@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soluciones IT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importa la fuente Montserrat de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #050a0f;
+            color: #e2e8f0;
+            scroll-behavior: smooth;
+            background-image: radial-gradient(at 50% 10%, #0c1521, #050a0f);
+            background-size: 100% 200%; /* Permite que el parallax funcione */
+        }
+        /* Usa la fuente Montserrat para los títulos */
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .primary-accent {
+            color: #38bdf8 !important;
+        }
+        /* Estilos para la pantalla de carga */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #050a0f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+            background-image: radial-gradient(at 50% 10%, #0c1521, #050a0f);
+        }
+        #splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Solución para que la barra de navegación no tape el contenido */
+        section[id] {
+            scroll-margin-top: 100px;
+        }
+        /* Estilos para las animaciones */
+        .animate-in {
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Pantalla de Carga (Splash Screen) -->
+    <div id="splash-screen">
+        <h1 class="text-7xl sm:text-9xl font-extrabold text-white mb-4 leading-none" style="font-family: 'Montserrat', sans-serif;">
+            CYGNUS<span class="primary-accent">IT</span>
+        </h1>
+        <p class="text-md sm:text-xl text-slate-400 font-bold tracking-widest text-center">
+            Virtual Resources and Technologies Unify System
+        </p>
+    </div>
+
+    <!-- Barra de Navegación Fija -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-slate-900 bg-opacity-70 backdrop-blur-md p-4 shadow-lg transition-all duration-300">
+        <div class="container mx-auto flex justify-center items-center">
+            <!-- Enlaces de navegación centrados -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#inicio" data-section="inicio" class="nav-link text-slate-400 hover:text-white transition-all duration-300 transform hover:scale-105 uppercase">Inicio</a>
+                <a href="#nosotros" data-section="nosotros" class="nav-link text-slate-400 hover:text-white transition-all duration-300 transform hover:scale-105 uppercase">Nosotros</a>
+                <a href="#servicios" data-section="servicios" class="nav-link text-slate-400 hover:text-white transition-all duration-300 transform hover:scale-105 uppercase">Servicios</a>
+                <a href="#contacto" data-section="contacto" class="nav-link text-slate-400 hover:text-white transition-all duration-300 transform hover:scale-105 uppercase">Contacto</a>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="min-h-screen pt-20 pb-16 flex flex-col items-center justify-center p-6">
+
+        <!-- Sección de Inicio (Hero) -->
+        <section id="inicio" class="w-full max-w-5xl text-center mb-32 animate-in opacity-0 translate-y-8">
+            <!-- La imagen CygnusIT.png reemplaza al texto principal -->
+            <img src="CygnusIT.png" alt="Logotipo de CygnusIT con el texto Virtual Resources and Technologies Unify System" class="mx-auto w-full max-w-5xl">
+        </section>
+
+        <!-- Sección Nosotros -->
+        <section id="nosotros" class="w-full max-w-4xl bg-slate-900 p-8 rounded-2xl shadow-lg mb-24 text-center animate-in opacity-0 translate-y-8">
+            <h2 class="text-3xl font-bold text-white mb-4 primary-accent uppercase">Sobre Nosotros</h2>
+            <p class="text-slate-300 mb-4">
+                Somos un equipo de profesionales apasionados por la tecnología, dedicados a ofrecer soluciones IT innovadoras y personalizadas. Nuestra misión es ayudarte a navegar el complejo mundo de la tecnología, optimizando tus operaciones y garantizando la seguridad de tus datos.
+            </p>
+            <p class="text-slate-300">
+                Con años de experiencia en la industria, hemos ayudado a empresas de todos los tamaños a alcanzar sus objetivos tecnológicos. Creemos en la colaboración y en construir relaciones a largo plazo con nuestros clientes.
+            </p>
+        </section>
+
+        <!-- Sección de servicios -->
+        <section id="servicios" class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-24 justify-center">
+            <!-- Tarjeta 1: Consultoría -->
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-lg border-2 border-transparent hover:border-cyan-400 transition-all duration-300 transform hover:scale-105 animate-in opacity-0 translate-y-8">
+                <div class="flex items-center justify-center w-12 h-12 bg-cyan-900 text-cyan-400 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-2 4l-3 3m0 0l-3-3m3 3V5"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2 uppercase">Consultoría IT</h3>
+                <p class="text-slate-400">Análisis y planificación estratégica para optimizar tus sistemas y procesos tecnológicos.</p>
+            </div>
+
+            <!-- Tarjeta 2: Ciberseguridad -->
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-lg border-2 border-transparent hover:border-fuchsia-400 transition-all duration-300 transform hover:scale-105 animate-in opacity-0 translate-y-8" style="transition-delay: 100ms;">
+                <div class="flex items-center justify-center w-12 h-12 bg-fuchsia-900 text-fuchsia-400 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15V3m0 12a3 3 0 00-3 3h6a3 3 0 00-3-3zm0 0V3m0 12a3 3 0 00-3 3h6a3 3 0 00-3-3zM9 21h6m-3-4v4m0 0a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2 uppercase">Ciberseguridad</h3>
+                <p class="text-slate-400">Protege tus datos y sistemas de amenazas cibernéticas con nuestras soluciones de seguridad.</p>
+            </div>
+
+            <!-- Tarjeta 3: Nube -->
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-lg border-2 border-transparent hover:border-violet-400 transition-all duration-300 transform hover:scale-105 animate-in opacity-0 translate-y-8" style="transition-delay: 200ms;">
+                <div class="flex items-center justify-center w-12 h-12 bg-violet-900 text-violet-400 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2zM3 7h18M3 7l9 5 9-5M3 17l9 5 9-5M3 17h18"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2 uppercase">Servicios en la Nube</h3>
+                <p class="text-slate-400">Migración, gestión y optimización de infraestructura en la nube para mayor escalabilidad.</p>
+            </div>
+            
+             <!-- Tarjeta 4: Soporte Técnico -->
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-lg border-2 border-transparent hover:border-rose-400 transition-all duration-300 transform hover:scale-105 animate-in opacity-0 translate-y-8" style="transition-delay: 300ms;">
+                <div class="flex items-center justify-center w-12 h-12 bg-rose-900 text-rose-400 rounded-full mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.5 1.5l-6-6M19.5 9.5l-3-3m0 0l-3 3m3-3l3 3m-9-3l3 3"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2 uppercase">Soporte y Mantenimiento</h3>
+                <p class="text-slate-400">Soporte técnico 24/7 y mantenimiento proactivo para garantizar la continuidad de tus operaciones.</p>
+            </div>
+            
+             <!-- Tarjeta 5: Automatización -->
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-lg border-2 border-transparent hover:border-emerald-400 transition-all duration-300 transform hover:scale-105 animate-in opacity-0 translate-y-8" style="transition-delay: 400ms;">
+                <div class="flex items-center justify-center w-12 h-12 bg-emerald-900 text-emerald-400 rounded-full mb-4">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M10.875 18.062c.381-.082.72-.25 1.018-.496.425-.36.756-.814.975-1.325a2.593 2.593 0 0 1 .455-1.111c.198-.444.33-1.013.374-1.636a.65.65 0 0 0 .108-.027c.277-.07.56-.129.85-.183l-1.996 3.155.026.04-.04.025ZM12.75 3.938c.381.082.72.25 1.018.496.425-.36.756.814.975 1.325a2.593 2.593 0 0 1 .455 1.111c.198-.444.33-1.013.374 1.636a.65.65 0 0 0 .108-.027c.277-.07.56-.129.85-.183l-1.996-3.155.026-.04-.04-.025Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM7.5 7.5l-3 3m12 0l-3-3m0 10.5l3 3m-12-3l3 3M12 3v18M3 12h18"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2 uppercase">Automatización de Procesos</h3>
+                <p class="text-slate-400">Automatizamos tareas repetitivas para aumentar la eficiencia y reducir los errores humanos.</p>
+            </div>
+            
+        </section>
+
+        <!-- Sección de Contacto -->
+        <section id="contacto" class="w-full max-w-2xl text-center p-8 bg-slate-900 text-white rounded-2xl shadow-lg mb-24 animate-in opacity-0 translate-y-8">
+            <h2 class="text-3xl font-extrabold mb-4 primary-accent uppercase">Contáctanos</h2>
+            <p class="text-lg mb-6 text-slate-400">Estamos listos para escucharte. Envíanos un mensaje y te responderemos a la brevedad.</p>
+            <form id="contact-form" class="space-y-4">
+                <div>
+                    <input type="text" id="nombre" name="nombre" placeholder="Tu Nombre" class="w-full p-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-transparent focus:border-cyan-400 focus:outline-none transition-all duration-300" required>
+                </div>
+                <div>
+                    <input type="email" id="email" name="email" placeholder="Tu Correo Electrónico" class="w-full p-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-transparent focus:border-cyan-400 focus:outline-none transition-all duration-300" required>
+                </div>
+                <div>
+                    <textarea id="mensaje" name="mensaje" rows="4" placeholder="Tu Mensaje" class="w-full p-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-transparent focus:border-cyan-400 focus:outline-none transition-all duration-300" required></textarea>
+                </div>
+                <div>
+                    <button type="submit" class="inline-block w-full bg-cyan-600 text-white font-bold text-lg py-3 px-8 rounded-full shadow-lg hover:bg-cyan-500 transition-all duration-300 transform hover:scale-105">Enviar Mensaje</button>
+                </div>
+            </form>
+            <div id="confirmation-message" class="mt-4 text-green-400 font-semibold" style="display: none;">
+                ¡Mensaje enviado con éxito! Te contactaremos pronto.
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Flecha para volver arriba -->
+    <a href="#inicio" id="scroll-to-top-btn" class="fixed bottom-6 right-6 p-3 bg-cyan-600 text-white rounded-full shadow-lg transition-opacity duration-300 opacity-0 z-50 hover:bg-cyan-500 hover:scale-110">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </a>
+
+    <!-- Pie de Página -->
+    <footer class="w-full p-6 text-center text-slate-400 text-sm bg-slate-900 bg-opacity-70 backdrop-blur-md">
+        <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <p>&copy; 2024 CygnusIT. Todos los derechos reservados.</p>
+            <div class="flex items-center space-x-2">
+                <span class="text-sm">Hecho con</span>
+                
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Evita el envío real del formulario
+
+            const confirmationMessage = document.getElementById('confirmation-message');
+            const contactForm = document.getElementById('contact-form');
+            
+            try {
+                // Simula el envío
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Muestra el mensaje de confirmación
+                confirmationMessage.style.display = 'block';
+                // Oculta el formulario
+                contactForm.style.display = 'none';
+            } catch (error) {
+                console.error("Error al enviar el formulario:", error);
+                // Opcional: mostrar un mensaje de error al usuario
+                // alert("Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.");
+            }
+        });
+
+        // JavaScript para la navegación activa
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav .nav-link');
+            
+            const isAtBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 5);
+            
+            if (isAtBottom) {
+                current = 'contacto';
+            } else {
+                for (let i = sections.length - 1; i >= 0; i--) {
+                    const section = sections[i];
+                    const sectionTop = section.offsetTop - 100;
+                    if (window.scrollY >= sectionTop) {
+                        current = section.getAttribute('id');
+                        break; 
+                    }
+                }
+            }
+
+            navLinks.forEach(link => {
+                // Quita las clases del botón activo
+                link.classList.remove('bg-cyan-600', 'hover:bg-cyan-500', 'text-white', 'py-2', 'px-4', 'rounded-md');
+                // Añade las clases del botón inactivo (sin fondo)
+                link.classList.add('text-slate-400', 'hover:text-white');
+
+                // Si es la sección actual, añade las clases de estilo del botón activo
+                if (link.dataset.section === current) {
+                    // Remueve las clases del botón inactivo
+                    link.classList.remove('text-slate-400', 'hover:text-white');
+                    // Añade las clases de estilo del botón activo
+                    link.classList.add('bg-cyan-600', 'hover:bg-cyan-500', 'text-white', 'py-2', 'px-4', 'rounded-md');
+                }
+            });
+            
+            // Lógica para mostrar/ocultar el botón de volver arriba
+            const scrollToTopBtn = document.getElementById('scroll-to-top-btn');
+            if (window.scrollY > 300) {
+                scrollToTopBtn.classList.remove('opacity-0');
+                scrollToTopBtn.classList.add('opacity-100');
+            } else {
+                scrollToTopBtn.classList.remove('opacity-100');
+                scrollToTopBtn.classList.add('opacity-0');
+            }
+        });
+
+        // Ocultar la pantalla de inicio al cargar la página
+        window.addEventListener('load', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            setTimeout(() => {
+                splashScreen.classList.add('fade-out');
+            }, 1000); // 1 segundo antes de empezar a desvanecer
+        });
+
+        // Nuevo JavaScript para el desplazamiento suave al hacer clic en los enlaces de la barra de navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // JavaScript para los efectos dinámicos
+
+        // Efecto Parallax en el fondo del body
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            document.body.style.backgroundPositionY = `${scrollY * 0.5}px`;
+        });
+        
+        // Animación al hacer scroll con Intersection Observer
+        const elementsToAnimate = document.querySelectorAll('.animate-in');
+        
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    observer.unobserve(entry.target); // Dejar de observar una vez que se ha animado
+                }
+            });
+        }, {
+            threshold: 0.2 // Porcentaje del elemento visible para activar la animación
+        });
+
+        elementsToAnimate.forEach(element => {
+            observer.observe(element);
+        });
+
+    </script>
+</body>
+</html>
