@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cygnus IT</title>
+    <title>Soluciones IT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Importa la fuente Montserrat de Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -164,23 +164,21 @@
         <section id="contacto" class="w-full max-w-2xl text-center p-8 bg-slate-900 text-white rounded-2xl shadow-lg mb-24 animate-in opacity-0 translate-y-8">
             <h2 class="text-3xl font-extrabold mb-4 primary-accent uppercase">Contáctanos</h2>
             <p class="text-lg mb-6 text-slate-400">Estamos listos para escucharte. Envíanos un mensaje y te responderemos a la brevedad.</p>
-            <form id="contact-form" class="space-y-4">
+            <!-- Formulario de contacto actualizado -->
+            <form action="https://formspree.io/f/mzzjpgye" method="POST" class="space-y-4">
                 <div>
-                    <input type="text" id="nombre" name="nombre" placeholder="Tu Nombre" class="w-full p-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-transparent focus:border-cyan-400 focus:outline-none transition-all duration-300" required>
+                    <input type="text" name="name" placeholder="Tu Nombre" class="w-full p-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-transparent focus:border-cyan-400 focus:outline-none transition-all duration-300" required>
                 </div>
                 <div>
-                    <input type="email" id="email" name="email" placeholder="Tu Correo Electrónico" class="w-full p-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-transparent focus:border-cyan-400 focus:outline-none transition-all duration-300" required>
+                    <input type="email" name="email" placeholder="Tu Correo Electrónico" class="w-full p-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-transparent focus:border-cyan-400 focus:outline-none transition-all duration-300" required>
                 </div>
                 <div>
-                    <textarea id="mensaje" name="mensaje" rows="4" placeholder="Tu Mensaje" class="w-full p-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-transparent focus:border-cyan-400 focus:outline-none transition-all duration-300" required></textarea>
+                    <textarea name="message" rows="4" placeholder="Tu Mensaje" class="w-full p-3 rounded-lg bg-slate-700 text-white placeholder-slate-400 border border-transparent focus:border-cyan-400 focus:outline-none transition-all duration-300" required></textarea>
                 </div>
                 <div>
                     <button type="submit" class="inline-block w-full bg-cyan-600 text-white font-bold text-lg py-3 px-8 rounded-full shadow-lg hover:bg-cyan-500 transition-all duration-300 transform hover:scale-105">Enviar Mensaje</button>
                 </div>
             </form>
-            <div id="confirmation-message" class="mt-4 text-green-400 font-semibold" style="display: none;">
-                ¡Mensaje enviado con éxito! Te contactaremos pronto.
-            </div>
         </section>
 
     </main>
@@ -205,27 +203,6 @@
 
 
     <script>
-        document.getElementById('contact-form').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Evita el envío real del formulario
-
-            const confirmationMessage = document.getElementById('confirmation-message');
-            const contactForm = document.getElementById('contact-form');
-            
-            try {
-                // Simula el envío
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                // Muestra el mensaje de confirmación
-                confirmationMessage.style.display = 'block';
-                // Oculta el formulario
-                contactForm.style.display = 'none';
-            } catch (error) {
-                console.error("Error al enviar el formulario:", error);
-                // Opcional: mostrar un mensaje de error al usuario
-                // alert("Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.");
-            }
-        });
-
         // JavaScript para la navegación activa
         window.addEventListener('scroll', () => {
             let current = '';
@@ -326,4 +303,3 @@
     </script>
 </body>
 </html>
-
