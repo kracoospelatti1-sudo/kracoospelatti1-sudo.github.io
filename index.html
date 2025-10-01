@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Artículos JDE</title>
+    <!-- Incluimos Tailwind CSS para estilos modernos y responsivos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Biblioteca SheetJS para leer archivos Excel (.xlsx, .xls) y CSV -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script> 
+    
+    <style>
+        /* Personalizaciones de estilo */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+        .container-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #searchInput, #fileInput {
+            transition: all 0.3s ease;
+        }
+        #searchInput:focus, #fileInput:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Sombra azul de Tailwind */
+        }
+        /* Estilos específicos para la tabla */
+        #data-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 100%;
+        }
+        #data-table th, #data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        #data-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #1f2937; /* Gris oscuro para el encabezado */
+            color: white;
+            z-index: 10;
+        }
+        #data-table tbody tr:hover {
+            background-color: #f3f4f6;
+        }
+        /* Clase para ocultar el indicador de carga */
+        .hidden-loading {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-wrapper">
+        <header class="text-center py-6 bg-white shadow-lg rounded-lg mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Filtro de Artículos JDE</h1>
+            <p class="text-gray-500 mt-2">Carga un archivo Excel (.xlsx, .xls) o CSV y usa el filtro estilo Excel.</p>
+        </header>
+
+        <!-- Controles de Carga y Búsqueda -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <!-- Selector de Archivo -->
+            <div>
+                <label for="fileInput" class="block text-sm font-medium text-gray-700 mb-1">Cargar Archivo de Datos:</label>
+                <input 
+                    type="file" 
+                    id="fileInput" 
+                    accept=".xlsx, .xls, .csv"
+                    class="w-full p-2 text-base border-2 border-gray-300 rounded-lg shadow-ienner focus:outline-none focus:border-blue-500 bg-white"
+                    onchange="handleFile(event)"
+                >
+            </div>
+            
+            <!-- Barra de búsqueda/filtro -->
+            <div>
+                <label for="searchInput" class="block text-sm font-medium text-gray-700 mb-1">Buscar/Filtrar en la Tabla (use '*' como comodín):</label>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="w-full p-2 text-base border-2 border-gray-300 rounded-lg shadow-inner focus:outline-none focus:border-blue-500"
+                    placeholder="Ej: *007*, AR*, *CABLE*, etc."
+                    onkeyup="filterTable()"
+                    disabled
+                >
+            </div>
+        </div>
+
+        <!-- Contenedor de la tabla -->
+        <div class="bg-white rounded-lg shadow-xl overflow-x-auto max-h-[70vh] relative">
+            <table id="data-table" class="w-full text-sm text-left text-gray-600">
+                <thead>
+                    <!-- El encabezado se insertará aquí con JavaScript -->
+                </thead>
+                <tbody>
+                    <!-- Las filas de datos se insertarán aquí con JavaScript -->
+                    <tr><td colspan="100%" class="text-center py-8 text-lg text-gray-500">Por favor, carga un archivo para empezar.</td></tr>
+                </tbody>
+            </table>
+            
+            <!-- Indicador de carga -->
+            <div id="loading-indicator" class="absolute inset-0 bg-white/80 flex items-center justify-center text-xl font-semibold text-blue-600 rounded-lg hidden-loading">
+                Procesando archivo...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales para la tabla y los datos
+        let tableData = [];
+        let headerRow = [];
+
+        // Referencia al contenido CSV precargado si existe (para el modo por defecto)
+        const initialCsvContent = typeof __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv !== 'undefined' 
+            ? __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv 
+            : null;
+
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const searchInput = document.getElementById('searchInput');
+        const tbody = document.querySelector('#data-table tbody');
+
+        /**
+         * Maneja la subida del archivo, lee su contenido y llama al parseo.
+         * Soporta .xlsx, .xls y .csv.
+         * @param {Event} event - El evento change del input file.
+         */
+        function handleFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Define 'extension' aquí para que esté disponible para la función reader.readAs...
+            const extension = file.name.split('.').pop().toLowerCase();
+            
+            // Mostrar indicador de carga y deshabilitar búsqueda
+            loadingIndicator.classList.remove('hidden-loading');
+            searchInput.disabled = true;
+            tbody.innerHTML = '<tr><td colspan="100%" class="text-center py-8 text-lg text-gray-500">Cargando y procesando los datos...</td></tr>';
+
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const data = e.target.result;
+                
+                let workbook;
+                let dataToParse;
+
+                try {
+                    if (extension === 'xlsx' || extension === 'xls') {
+                        // 1. Manejar archivos Excel
+                        workbook = XLSX.read(data, { type: 'binary' });
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+                        // Convertir la hoja a formato JSON con encabezados (header: 1)
+                        dataToParse = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    } else if (extension === 'csv') {
+                        // 2. Manejar archivos CSV como texto
+                        dataToParse = data;
+                    } else {
+                        throw new Error('Formato de archivo no soportado.'); 
+                    }
+
+                    // 3. Procesar los datos
+                    if (extension === 'xlsx' || extension === 'xls') {
+                        parseExcelData(dataToParse);
+                    } else if (extension === 'csv') {
+                         parseCSV(dataToParse);
+                    }
+                    
+                    // 4. Renderizar y habilitar búsqueda
+                    renderTable();
+                    searchInput.disabled = false;
+                    loadingIndicator.classList.add('hidden-loading');
+                    
+                } catch (error) {
+                    console.error("Error al procesar el archivo:", error);
+                    loadingIndicator.classList.add('hidden-loading');
+                    tbody.innerHTML = `<tr class="text-red-600 font-semibold"><td colspan="100%" class="text-center py-8">Error al procesar el archivo: ${error.message}. Asegúrate de que es un Excel o CSV válido.</td></tr>`;
+                }
+            };
+            
+            // Leer el archivo como binario si es Excel, o como texto si es CSV
+            if (extension === 'xlsx' || extension === 'xls') {
+                reader.readAsBinaryString(file);
+            } else if (extension === 'csv') {
+                reader.readAsText(file); // Usar readAsText para CSV
+            }
+        }
+        
+        /**
+         * Parsea datos de Excel (array de arrays) a un array de objetos.
+         * @param {Array<Array<any>>} data - El array de arrays de datos de Excel.
+         */
+        function parseExcelData(data) {
+            if (data.length === 0) return;
+
+            // El primer array es el encabezado
+            headerRow = data[0].map(h => String(h).trim());
+            
+            tableData = [];
+            
+            // El resto son los datos
+            for (let i = 1; i < data.length; i++) {
+                const rowArray = data[i];
+                const rowObject = {};
+                
+                headerRow.forEach((key, index) => {
+                    // Convertir cualquier valor a string para la búsqueda uniforme
+                    rowObject[key] = rowArray[index] !== undefined && rowArray[index] !== null ? String(rowArray[index]) : '';
+                });
+
+                tableData.push(rowObject);
+            }
+        }
+
+        /**
+         * Parsea el contenido CSV (texto) en un array de objetos. (Función original modificada)
+         * @param {string} csvText - El contenido CSV como cadena de texto.
+         */
+        function parseCSV(csvText) {
+            if (!csvText) {
+                console.error("No hay contenido CSV para procesar.");
+                return;
+            }
+            
+            const lines = csvText.trim().split('\n');
+            if (lines.length === 0) return;
+
+            // Función de ayuda para dividir líneas (maneja comillas)
+            const simpleSplit = (line) => {
+                // Se usa una expresión regular más robusta si hay comas y comillas
+                const pattern = /("([^"]*)"|[^,]+)/g;
+                return Array.from(line.matchAll(pattern), match => match[2] || match[0])
+                           .map(p => p.trim().replace(/^"|"$/g, '')); 
+            };
+
+
+            headerRow = simpleSplit(lines[0]).map(h => h.trim());
+            tableData = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                if (line.trim() === '') continue;
+
+                const values = simpleSplit(line);
+                const rowObject = {};
+                
+                headerRow.forEach((key, index) => {
+                    // Convertir cualquier valor a string para la búsqueda uniforme
+                    rowObject[key] = values[index] !== undefined && values[index] !== null ? String(values[index]) : '';
+                });
+
+                tableData.push(rowObject);
+            }
+        }
+
+        /**
+         * Renderiza el encabezado y el cuerpo de la tabla.
+         */
+        function renderTable() {
+            const thead = document.querySelector('#data-table thead');
+
+            // 1. Renderizar Encabezado
+            thead.innerHTML = '';
+            if (headerRow.length > 0) {
+                const headerTr = document.createElement('tr');
+                headerRow.forEach(headerText => {
+                    const th = document.createElement('th');
+                    th.textContent = headerText;
+                    th.setAttribute('scope', 'col');
+                    th.classList.add('whitespace-nowrap', 'font-semibold', 'text-xs', 'uppercase', 'tracking-wider');
+                    headerTr.appendChild(th);
+                });
+                thead.appendChild(headerTr);
+            } else {
+                 thead.innerHTML = '<tr><th colspan="100%" class="text-center py-3">No hay datos para mostrar.</th></tr>';
+            }
+
+            // 2. Renderizar Cuerpo de la tabla
+            tbody.innerHTML = '';
+            if (tableData.length > 0) {
+                tableData.forEach(rowData => {
+                    const tr = document.createElement('tr');
+                    tr.classList.add('bg-white', 'border-b', 'hover:bg-gray-50');
+                    
+                    headerRow.forEach(key => {
+                        const td = document.createElement('td');
+                        // Usamos una clase para identificar las celdas que contienen texto
+                        td.classList.add('filter-cell', 'whitespace-nowrap', 'text-gray-900');
+                        td.textContent = rowData[key];
+                        tr.appendChild(td);
+                    });
+                    
+                    tbody.appendChild(tr);
+                });
+            } else {
+                 tbody.innerHTML = '<tr><td colspan="100%" class="text-center py-8 text-gray-500">No hay filas de datos en el archivo cargado.</td></tr>';
+            }
+        }
+
+        /**
+         * La función principal de filtrado, llamada al escribir en el input.
+         * AHORA SOPORTA COMODINES ('*')
+         */
+        function filterTable() {
+            // No filtrar si no hay datos cargados
+            if (tableData.length === 0) return;
+            
+            const input = document.getElementById("searchInput");
+            const filterText = input.value.trim();
+            const table = document.getElementById("data-table");
+            const tr = table.getElementsByTagName("tr");
+
+            // Si el filtro está vacío, mostramos todas las filas
+            if (filterText === "") {
+                 for (let i = 1; i < tr.length; i++) {
+                    tr[i].style.display = ""; 
+                 }
+                 return;
+            }
+
+            // 1. Preparar la expresión regular (Regex) para los comodines
+            // - Escapar caracteres especiales de Regex
+            let regexString = filterText.replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&'); 
+            // - Reemplazar '*' con '.*' para que coincida con cero o más caracteres
+            regexString = regexString.replace(/\*/g, '.*');
+            
+            // 2. Crear la expresión regular, insensible a mayúsculas (i) y buscando en toda la cadena
+            let regex;
+            try {
+                regex = new RegExp(regexString, 'i');
+            } catch (e) {
+                // Si la expresión regular es inválida (ej. solo comodines sin texto), usamos el texto original
+                console.error("Regex inválida, usando búsqueda simple.", e);
+                regex = new RegExp(filterText.replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&'), 'i');
+            }
+
+
+            // Empieza en 1 para omitir la fila de encabezado (tr[0])
+            for (let i = 1; i < tr.length; i++) {
+                const row = tr[i];
+                let rowMatch = false; 
+                
+                // Obtener todas las celdas de la fila
+                const cells = row.getElementsByClassName('filter-cell'); 
+                
+                // Buscar coincidencia en cualquier celda
+                for (let j = 0; j < cells.length; j++) {
+                    const cell = cells[j];
+                    if (cell) {
+                        const txtValue = cell.textContent || cell.innerText; 
+                        
+                        // Si el valor coincide con la expresión regular
+                        if (regex.test(txtValue)) {
+                            rowMatch = true;
+                            break; // Ya encontramos una coincidencia, pasamos a la siguiente fila
+                        }
+                    }
+                }
+
+                // Aplicar estilo de visualización
+                if (rowMatch) {
+                    row.style.display = ""; // Muestra la fila
+                } else {
+                    row.style.display = "none"; // Oculta la fila
+                }
+            }
+        }
+
+        // --- Inicialización al cargar la página ---
+        window.onload = function() {
+            // Cargar datos iniciales (CSV precargado) si no hay un archivo subido
+            if (initialCsvContent && tableData.length === 0) {
+                loadingIndicator.classList.remove('hidden-loading');
+                loadingIndicator.textContent = "Cargando datos iniciales...";
+                
+                parseCSV(initialCsvContent);
+                renderTable();
+                
+                loadingIndicator.classList.add('hidden-loading');
+                searchInput.disabled = false;
+            } else {
+                // Si no hay contenido inicial, mostramos el mensaje de "Por favor, carga..."
+                searchInput.disabled = true;
+            }
+        };
+
+    </script>
+</body>
+</html>
