@@ -1,106 +1,160 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Buscador de Códigos JDE/SAP</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        input[type="text"] {
-            width: 70%;
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .error {
-            color: red;
-            font-weight: bold;
-            text-align: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #e2e6ea;
-        }
-        .no-results {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🔍 Buscador de `CODIGOSJDESAP.xlsx`</h1>
+import pandas as pd
+from flask import Flask, request, redirect, url_for
 
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
+# Nombre del archivo Excel en la carpeta raíz
+ARCHIVO_EXCEL = "CODIGOSJDESAP.xlsx"
 
-        <form method="POST" action="/">
-            <input type="text" name="busqueda" placeholder="Ingrese código, descripción o palabra clave..." value="{{ termino_busqueda or '' }}">
-            <button type="submit">Buscar</button>
-        </form>
+# Inicializa la aplicación Flask
+app = Flask(__name__)
 
-        {% if termino_busqueda and resultados %}
-            <h2>Resultados para "{{ termino_busqueda }}" ({{ resultados|length }} encontrados)</h2>
+# Variable global para almacenar el DataFrame
+df = None
+columnas = []
+error_carga = ""
+
+def cargar_datos():
+    """Carga el archivo Excel en un DataFrame de Pandas."""
+    global df, columnas, error_carga
+    try:
+        # Intenta cargar la primera hoja del Excel.
+        df = pd.read_excel(ARCHIVO_EXCEL, sheet_name=0) 
+        # Convertir todas las columnas a string para asegurar consistencia en la búsqueda
+        df = df.astype(str)
+        columnas = df.columns.tolist()
+        print(f"✅ Datos cargados exitosamente de {ARCHIVO_EXCEL}.")
+    except FileNotFoundError:
+        error_carga = f"❌ ERROR: El archivo '{ARCHIVO_EXCEL}' no se encontró en la carpeta raíz. Asegúrate de que está en la misma carpeta que el script."
+        df = pd.DataFrame()
+        print(error_carga)
+    except Exception as e:
+        error_carga = f"❌ ERROR al cargar el archivo Excel: {e}"
+        df = pd.DataFrame()
+        print(error_carga)
+
+@app.before_first_request
+def inicializar():
+    """Función que se ejecuta una vez antes de la primera petición."""
+    cargar_datos()
+
+
+def generar_html(termino_busqueda="", resultados=None):
+    """Genera todo el HTML de la página web como una cadena."""
+    
+    # 1. Definición de estilos CSS
+    style = """
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f4; }
+            .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+            input[type="text"] { width: 70%; padding: 10px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px; }
+            button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+            button:hover { background-color: #0056b3; }
+            h1 { color: #333; text-align: center; }
+            .error { color: red; font-weight: bold; text-align: center; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #e2e6ea; }
+            .no-results { text-align: center; padding: 20px; color: #666; }
+        </style>
+    """
+    
+    # 2. Construcción del contenido HTML
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Buscador de Códigos Excel</title>
+        {style}
+    </head>
+    <body>
+        <div class="container">
+            <h1>🔍 Buscador de `{ARCHIVO_EXCEL}`</h1>
+            
+            """
+    
+    # Manejo de errores de carga
+    if error_carga:
+        html_content += f'<p class="error">{error_carga}</p>'
+    
+    # Formulario de búsqueda
+    html_content += f"""
+            <form method="POST" action="{url_for('index')}">
+                <input type="text" name="busqueda" placeholder="Ingrese código, descripción o palabra clave..." value="{termino_busqueda}">
+                <button type="submit">Buscar</button>
+            </form>
+            """
+            
+    # Mostrar resultados
+    if resultados is not None:
+        if resultados:
+            html_content += f"""
+            <h2>Resultados para "{termino_busqueda}" ({len(resultados)} encontrados)</h2>
             <table>
                 <thead>
                     <tr>
-                        {% for columna in columnas %}
-                            <th>{{ columna }}</th>
-                        {% endfor %}
+                        """
+            for col in columnas:
+                html_content += f"<th>{col}</th>"
+            
+            html_content += """
                     </tr>
                 </thead>
                 <tbody>
-                    {% for fila in resultados %}
-                        <tr>
-                            {% for columna in columnas %}
-                                <td>{{ fila[columna] }}</td>
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
+                    """
+            for fila in resultados:
+                html_content += "<tr>"
+                for col in columnas:
+                    # Accedemos al valor en la fila (diccionario) usando el nombre de la columna
+                    html_content += f"<td>{fila[col]}</td>"
+                html_content += "</tr>"
+                
+            html_content += """
                 </tbody>
             </table>
-        {% elif termino_busqueda and not resultados %}
-            <p class="no-results">No se encontraron resultados para "{{ termino_busqueda }}".</p>
-        {% endif %}
+            """
+        elif termino_busqueda:
+             html_content += f'<p class="no-results">No se encontraron resultados para "{termino_busqueda}".</p>'
 
-    </div>
-</body>
-</html>
+    html_content += """
+        </div>
+    </body>
+    </html>
+    """
+    return html_content
+
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    """Ruta principal: maneja el formulario y muestra la interfaz."""
+    
+    termino_busqueda = ""
+    resultados = None # None significa que no se ha realizado ninguna búsqueda todavía
+    
+    if df is None or df.empty:
+        # Si hay un error de carga, solo mostramos la página con el error
+        return generar_html(error_carga=error_carga)
+
+    if request.method == 'POST':
+        # 1. Obtener el término de búsqueda
+        termino_busqueda = request.form.get('busqueda', '').strip().lower()
+        
+        if termino_busqueda:
+            # 2. Lógica de búsqueda con Pandas:
+            # Buscamos el término en TODAS las columnas
+            mask = df.apply(
+                lambda row: row.astype(str).str.lower().str.contains(termino_busqueda).any(),
+                axis=1
+            )
+            
+            # 3. Convertir resultados a lista de diccionarios (JSON-like)
+            resultados = df[mask].to_dict('records')
+
+    # 4. Generar y devolver la respuesta HTML
+    return generar_html(termino_busqueda=termino_busqueda, resultados=resultados)
+
+
+# Para ejecutar la aplicación
+if __name__ == '__main__':
+    # Ejecuta el servidor en modo de depuración (útil para desarrollo)
+    # Cambia a debug=False para producción
+    app.run(debug=True)
