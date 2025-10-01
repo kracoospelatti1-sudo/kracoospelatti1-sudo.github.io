@@ -56,15 +56,15 @@
 
     <div class="container-wrapper">
         <header class="text-center py-6 bg-white shadow-lg rounded-lg mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Filtro de Artículos JDE</h1>
-            <p class="text-gray-500 mt-2">Carga un archivo Excel (.xlsx, .xls) o CSV y usa el filtro estilo Excel.</p>
+            <h1 class="text-3xl font-bold text-gray-800">Buscador de Códigos JDE SAP</h1>
+            <p class="text-gray-500 mt-2">Datos precargados de **CODIGOS JDE SAP.xlsx**. Usa el filtro para buscar por comodín (*).</p>
         </header>
 
         <!-- Controles de Carga y Búsqueda -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <!-- Selector de Archivo -->
             <div>
-                <label for="fileInput" class="block text-sm font-medium text-gray-700 mb-1">Cargar Archivo de Datos:</label>
+                <label for="fileInput" class="block text-sm font-medium text-gray-700 mb-1">Cargar Otro Archivo de Datos (Opcional):</label>
                 <input 
                     type="file" 
                     id="fileInput" 
@@ -112,7 +112,8 @@
         let tableData = [];
         let headerRow = [];
 
-        // Referencia al contenido CSV precargado (CODIGOS JDE.xlsx - Sheet1.csv)
+        // Referencia al contenido CSV precargado. 
+        // Se asume que este contenido pertenece al archivo "CODIGOS JDE SAP.xlsx" solicitado.
         const initialCsvContent = typeof __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv !== 'undefined' 
             ? __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv 
             : null;
@@ -398,7 +399,7 @@
                 
                 // Mostrar indicador de carga para precarga
                 loadingIndicator.classList.remove('hidden-loading');
-                loadingIndicator.textContent = "Cargando datos iniciales...";
+                loadingIndicator.textContent = "Cargando datos iniciales del archivo CODIGOS JDE SAP.xlsx...";
                 
                 // Usamos setTimeout para asegurar que el DOM se haya renderizado antes de empezar el parseo,
                 // evitando bloquear la UI y permitiendo que se vea el spinner.
