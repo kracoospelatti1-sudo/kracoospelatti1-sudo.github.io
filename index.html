@@ -95,8 +95,8 @@
                     <!-- El encabezado se insertará aquí con JavaScript -->
                 </thead>
                 <tbody>
-                    <!-- Las filas de datos se insertarán aquí con JavaScript -->
-                    <tr><td colspan="100%" class="text-center py-8 text-lg text-gray-500">Por favor, carga un archivo para empezar.</td></tr>
+                    <!-- El mensaje inicial se ajusta para reflejar la precarga -->
+                    <tr><td colspan="100%" class="text-center py-8 text-lg text-gray-500" id="initial-message">Cargando datos iniciales...</td></tr>
                 </tbody>
             </table>
             
@@ -112,7 +112,7 @@
         let tableData = [];
         let headerRow = [];
 
-        // Referencia al contenido CSV precargado si existe (para el modo por defecto)
+        // Referencia al contenido CSV precargado (CODIGOS JDE.xlsx - Sheet1.csv)
         const initialCsvContent = typeof __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv !== 'undefined' 
             ? __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv 
             : null;
@@ -334,7 +334,27 @@
             } catch (e) {
                 // Si la expresión regular es inválida (ej. solo comodines sin texto), usamos el texto original
                 console.error("Regex inválida, usando búsqueda simple.", e);
-                regex = new RegExp(filterText.replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&'), 'i');
+                // Si la regex falla, volvemos a la búsqueda simple (subcadena)
+                const simpleFilterText = filterText.toUpperCase();
+                for (let i = 1; i < tr.length; i++) {
+                    const row = tr[i];
+                    let rowMatch = false; 
+                    const cells = row.getElementsByClassName('filter-cell'); 
+                    
+                    for (let j = 0; j < cells.length; j++) {
+                        const cell = cells[j];
+                        if (cell) {
+                            const txtValue = (cell.textContent || cell.innerText).toUpperCase(); 
+                            if (txtValue.indexOf(simpleFilterText) > -1) {
+                                rowMatch = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    row.style.display = rowMatch ? "" : "none";
+                }
+                return;
             }
 
 
@@ -371,19 +391,38 @@
 
         // --- Inicialización al cargar la página ---
         window.onload = function() {
-            // Cargar datos iniciales (CSV precargado) si no hay un archivo subido
+            const initialMessageRow = document.getElementById('initial-message');
+            
+            // Cargar datos iniciales (CSV precargado) si existe
             if (initialCsvContent && tableData.length === 0) {
+                
+                // Mostrar indicador de carga para precarga
                 loadingIndicator.classList.remove('hidden-loading');
                 loadingIndicator.textContent = "Cargando datos iniciales...";
                 
-                parseCSV(initialCsvContent);
-                renderTable();
+                // Usamos setTimeout para asegurar que el DOM se haya renderizado antes de empezar el parseo,
+                // evitando bloquear la UI y permitiendo que se vea el spinner.
+                setTimeout(() => {
+                    try {
+                        parseCSV(initialCsvContent);
+                        renderTable();
+                        searchInput.disabled = false;
+                        initialMessageRow.remove(); // Elimina el mensaje de carga inicial
+                    } catch (e) {
+                         console.error("Error al cargar y parsear el contenido inicial:", e);
+                         // Muestra mensaje de error en la tabla
+                         initialMessageRow.innerHTML = `<tr class="text-red-600 font-semibold"><td colspan="100%" class="text-center py-8">Error al cargar datos iniciales.</td></tr>`;
+                    } finally {
+                        loadingIndicator.classList.add('hidden-loading');
+                    }
+                }, 100); // Pequeño retraso para la visualización del loading
                 
-                loadingIndicator.classList.add('hidden-loading');
-                searchInput.disabled = false;
             } else {
                 // Si no hay contenido inicial, mostramos el mensaje de "Por favor, carga..."
                 searchInput.disabled = true;
+                if (initialMessageRow) {
+                     initialMessageRow.textContent = "Por favor, carga un archivo para empezar.";
+                }
             }
         };
 
