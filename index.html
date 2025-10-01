@@ -20,10 +20,10 @@
             margin: 0 auto;
             padding: 20px;
         }
-        #searchInput, #fileInput {
+        #searchInput {
             transition: all 0.3s ease;
         }
-        #searchInput:focus, #fileInput:focus {
+        #searchInput:focus {
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Sombra azul de Tailwind */
         }
         /* Estilos específicos para la tabla */
@@ -57,22 +57,12 @@
     <div class="container-wrapper">
         <header class="text-center py-6 bg-white shadow-lg rounded-lg mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Buscador de Códigos JDE SAP</h1>
-            <p class="text-gray-500 mt-2">Datos precargados de **CODIGOS JDE SAP.xlsx**. Usa el filtro para buscar por comodín (*).</p>
+            <p class="text-gray-500 mt-2">Datos cargados automáticamente del servidor (**CODIGOS JDE SAP.xlsx**). Use el filtro para buscar por comodín (*).</p>
         </header>
 
         <!-- Controles de Carga y Búsqueda -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <!-- Selector de Archivo -->
-            <div>
-                <label for="fileInput" class="block text-sm font-medium text-gray-700 mb-1">Cargar Otro Archivo de Datos (Opcional):</label>
-                <input 
-                    type="file" 
-                    id="fileInput" 
-                    accept=".xlsx, .xls, .csv"
-                    class="w-full p-2 text-base border-2 border-gray-300 rounded-lg shadow-ienner focus:outline-none focus:border-blue-500 bg-white"
-                    onchange="handleFile(event)"
-                >
-            </div>
+        <!-- Se elimina el selector de archivo local para usar solo datos del servidor. -->
+        <div class="mb-6">
             
             <!-- Barra de búsqueda/filtro -->
             <div>
@@ -80,7 +70,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    class="w-full p-2 text-base border-2 border-gray-300 rounded-lg shadow-inner focus:outline-none focus:border-blue-500"
+                    class="w-full p-3 text-base border-2 border-gray-300 rounded-lg shadow-inner focus:outline-none focus:border-blue-500"
                     placeholder="Ej: *007*, AR*, *CABLE*, etc."
                     onkeyup="filterTable()"
                     disabled
@@ -89,7 +79,7 @@
         </div>
 
         <!-- Contenedor de la tabla -->
-        <div class="bg-white rounded-lg shadow-xl overflow-x-auto max-h-[70vh] relative">
+        <div class="bg-white rounded-lg shadow-xl overflow-x-auto max-h-[75vh] relative">
             <table id="data-table" class="w-full text-sm text-left text-gray-600">
                 <thead>
                     <!-- El encabezado se insertará aquí con JavaScript -->
@@ -112,8 +102,8 @@
         let tableData = [];
         let headerRow = [];
 
-        // Referencia al contenido CSV precargado. 
-        // Se asume que este contenido pertenece al archivo "CODIGOS JDE SAP.xlsx" solicitado.
+        // Referencia al contenido CSV precargado desde el servidor. 
+        // Esta variable contiene el contenido del archivo "CODIGOS JDE SAP.xlsx" subido.
         const initialCsvContent = typeof __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv !== 'undefined' 
             ? __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv 
             : null;
@@ -121,77 +111,13 @@
         const loadingIndicator = document.getElementById('loading-indicator');
         const searchInput = document.getElementById('searchInput');
         const tbody = document.querySelector('#data-table tbody');
-
-        /**
-         * Maneja la subida del archivo, lee su contenido y llama al parseo.
-         * Soporta .xlsx, .xls y .csv.
-         * @param {Event} event - El evento change del input file.
-         */
-        function handleFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            // Define 'extension' aquí para que esté disponible para la función reader.readAs...
-            const extension = file.name.split('.').pop().toLowerCase();
-            
-            // Mostrar indicador de carga y deshabilitar búsqueda
-            loadingIndicator.classList.remove('hidden-loading');
-            searchInput.disabled = true;
-            tbody.innerHTML = '<tr><td colspan="100%" class="text-center py-8 text-lg text-gray-500">Cargando y procesando los datos...</td></tr>';
-
-
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const data = e.target.result;
-                
-                let workbook;
-                let dataToParse;
-
-                try {
-                    if (extension === 'xlsx' || extension === 'xls') {
-                        // 1. Manejar archivos Excel
-                        workbook = XLSX.read(data, { type: 'binary' });
-                        const sheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[sheetName];
-                        // Convertir la hoja a formato JSON con encabezados (header: 1)
-                        dataToParse = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                    } else if (extension === 'csv') {
-                        // 2. Manejar archivos CSV como texto
-                        dataToParse = data;
-                    } else {
-                        throw new Error('Formato de archivo no soportado.'); 
-                    }
-
-                    // 3. Procesar los datos
-                    if (extension === 'xlsx' || extension === 'xls') {
-                        parseExcelData(dataToParse);
-                    } else if (extension === 'csv') {
-                         parseCSV(dataToParse);
-                    }
-                    
-                    // 4. Renderizar y habilitar búsqueda
-                    renderTable();
-                    searchInput.disabled = false;
-                    loadingIndicator.classList.add('hidden-loading');
-                    
-                } catch (error) {
-                    console.error("Error al procesar el archivo:", error);
-                    loadingIndicator.classList.add('hidden-loading');
-                    tbody.innerHTML = `<tr class="text-red-600 font-semibold"><td colspan="100%" class="text-center py-8">Error al procesar el archivo: ${error.message}. Asegúrate de que es un Excel o CSV válido.</td></tr>`;
-                }
-            };
-            
-            // Leer el archivo como binario si es Excel, o como texto si es CSV
-            if (extension === 'xlsx' || extension === 'xls') {
-                reader.readAsBinaryString(file);
-            } else if (extension === 'csv') {
-                reader.readAsText(file); // Usar readAsText para CSV
-            }
-        }
+        
+        // La función handleFile ha sido eliminada ya que no se permite la carga local.
         
         /**
          * Parsea datos de Excel (array de arrays) a un array de objetos.
+         * NOTA: Esta función se mantiene aunque ya no se use la carga local de .xlsx,
+         * en caso de que la variable precargada cambie de formato en el futuro.
          * @param {Array<Array<any>>} data - El array de arrays de datos de Excel.
          */
         function parseExcelData(data) {
@@ -217,7 +143,7 @@
         }
 
         /**
-         * Parsea el contenido CSV (texto) en un array de objetos. (Función original modificada)
+         * Parsea el contenido CSV (texto) en un array de objetos. 
          * @param {string} csvText - El contenido CSV como cadena de texto.
          */
         function parseCSV(csvText) {
@@ -232,6 +158,7 @@
             // Función de ayuda para dividir líneas (maneja comillas)
             const simpleSplit = (line) => {
                 // Se usa una expresión regular más robusta si hay comas y comillas
+                // Captura el contenido entre comillas o cualquier secuencia sin coma
                 const pattern = /("([^"]*)"|[^,]+)/g;
                 return Array.from(line.matchAll(pattern), match => match[2] || match[0])
                            .map(p => p.trim().replace(/^"|"$/g, '')); 
@@ -303,7 +230,7 @@
 
         /**
          * La función principal de filtrado, llamada al escribir en el input.
-         * AHORA SOPORTA COMODINES ('*')
+         * SOPORTA COMODINES ('*')
          */
         function filterTable() {
             // No filtrar si no hay datos cargados
@@ -316,6 +243,7 @@
 
             // Si el filtro está vacío, mostramos todas las filas
             if (filterText === "") {
+                 // Empezamos desde 1 para omitir la fila de encabezado
                  for (let i = 1; i < tr.length; i++) {
                     tr[i].style.display = ""; 
                  }
@@ -333,29 +261,8 @@
             try {
                 regex = new RegExp(regexString, 'i');
             } catch (e) {
-                // Si la expresión regular es inválida (ej. solo comodines sin texto), usamos el texto original
-                console.error("Regex inválida, usando búsqueda simple.", e);
-                // Si la regex falla, volvemos a la búsqueda simple (subcadena)
-                const simpleFilterText = filterText.toUpperCase();
-                for (let i = 1; i < tr.length; i++) {
-                    const row = tr[i];
-                    let rowMatch = false; 
-                    const cells = row.getElementsByClassName('filter-cell'); 
-                    
-                    for (let j = 0; j < cells.length; j++) {
-                        const cell = cells[j];
-                        if (cell) {
-                            const txtValue = (cell.textContent || cell.innerText).toUpperCase(); 
-                            if (txtValue.indexOf(simpleFilterText) > -1) {
-                                rowMatch = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    row.style.display = rowMatch ? "" : "none";
-                }
-                return;
+                console.error("Regex inválida:", e);
+                return; 
             }
 
 
@@ -408,21 +315,27 @@
                         parseCSV(initialCsvContent);
                         renderTable();
                         searchInput.disabled = false;
-                        initialMessageRow.remove(); // Elimina el mensaje de carga inicial
+                        // Eliminamos el mensaje inicial, ya que la tabla está llena
+                        const messageElement = document.getElementById('initial-message');
+                        if (messageElement) {
+                             // En lugar de remover toda la fila, limpiamos el tbody y dejamos solo las filas de datos
+                             messageElement.parentNode.innerHTML = '';
+                             // renderTable se encarga de llenar el tbody.
+                        }
                     } catch (e) {
                          console.error("Error al cargar y parsear el contenido inicial:", e);
                          // Muestra mensaje de error en la tabla
-                         initialMessageRow.innerHTML = `<tr class="text-red-600 font-semibold"><td colspan="100%" class="text-center py-8">Error al cargar datos iniciales.</td></tr>`;
+                         tbody.innerHTML = `<tr class="text-red-600 font-semibold"><td colspan="100%" class="text-center py-8">Error al cargar datos iniciales.</td></tr>`;
                     } finally {
                         loadingIndicator.classList.add('hidden-loading');
                     }
                 }, 100); // Pequeño retraso para la visualización del loading
                 
             } else {
-                // Si no hay contenido inicial, mostramos el mensaje de "Por favor, carga..."
+                // Si no hay contenido inicial, mostramos el mensaje de "No hay datos..."
                 searchInput.disabled = true;
                 if (initialMessageRow) {
-                     initialMessageRow.textContent = "Por favor, carga un archivo para empezar.";
+                     initialMessageRow.textContent = "No se encontraron datos precargados del servidor.";
                 }
             }
         };
