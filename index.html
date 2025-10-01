@@ -57,7 +57,7 @@
     <div class="container-wrapper">
         <header class="text-center py-6 bg-white shadow-lg rounded-lg mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Buscador de Códigos JDE SAP</h1>
-            <p class="text-gray-500 mt-2">Datos cargados automáticamente del servidor (**CODIGOS JDE SAP.xlsx**). Use el filtro para buscar por comodín (*).</p>
+            <p class="text-gray-500 mt-2">Datos cargados automáticamente del servidor (**CODIGOSJDESAP.xlsx**). Use el filtro para buscar por comodín (*).</p>
         </header>
 
         <!-- Controles de Carga y Búsqueda -->
@@ -103,7 +103,7 @@
         let headerRow = [];
 
         // Referencia al contenido CSV precargado desde el servidor. 
-        // Esta variable contiene el contenido del archivo "CODIGOS JDE SAP.xlsx" subido.
+        // Esta variable contiene el contenido del archivo subido (CODIGOS JDE.xlsx - Sheet1.csv).
         const initialCsvContent = typeof __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv !== 'undefined' 
             ? __csv_content_CODIGOS_JDE_xlsx___Sheet1_csv 
             : null;
@@ -112,29 +112,18 @@
         const searchInput = document.getElementById('searchInput');
         const tbody = document.querySelector('#data-table tbody');
         
-        // La función handleFile ha sido eliminada ya que no se permite la carga local.
-        
-        /**
-         * Parsea datos de Excel (array de arrays) a un array de objetos.
-         * NOTA: Esta función se mantiene aunque ya no se use la carga local de .xlsx,
-         * en caso de que la variable precargada cambie de formato en el futuro.
-         * @param {Array<Array<any>>} data - El array de arrays de datos de Excel.
-         */
+        // Se mantiene la función parseExcelData por si se requiere, aunque el precargado es CSV.
         function parseExcelData(data) {
             if (data.length === 0) return;
 
-            // El primer array es el encabezado
             headerRow = data[0].map(h => String(h).trim());
-            
             tableData = [];
             
-            // El resto son los datos
             for (let i = 1; i < data.length; i++) {
                 const rowArray = data[i];
                 const rowObject = {};
                 
                 headerRow.forEach((key, index) => {
-                    // Convertir cualquier valor a string para la búsqueda uniforme
                     rowObject[key] = rowArray[index] !== undefined && rowArray[index] !== null ? String(rowArray[index]) : '';
                 });
 
@@ -157,8 +146,6 @@
 
             // Función de ayuda para dividir líneas (maneja comillas)
             const simpleSplit = (line) => {
-                // Se usa una expresión regular más robusta si hay comas y comillas
-                // Captura el contenido entre comillas o cualquier secuencia sin coma
                 const pattern = /("([^"]*)"|[^,]+)/g;
                 return Array.from(line.matchAll(pattern), match => match[2] || match[0])
                            .map(p => p.trim().replace(/^"|"$/g, '')); 
@@ -176,7 +163,6 @@
                 const rowObject = {};
                 
                 headerRow.forEach((key, index) => {
-                    // Convertir cualquier valor a string para la búsqueda uniforme
                     rowObject[key] = values[index] !== undefined && values[index] !== null ? String(values[index]) : '';
                 });
 
@@ -251,12 +237,10 @@
             }
 
             // 1. Preparar la expresión regular (Regex) para los comodines
-            // - Escapar caracteres especiales de Regex
             let regexString = filterText.replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&'); 
-            // - Reemplazar '*' con '.*' para que coincida con cero o más caracteres
             regexString = regexString.replace(/\*/g, '.*');
             
-            // 2. Crear la expresión regular, insensible a mayúsculas (i) y buscando en toda la cadena
+            // 2. Crear la expresión regular, insensible a mayúsculas (i)
             let regex;
             try {
                 regex = new RegExp(regexString, 'i');
@@ -271,7 +255,6 @@
                 const row = tr[i];
                 let rowMatch = false; 
                 
-                // Obtener todas las celdas de la fila
                 const cells = row.getElementsByClassName('filter-cell'); 
                 
                 // Buscar coincidencia en cualquier celda
@@ -299,41 +282,37 @@
 
         // --- Inicialización al cargar la página ---
         window.onload = function() {
-            const initialMessageRow = document.getElementById('initial-message');
             
             // Cargar datos iniciales (CSV precargado) si existe
             if (initialCsvContent && tableData.length === 0) {
                 
                 // Mostrar indicador de carga para precarga
                 loadingIndicator.classList.remove('hidden-loading');
-                loadingIndicator.textContent = "Cargando datos iniciales del archivo CODIGOS JDE SAP.xlsx...";
+                loadingIndicator.textContent = "Cargando datos iniciales del archivo CODIGOSJDESAP.xlsx...";
                 
-                // Usamos setTimeout para asegurar que el DOM se haya renderizado antes de empezar el parseo,
-                // evitando bloquear la UI y permitiendo que se vea el spinner.
                 setTimeout(() => {
                     try {
                         parseCSV(initialCsvContent);
                         renderTable();
                         searchInput.disabled = false;
-                        // Eliminamos el mensaje inicial, ya que la tabla está llena
+                        
                         const messageElement = document.getElementById('initial-message');
                         if (messageElement) {
-                             // En lugar de remover toda la fila, limpiamos el tbody y dejamos solo las filas de datos
-                             messageElement.parentNode.innerHTML = '';
-                             // renderTable se encarga de llenar el tbody.
+                             // Limpiamos el tbody después de renderizar la tabla con datos
+                             messageElement.parentNode.innerHTML = ''; 
                         }
                     } catch (e) {
                          console.error("Error al cargar y parsear el contenido inicial:", e);
-                         // Muestra mensaje de error en la tabla
                          tbody.innerHTML = `<tr class="text-red-600 font-semibold"><td colspan="100%" class="text-center py-8">Error al cargar datos iniciales.</td></tr>`;
                     } finally {
                         loadingIndicator.classList.add('hidden-loading');
                     }
-                }, 100); // Pequeño retraso para la visualización del loading
+                }, 100); 
                 
             } else {
-                // Si no hay contenido inicial, mostramos el mensaje de "No hay datos..."
+                // Si no hay contenido inicial
                 searchInput.disabled = true;
+                const initialMessageRow = document.getElementById('initial-message');
                 if (initialMessageRow) {
                      initialMessageRow.textContent = "No se encontraron datos precargados del servidor.";
                 }
