@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EventWall · Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0c0c0f;--surface:#16161a;--surface2:#1e1e24;--border:#2a2a35;--pink:#f0176f;--pink-dim:rgba(240,23,111,0.12);--gold:#f5a623;--text:#f0ede8;--muted:#6b6b7a;--green:#22c55e;--red:#ef4444}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:28px 20px;display:flex;flex-direction:column;gap:8px}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--pink);margin-bottom:20px}
+.logo span{color:var(--text)}
+.nav-btn{width:100%;text-align:left;padding:10px 14px;border-radius:10px;border:none;background:transparent;color:var(--muted);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
+.nav-btn:hover{background:var(--surface2);color:var(--text)}
+.nav-btn.active{background:var(--pink-dim);color:var(--pink);font-weight:500}
+.nav-sep{height:1px;background:var(--border);margin:8px 0}
+.main{padding:32px 36px;overflow-y:auto}
+.page{display:none}.page.active{display:block}
+.page-title{font-size:26px;font-weight:800;margin-bottom:6px;font-family:'Syne',sans-serif}
+.page-sub{color:var(--muted);font-size:14px;margin-bottom:28px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px}
+.card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px}
+label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;letter-spacing:0.3px}
+input[type=text],input[type=date],input[type=password],input[type=number],textarea,select{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s}
+input:focus,textarea:focus,select:focus{border-color:var(--pink)}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.fg.full{grid-template-columns:1fr}
+.fg.three{grid-template-columns:1fr 1fr 1fr}
+.btn-pink{background:var(--pink);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s}
+.btn-pink:hover{opacity:0.88}.btn-pink:disabled{opacity:0.5;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s}
+.btn-ghost:hover{border-color:var(--text);color:var(--text)}
+.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:20px}
+.event-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;position:relative}
+.event-card:hover{border-color:var(--pink);transform:translateY(-2px)}
+.event-card.selected{border-color:var(--pink);background:var(--pink-dim)}
+.event-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px}
+.event-date{font-size:12px;color:var(--muted)}
+.event-stats{display:flex;gap:12px;margin-top:14px}
+.estat{text-align:center}.estat-num{font-size:18px;font-weight:700;color:var(--pink)}.estat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.badge-pending{position:absolute;top:14px;right:14px;background:#f5a62322;color:var(--gold);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid #f5a62344}
+.mod-filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.filter-btn.active{background:var(--pink);border-color:var(--pink);color:#fff}
+.posts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.post-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.post-card.approved{border-color:#22c55e44}
+.post-img{width:100%;height:150px;object-fit:cover;display:block}
+.post-body{padding:14px}
+.post-author{font-size:12px;font-weight:600;color:var(--pink);margin-bottom:5px}
+.post-text{font-size:13px;color:var(--text);line-height:1.5}
+.tbadge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
+.type-photo{background:#3b82f622;color:#60a5fa}.type-message{background:#a855f722;color:#c084fc}.type-audio{background:#f5a62322;color:var(--gold)}.type-wish{background:rgba(255,107,157,0.15);color:#ff6b9d}
+.post-actions{display:flex;gap:8px;margin-top:12px}
+.btn-approve{flex:1;padding:8px;background:#22c55e22;border:1px solid #22c55e44;color:var(--green);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.btn-approve:hover{background:#22c55e44}.btn-approve.done{background:#22c55e;color:#fff;border-color:#22c55e}
+.btn-reject{flex:1;padding:8px;background:#ef444422;border:1px solid #ef444444;color:var(--red);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.post-time{font-size:10px;color:var(--muted);margin-top:8px}
+.link-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.link-label{font-size:12px;color:var(--muted);width:80px;flex-shrink:0}
+.link-box{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--text);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.copy-btn{padding:7px 14px;background:var(--pink-dim);border:1px solid rgba(240,23,111,0.3);color:var(--pink);border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.copy-btn:hover{background:var(--pink);color:#fff}
+.qr-wrap{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.qr-box{background:#fff;padding:14px;border-radius:12px}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 20px;border-radius:12px;font-size:14px;display:none;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-width:360px}
+.toast.show{display:block;animation:toastIn 0.3s ease}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-ico{font-size:40px;margin-bottom:12px}.empty-txt{font-size:14px}
+.notice{background:var(--pink-dim);border:1px solid rgba(240,23,111,0.3);border-radius:12px;padding:16px 20px;color:var(--pink);font-size:14px;margin-bottom:20px;display:none}
+.notice.show{display:block}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+.stat-card .num{font-size:28px;font-weight:800;color:var(--pink);font-family:'Syne',sans-serif}
+.stat-card .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
+.seb{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.seb-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.seb-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* PIN LOCK */
+.pin-lock{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:20px}
+.pin-lock h2{font-family:'Syne',sans-serif;font-size:24px;font-weight:800}
+.pin-lock p{color:var(--muted);font-size:14px}
+.pin-input{width:180px;text-align:center;font-size:24px;letter-spacing:8px;padding:14px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:monospace}
+.pin-error{color:var(--red);font-size:13px;display:none}
+.pin-error.show{display:block}
+
+/* THEME EDITOR */
+.theme-preview{width:100%;height:180px;border-radius:12px;overflow:hidden;border:1px solid var(--border);position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.5)}
+.color-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.color-row label{margin:0;width:120px;flex-shrink:0}
+input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer}
+.template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.tpl-card{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.2s;aspect-ratio:16/9;position:relative}
+.tpl-card:hover{border-color:var(--muted)}
+.tpl-card.active{border-color:var(--pink)}
+.tpl-card .tpl-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.7);color:#fff;font-size:11px;font-weight:600;padding:5px 8px;text-align:center}
+/* template preview backgrounds */
+.tpl-dark{background:linear-gradient(135deg,#07070f,#1a1a2e)}
+.tpl-light{background:linear-gradient(135deg,#f8f4ef,#ede8e0)}
+.tpl-neon{background:linear-gradient(135deg,#000,#0d0d2b)}
+.tpl-floral{background:linear-gradient(135deg,#1a0a14,#2d1020)}
+.tpl-gold{background:linear-gradient(135deg,#1a1200,#2d2000)}
+.tpl-ocean{background:linear-gradient(135deg,#021020,#041830)}
+
+.print-sheet{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px;margin-top:16px}
+.print-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:12px;break-inside:avoid}
+/* POLLS */
+.poll-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
+.poll-question{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px}
+.poll-option-bar{margin-bottom:10px}
+.poll-option-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;color:var(--text)}
+.poll-option-label .pvotes{color:var(--muted);font-size:12px}
+.poll-bar-bg{background:var(--surface2);border-radius:6px;height:10px;overflow:hidden}
+.poll-bar-fill{height:100%;border-radius:6px;background:var(--pink);transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1)}
+.poll-bar-fill.winner{background:var(--gold)}
+.poll-meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.poll-total{font-size:12px;color:var(--muted)}
+.poll-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px}
+.poll-status.active{background:rgba(34,197,94,0.15);color:var(--green)}
+.poll-status.closed{background:var(--surface2);color:var(--muted)}
+/* AUTO APPROVE TOGGLE */
+.auto-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);transition:all 0.2s;user-select:none}
+.auto-toggle:hover{border-color:var(--green)}
+.auto-toggle.on{border-color:var(--green);background:rgba(34,197,94,0.1)}
+.auto-track{width:36px;height:20px;background:var(--border);border-radius:10px;position:relative;transition:background 0.3s;flex-shrink:0}
+.auto-toggle.on .auto-track{background:var(--green)}
+.auto-thumb{width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.auto-toggle.on .auto-thumb{left:19px}
+.auto-toggle span{font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap}
+.auto-toggle.on span{color:var(--green)}
+/* WISH WALL */
+.wish-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column}
+.wish-overlay.show{display:flex;animation:wishIn 0.5s ease}
+@keyframes wishIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+
+/* ALBUM */
+.album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
+.album-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<!-- PIN LOCK -->
+<div class="pin-lock" id="pin-lock">
+  <div style="font-size:40px">🔒</div>
+  <h2>EventWall Admin</h2>
+  <p>Ingresá el PIN de acceso</p>
+  <input type="password" class="pin-input" id="pin-input" maxlength="20" placeholder="••••••••" onkeydown="if(event.key==='Enter')submitPin()"/>
+  <button onclick="submitPin()" style="background:var(--pink);color:#fff;border:none;padding:12px 32px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:4px">Ingresar →</button>
+  <div class="pin-error" id="pin-error">PIN incorrecto. Intentá de nuevo.</div>
+  <div style="font-size:12px;color:var(--muted);margin-top:8px">PIN por defecto: <strong style="color:var(--pink)">1234</strong></div>
+</div>
+
+<div class="shell" id="main-app" style="display:none">
+  <nav class="sidebar">
+    <div class="logo">Event<span>Wall</span></div>
+    <button class="nav-btn active" onclick="goNav('events')">🗓 Eventos</button>
+    <button class="nav-btn" onclick="goNav('new-event')">➕ Nuevo evento</button>
+    <div class="nav-sep"></div>
+    <button class="nav-btn" onclick="goNav('moderation')">🛡 Moderación</button>
+    <button class="nav-btn" onclick="goNav('links')">🔗 Links & QR</button>
+    <button class="nav-btn" onclick="goNav('design')">🎨 Diseño</button>
+    <button class="nav-btn" onclick="goNav('album')">📥 Álbum</button>
+    <div class="nav-sep"></div>
+    <button class="nav-btn" onclick="goNav('print')">🖨 Modo impresión</button>
+    <button class="nav-btn" onclick="goNav('polls')">🗳 Votaciones</button>
+    <button class="nav-btn" onclick="goNav('settings')">⚙️ Configuración</button>
+    <div style="margin-top:auto;font-size:11px;color:var(--muted);padding:10px 14px">
+      Evento activo:<br>
+      <span id="sidebar-event" style="color:var(--pink);font-weight:600">Ninguno</span>
+    </div>
+  </nav>
+  <main class="main">
+
+    <!-- EVENTS -->
+    <div class="page active" id="page-events">
+      <div class="page-title">Mis eventos</div>
+      <div class="page-sub">Seleccioná un evento para trabajar con él</div>
+      <button class="btn-pink" onclick="goNav('new-event')" style="margin-bottom:20px">+ Crear nuevo evento</button>
+      <div class="events-grid" id="events-list"><div class="empty"><div class="empty-ico">⏳</div><div class="empty-txt">Cargando...</div></div></div>
+    </div>
+
+    <!-- NEW EVENT -->
+    <div class="page" id="page-new-event">
+      <div class="page-title">Crear evento</div>
+      <div class="page-sub">Completá los datos del evento</div>
+      <div class="card">
+        <div class="card-title">Datos del evento</div>
+        <div class="fg"><div><label>Nombre *</label><input type="text" id="ev-name" placeholder="Boda de Caro & Pablo"/></div><div><label>Fecha</label><input type="date" id="ev-date"/></div></div>
+        <div class="fg full"><div><label>Subtítulo</label><input type="text" id="ev-subtitle" placeholder="Salón La Armonía · 20hs"/></div></div>
+        <button class="btn-pink" id="create-btn" onclick="evCreate()">Crear evento →</button>
+      </div>
+    </div>
+
+    <!-- MODERATION -->
+    <div class="page" id="page-moderation">
+      <div class="page-title">Moderación</div>
+      <div class="page-sub">Aprobá o rechazá el contenido</div>
+      <div class="notice" id="mod-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="mod-content" style="display:none">
+        <div class="seb">
+          <div><div class="seb-name" id="mod-ev-name">—</div><div class="seb-sub" id="mod-ev-sub">—</div></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="auto-toggle" onclick="toggleAutoApprove()" id="auto-toggle">
+              <div class="auto-track" id="auto-track"><div class="auto-thumb"></div></div>
+              <span id="auto-label">Aprobación manual</span>
+            </div>
+            <button class="btn-ghost" onclick="loadPosts()">↻ Actualizar</button>
+            <button class="btn-pink" onclick="approveAll()">✓ Aprobar todo</button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-card"><div class="num" id="st-total">0</div><div class="lbl">Total</div></div>
+          <div class="stat-card"><div class="num" id="st-pending">0</div><div class="lbl">Pendientes</div></div>
+          <div class="stat-card"><div class="num" id="st-approved">0</div><div class="lbl">Aprobados</div></div>
+          <div class="stat-card"><div class="num" id="st-photos">0</div><div class="lbl">Fotos</div></div>
+          <div class="stat-card"><div class="num" id="st-wishes">0</div><div class="lbl">💌 Deseos</div></div>
+        </div>
+        <div class="mod-filters">
+          <button class="filter-btn active" onclick="filterPosts('all',this)">Todos</button>
+          <button class="filter-btn" onclick="filterPosts('pending',this)">Pendientes</button>
+          <button class="filter-btn" onclick="filterPosts('approved',this)">Aprobados</button>
+          <button class="filter-btn" onclick="filterPosts('photo',this)">Fotos</button>
+          <button class="filter-btn" onclick="filterPosts('message',this)">Mensajes</button>
+          <button class="filter-btn" onclick="filterPosts('audio',this)">Audios</button>
+          <button class="filter-btn" onclick="filterPosts('wish',this)">💌 Deseos</button>
+        </div>
+        <div class="posts-grid" id="posts-grid"></div>
+      </div>
+    </div>
+
+    <!-- LINKS -->
+    <div class="page" id="page-links">
+      <div class="page-title">Links & QR</div>
+      <div class="page-sub">Compartí con tu equipo e invitados</div>
+      <div class="notice" id="links-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="links-content" style="display:none">
+        <div class="card">
+          <div class="card-title">Código del evento</div>
+          <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;padding:20px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)">
+            <div style="text-align:center">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Código</div>
+              <div id="event-code-display" style="font-family:monospace;font-size:52px;font-weight:800;color:var(--pink);letter-spacing:8px;line-height:1">—</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:8px">Escribí este código en el TV</div>
+            </div>
+            <div style="flex:1;border-left:1px solid var(--border);padding-left:20px">
+              <div style="font-size:13px;color:var(--muted);line-height:1.8">
+                En el televisor abrí el navegador y escribí:<br>
+                <span id="screen-short-url" style="font-family:monospace;font-size:14px;color:var(--text);background:var(--surface);padding:4px 10px;border-radius:6px;display:inline-block;margin-top:6px"></span>
+              </div>
+              <button class="copy-btn" style="margin-top:12px" onclick="copyText(document.getElementById('link-screen').textContent)">Copiar URL pantalla</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">URLs del evento</div>
+          <div class="link-row"><span class="link-label">📺 Pantalla</span><div class="link-box" id="link-screen">—</div><button class="copy-btn" onclick="copyLink('link-screen')">Copiar</button></div>
+          <div class="link-row"><span class="link-label">📱 Invitados</span><div class="link-box" id="link-guest">—</div><button class="copy-btn" onclick="copyLink('link-guest')">Copiar</button></div>
+        </div>
+        <div class="card">
+          <div class="card-title">QR para imprimir</div>
+          <div class="qr-wrap">
+            <div class="qr-box"><div id="qr-container"></div></div>
+            <div>
+              <p style="font-size:13px;color:var(--muted);line-height:1.7;max-width:300px">Poné este QR en cada mesa. Los invitados lo escanean y participan al instante.</p>
+              <button class="btn-pink" style="margin-top:14px" onclick="downloadQR()">⬇ Descargar QR</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DESIGN -->
+    <div class="page" id="page-design">
+      <div class="page-title">Diseño de pantalla</div>
+      <div class="page-sub">Personalizá cómo se ve la pantalla del evento</div>
+      <div class="notice" id="design-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="design-content" style="display:none">
+        <div class="card">
+          <div class="card-title">Plantilla</div>
+          <div class="template-grid">
+            <div class="tpl-card tpl-dark active" onclick="selectTemplate('dark',this)"><div class="tpl-label">Oscuro clásico</div></div>
+            <div class="tpl-card tpl-light" onclick="selectTemplate('light',this)"><div class="tpl-label">Claro elegante</div></div>
+            <div class="tpl-card tpl-neon" onclick="selectTemplate('neon',this)"><div class="tpl-label">Neón futurista</div></div>
+            <div class="tpl-card tpl-floral" onclick="selectTemplate('floral',this)"><div class="tpl-label">Romántico floral</div></div>
+            <div class="tpl-card tpl-gold" onclick="selectTemplate('gold',this)"><div class="tpl-label">Dorado lujoso</div></div>
+            <div class="tpl-card tpl-ocean" onclick="selectTemplate('ocean',this)"><div class="tpl-label">Océano profundo</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Colores personalizados</div>
+          <div class="color-row"><label>Color de fondo</label><input type="color" id="c-bg" value="#07070f" oninput="previewTheme()"/></div>
+          <div class="color-row"><label>Color de acento</label><input type="color" id="c-accent" value="#f0176f" oninput="previewTheme()"/></div>
+          <div class="color-row"><label>Color de texto</label><input type="color" id="c-text" value="#ffffff" oninput="previewTheme()"/></div>
+          <div class="theme-preview" id="theme-preview">
+            <span>Vista previa de colores</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Opciones</div>
+          <div class="fg">
+            <div><label>Tiempo entre fotos (seg)</label><input type="number" id="cfg-interval" value="6" min="3" max="30"/></div>
+            <div><label>Sonido al recibir contenido</label>
+              <select id="cfg-sound">
+                <option value="chime">Campanita 🔔</option>
+                <option value="pop">Pop suave 💫</option>
+                <option value="none">Sin sonido</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-pink" onclick="saveDesign()">Guardar diseño →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALBUM -->
+    <div class="page" id="page-album">
+      <div class="page-title">Álbum del evento</div>
+      <div class="page-sub">Descargá todas las fotos del evento</div>
+      <div class="notice" id="album-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="album-content" style="display:none">
+        <div class="seb">
+          <div><div class="seb-name" id="album-ev-name">—</div><div class="seb-sub" id="album-ev-sub">—</div></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span id="album-count" style="font-size:13px;color:var(--muted)"></span>
+            <button class="btn-pink" onclick="downloadAlbum()">⬇ Descargar todas</button>
+          </div>
+        </div>
+        <div class="album-grid" id="album-grid"></div>
+      </div>
+    </div>
+
+    <!-- PRINT -->
+    <div class="page" id="page-print">
+      <div class="page-title">Modo impresión</div>
+      <div class="page-sub">Generá una hoja A4 lista para imprimir y poner en las mesas</div>
+      <div class="notice" id="print-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="print-content" style="display:none">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title">Personalizar hoja</div>
+          <div class="fg">
+            <div><label>Mensaje principal</label><input type="text" id="print-msg" value="¡Escaneá y participá del evento!" /></div>
+            <div><label>Mensaje secundario</label><input type="text" id="print-sub" value="Subí fotos, mensajes y audios en tiempo real" /></div>
+          </div>
+          <div class="fg">
+            <div><label>Estilo de hoja</label>
+              <select id="print-style">
+                <option value="dark">Oscuro elegante</option>
+                <option value="light">Blanco clásico</option>
+                <option value="romantic">Romántico floral</option>
+                <option value="gold">Dorado lujoso</option>
+              </select>
+            </div>
+            <div><label>Cantidad de copias por hoja</label>
+              <select id="print-qty">
+                <option value="1">1 por hoja (grande)</option>
+                <option value="2">2 por hoja</option>
+                <option value="4">4 por hoja (mesas)</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn-pink" onclick="previewPrint()">👁 Vista previa</button>
+            <button class="btn-ghost" onclick="doPrint()">🖨 Imprimir ahora</button>
+          </div>
+        </div>
+        <div id="print-preview-area"></div>
+      </div>
+    </div>
+
+    <!-- POLLS -->
+    <div class="page" id="page-polls">
+      <div class="page-title">Votaciones</div>
+      <div class="page-sub">Creá preguntas y los invitados votan en tiempo real desde el celular</div>
+      <div class="notice" id="polls-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="polls-content" style="display:none">
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title">Nueva votación</div>
+          <div class="fg full" style="margin-bottom:12px">
+            <div><label>Pregunta</label><input type="text" id="poll-question" placeholder="Ej: ¿Cuál es tu canción favorita de la noche?"/></div>
+          </div>
+          <label style="margin-bottom:8px;display:block">Opciones (mínimo 2)</label>
+          <div id="poll-options-list">
+            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="Opción 1" style="margin-bottom:8px"/></div>
+            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="Opción 2" style="margin-bottom:8px"/></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
+            <button class="btn-ghost" onclick="addPollOption()">+ Agregar opción</button>
+            <button class="btn-pink" id="create-poll-btn" onclick="createPoll()">Crear votación →</button>
+          </div>
+        </div>
+        <div id="polls-list"></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-title">Configuración</div>
+      <div class="page-sub">Ajustes generales del panel</div>
+      <div class="card">
+        <div class="card-title">🔒 Cambiar PIN de acceso</div>
+        <div class="fg">
+          <div><label>PIN actual</label><input type="password" id="pin-current" placeholder="••••••••" maxlength="20"/></div>
+          <div><label>PIN nuevo</label><input type="password" id="pin-new" placeholder="••••••••" maxlength="20"/></div>
+        </div>
+        <button class="btn-pink" onclick="changePin()">Cambiar PIN →</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const SUPABASE_URL = 'https://jxqwrbmnfmnzddkcimrm.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
+
+// ── PIN ──────────────────────────────────────────────────────
+const DEFAULT_PIN = '1234';
+function getPin(){ return localStorage.getItem('ew_pin')||DEFAULT_PIN; }
+function submitPin(){
+  const input=document.getElementById('pin-input');
+  if(input.value===getPin()){
+    document.getElementById('pin-lock').style.display='none';
+    document.getElementById('main-app').style.display='grid';
+    sessionStorage.setItem('ew_unlocked','1');
+    loadEvents();
+  } else {
+    document.getElementById('pin-error').classList.add('show');
+    input.value='';
+    setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),2000);
+  }
+}
+function checkPin(input){ if(event&&event.key==='Enter') submitPin(); }
+function changePin(){
+  const cur=document.getElementById('pin-current').value;
+  const nw=document.getElementById('pin-new').value;
+  if(cur!==getPin()){toast('❌ PIN actual incorrecto');return;}
+  if(nw.length<4){toast('❌ El PIN debe tener al menos 4 dígitos');return;}
+  localStorage.setItem('ew_pin',nw);
+  document.getElementById('pin-current').value='';
+  document.getElementById('pin-new').value='';
+  toast('✅ PIN actualizado');
+}
+
+// ── API ──────────────────────────────────────────────────────
+async function api(path, opts={}){
+  const fetchOpts={method:opts.method||'GET',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
+  if(opts.method==='DELETE') fetchOpts.headers['Prefer']='';
+  if(opts.body) fetchOpts.body=opts.body;
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,fetchOpts);
+    const text=await res.text();
+    if(!res.ok){toast('❌ Error: '+text.slice(0,100));return[];}
+    return text?JSON.parse(text):[];
+  }catch(e){toast('❌ Red: '+e.message);return[];}
+}
+
+// ── STATE ────────────────────────────────────────────────────
+let selectedEvent=null, allPosts=[], currentFilter='all';
+
+// ── NAV ──────────────────────────────────────────────────────
+function goNav(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const map={events:0,'new-event':1,moderation:2,links:3,design:4,album:5,print:6,polls:7,settings:8};
+  const btns=document.querySelectorAll('.nav-btn');
+  if(map[page]!==undefined) btns[map[page]].classList.add('active');
+  if(page==='events') loadEvents();
+  if(page==='moderation') showMod();
+  if(page==='links') showLinks();
+  if(page==='design') showDesign();
+  if(page==='album') showAlbum();
+  if(page==='print') showPrint();
+  if(page==='polls') showPolls();
+}
+
+function toast(msg,dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ── AUTO APPROVE ─────────────────────────────────────────────
+let autoApprove=false;
+let autoApproveInterval=null;
+
+function getAutoKey(){ return 'ew_auto_'+selectedEvent?.id; }
+
+function toggleAutoApprove(){
+  autoApprove=!autoApprove;
+  updateAutoToggleUI();
+  if(autoApprove){
+    localStorage.setItem(getAutoKey(),'1');
+    toast('✅ Aprobación automática activada — todo el contenido nuevo se aprueba al instante');
+    autoApproveInterval=setInterval(approveNewPosts,4000);
+    approveNewPosts();
+  } else {
+    localStorage.removeItem(getAutoKey());
+    toast('🛡 Aprobación manual activada — revisás cada publicación antes de mostrarla');
+    clearInterval(autoApproveInterval);
+  }
+}
+
+function updateAutoToggleUI(){
+  const toggle=document.getElementById('auto-toggle');
+  const label=document.getElementById('auto-label');
+  if(!toggle) return;
+  toggle.classList.toggle('on', autoApprove);
+  label.textContent=autoApprove?'Auto-aprobación ON':'Aprobación manual';
+}
+
+async function approveNewPosts(){
+  if(!selectedEvent||!autoApprove) return;
+  const pending=await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.false');
+  if(!Array.isArray(pending)||!pending.length) return;
+  await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.false',{method:'PATCH',body:JSON.stringify({approved:true})});
+  pending.forEach(p=>{const idx=allPosts.findIndex(x=>x.id===p.id);if(idx>=0) allPosts[idx].approved=true;});
+  updateStats();renderPosts();
+  toast('⚡ '+pending.length+' publicaciones aprobadas automáticamente');
+}
+
+function loadAutoApproveState(){
+  if(!selectedEvent) return;
+  autoApprove=localStorage.getItem(getAutoKey())==='1';
+  updateAutoToggleUI();
+  clearInterval(autoApproveInterval);
+  if(autoApprove){
+    autoApproveInterval=setInterval(approveNewPosts,4000);
+  }
+}
+
+// ── DELETE EVENT ─────────────────────────────────────────────
+async function deleteEvent(ev){
+  if(!confirm('¿Seguro que querés eliminar "'+ev.name+'"?\nSe borrarán TODAS las fotos, mensajes y audios del evento. Esta acción no se puede deshacer.')) return;
+  // Delete posts first (storage files stay but DB records go)
+  await api('posts?event_id=eq.'+ev.id,{method:'DELETE'});
+  // Delete reactions
+  await api('reactions?event_id=eq.'+ev.id,{method:'DELETE'});
+  // Delete event
+  await api('events?id=eq.'+ev.id,{method:'DELETE'});
+  // Clear selection if deleted event was selected
+  if(selectedEvent?.id===ev.id){
+    selectedEvent=null;
+    document.getElementById('sidebar-event').textContent='Ninguno';
+  }
+  toast('🗑 Evento "'+ev.name+'" eliminado');
+  loadEvents();
+}
+
+// ── EVENTS ───────────────────────────────────────────────────
+async function loadEvents(){
+  const grid=document.getElementById('events-list');
+  grid.innerHTML='<div class="empty"><div class="empty-ico">⏳</div><div class="empty-txt">Conectando...</div></div>';
+  const events=await api('events?order=created_at.desc');
+  if(!Array.isArray(events)||!events.length){
+    grid.innerHTML='<div class="empty"><div class="empty-ico">📭</div><div class="empty-txt">No hay eventos. ¡Creá el primero!</div></div>';return;
+  }
+  const counts=await api('posts?select=event_id,approved');
+  const sc=Array.isArray(counts)?counts:[];
+  grid.innerHTML='';
+  events.forEach(ev=>{
+    const posts=sc.filter(p=>p.event_id===ev.id);
+    const pending=posts.filter(p=>!p.approved).length;
+    const approved=posts.filter(p=>p.approved).length;
+    const card=document.createElement('div');
+    card.className='event-card'+(selectedEvent?.id===ev.id?' selected':'');
+    card.innerHTML=(pending>0?`<div class="badge-pending">${pending} pend.</div>`:'')+
+      `<div class="event-name">${ev.name}</div><div class="event-date">${ev.date||''}${ev.subtitle?' · '+ev.subtitle:''}</div>
+      <div style="display:inline-block;margin-top:6px;font-family:monospace;font-size:13px;font-weight:800;background:var(--pink-dim);color:var(--pink);padding:2px 10px;border-radius:6px;letter-spacing:3px">${ev.id.toUpperCase()}</div>
+      <div class="event-stats"><div class="estat"><div class="estat-num">${posts.length}</div><div class="estat-lbl">Total</div></div>
+      <div class="estat"><div class="estat-num">${approved}</div><div class="estat-lbl">Aprob.</div></div>
+      <div class="estat"><div class="estat-num">${pending}</div><div class="estat-lbl">Pend.</div></div></div>`;
+    card.onclick=function(e){if(!e.target.closest('.del-btn')) selectEvent(ev,this);};
+    const delBtn=document.createElement('button');
+    delBtn.className='del-btn';
+    delBtn.innerHTML='🗑';
+    delBtn.title='Eliminar evento';
+    delBtn.style.cssText='position:absolute;top:12px;right:12px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;transition:all 0.2s;';
+    delBtn.onmouseenter=()=>delBtn.style.background='rgba(239,68,68,0.35)';
+    delBtn.onmouseleave=()=>delBtn.style.background='rgba(239,68,68,0.15)';
+    delBtn.onclick=()=>deleteEvent(ev);
+    card.appendChild(delBtn);
+    grid.appendChild(card);
+  });
+}
+
+function selectEvent(ev,cardEl){
+  selectedEvent=ev;
+  document.getElementById('sidebar-event').textContent=ev.name;
+  document.querySelectorAll('.event-card').forEach(c=>c.classList.remove('selected'));
+  cardEl.classList.add('selected');
+  toast('✓ "'+ev.name+'" seleccionado');
+}
+
+async function evCreate(){
+  const name=document.getElementById('ev-name').value.trim();
+  if(!name){toast('❌ El nombre es obligatorio');return;}
+  const btn=document.getElementById('create-btn');
+  btn.disabled=true;btn.textContent='Creando...';
+  const body={name};
+  const date=document.getElementById('ev-date').value;
+  const subtitle=document.getElementById('ev-subtitle').value.trim();
+  if(date) body.date=date;
+  if(subtitle) body.subtitle=subtitle;
+  const res=await api('events',{method:'POST',body:JSON.stringify(body)});
+  btn.disabled=false;btn.textContent='Crear evento →';
+  if(Array.isArray(res)&&res[0]?.id){
+    toast('🎉 Evento "'+res[0].name+'" creado!');
+    document.getElementById('ev-name').value='';
+    document.getElementById('ev-date').value='';
+    document.getElementById('ev-subtitle').value='';
+    goNav('events');
+  }
+}
+
+// ── MODERATION ───────────────────────────────────────────────
+function showMod(){
+  const notice=document.getElementById('mod-notice');
+  const content=document.getElementById('mod-content');
+  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
+  notice.classList.remove('show');content.style.display='block';
+  document.getElementById('mod-ev-name').textContent=selectedEvent.name;
+  document.getElementById('mod-ev-sub').textContent=(selectedEvent.date||'')+(selectedEvent.subtitle?' · '+selectedEvent.subtitle:'');
+  loadAutoApproveState();
+  loadPosts();
+}
+async function loadPosts(){
+  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&order=created_at.desc');
+  allPosts=Array.isArray(posts)?posts:[];
+  updateStats();renderPosts();
+  clearInterval(window._poll);
+  window._poll=setInterval(async()=>{
+    const fresh=await api('posts?event_id=eq.'+selectedEvent.id+'&order=created_at.desc');
+    if(Array.isArray(fresh)&&fresh.length!==allPosts.length){allPosts=fresh;updateStats();renderPosts();}
+  },5000);
+}
+function updateStats(){
+  document.getElementById('st-total').textContent=allPosts.length;
+  document.getElementById('st-pending').textContent=allPosts.filter(p=>!p.approved).length;
+  document.getElementById('st-approved').textContent=allPosts.filter(p=>p.approved).length;
+  document.getElementById('st-photos').textContent=allPosts.filter(p=>p.type==='photo').length;
+  const wishEl=document.getElementById('st-wishes'); if(wishEl) wishEl.textContent=allPosts.filter(p=>p.type==='wish').length;
+}
+function filterPosts(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderPosts();
+}
+function renderPosts(){
+  let posts=[...allPosts];
+  if(currentFilter==='pending') posts=posts.filter(p=>!p.approved);
+  else if(currentFilter==='approved') posts=posts.filter(p=>p.approved);
+  else if(['photo','message','audio'].includes(currentFilter)) posts=posts.filter(p=>p.type===currentFilter);
+  const grid=document.getElementById('posts-grid');
+  if(!posts.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">✨</div><div class="empty-txt">Sin contenido aquí</div></div>';return;}
+  grid.innerHTML='';
+  posts.forEach(p=>{
+    const card=document.createElement('div');
+    card.className='post-card'+(p.approved?' approved':'');
+    card.id='post-'+p.id;
+    const labels={photo:'📷 Foto',message:'💬 Mensaje',audio:'🎤 Audio',wish:'💌 Deseo'};
+    const cls={photo:'type-photo',message:'type-message',audio:'type-audio',wish:'type-wish'};
+    const d=new Date(p.created_at);
+    const t=d.toLocaleDateString('es-AR')+' '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    let bodyHtml='';
+    if(p.type==='photo'&&p.content&&p.content.startsWith('http')) bodyHtml='<img src="'+p.content+'" class="post-img" onerror="this.style.display=\'none\'"/>';
+    card.innerHTML=bodyHtml+'<div class="post-body"><span class="tbadge '+cls[p.type]+'">'+labels[p.type]+'</span><div class="post-author">'+p.author+'</div>'+(p.type==='message'?'<div class="post-text">'+(p.content||'')+'</div>':'')+(p.type==='audio'?'<div style="font-size:12px;color:var(--muted)">🎤 Mensaje de voz · '+(p.content_text||'')+'</div>':'')+(p.type==='wish'?'<div class="post-text" style="border-left:3px solid #ff6b9d;padding-left:10px;margin-top:4px">'+(p.content||'')+'</div>':'')+
+    '<div class="post-actions"><button class="btn-approve'+(p.approved?' done':'')+'" onclick="moderatePost(\''+p.id+'\',true)">'+(p.approved?'✓ Aprobado':'✓ Aprobar')+'</button><button class="btn-reject" onclick="moderatePost(\''+p.id+'\',false)">✕ Rechazar</button></div><div class="post-time">'+t+'</div></div>';
+    grid.appendChild(card);
+  });
+}
+async function moderatePost(id,approve){
+  await api('posts?id=eq.'+id,{method:'PATCH',body:JSON.stringify({approved:approve})});
+  const idx=allPosts.findIndex(p=>p.id===id);
+  if(idx>=0) allPosts[idx].approved=approve;
+  if(!approve) allPosts=allPosts.filter(p=>p.id!==id);
+  updateStats();renderPosts();
+  toast(approve?'✅ Aprobado':'🗑 Rechazado');
+}
+async function approveAll(){
+  const pending=allPosts.filter(p=>!p.approved);
+  if(!pending.length){toast('Ya todo aprobado');return;}
+  await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.false',{method:'PATCH',body:JSON.stringify({approved:true})});
+  allPosts.forEach(p=>p.approved=true);
+  updateStats();renderPosts();
+  toast('✅ '+pending.length+' posts aprobados');
+}
+
+// ── LINKS ────────────────────────────────────────────────────
+function showLinks(){
+  const notice=document.getElementById('links-notice');
+  const content=document.getElementById('links-content');
+  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
+  notice.classList.remove('show');content.style.display='block';
+  const base=location.origin+'/';
+  const screenUrl=base+'screen.html?event='+selectedEvent.id;
+  const guestUrl=base+'guest.html?event='+selectedEvent.id;
+  document.getElementById('link-screen').textContent=screenUrl;
+  document.getElementById('link-guest').textContent=guestUrl;
+  // Show short code
+  document.getElementById('event-code-display').textContent=selectedEvent.id.toUpperCase();
+  document.getElementById('screen-short-url').textContent=location.hostname+'/screen.html?event='+selectedEvent.id;
+  const qrDiv=document.getElementById('qr-container');
+  qrDiv.innerHTML='';
+  try{new QRCode(qrDiv,{text:guestUrl,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
+}
+function copyLink(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>toast('📋 Copiado'));}
+function copyText(text){navigator.clipboard.writeText(text).then(()=>toast('📋 Copiado'));}
+function downloadQR(){
+  const img=document.querySelector('#qr-container img');
+  if(!img){toast('Generando QR...');return;}
+  const a=document.createElement('a');a.download='qr-evento.png';a.href=img.src;a.click();
+}
+
+// ── DESIGN ───────────────────────────────────────────────────
+const TEMPLATES = {
+  dark:  {bg:'#07070f',accent:'#f0176f',text:'#ffffff'},
+  light: {bg:'#f8f4ef',accent:'#e91e8c',text:'#1a1a1a'},
+  neon:  {bg:'#000011',accent:'#00f5ff',text:'#ffffff'},
+  floral:{bg:'#1a0a14',accent:'#ff6b9d',text:'#fff0f5'},
+  gold:  {bg:'#0d0900',accent:'#f5a623',text:'#fff8e0'},
+  ocean: {bg:'#021020',accent:'#0ea5e9',text:'#e0f4ff'},
+};
+
+function showDesign(){
+  const notice=document.getElementById('design-notice');
+  const content=document.getElementById('design-content');
+  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
+  notice.classList.remove('show');content.style.display='block';
+  // Load saved design
+  const saved=JSON.parse(localStorage.getItem('ew_design_'+selectedEvent.id)||'{}');
+  if(saved.bg) document.getElementById('c-bg').value=saved.bg;
+  if(saved.accent) document.getElementById('c-accent').value=saved.accent;
+  if(saved.text) document.getElementById('c-text').value=saved.text;
+  if(saved.interval) document.getElementById('cfg-interval').value=saved.interval;
+  if(saved.sound) document.getElementById('cfg-sound').value=saved.sound;
+  if(saved.template){
+    document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
+    const el=document.querySelector('.tpl-'+saved.template);
+    if(el) el.classList.add('active');
+  }
+  previewTheme();
+}
+
+function selectTemplate(name,el){
+  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  const t=TEMPLATES[name];
+  document.getElementById('c-bg').value=t.bg;
+  document.getElementById('c-accent').value=t.accent;
+  document.getElementById('c-text').value=t.text;
+  previewTheme();
+}
+
+function previewTheme(){
+  const bg=document.getElementById('c-bg').value;
+  const accent=document.getElementById('c-accent').value;
+  const text=document.getElementById('c-text').value;
+  const prev=document.getElementById('theme-preview');
+  prev.style.background=bg;
+  prev.innerHTML=`<div style="text-align:center">
+    <div style="font-size:18px;font-weight:800;color:${text};font-family:Syne,sans-serif;margin-bottom:8px">Nombre del evento</div>
+    <div style="display:inline-block;background:${accent};color:#fff;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700">EN VIVO</div>
+    <div style="margin-top:10px;font-size:12px;color:${text};opacity:0.5">Vista previa de colores</div>
+  </div>`;
+}
+
+function saveDesign(){
+  if(!selectedEvent){toast('Seleccioná un evento primero');return;}
+  const design={
+    bg:document.getElementById('c-bg').value,
+    accent:document.getElementById('c-accent').value,
+    text:document.getElementById('c-text').value,
+    interval:document.getElementById('cfg-interval').value,
+    sound:document.getElementById('cfg-sound').value,
+    template:document.querySelector('.tpl-card.active')?.className.match(/tpl-(\w+)/)?.[1]||'dark'
+  };
+  localStorage.setItem('ew_design_'+selectedEvent.id,JSON.stringify(design));
+  toast('✅ Diseño guardado — se aplica en la pantalla del evento');
+}
+
+// ── ALBUM ────────────────────────────────────────────────────
+async function showAlbum(){
+  const notice=document.getElementById('album-notice');
+  const content=document.getElementById('album-content');
+  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
+  notice.classList.remove('show');content.style.display='block';
+  document.getElementById('album-ev-name').textContent=selectedEvent.name;
+  document.getElementById('album-ev-sub').textContent=selectedEvent.date||'';
+  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=eq.photo&approved=eq.true&order=created_at.desc');
+  const photos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
+  document.getElementById('album-count').textContent=photos.length+' foto'+(photos.length!==1?'s':'');
+  const grid=document.getElementById('album-grid');
+  if(!photos.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">📷</div><div class="empty-txt">No hay fotos aprobadas aún</div></div>';return;}
+  grid.innerHTML='';
+  photos.forEach(p=>{
+    const img=document.createElement('img');
+    img.className='album-img';img.src=p.content;img.alt=p.author;
+    img.title=p.author;
+    grid.appendChild(img);
+  });
+}
+
+async function downloadAlbum(){
+  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=eq.photo&approved=eq.true');
+  const photos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
+  if(!photos.length){toast('No hay fotos para descargar');return;}
+  toast('⬇ Descargando '+photos.length+' fotos...',5000);
+  for(let i=0;i<photos.length;i++){
+    try{
+      const res=await fetch(photos[i].content);
+      const blob=await res.blob();
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;a.download='foto_'+(i+1)+'_'+photos[i].author.replace(/\s/g,'_')+'.jpg';
+      a.click();
+      URL.revokeObjectURL(url);
+      await new Promise(r=>setTimeout(r,400));
+    }catch(e){}
+  }
+}
+
+// ── PRINT MODE ───────────────────────────────────────────────
+function showPrint(){
+  const notice=document.getElementById('print-notice');
+  const content=document.getElementById('print-content');
+  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
+  notice.classList.remove('show');content.style.display='block';
+  previewPrint();
+}
+
+function getPrintQRUrl(){
+  return location.origin+'/guest.html?event='+selectedEvent.id;
+}
+
+const PRINT_STYLES={
+  dark:{bg:'#0c0c14',accent:'#f0176f',text:'#ffffff',sub:'rgba(255,255,255,0.55)',border:'rgba(255,255,255,0.1)'},
+  light:{bg:'#ffffff',accent:'#e91e8c',text:'#1a1a1a',sub:'#666666',border:'#e0e0e0'},
+  romantic:{bg:'#1a0a14',accent:'#ff6b9d',text:'#fff0f5',sub:'rgba(255,240,245,0.6)',border:'rgba(255,107,157,0.2)'},
+  gold:{bg:'#0d0900',accent:'#f5a623',text:'#fff8e0',sub:'rgba(255,248,224,0.55)',border:'rgba(245,166,35,0.2)'},
+};
+
+function buildPrintCell(evName,msg,sub,qrDataUrl,style,size){
+  const s=PRINT_STYLES[style]||PRINT_STYLES.dark;
+  const big=size==='1';
+  return `
+  <div style="background:${s.bg};border-radius:${big?'16':'12'}px;padding:${big?'40px 32px':'24px 20px'};display:flex;flex-direction:column;align-items:center;gap:${big?'18':'12'}px;text-align:center;border:1px solid ${s.border};font-family:'DM Sans',sans-serif;break-inside:avoid">
+    <div style="font-family:'Syne',sans-serif;font-size:${big?'28':'18'}px;font-weight:800;color:${s.text};line-height:1.2">${evName}</div>
+    <div style="width:${big?'180':'130'}px;height:${big?'180':'130'}px;background:#fff;padding:10px;border-radius:10px">
+      <img src="${qrDataUrl}" style="width:100%;height:100%;display:block"/>
+    </div>
+    <div style="font-size:${big?'18':'14'}px;font-weight:700;color:${s.accent}">${msg}</div>
+    <div style="font-size:${big?'13':'11'}px;color:${s.sub};max-width:260px;line-height:1.6">${sub}</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+      <div style="width:8px;height:8px;border-radius:50%;background:${s.accent};animation:none"></div>
+      <span style="font-size:${big?'11':'9'}px;color:${s.sub};font-weight:600;letter-spacing:1px;text-transform:uppercase">EventWall · En vivo</span>
+    </div>
+  </div>`;
+}
+
+async function getQRDataUrl(){
+  const url=getPrintQRUrl();
+  return new Promise(resolve=>{
+    const div=document.createElement('div');div.style.display='none';document.body.appendChild(div);
+    try{
+      new QRCode(div,{text:url,width:300,height:300,correctLevel:QRCode.CorrectLevel.M});
+      setTimeout(()=>{
+        const img=div.querySelector('img');
+        resolve(img?img.src:'');div.remove();
+      },300);
+    }catch(e){div.remove();resolve('');}
+  });
+}
+
+async function previewPrint(){
+  const area=document.getElementById('print-preview-area');
+  area.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px">Generando vista previa...</div>';
+  const msg=document.getElementById('print-msg').value||'¡Escaneá y participá!';
+  const sub=document.getElementById('print-sub').value||'Subí fotos y mensajes en tiempo real';
+  const style=document.getElementById('print-style').value;
+  const qty=parseInt(document.getElementById('print-qty').value);
+  const qrDataUrl=await getQRDataUrl();
+  if(!qrDataUrl){area.innerHTML='<div style="color:var(--red)">Error generando QR. Asegurate de tener el evento seleccionado.</div>';return;}
+  const size=qty===1?'1':'small';
+  let cells='';
+  for(let i=0;i<qty;i++) cells+=buildPrintCell(selectedEvent.name,msg,sub,qrDataUrl,style,size);
+  const cols=qty===1?1:qty===2?2:2;
+  area.innerHTML=`
+    <div class="print-sheet">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Vista previa · Hoja A4</div>
+      <div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:16px;background:#888;padding:16px;border-radius:8px">
+        ${cells}
+      </div>
+    </div>`;
+}
+
+async function doPrint(){
+  const msg=document.getElementById('print-msg').value||'¡Escaneá y participá!';
+  const sub=document.getElementById('print-sub').value||'Subí fotos y mensajes en tiempo real';
+  const style=document.getElementById('print-style').value;
+  const qty=parseInt(document.getElementById('print-qty').value);
+  const qrDataUrl=await getQRDataUrl();
+  const size=qty===1?'1':'small';
+  let cells='';
+  for(let i=0;i<qty;i++) cells+=buildPrintCell(selectedEvent.name,msg,sub,qrDataUrl,style,size);
+  const cols=qty===1?1:qty===2?2:2;
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{width:210mm;min-height:297mm;padding:16mm;background:#f0f0f0;font-family:'DM Sans',sans-serif}
+    .grid{display:grid;grid-template-columns:repeat(${cols},1fr);gap:12mm;height:100%}
+    @media print{body{background:#fff;padding:10mm}@page{size:A4;margin:10mm}}
+  </style></head><body>
+  <div class="grid">${cells}</div>
+  <script>setTimeout(()=>{window.print();},600);<\/script>
+  </body></html>`);
+  win.document.close();
+}
+
+// ── WISH WALL (in screen.html - handled separately) ──────────
+
+
+// ── POLLS ─────────────────────────────────────────────────────
+function showPolls(){
+  const notice=document.getElementById('polls-notice');
+  const content=document.getElementById('polls-content');
+  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
+  notice.classList.remove('show');content.style.display='block';
+  loadPolls();
+}
+
+function addPollOption(){
+  const list=document.getElementById('poll-options-list');
+  const n=list.children.length+1;
+  const div=document.createElement('div');div.className='poll-opt-row';
+  div.innerHTML='<input type="text" class="field poll-opt-input" placeholder="Opción '+n+'" style="margin-bottom:8px"/>';
+  list.appendChild(div);
+}
+
+async function createPoll(){
+  const question=document.getElementById('poll-question').value.trim();
+  if(!question){toast('❌ Escribí la pregunta');return;}
+  const inputs=[...document.querySelectorAll('.poll-opt-input')];
+  const options=inputs.map(i=>i.value.trim()).filter(Boolean);
+  if(options.length<2){toast('❌ Necesitás al menos 2 opciones');return;}
+  const btn=document.getElementById('create-poll-btn');
+  btn.disabled=true;btn.textContent='Creando...';
+  const res=await api('polls',{method:'POST',body:JSON.stringify({
+    event_id:selectedEvent.id, question, options, active:true
+  })});
+  btn.disabled=false;btn.textContent='Crear votación →';
+  if(Array.isArray(res)&&res[0]?.id){
+    toast('🗳 Votación creada y visible para los invitados!');
+    document.getElementById('poll-question').value='';
+    document.querySelectorAll('.poll-opt-input').forEach((el,i)=>{el.value='';el.placeholder='Opción '+(i+1);});
+    while(document.getElementById('poll-options-list').children.length>2){
+      document.getElementById('poll-options-list').removeChild(document.getElementById('poll-options-list').lastChild);
+    }
+    loadPolls();
+  }
+}
+
+async function loadPolls(){
+  const polls=await api('polls?event_id=eq.'+selectedEvent.id+'&order=created_at.desc');
+  if(!Array.isArray(polls)||!polls.length){
+    document.getElementById('polls-list').innerHTML='<div class="empty"><div class="empty-ico">🗳</div><div class="empty-txt">No hay votaciones aún. ¡Creá la primera!</div></div>';
+    return;
+  }
+  // Load all votes for this event
+  const votes=await api('poll_votes?event_id=eq.'+selectedEvent.id+'&select=poll_id,option_idx');
+  const safeVotes=Array.isArray(votes)?votes:[];
+  const list=document.getElementById('polls-list');
+  list.innerHTML='';
+  polls.forEach(poll=>{
+    const pollVotes=safeVotes.filter(v=>v.poll_id===poll.id);
+    const total=pollVotes.length;
+    const opts=Array.isArray(poll.options)?poll.options:[];
+    const counts=opts.map((_,i)=>pollVotes.filter(v=>v.option_idx===i).length);
+    const maxVotes=Math.max(...counts,1);
+    const card=document.createElement('div');card.className='poll-card';
+    const barsHtml=opts.map((opt,i)=>{
+      const pct=total>0?Math.round((counts[i]/total)*100):0;
+      const isWinner=counts[i]===maxVotes&&total>0;
+      return `<div class="poll-option-bar">
+        <div class="poll-option-label"><span>${opt}</span><span class="pvotes">${counts[i]} voto${counts[i]!==1?'s':''} · ${pct}%</span></div>
+        <div class="poll-bar-bg"><div class="poll-bar-fill${isWinner?' winner':''}" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+    card.innerHTML=`<div class="poll-question">${poll.question}</div>${barsHtml}
+      <div class="poll-meta">
+        <span class="poll-total">📊 ${total} voto${total!==1?'s':''} en total</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="poll-status ${poll.active?'active':'closed'}">${poll.active?'● Activa':'Cerrada'}</span>
+          <button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="togglePoll('${poll.id}',${poll.active})">${poll.active?'Cerrar':'Reabrir'}</button>
+          <button class="btn-reject" style="font-size:12px;padding:5px 12px;flex:none" onclick="deletePoll('${poll.id}')">✕</button>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+  // Auto-refresh while on this page
+  clearInterval(window._pollsInterval);
+  window._pollsInterval=setInterval(()=>{
+    if(document.getElementById('page-polls').classList.contains('active')) loadPolls();
+  },5000);
+}
+
+async function togglePoll(id,isActive){
+  await api('polls?id=eq.'+id,{method:'PATCH',body:JSON.stringify({active:!isActive})});
+  toast(isActive?'Votación cerrada':'Votación reabierta');
+  loadPolls();
+}
+
+async function deletePoll(id){
+  if(!confirm('¿Eliminar esta votación y todos sus votos?')) return;
+  await api('poll_votes?poll_id=eq.'+id,{method:'DELETE'});
+  await api('polls?id=eq.'+id,{method:'DELETE'});
+  toast('🗑 Votación eliminada');
+  loadPolls();
+}
+
+// Auto-load if already unlocked this session
+if(sessionStorage.getItem('ew_unlocked')==='1'){
+  document.getElementById('pin-lock').style.display='none';
+  document.getElementById('main-app').style.display='grid';
+  loadEvents();
+}
+// Save session on unlock
+
+</script>
+</body>
+</html>

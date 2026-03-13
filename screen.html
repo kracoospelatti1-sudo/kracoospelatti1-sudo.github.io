@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EventWall · Pantalla</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;font-family:'DM Sans',sans-serif}
+:root{--bg:#07070f;--accent:#f0176f;--txt:#ffffff}
+
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);height:68px;z-index:10;position:relative}
+.ev-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--txt)}
+.ev-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
+.live-pill{display:flex;align-items:center;gap:6px;background:rgba(240,23,111,0.15);border:1px solid rgba(240,23,111,0.35);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px}
+.live-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.counter-pills{display:flex;gap:8px}
+.cpill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);padding:5px 12px;border-radius:20px;font-size:12px;color:rgba(255,255,255,0.7)}
+.cpill span{color:var(--accent);font-weight:700}
+
+.grid{display:grid;grid-template-columns:1fr 320px;height:calc(100vh - 68px)}
+.featured-side{position:relative;overflow:hidden;background:#000}
+.featured-img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.8s ease;position:absolute;inset:0}
+.featured-img.fade{opacity:0}
+.featured-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px 28px;background:linear-gradient(transparent,rgba(0,0,0,0.88));z-index:2}
+.featured-caption{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;line-height:1.4;margin-bottom:6px;color:var(--txt)}
+.featured-author{font-size:13px;color:var(--accent);font-weight:600}
+.no-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:rgba(255,255,255,0.2);z-index:1}
+.no-content .big{font-size:64px}
+
+/* REACTION OVERLAY ON FEATURED */
+.reaction-overlay{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.floating-emoji{position:absolute;font-size:40px;animation:floatUp 2.5s ease-out forwards;pointer-events:none}
+@keyframes floatUp{
+  0%{transform:translateY(0) scale(0.5) rotate(-10deg);opacity:1}
+  50%{transform:translateY(-40%) scale(1.2) rotate(5deg);opacity:1}
+  100%{transform:translateY(-90%) scale(0.8) rotate(-5deg);opacity:0}
+}
+
+/* REACTION BUTTON BAR */
+.reaction-bar{position:absolute;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:center;padding:12px;gap:10px;background:linear-gradient(transparent,rgba(0,0,0,0.6));opacity:0;transition:opacity 0.3s}
+.featured-side:hover .reaction-bar{opacity:1}
+.react-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:8px 16px;font-size:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px}
+.react-btn:hover{background:rgba(255,255,255,0.25);transform:scale(1.1)}
+.react-btn .cnt{font-size:12px;font-weight:700;color:rgba(255,255,255,0.8)}
+
+/* REACTION TOAST */
+.reaction-toast{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:8px 18px;font-size:14px;color:#fff;white-space:nowrap;display:none;z-index:15;animation:toastPop 0.3s ease}
+@keyframes toastPop{from{transform:translateX(-50%) scale(0.8);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+
+/* SIDEBAR */
+.sidebar{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(0,0,0,0.25)}
+.s-section{padding:14px 14px 0}
+.s-title{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.photo-strip{display:flex;gap:8px;overflow:hidden;padding:0 14px 12px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.strip-img{width:66px;height:66px;object-fit:cover;border-radius:8px;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s}
+.strip-img.active{border-color:var(--accent);transform:scale(1.05)}
+.messages-list{flex:1;overflow:hidden;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.msg-item{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 12px;animation:msgIn 0.5s ease;flex-shrink:0}
+@keyframes msgIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+.msg-author{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.msg-body{font-size:13px;color:rgba(255,255,255,0.82);line-height:1.45}
+.msg-audio-row{display:flex;align-items:center;gap:8px}
+.audio-dot{width:26px;height:26px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+.msg-time{font-size:10px;color:rgba(255,255,255,0.2);margin-top:4px}
+
+/* NEW CONTENT BADGE */
+.new-badge{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;display:none;z-index:20;pointer-events:none;animation:badgePop 0.4s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes badgePop{from{transform:translateX(-50%) scale(0.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+
+/* QR */
+.qr-section{padding:12px 14px;border-top:1px solid rgba(255,255,255,0.06)}
+.qr-inner{display:flex;align-items:center;gap:10px}
+.qr-box{background:#fff;padding:7px;border-radius:8px;flex-shrink:0}
+.qr-text{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.6}
+.qr-text strong{color:rgba(255,255,255,0.8);display:block;font-size:12px;margin-bottom:2px}
+
+/* REACTION SUMMARY BAR (sidebar) */
+.reaction-summary{display:flex;gap:6px;flex-wrap:wrap;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.rsumm-pill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:4px 10px;font-size:13px;display:flex;align-items:center;gap:4px}
+.rsumm-pill .rcnt{font-size:11px;color:rgba(255,255,255,0.6);font-weight:600}
+
+/* LIGHT THEME */
+body.theme-light{background:#f8f4ef}
+body.theme-light .header{background:rgba(0,0,0,0.04);border-bottom:1px solid rgba(0,0,0,0.08)}
+body.theme-light .ev-sub,.theme-light .qr-text{color:rgba(0,0,0,0.4)}
+body.theme-light .sidebar{background:rgba(0,0,0,0.04);border-left:1px solid rgba(0,0,0,0.1)}
+body.theme-light .msg-item{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.08)}
+body.theme-light .cpill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.7)}
+body.theme-light .msg-body{color:rgba(0,0,0,0.8)}
+body.theme-light .s-title{color:rgba(0,0,0,0.35)}
+body.theme-light .photo-strip{border-bottom-color:rgba(0,0,0,0.08)}
+body.theme-light .reaction-summary{border-bottom-color:rgba(0,0,0,0.08)}
+body.theme-light .rsumm-pill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1)}
+body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
+
+/* POLL SCREEN */
+@keyframes barGrow{from{width:0}to{width:var(--target-w)}}
+.sbar-wrap{background:rgba(255,255,255,0.06);border-radius:12px;padding:16px 20px}
+.sbar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sbar-label{font-size:16px;font-weight:600;color:#fff}
+.sbar-count{font-size:14px;font-weight:700;color:var(--accent)}
+.sbar-bg{background:rgba(255,255,255,0.08);border-radius:8px;height:14px;overflow:hidden}
+.sbar-fill{height:100%;border-radius:8px;background:var(--accent);transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1)}
+.sbar-fill.winner{background:var(--gold)}
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+@keyframes particleFly{0%{transform:translateY(100vh) rotate(0deg);opacity:1}100%{transform:translateY(-20vh) rotate(720deg);opacity:0}}
+@keyframes wishTextIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.screen-loading{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;color:rgba(255,255,255,0.4)}
+.spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="loading" class="screen-loading"><div class="spinner"></div><p>Cargando evento...</p></div>
+
+<!-- POLL OVERLAY -->
+<div id="poll-overlay" style="position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(7,7,15,0.96);padding:40px">
+  <div style="width:100%;max-width:700px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">🗳 VOTACIÓN EN VIVO</div>
+      <div id="poll-screen-question" style="font-family:'Syne',sans-serif;font-size:clamp(20px,3.5vw,36px);font-weight:800;color:#fff;line-height:1.3"></div>
+    </div>
+    <div id="poll-screen-bars" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div id="poll-screen-total" style="text-align:center;margin-top:20px;font-size:14px;color:rgba(255,255,255,0.4)"></div>
+  </div>
+</div>
+
+<!-- WISH WALL OVERLAY -->
+<div id="wish-overlay" style="position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;overflow:hidden">
+  <div id="wish-bg" style="position:absolute;inset:0;background:linear-gradient(135deg,#1a0a14,#2d1020,#1a0a14);background-size:400% 400%;animation:gradShift 8s ease infinite"></div>
+  <!-- particles -->
+  <div id="wish-particles" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+  <div style="position:relative;z-index:2;text-align:center;padding:40px;max-width:800px">
+    <div id="wish-heart" style="font-size:72px;margin-bottom:20px;animation:heartBeat 1.5s ease infinite">💌</div>
+    <div id="wish-author" style="font-size:18px;font-weight:600;color:rgba(255,192,210,0.8);margin-bottom:16px;letter-spacing:1px;text-transform:uppercase"></div>
+    <div id="wish-text" style="font-family:'Syne',sans-serif;font-size:clamp(22px,4vw,48px);font-weight:800;color:#fff;line-height:1.4;text-shadow:0 2px 40px rgba(240,23,111,0.5)"></div>
+    <div style="margin-top:32px;width:80px;height:2px;background:rgba(255,107,157,0.5);margin-left:auto;margin-right:auto;border-radius:2px"></div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <div class="header">
+    <div>
+      <div class="ev-name" id="ev-name">—</div>
+      <div class="ev-sub" id="ev-sub">—</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="counter-pills">
+        <div class="cpill">📷 <span id="cnt-p">0</span></div>
+        <div class="cpill">💬 <span id="cnt-m">0</span></div>
+        <div class="cpill">🎤 <span id="cnt-a">0</span></div>
+      </div>
+      <div class="live-pill"><div class="live-dot"></div>EN VIVO</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="featured-side" id="featured-side">
+      <div class="new-badge" id="new-badge">¡Nuevo contenido! 🎉</div>
+      <div class="reaction-toast" id="reaction-toast"></div>
+      <div class="no-content" id="no-content">
+        <div class="big">📸</div>
+        <p style="font-size:16px">Esperando contenido...</p>
+        <p style="font-size:13px">Los invitados están escaneando el QR</p>
+      </div>
+      <img id="featured-img" class="featured-img" src="" alt="" style="display:none"/>
+      <div class="featured-overlay" id="featured-overlay" style="display:none">
+        <div class="featured-caption" id="featured-caption"></div>
+        <div class="featured-author" id="featured-author"></div>
+      </div>
+      <div class="reaction-overlay" id="reaction-overlay"></div>
+      <!-- REACTION BUTTONS -->
+      <div class="reaction-bar" id="reaction-bar">
+        <button class="react-btn" onclick="sendReaction('❤️')">❤️ <span class="cnt" id="rc-heart">0</span></button>
+        <button class="react-btn" onclick="sendReaction('😂')">😂 <span class="cnt" id="rc-laugh">0</span></button>
+        <button class="react-btn" onclick="sendReaction('😍')">😍 <span class="cnt" id="rc-love">0</span></button>
+        <button class="react-btn" onclick="sendReaction('🔥')">🔥 <span class="cnt" id="rc-fire">0</span></button>
+        <button class="react-btn" onclick="sendReaction('👏')">👏 <span class="cnt" id="rc-clap">0</span></button>
+        <button class="react-btn" onclick="sendReaction('🥳')">🥳 <span class="cnt" id="rc-party">0</span></button>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="s-section"><div class="s-title">Fotos recientes</div></div>
+      <div class="photo-strip" id="photo-strip"></div>
+      <div class="reaction-summary" id="reaction-summary"></div>
+      <div class="messages-list" id="messages-list">
+        <div class="s-title">Mensajes en vivo</div>
+      </div>
+      <div class="qr-section">
+        <div class="qr-inner">
+          <div class="qr-box"><canvas id="qr-canvas" width="66" height="66"></canvas></div>
+          <div class="qr-text"><strong>Escaneá para participar</strong>Subí fotos y mensajes<br>en tiempo real</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const SUPABASE_URL='https://jxqwrbmnfmnzddkcimrm.supabase.co';
+const SUPABASE_KEY='sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
+
+async function api(path){
+  try{const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});const t=await res.text();return t?JSON.parse(t):[];}
+  catch(e){return[];}
+}
+async function apiPost(path,body){
+  try{const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(body)});const t=await res.text();return t?JSON.parse(t):[];}
+  catch(e){return[];}
+}
+
+const params=new URLSearchParams(location.search);
+const eventId=params.get('event');
+let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
+let currentFeaturedPostId=null;
+let reactionCounts={};
+let lastReactionCount=0;
+let cfg={interval:6000,sound:'chime'};
+
+const EMOJI_MAP={'❤️':'rc-heart','😂':'rc-laugh','😍':'rc-love','🔥':'rc-fire','👏':'rc-clap','🥳':'rc-party'};
+
+// ── SOUNDS ───────────────────────────────────────────────────
+function playSound(type){
+  if(type==='none') return;
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(type==='chime'){
+      [523,659,784].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,ctx.currentTime+i*0.15);g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+i*0.15+0.05);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.5);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.5);});
+    } else if(type==='pop'){
+      const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(800,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(400,ctx.currentTime+0.15);g.gain.setValueAtTime(0.4,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.2);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.2);
+    }
+  }catch(e){}
+}
+
+// ── THEME ─────────────────────────────────────────────────────
+function applyTheme(design){
+  if(!design) return;
+  document.documentElement.style.setProperty('--bg',design.bg||'#07070f');
+  document.documentElement.style.setProperty('--accent',design.accent||'#f0176f');
+  document.documentElement.style.setProperty('--txt',design.text||'#ffffff');
+  document.body.style.background=design.bg||'#07070f';
+  const isLight=design.bg&&(design.bg.startsWith('#f')||design.bg.startsWith('#e')||design.bg.startsWith('#d'));
+  document.body.classList.toggle('theme-light',isLight);
+  if(design.interval) cfg.interval=parseInt(design.interval)*1000;
+  if(design.sound) cfg.sound=design.sound;
+}
+
+// ── REACTIONS ────────────────────────────────────────────────
+function spawnEmoji(emoji){
+  const overlay=document.getElementById('reaction-overlay');
+  for(let i=0;i<3;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='floating-emoji';
+      el.textContent=emoji;
+      el.style.left=Math.random()*80+10+'%';
+      el.style.bottom='60px';
+      el.style.animationDelay=Math.random()*0.3+'s';
+      overlay.appendChild(el);
+      setTimeout(()=>el.remove(),3000);
+    },i*150);
+  }
+}
+
+async function sendReaction(emoji){
+  if(!currentFeaturedPostId) return;
+  spawnEmoji(emoji);
+  // optimistic update
+  reactionCounts[emoji]=(reactionCounts[emoji]||0)+1;
+  updateReactionUI();
+  showReactionToast(emoji);
+  await apiPost('reactions',{post_id:currentFeaturedPostId,event_id:eventId,emoji});
+}
+
+function showReactionToast(emoji){
+  const t=document.getElementById('reaction-toast');
+  t.textContent=emoji+' ¡Reacción enviada!';
+  t.style.display='block';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2000);
+}
+
+async function loadReactions(){
+  if(!currentFeaturedPostId) return;
+  const data=await api('reactions?post_id=eq.'+currentFeaturedPostId+'&select=emoji');
+  if(!Array.isArray(data)) return;
+  reactionCounts={};
+  data.forEach(r=>{reactionCounts[r.emoji]=(reactionCounts[r.emoji]||0)+1;});
+  updateReactionUI();
+  updateReactionSummary();
+  lastReactionCount=data.length;
+}
+
+function updateReactionUI(){
+  Object.entries(EMOJI_MAP).forEach(([emoji,id])=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=reactionCounts[emoji]||0;
+  });
+}
+
+function updateReactionSummary(){
+  const bar=document.getElementById('reaction-summary');
+  const sorted=Object.entries(reactionCounts).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  if(!sorted.length){bar.innerHTML='';return;}
+  bar.innerHTML=sorted.map(([e,c])=>`<div class="rsumm-pill">${e}<span class="rcnt">${c}</span></div>`).join('');
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+// ── WISH WALL ────────────────────────────────────────────────
+let wishQueue=[];
+let wishShowing=false;
+
+// Persist shown wish IDs in sessionStorage so reloads don't repeat them
+function getShownWishIds(){
+  try{ return new Set(JSON.parse(sessionStorage.getItem('ew_shown_wishes_'+eventId)||'[]')); }
+  catch(e){ return new Set(); }
+}
+function markWishShown(id){
+  const ids=getShownWishIds();
+  ids.add(id);
+  sessionStorage.setItem('ew_shown_wishes_'+eventId, JSON.stringify([...ids]));
+}
+
+async function pollWishes(){
+  const wishes=await api('posts?event_id=eq.'+eventId+'&type=eq.wish&approved=eq.true&order=created_at.asc');
+  if(!Array.isArray(wishes)) return;
+  const shown=getShownWishIds();
+  const newWishes=wishes.filter(w=>w.id&&!shown.has(w.id)&&!wishQueue.find(q=>q.id===w.id));
+  if(newWishes.length){
+    wishQueue.push(...newWishes);
+    if(!wishShowing) showNextWish();
+  }
+}
+
+function spawnParticles(){
+  const container=document.getElementById('wish-particles');
+  container.innerHTML='';
+  const emojis=['💕','✨','🌸','💖','⭐','🎀','💫','🌺'];
+  for(let i=0;i<20;i++){
+    const el=document.createElement('div');
+    el.style.cssText='position:absolute;font-size:'+(Math.random()*20+16)+'px;left:'+Math.random()*100+'%;animation:particleFly '+(Math.random()*4+4)+'s linear '+(Math.random()*3)+'s infinite;';
+    el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    container.appendChild(el);
+  }
+}
+
+function showNextWish(){
+  if(!wishQueue.length){wishShowing=false;return;}
+  wishShowing=true;
+  const wish=wishQueue.shift();
+  markWishShown(wish.id);
+  document.getElementById('wish-author').textContent=wish.author+' dice:';
+  const textEl=document.getElementById('wish-text');
+  textEl.textContent=wish.content;
+  textEl.style.animation='none';void textEl.offsetWidth;
+  textEl.style.animation='wishTextIn 0.8s ease 0.3s both';
+  spawnParticles();
+  const overlay=document.getElementById('wish-overlay');
+  overlay.style.display='flex';
+  // Auto-hide after reading time (min 6s, +1s per 20 chars)
+  const readTime=Math.max(6000, 6000 + wish.content.length*80);
+  setTimeout(()=>{
+    overlay.style.opacity='0';overlay.style.transition='opacity 0.8s';
+    setTimeout(()=>{overlay.style.display='none';overlay.style.opacity='1';overlay.style.transition='';
+      setTimeout(showNextWish,1500);
+    },800);
+  },readTime);
+}
+
+// ── POLL SCREEN ──────────────────────────────────────────────
+let activePollId=null;
+let pollScreenVisible=false;
+
+async function pollForPolls(){
+  const polls=await api('polls?event_id=eq.'+eventId+'&active=eq.true&order=created_at.desc&limit=1');
+  if(!Array.isArray(polls)||!polls.length){
+    if(pollScreenVisible) hidePollScreen();
+    return;
+  }
+  const poll=polls[0];
+  const votes=await api('poll_votes?poll_id=eq.'+poll.id+'&select=option_idx');
+  renderPollScreen(poll, Array.isArray(votes)?votes:[]);
+}
+
+function renderPollScreen(poll, votes){
+  const opts=Array.isArray(poll.options)?poll.options:[];
+  const total=votes.length;
+  const counts=opts.map((_,i)=>votes.filter(v=>v.option_idx===i).length);
+  const maxVotes=Math.max(...counts,1);
+  document.getElementById('poll-screen-question').textContent=poll.question;
+  document.getElementById('poll-screen-total').textContent=total+' voto'+(total!==1?'s':'')+' en tiempo real';
+  const barsDiv=document.getElementById('poll-screen-bars');
+  barsDiv.innerHTML='';
+  opts.forEach((opt,i)=>{
+    const pct=total>0?Math.round((counts[i]/total)*100):0;
+    const isWinner=counts[i]===maxVotes&&total>0;
+    const bar=document.createElement('div');bar.className='sbar-wrap';
+    bar.innerHTML=`<div class="sbar-top"><span class="sbar-label">${opt}</span><span class="sbar-count">${counts[i]} · ${pct}%</span></div>
+      <div class="sbar-bg"><div class="sbar-fill${isWinner?' winner':''}" style="width:${pct}%"></div></div>`;
+    barsDiv.appendChild(bar);
+  });
+  const overlay=document.getElementById('poll-overlay');
+  overlay.style.display='flex';
+  pollScreenVisible=true;
+  activePollId=poll.id;
+}
+
+function hidePollScreen(){
+  document.getElementById('poll-overlay').style.display='none';
+  pollScreenVisible=false;
+  activePollId=null;
+}
+
+async function init(){
+  if(!eventId){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Error: falta ?event= en la URL</p>';return;}
+  const events=await api('events?id=eq.'+eventId);
+  if(!events[0]){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Evento no encontrado</p>';return;}
+  const ev=events[0];
+  document.title=ev.name+' · EventWall';
+  document.getElementById('ev-name').textContent=ev.name;
+  document.getElementById('ev-sub').textContent=[ev.date,ev.subtitle].filter(Boolean).join(' · ');
+  const saved=localStorage.getItem('ew_design_'+eventId);
+  if(saved) try{applyTheme(JSON.parse(saved));}catch(e){}
+  // QR
+  const guestUrl=location.origin+'/guest.html?event='+eventId;
+  const tmp=document.createElement('div');tmp.style.display='none';document.body.appendChild(tmp);
+  try{
+    new QRCode(tmp,{text:guestUrl,width:66,height:66,correctLevel:QRCode.CorrectLevel.M});
+    setTimeout(()=>{const img=tmp.querySelector('img');if(img){const i=new Image();i.onload=()=>{const ctx=document.getElementById('qr-canvas').getContext('2d');ctx.drawImage(i,0,0,66,66)};i.src=img.src;}tmp.remove();},200);
+  }catch(e){tmp.remove();}
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='block';
+  await loadPosts();
+  rotateTimer=setInterval(rotateFeatured,cfg.interval);
+  setInterval(pollPosts,3000);
+  setInterval(()=>{if(currentFeaturedPostId) loadReactions();},4000);
+  setInterval(pollWishes,5000);
+  setInterval(pollForPolls,4000);
+}
+
+async function loadPosts(){
+  posts=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
+  if(!Array.isArray(posts)) posts=[];
+  lastPostCount=posts.length;
+  updateCounters();
+  photoPosts=posts.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
+  buildStrip();
+  if(photoPosts.length){showFeatured(photoPosts[0],0);}
+  buildMessages();
+}
+
+async function pollPosts(){
+  const fresh=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
+  if(!Array.isArray(fresh)) return;
+  if(fresh.length>lastPostCount){
+    const newItems=fresh.filter(f=>!posts.find(p=>p.id===f.id));
+    posts=fresh;lastPostCount=fresh.length;updateCounters();
+    newItems.forEach(p=>{
+      if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
+        photoPosts.unshift(p);addToStrip(p);showFeatured(p,0);
+      } else {addMsgCard(p,true);}
+    });
+    playSound(cfg.sound);showNewBadge();
+  }
+}
+
+function showNewBadge(){
+  const b=document.getElementById('new-badge');b.style.display='block';
+  clearTimeout(b._t);b._t=setTimeout(()=>b.style.display='none',3000);
+}
+
+function updateCounters(){
+  document.getElementById('cnt-p').textContent=posts.filter(p=>p.type==='photo').length;
+  document.getElementById('cnt-m').textContent=posts.filter(p=>p.type==='message').length;
+  document.getElementById('cnt-a').textContent=posts.filter(p=>p.type==='audio').length;
+}
+
+function showFeatured(post,idx){
+  featuredIdx=idx;currentFeaturedPostId=post.id;
+  const img=document.getElementById('featured-img');
+  img.style.opacity='0';
+  setTimeout(()=>{
+    img.src=post.content;img.style.display='block';img.style.opacity='1';
+    document.getElementById('no-content').style.display='none';
+    document.getElementById('featured-overlay').style.display='block';
+    document.getElementById('featured-caption').textContent=post.content_text?'"'+post.content_text+'"':'';
+    document.getElementById('featured-author').textContent='— '+post.author;
+  },300);
+  document.querySelectorAll('.strip-img').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  reactionCounts={};updateReactionUI();updateReactionSummary();
+  loadReactions();
+}
+
+function rotateFeatured(){
+  if(!photoPosts.length) return;
+  featuredIdx=(featuredIdx+1)%photoPosts.length;
+  showFeatured(photoPosts[featuredIdx],featuredIdx);
+}
+
+function buildStrip(){
+  const strip=document.getElementById('photo-strip');strip.innerHTML='';
+  photoPosts.slice(0,8).forEach((p,i)=>addToStrip(p,i));
+}
+
+function addToStrip(post,idx){
+  const strip=document.getElementById('photo-strip');
+  const img=document.createElement('img');
+  img.className='strip-img';img.src=post.content;
+  img.onclick=()=>showFeatured(post,idx||0);
+  strip.insertBefore(img,strip.firstChild);
+  if(strip.children.length>8) strip.removeChild(strip.lastChild);
+}
+
+function buildMessages(){
+  const list=document.getElementById('messages-list');
+  const title=list.querySelector('.s-title');
+  list.innerHTML='';list.appendChild(title);
+  posts.filter(p=>p.type==='message'||p.type==='audio').slice(0,5).forEach(p=>addMsgCard(p,false));
+}
+
+function addMsgCard(post,animate){
+  if(post.type!=='message'&&post.type!=='audio') return;
+  const list=document.getElementById('messages-list');
+  const card=document.createElement('div');card.className='msg-item';
+  if(!animate) card.style.animation='none';
+  const d=new Date(post.created_at);
+  const t=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+  if(post.type==='message'){
+    card.innerHTML='<div class="msg-author">'+post.author+'</div><div class="msg-body">'+post.content+'</div><div class="msg-time">'+t+'</div>';
+  } else if(post.type==='audio'){
+    card.innerHTML='<div class="msg-author">'+post.author+'</div><div class="msg-audio-row"><div class="audio-dot" onclick="new Audio(\''+post.content+'\').play()"><svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div><span style="font-size:12px;color:rgba(255,255,255,0.55)">Audio · '+(post.content_text||'')+'</span></div><div class="msg-time">'+t+'</div>';
+  }
+  const title=list.querySelector('.s-title');
+  list.insertBefore(card,title?title.nextSibling:list.firstChild);
+  while(list.querySelectorAll('.msg-item').length>5) list.removeChild(list.lastChild);
+}
+
+init();
+</script>
+</body>
+</html>
