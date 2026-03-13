@@ -20,7 +20,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .cpill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);padding:5px 12px;border-radius:20px;font-size:12px;color:rgba(255,255,255,0.7)}
 .cpill span{color:var(--accent);font-weight:700}
 
-.grid{display:grid;grid-template-columns:1fr 320px;height:calc(100vh - 68px)}
+.grid{display:grid;grid-template-columns:1fr 320px;height:calc(100vh - 68px);overflow:hidden}
 .featured-side{position:relative;overflow:hidden;background:#000}
 .featured-img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.8s ease;position:absolute;inset:0}
 .featured-img.fade{opacity:0}
@@ -51,14 +51,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 @keyframes toastPop{from{transform:translateX(-50%) scale(0.8);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
 
 /* SIDEBAR */
-.sidebar{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(0,0,0,0.25)}
+.sidebar{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(0,0,0,0.25);overflow:hidden;min-height:0}
 .s-section{padding:14px 14px 0}
 .s-title{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
 .photo-strip{display:flex;gap:8px;overflow:hidden;padding:0 14px 12px;border-bottom:1px solid rgba(255,255,255,0.06)}
 .strip-img{width:66px;height:66px;object-fit:cover;border-radius:8px;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s}
 .strip-img.active{border-color:var(--accent);transform:scale(1.05)}
-.messages-list{flex:1;overflow:hidden;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
-.msg-item{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 12px;animation:msgIn 0.5s ease;flex-shrink:0}
+.messages-list{flex:1;overflow:hidden;padding:10px 14px;display:flex;flex-direction:column;gap:8px;min-height:0}
+.msg-item{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 12px;animation:msgIn 0.5s ease;flex-shrink:0;word-break:break-word;overflow:hidden}
 @keyframes msgIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
 .msg-author{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px}
 .msg-body{font-size:13px;color:rgba(255,255,255,0.82);line-height:1.45}
@@ -544,9 +544,11 @@ function addMsgCard(post,animate){
   } else if(post.type==='audio'){
     card.innerHTML='<div class="msg-author">'+post.author+'</div><div class="msg-audio-row"><div class="audio-dot" onclick="new Audio(\''+post.content+'\').play()"><svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div><span style="font-size:12px;color:rgba(255,255,255,0.55)">Audio · '+(post.content_text||'')+'</span></div><div class="msg-time">'+t+'</div>';
   }
+  // Remove excess first to prevent layout jump
+  const items=list.querySelectorAll('.msg-item');
+  if(items.length>=5) list.removeChild(items[items.length-1]);
   const title=list.querySelector('.s-title');
   list.insertBefore(card,title?title.nextSibling:list.firstChild);
-  while(list.querySelectorAll('.msg-item').length>5) list.removeChild(list.lastChild);
 }
 
 init();
