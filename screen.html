@@ -53,17 +53,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .sidebar{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(0,0,0,0.25);overflow:hidden;min-height:0}
 .s-section{padding:14px 14px 0}
 .s-title{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
-.photo-strip{display:flex;gap:8px;overflow:hidden;padding:0 14px 12px;border-bottom:1px solid rgba(255,255,255,0.06)}
-.strip-img{width:66px;height:66px;object-fit:cover;border-radius:8px;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s}
-.strip-img.active{border-color:var(--accent);transform:scale(1.05)}
-.messages-list{flex:1;overflow:hidden;padding:10px 14px;display:flex;flex-direction:column;gap:8px;min-height:0}
-.msg-item{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 12px;animation:msgIn 0.5s ease;flex-shrink:0;word-break:break-word;overflow:hidden}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 14px 12px;border-bottom:1px solid rgba(255,255,255,0.06);overflow:hidden}
+.strip-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:1.5px solid rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;display:block}
+.strip-img.active{border-color:var(--accent);transform:scale(1.03)}
+/* msg-item kept minimal for potential future use */
 @keyframes msgIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
-.msg-author{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px}
-.msg-body{font-size:13px;color:rgba(255,255,255,0.82);line-height:1.45}
-.msg-audio-row{display:flex;align-items:center;gap:8px}
-.audio-dot{width:26px;height:26px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
-.msg-time{font-size:10px;color:rgba(255,255,255,0.2);margin-top:4px}
 
 /* NEW CONTENT BADGE */
 .new-badge{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;display:none;z-index:20;pointer-events:none;animation:badgePop 0.4s cubic-bezier(0.175,0.885,0.32,1.275)}
@@ -86,7 +80,7 @@ body.theme-light{background:#f8f4ef}
 body.theme-light .header{background:rgba(0,0,0,0.04);border-bottom:1px solid rgba(0,0,0,0.08)}
 body.theme-light .ev-sub,.theme-light .qr-text{color:rgba(0,0,0,0.4)}
 body.theme-light .sidebar{background:rgba(0,0,0,0.04);border-left:1px solid rgba(0,0,0,0.1)}
-body.theme-light .msg-item{background:rgba(0,0,0,0.04);border-color:rgba(0,0,0,0.08)}
+
 body.theme-light .cpill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.7)}
 body.theme-light .msg-body{color:rgba(0,0,0,0.8)}
 body.theme-light .s-title{color:rgba(0,0,0,0.35)}
@@ -197,11 +191,9 @@ body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
 
     <div class="sidebar">
       <div class="s-section"><div class="s-title">Fotos recientes</div></div>
-      <div class="photo-strip" id="photo-strip"></div>
+      <div class="photo-grid" id="photo-strip"></div>
       <div class="reaction-summary" id="reaction-summary"></div>
-      <div class="messages-list" id="messages-list">
-        <div class="s-title">Audios recibidos</div>
-      </div>
+      <div style="flex:1"></div>
       <div class="qr-section">
         <div class="qr-inner">
           <div class="qr-box"><canvas id="qr-canvas" width="66" height="66"></canvas></div>
@@ -571,7 +563,7 @@ function rotateFeatured(){
 
 function buildStrip(){
   const strip=document.getElementById('photo-strip');strip.innerHTML='';
-  photoPosts.slice(0,8).forEach((p,i)=>addToStrip(p,i));
+  photoPosts.slice(0,6).forEach((p,i)=>addToStrip(p,i));
 }
 
 function addToStrip(post,idx){
@@ -580,7 +572,7 @@ function addToStrip(post,idx){
   img.className='strip-img';img.src=post.content;
   img.onclick=()=>showFeatured(post,idx||0);
   strip.insertBefore(img,strip.firstChild);
-  if(strip.children.length>8) strip.removeChild(strip.lastChild);
+  if(strip.children.length>6) strip.removeChild(strip.lastChild);
 }
 
 function buildMessages(){
