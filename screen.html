@@ -104,6 +104,8 @@ body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
 .sbar-bg{background:rgba(255,255,255,0.08);border-radius:8px;height:14px;overflow:hidden}
 .sbar-fill{height:100%;border-radius:8px;background:var(--accent);transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1)}
 .sbar-fill.winner{background:var(--gold)}
+@keyframes bubbleIn{from{transform:scale(0.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+@keyframes bubbleOut{from{transform:scale(1);opacity:1}to{transform:scale(0.8) translateY(-20px);opacity:0}}
 @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 @keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 @keyframes particleFly{0%{transform:translateY(100vh) rotate(0deg);opacity:1}100%{transform:translateY(-20vh) rotate(720deg);opacity:0}}
@@ -125,6 +127,16 @@ body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
     </div>
     <div id="poll-screen-bars" style="display:flex;flex-direction:column;gap:14px"></div>
     <div id="poll-screen-total" style="text-align:center;margin-top:20px;font-size:14px;color:rgba(255,255,255,0.4)"></div>
+  </div>
+</div>
+
+<!-- MESSAGE BUBBLE OVERLAY -->
+<div id="msg-bubble-overlay" style="position:fixed;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
+  <div id="msg-bubble-card" style="background:#fff;border-radius:28px;padding:36px 44px;max-width:680px;width:90%;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5);animation:bubbleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)">
+    <div style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:24px solid #fff"></div>
+    <div id="msg-bubble-icon" style="font-size:36px;margin-bottom:14px">💬</div>
+    <div id="msg-bubble-text" style="font-family:'Syne',sans-serif;font-size:clamp(18px,3.5vw,38px);font-weight:800;color:#1a1a1a;line-height:1.35;margin-bottom:16px"></div>
+    <div id="msg-bubble-author" style="font-size:16px;font-weight:600;color:#888"></div>
   </div>
 </div>
 
@@ -188,7 +200,7 @@ body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
       <div class="photo-strip" id="photo-strip"></div>
       <div class="reaction-summary" id="reaction-summary"></div>
       <div class="messages-list" id="messages-list">
-        <div class="s-title">Mensajes en vivo</div>
+        <div class="s-title">Audios recibidos</div>
       </div>
       <div class="qr-section">
         <div class="qr-inner">
@@ -372,6 +384,49 @@ function showNextWish(){
   },readTime);
 }
 
+// ── MESSAGE BUBBLES ──────────────────────────────────────────
+let msgBubbleQueue=[];
+let msgBubbleShowing=false;
+const shownMsgIds=new Set();
+
+// Fun icons for variety
+const MSG_ICONS=['💬','😂','❤️','🔥','😍','🎉','👏','💕','😎','🥳','💯','✨'];
+
+async function pollMessages(){
+  const msgs=await api('posts?event_id=eq.'+eventId+'&type=eq.message&approved=eq.true&order=created_at.asc');
+  if(!Array.isArray(msgs)) return;
+  const newMsgs=msgs.filter(m=>m.id&&!shownMsgIds.has(m.id)&&!msgBubbleQueue.find(q=>q.id===m.id));
+  if(newMsgs.length){
+    msgBubbleQueue.push(...newMsgs);
+    if(!msgBubbleShowing) showNextBubble();
+  }
+}
+
+function showNextBubble(){
+  if(!msgBubbleQueue.length){msgBubbleShowing=false;return;}
+  msgBubbleShowing=true;
+  const msg=msgBubbleQueue.shift();
+  shownMsgIds.add(msg.id);
+  const icon=MSG_ICONS[Math.floor(Math.random()*MSG_ICONS.length)];
+  document.getElementById('msg-bubble-icon').textContent=icon;
+  document.getElementById('msg-bubble-text').textContent=msg.content;
+  document.getElementById('msg-bubble-author').textContent='— '+msg.author;
+  const overlay=document.getElementById('msg-bubble-overlay');
+  const card=document.getElementById('msg-bubble-card');
+  card.style.animation='none'; void card.offsetWidth;
+  card.style.animation='bubbleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)';
+  overlay.style.display='flex';
+  // Read time: min 4s + extra per char
+  const readTime=Math.max(4000, 3000+msg.content.length*60);
+  setTimeout(()=>{
+    card.style.animation='bubbleOut 0.4s ease forwards';
+    setTimeout(()=>{
+      overlay.style.display='none';
+      setTimeout(showNextBubble, 800);
+    },400);
+  }, readTime);
+}
+
 // ── POLL SCREEN ──────────────────────────────────────────────
 let activePollId=null;
 let pollScreenVisible=false;
@@ -441,6 +496,7 @@ async function init(){
   setInterval(()=>{if(currentFeaturedPostId) loadReactions();},4000);
   setInterval(pollWishes,5000);
   setInterval(pollForPolls,4000);
+  setInterval(pollMessages,3500);
 }
 
 async function loadPosts(){
@@ -531,11 +587,11 @@ function buildMessages(){
   const list=document.getElementById('messages-list');
   const title=list.querySelector('.s-title');
   list.innerHTML='';list.appendChild(title);
-  posts.filter(p=>p.type==='message'||p.type==='audio').slice(0,5).forEach(p=>addMsgCard(p,false));
+  posts.filter(p=>p.type==='audio').slice(0,5).forEach(p=>addMsgCard(p,false));
 }
 
 function addMsgCard(post,animate){
-  if(post.type!=='message'&&post.type!=='audio') return;
+  if(post.type!=='audio') return; // messages show as bubbles now
   const list=document.getElementById('messages-list');
   const card=document.createElement('div');card.className='msg-item';
   if(!animate) card.style.animation='none';
