@@ -597,6 +597,9 @@ function selectEvent(ev,cardEl){
   document.getElementById('sidebar-event').textContent=ev.name;
   document.querySelectorAll('.event-card').forEach(c=>c.classList.remove('selected'));
   cardEl.classList.add('selected');
+  // Stop auto-approve from previous event
+  clearInterval(autoApproveInterval);
+  autoApprove=false;
   toast('✓ "'+ev.name+'" seleccionado');
 }
 
