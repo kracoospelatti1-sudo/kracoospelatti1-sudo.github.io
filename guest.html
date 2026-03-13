@@ -53,6 +53,13 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;max-wid
 /* UPLOAD */
 .upload-zone{width:100%;min-height:130px;border:2px dashed var(--border);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--muted);font-size:13px;transition:all 0.2s;background:var(--surface);position:relative;overflow:hidden}
 .upload-zone:hover{border-color:var(--pink);color:var(--pink)}
+/* ORIENTATION WARNING */
+.orient-warn{display:none;background:#fff3cd;border:1.5px solid #f5a623;border-radius:12px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:#7a4f00;align-items:center;gap:10px}
+.orient-warn.show{display:flex}
+.orient-warn .ow-ico{font-size:24px;flex-shrink:0}
+.orient-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px;vertical-align:middle}
+.tag-h{background:rgba(34,197,94,0.15);color:#16a34a}
+.tag-v{background:rgba(245,166,35,0.15);color:#b45309}
 .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .upload-zone .uico{font-size:32px;line-height:1}
 .upload-zone .uhint{font-size:11px;opacity:0.6}
@@ -155,11 +162,18 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
       <button class="type-btn" onclick="selectType('vote',this);loadVotePolls()" style="width:100%;flex-direction:row;gap:10px;padding:14px 20px;justify-content:center;border-color:#f5a623;background:rgba(245,166,35,0.06)"><span class="ico" style="font-size:20px">🗳</span><span style="font-size:14px;font-weight:700;color:#f5a623">Votaciones activas</span></button>
     <!-- PHOTO -->
     <div class="form-section active" id="section-photo">
+      <div class="orient-warn" id="orient-warn">
+        <span class="ow-ico">📱</span>
+        <div>
+          <strong>Girá el celular horizontalmente</strong><br>
+          Las fotos se ven mejor en la pantalla del evento si las sacás en modo paisaje 🌄
+        </div>
+      </div>
       <div class="upload-zone" id="upload-zone">
         <input type="file" accept="image/*" capture="environment" id="file-input" onchange="handleFileSelect(this)"/>
         <span class="uico">📸</span>
         <span>Tocá para sacar o elegir una foto</span>
-        <span class="uhint">JPG, PNG · Máx 8MB</span>
+        <span class="uhint">JPG, PNG · Máx 8MB · Mejor en horizontal</span>
       </div>
 
       <!-- FRAME PICKER -->
@@ -413,6 +427,16 @@ async function init(){
     document.getElementById('page-loading').style.display='none';
     document.getElementById('app').style.display='block';
     buildFramePicker();
+    // Live orientation warning while camera is not open
+    if(window.DeviceOrientationEvent){
+      window.addEventListener('orientationchange',()=>{
+        const isPortrait=window.innerHeight>window.innerWidth;
+        const zone=document.getElementById('upload-zone');
+        if(zone&&zone.style.display!=='none'){
+          zone.style.borderColor=isPortrait?'#f5a623':'var(--border)';
+        }
+      });
+    }
     // Restore saved name
     const savedName=localStorage.getItem('ew_guest_name');
     if(savedName) document.getElementById('guest-name').value=savedName;
@@ -451,12 +475,43 @@ function handleFileSelect(input){
   reader.onload=e=>{
     const img=new Image();
     img.onload=()=>{
-      originalImage=img;
-      renderPreviewCanvas();
-      document.getElementById('canvas-preview-wrap').style.display='block';
-      document.getElementById('upload-zone').style.display='none';
-      document.getElementById('frame-picker').style.display='block';
-      buildFramePicker();
+      const isVertical=img.naturalHeight>img.naturalWidth;
+      // Show/hide orientation warning
+      const warn=document.getElementById('orient-warn');
+      if(isVertical) warn.classList.add('show');
+      else warn.classList.remove('show');
+      // Auto-crop vertical to 16:9 landscape
+      if(isVertical){
+        const canvas=document.createElement('canvas');
+        const targetW=img.naturalHeight*(16/9);
+        const targetH=img.naturalHeight;
+        // If width allows 16:9 crop, use it; otherwise use full width → letterbox
+        const srcW=Math.min(img.naturalWidth, targetW);
+        const srcH=srcW*(9/16);
+        const srcX=(img.naturalWidth-srcW)/2;
+        const srcY=(img.naturalHeight-srcH)/2;
+        canvas.width=Math.round(srcW);
+        canvas.height=Math.round(srcH);
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, canvas.width, canvas.height);
+        const cropped=new Image();
+        cropped.onload=()=>{
+          originalImage=cropped;
+          renderPreviewCanvas();
+          document.getElementById('canvas-preview-wrap').style.display='block';
+          document.getElementById('upload-zone').style.display='none';
+          document.getElementById('frame-picker').style.display='block';
+          buildFramePicker();
+        };
+        cropped.src=canvas.toDataURL('image/jpeg',0.95);
+      } else {
+        originalImage=img;
+        renderPreviewCanvas();
+        document.getElementById('canvas-preview-wrap').style.display='block';
+        document.getElementById('upload-zone').style.display='none';
+        document.getElementById('frame-picker').style.display='block';
+        buildFramePicker();
+      }
     };
     img.src=e.target.result;
   };
@@ -470,6 +525,7 @@ function removePhoto(){
   document.getElementById('upload-zone').style.display='flex';
   document.getElementById('frame-picker').style.display='none';
   document.getElementById('file-input').value='';
+  document.getElementById('orient-warn').classList.remove('show');
 }
 
 async function sendPhoto(){
