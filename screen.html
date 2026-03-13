@@ -314,6 +314,7 @@ function updateReactionSummary(){
 // ── WISH WALL ────────────────────────────────────────────────
 let wishQueue=[];
 let wishShowing=false;
+const playedAudioIds=new Set();
 
 // Persist shown wish IDs in sessionStorage so reloads don't repeat them
 function getShownWishIds(){
@@ -463,7 +464,15 @@ async function pollPosts(){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
         photoPosts.unshift(p);addToStrip(p);showFeatured(p,0);
-      } else {addMsgCard(p,true);}
+      } else {
+        addMsgCard(p,true);
+        if(p.type==='audio'&&p.content&&!playedAudioIds.has(p.id)){
+          playedAudioIds.add(p.id);
+          setTimeout(()=>{
+            try{const a=new Audio(p.content);a.play();}catch(e){}
+          },800);
+        }
+      }
     });
     playSound(cfg.sound);showNewBadge();
   }
