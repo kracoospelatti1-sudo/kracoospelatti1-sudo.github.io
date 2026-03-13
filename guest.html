@@ -33,6 +33,10 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;max-wid
 .wish-btn.active{border-color:#ff6b9d;background:linear-gradient(135deg,rgba(240,23,111,0.08),rgba(255,107,157,0.08))}
 .wish-btn .wish-btn-label{color:var(--muted);font-weight:600}
 .wish-btn.active .wish-btn-label{color:#f0176f;font-weight:700}
+.vote-btn{border-color:var(--border);color:var(--muted)}
+.vote-btn.active{border-color:#f5a623;background:rgba(245,166,35,0.08)}
+.vote-btn .vote-btn-label{color:var(--muted);font-weight:600}
+.vote-btn.active .vote-btn-label{color:#f5a623;font-weight:700}
 /* VOTE */
 .poll-item{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px}
 .poll-item-question{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:14px;color:var(--text);line-height:1.35}
@@ -159,7 +163,7 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
     </div>
     <div style="margin-bottom:20px">
       <button class="type-btn wish-btn" onclick="selectType('wish',this)" style="width:100%;flex-direction:row;gap:10px;padding:14px 20px;justify-content:center"><span class="ico" style="font-size:20px">💌</span><span class="wish-btn-label" style="font-size:14px">Mensaje especial para el festejado</span></button>
-      <button class="type-btn" onclick="selectType('vote',this);loadVotePolls()" style="width:100%;flex-direction:row;gap:10px;padding:14px 20px;justify-content:center;border-color:#f5a623;background:rgba(245,166,35,0.06)"><span class="ico" style="font-size:20px">🗳</span><span style="font-size:14px;font-weight:700;color:#f5a623">Votaciones activas</span></button>
+      <button class="type-btn vote-btn" onclick="selectType('vote',this);loadVotePolls()" style="width:100%;flex-direction:row;gap:10px;padding:14px 20px;justify-content:center"><span class="ico" style="font-size:20px">🗳</span><span class="vote-btn-label" style="font-size:14px;font-weight:600">Votaciones activas</span></button>
     <!-- PHOTO -->
     <div class="form-section active" id="section-photo">
       <div class="orient-warn" id="orient-warn">
