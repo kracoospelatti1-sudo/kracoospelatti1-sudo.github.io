@@ -747,8 +747,19 @@ input[type=range]{accent-color:var(--pink)}
       <div id="polls-content" style="display:none">
         <div class="card" style="margin-bottom:20px">
           <div class="card-title">Nueva votación</div>
-          <div class="fg full" style="margin-bottom:12px">
+          <div class="fg" style="margin-bottom:12px">
             <div><label>Pregunta</label><input type="text" id="poll-question" placeholder="Ej: ¿Cuál es tu canción favorita de la noche?"/></div>
+            <div><label>Duración</label>
+              <select id="poll-duration">
+                <option value="0">Sin límite de tiempo</option>
+                <option value="30">30 segundos</option>
+                <option value="60">1 minuto</option>
+                <option value="120">2 minutos</option>
+                <option value="180">3 minutos</option>
+                <option value="300">5 minutos</option>
+                <option value="600">10 minutos</option>
+              </select>
+            </div>
           </div>
           <label style="margin-bottom:8px;display:block">Opciones (mínimo 2)</label>
           <div id="poll-options-list">
@@ -1641,14 +1652,18 @@ async function createPoll(){
   if(options.length<2){toast('❌ Necesitás al menos 2 opciones');return;}
   const btn=document.getElementById('create-poll-btn');
   btn.disabled=true;btn.textContent='Creando...';
+  const duration=parseInt(document.getElementById('poll-duration').value)||0;
+  const ends_at=duration>0 ? new Date(Date.now()+duration*1000).toISOString() : null;
   const res=await api('polls',{method:'POST',body:JSON.stringify({
-    event_id:selectedEvent.id, question, options, active:true
+    event_id:selectedEvent.id, question, options, active:true,
+    duration_secs:duration, ends_at
   })});
   btn.disabled=false;btn.textContent='Crear votación →';
   if(Array.isArray(res)&&res[0]?.id){
     toast('🗳 Votación creada y visible para los invitados!');
     document.getElementById('poll-question').value='';
     document.querySelectorAll('.poll-opt-input').forEach((el,i)=>{el.value='';el.placeholder='Opción '+(i+1);});
+    document.getElementById('poll-duration').value='0';
     while(document.getElementById('poll-options-list').children.length>2){
       document.getElementById('poll-options-list').removeChild(document.getElementById('poll-options-list').lastChild);
     }
@@ -1682,7 +1697,16 @@ async function loadPolls(){
         <div class="poll-bar-bg"><div class="poll-bar-fill${isWinner?' winner':''}" style="width:${pct}%"></div></div>
       </div>`;
     }).join('');
+    // Calculate remaining time
+    let timeLabel='';
+    if(poll.active&&poll.ends_at){
+      const remaining=Math.max(0,Math.round((new Date(poll.ends_at)-Date.now())/1000));
+      timeLabel=remaining>0?`⏱ ${remaining}s restantes`:'⏱ Tiempo agotado';
+    } else if(poll.active&&poll.duration_secs>0){
+      timeLabel='⏱ Sin tiempo registrado';
+    }
     card.innerHTML=`<div class="poll-question">${poll.question}</div>${barsHtml}
+      ${timeLabel?`<div style="font-size:12px;color:var(--gold);margin-bottom:8px">${timeLabel}</div>`:''}
       <div class="poll-meta">
         <span class="poll-total">📊 ${total} voto${total!==1?'s':''} en total</span>
         <div style="display:flex;gap:8px;align-items:center">

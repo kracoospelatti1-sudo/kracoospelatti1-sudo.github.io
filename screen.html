@@ -495,15 +495,31 @@ function showNextWish(){
 
 // ── POLL SCREEN ───────────────────────────────────────────────
 let pollScreenVisible=false;
+let pollTimerInterval=null;
+let currentPollData=null;
 
 async function pollForPolls(){
   const polls=await api('polls?event_id=eq.'+eventId+'&active=eq.true&order=created_at.desc&limit=1');
   if(!Array.isArray(polls)||!polls.length){
-    if(pollScreenVisible){document.getElementById('poll-overlay').style.display='none';pollScreenVisible=false;}
+    if(pollScreenVisible){
+      document.getElementById('poll-overlay').style.display='none';
+      pollScreenVisible=false;
+      clearInterval(pollTimerInterval);
+    }
     return;
   }
   const poll=polls[0];
+  // Auto-close if time is up
+  if(poll.ends_at&&new Date(poll.ends_at)<=new Date()){
+    await api('polls?id=eq.'+poll.id,{method:'PATCH',body:'{"active":false}'});
+    if(pollScreenVisible){
+      document.getElementById('poll-overlay').style.display='none';
+      pollScreenVisible=false;clearInterval(pollTimerInterval);
+    }
+    return;
+  }
   const votes=await api('poll_votes?poll_id=eq.'+poll.id+'&select=option_idx');
+  currentPollData=poll;
   renderPollScreen(poll,Array.isArray(votes)?votes:[]);
 }
 
@@ -524,6 +540,46 @@ function renderPollScreen(poll,votes){
   });
   document.getElementById('poll-overlay').style.display='flex';
   pollScreenVisible=true;
+  startPollTimer(poll);
+}
+
+function startPollTimer(poll){
+  clearInterval(pollTimerInterval);
+  let timerEl=document.getElementById('poll-screen-timer');
+  if(!timerEl){
+    timerEl=document.createElement('div');
+    timerEl.id='poll-screen-timer';
+    timerEl.style.cssText='text-align:center;margin-top:20px;font-size:48px;font-weight:800;font-family:var(--font-title);';
+    document.getElementById('poll-screen-total').after(timerEl);
+  }
+  if(!poll.ends_at||!poll.duration_secs){
+    timerEl.style.display='none';
+    return;
+  }
+  timerEl.style.display='block';
+  function updateTimer(){
+    const remaining=Math.max(0,Math.round((new Date(poll.ends_at)-Date.now())/1000));
+    const m=Math.floor(remaining/60);
+    const s=remaining%60;
+    timerEl.textContent=m>0?m+':'+String(s).padStart(2,'0'):s+'s';
+    // Color changes
+    if(remaining<=10) timerEl.style.color='#ef4444';
+    else if(remaining<=30) timerEl.style.color='var(--gold)';
+    else timerEl.style.color='var(--accent)';
+    // Pulse when low
+    if(remaining<=10){
+      timerEl.style.animation='recPulse 0.5s infinite';
+    } else {
+      timerEl.style.animation='none';
+    }
+    if(remaining<=0){
+      clearInterval(pollTimerInterval);
+      timerEl.textContent='⏰ ¡Tiempo!';
+      timerEl.style.color='#ef4444';
+    }
+  }
+  updateTimer();
+  pollTimerInterval=setInterval(updateTimer,1000);
 }
 
 // ── PHOTOS ────────────────────────────────────────────────────

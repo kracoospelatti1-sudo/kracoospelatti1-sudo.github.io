@@ -806,8 +806,10 @@ async function loadVotePolls(){
   document.getElementById('vote-list').innerHTML='';
   document.getElementById('vote-empty').style.display='none';
   try{
-    const polls=await apiRest('polls?event_id=eq.'+eventId+'&active=eq.true&order=created_at.desc');
+    let polls=await apiRest('polls?event_id=eq.'+eventId+'&active=eq.true&order=created_at.desc');
     document.getElementById('vote-loading').style.display='none';
+    // Filter out expired polls
+    polls=polls.filter(p=>!p.ends_at||new Date(p.ends_at)>new Date());
     if(!polls.length){document.getElementById('vote-empty').style.display='block';return;}
     // Load vote counts
     const votes=await apiRest('poll_votes?event_id=eq.'+eventId+'&select=poll_id,option_idx');
@@ -830,7 +832,22 @@ function renderVotePolls(polls, votes){
     const myVote=votedPolls[poll.id];
     const hasVoted=myVote!==undefined;
     const div=document.createElement('div');div.className='poll-item';
-    let content=`<div class="poll-item-question">${poll.question}</div>`;
+    // Timer badge
+    let timerBadge='';
+    if(poll.ends_at){
+      const remaining=Math.max(0,Math.round((new Date(poll.ends_at)-Date.now())/1000));
+      if(remaining>0){
+        const m=Math.floor(remaining/60),s=remaining%60;
+        const timeStr=m>0?m+':'+String(s).padStart(2,'0'):s+'s';
+        const color=remaining<=10?'#ef4444':remaining<=30?'#f5a623':'#22c55e';
+        timerBadge=`<div style="display:inline-flex;align-items:center;gap:5px;background:${color}18;border:1px solid ${color}44;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:${color};margin-bottom:12px" id="timer-${poll.id}">⏱ ${timeStr}</div>`;
+        // Start live countdown
+        setTimeout(()=>startGuestPollTimer(poll.id, poll.ends_at), 100);
+      } else {
+        timerBadge=`<div style="display:inline-flex;align-items:center;gap:5px;background:#ef444418;border:1px solid #ef444444;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#ef4444;margin-bottom:12px">⏰ Tiempo agotado</div>`;
+      }
+    }
+    let content=`<div class="poll-item-question">${poll.question}</div>${timerBadge}`;
     if(hasVoted){
       // Show results
       content+=opts.map((opt,i)=>{
@@ -872,6 +889,30 @@ async function castVote(pollId, optionIdx, container, pollEncoded){
     localStorage.setItem('ew_voted_'+eventId,JSON.stringify(votedPolls));
     showFormError('photo-error','Error al votar: '+e.message);
   }
+}
+
+// ── POLL TIMER ────────────────────────────────────────────────
+const pollTimers={};
+function startGuestPollTimer(pollId, endsAt){
+  if(pollTimers[pollId]) clearInterval(pollTimers[pollId]);
+  pollTimers[pollId]=setInterval(()=>{
+    const el=document.getElementById('timer-'+pollId);
+    if(!el){clearInterval(pollTimers[pollId]);return;}
+    const remaining=Math.max(0,Math.round((new Date(endsAt)-Date.now())/1000));
+    const m=Math.floor(remaining/60),s=remaining%60;
+    const timeStr=m>0?m+':'+String(s).padStart(2,'0'):s+'s';
+    const color=remaining<=10?'#ef4444':remaining<=30?'#f5a623':'#22c55e';
+    el.style.color=color;
+    el.style.borderColor=color+'44';
+    el.style.background=color+'18';
+    el.textContent='⏱ '+timeStr;
+    if(remaining<=0){
+      clearInterval(pollTimers[pollId]);
+      el.textContent='⏰ Tiempo agotado';
+      // Reload polls to remove expired ones
+      setTimeout(loadVotePolls,1000);
+    }
+  },1000);
 }
 
 // ── SPAM CONTROL ─────────────────────────────────────────────
