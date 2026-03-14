@@ -243,6 +243,8 @@ input[type=range]{accent-color:var(--pink)}
     <div style="margin-top:auto;font-size:11px;color:var(--muted);padding:10px 14px">
       Evento activo:<br>
       <span id="sidebar-event" style="color:var(--pink);font-weight:600">Ninguno</span>
+      </div>
+      <button onclick="logout()" style="width:100%;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left;transition:all 0.2s;margin-top:8px" onmouseenter="this.style.borderColor='#ef4444';this.style.color='#ef4444'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">🚪 Cerrar sesión</button>
     </div>
   </nav>
   <main class="main">
@@ -1017,6 +1019,12 @@ const SUPABASE_KEY = 'sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 // ── PIN ──────────────────────────────────────────────────────
 const DEFAULT_PIN = '1234';
 function getPin(){ return localStorage.getItem('ew_pin')||DEFAULT_PIN; }
+function logout(){
+  if(!confirm('¿Cerrar sesión?')) return;
+  sessionStorage.clear();
+  location.reload();
+}
+
 function startGlobalPoller(){
   setInterval(async()=>{
     if(!selectedEvent) return;
