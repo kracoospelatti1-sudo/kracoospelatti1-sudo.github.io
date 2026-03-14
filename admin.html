@@ -109,6 +109,14 @@ input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1p
 
 .print-sheet{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px;margin-top:16px}
 .print-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:12px;break-inside:avoid}
+/* DESIGN EDITOR */
+.design-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:4px}
+.design-field{display:flex;flex-direction:column;gap:6px}
+.design-field label{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0.3px}
+.color-pick-row{display:flex;align-items:center;gap:8px}
+.color-pick-row input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;flex-shrink:0}
+.hex-input{flex:1;font-family:monospace;font-size:13px;text-transform:uppercase}
+input[type=range]{accent-color:var(--pink)}
 /* POLLS */
 .poll-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
 .poll-question{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px}
@@ -278,11 +286,35 @@ input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1p
     <!-- DESIGN -->
     <div class="page" id="page-design">
       <div class="page-title">Diseño de pantalla</div>
-      <div class="page-sub">Personalizá cómo se ve la pantalla del evento</div>
+      <div class="page-sub">Personalizá colores, fuentes y estilo de la pantalla del evento</div>
       <div class="notice" id="design-notice">⚠️ Seleccioná un evento primero</div>
       <div id="design-content" style="display:none">
+
+        <!-- LIVE PREVIEW -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title">Vista previa en vivo</div>
+          <div id="design-preview" style="width:100%;height:200px;border-radius:12px;overflow:hidden;position:relative;border:1px solid var(--border)">
+            <div id="dp-bg" style="position:absolute;inset:0"></div>
+            <div id="dp-header" style="position:absolute;top:0;left:0;right:0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.2)">
+              <div>
+                <div id="dp-title" style="font-size:14px;font-weight:800">Nombre del evento</div>
+                <div id="dp-sub" style="font-size:10px;opacity:0.5">Salón · Fecha</div>
+              </div>
+              <div id="dp-live" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px">EN VIVO</div>
+            </div>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
+              <div id="dp-bubble" style="background:#fff;border-radius:16px;padding:12px 20px;max-width:60%;text-align:center">
+                <div id="dp-bubble-text" style="font-size:13px;font-weight:800;color:#1a1a1a">¡Qué lindo evento! 🎉</div>
+                <div id="dp-bubble-author" style="font-size:10px;color:#888;margin-top:4px">— Valentina</div>
+              </div>
+            </div>
+            <div id="dp-accent-bar" style="position:absolute;bottom:0;left:0;right:0;height:3px"></div>
+          </div>
+        </div>
+
+        <!-- TEMPLATES -->
         <div class="card">
-          <div class="card-title">Plantilla</div>
+          <div class="card-title">Plantillas rápidas</div>
           <div class="template-grid">
             <div class="tpl-card tpl-dark active" onclick="selectTemplate('dark',this)"><div class="tpl-label">Oscuro clásico</div></div>
             <div class="tpl-card tpl-light" onclick="selectTemplate('light',this)"><div class="tpl-label">Claro elegante</div></div>
@@ -292,29 +324,144 @@ input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1p
             <div class="tpl-card tpl-ocean" onclick="selectTemplate('ocean',this)"><div class="tpl-label">Océano profundo</div></div>
           </div>
         </div>
+
+        <!-- COLORS -->
         <div class="card">
-          <div class="card-title">Colores personalizados</div>
-          <div class="color-row"><label>Color de fondo</label><input type="color" id="c-bg" value="#07070f" oninput="previewTheme()"/></div>
-          <div class="color-row"><label>Color de acento</label><input type="color" id="c-accent" value="#f0176f" oninput="previewTheme()"/></div>
-          <div class="color-row"><label>Color de texto</label><input type="color" id="c-text" value="#ffffff" oninput="previewTheme()"/></div>
-          <div class="theme-preview" id="theme-preview">
-            <span>Vista previa de colores</span>
+          <div class="card-title">🎨 Colores</div>
+          <div class="design-grid">
+            <div class="design-field">
+              <label>Fondo de pantalla</label>
+              <div class="color-pick-row">
+                <input type="color" id="c-bg" value="#07070f" oninput="previewTheme()"/>
+                <input type="text" id="c-bg-hex" value="#07070f" class="hex-input" oninput="syncColorFromHex('c-bg','c-bg-hex')"/>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Color de acento</label>
+              <div class="color-pick-row">
+                <input type="color" id="c-accent" value="#f0176f" oninput="previewTheme()"/>
+                <input type="text" id="c-accent-hex" value="#f0176f" class="hex-input" oninput="syncColorFromHex('c-accent','c-accent-hex')"/>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Texto principal</label>
+              <div class="color-pick-row">
+                <input type="color" id="c-text" value="#ffffff" oninput="previewTheme()"/>
+                <input type="text" id="c-text-hex" value="#ffffff" class="hex-input" oninput="syncColorFromHex('c-text','c-text-hex')"/>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Burbuja de mensaje</label>
+              <div class="color-pick-row">
+                <input type="color" id="c-bubble" value="#ffffff" oninput="previewTheme()"/>
+                <input type="text" id="c-bubble-hex" value="#ffffff" class="hex-input" oninput="syncColorFromHex('c-bubble','c-bubble-hex')"/>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Texto de burbuja</label>
+              <div class="color-pick-row">
+                <input type="color" id="c-bubble-text" value="#1a1a1a" oninput="previewTheme()"/>
+                <input type="text" id="c-bubble-text-hex" value="#1a1a1a" class="hex-input" oninput="syncColorFromHex('c-bubble-text','c-bubble-text-hex')"/>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Color header</label>
+              <div class="color-pick-row">
+                <input type="color" id="c-header" value="#0c0c14" oninput="previewTheme()"/>
+                <input type="text" id="c-header-hex" value="#0c0c14" class="hex-input" oninput="syncColorFromHex('c-header','c-header-hex')"/>
+              </div>
+            </div>
           </div>
         </div>
+
+        <!-- FONTS -->
         <div class="card">
-          <div class="card-title">Opciones</div>
-          <div class="fg">
-            <div><label>Tiempo entre fotos (seg)</label><input type="number" id="cfg-interval" value="6" min="3" max="30"/></div>
-            <div><label>Sonido al recibir contenido</label>
+          <div class="card-title">🔤 Fuentes</div>
+          <div class="design-grid">
+            <div class="design-field">
+              <label>Fuente de títulos</label>
+              <select id="f-title" onchange="previewTheme()">
+                <option value="Syne">Syne (por defecto)</option>
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Oswald">Oswald</option>
+                <option value="Raleway">Raleway</option>
+                <option value="Bebas Neue">Bebas Neue</option>
+                <option value="Dancing Script">Dancing Script</option>
+                <option value="Pacifico">Pacifico</option>
+                <option value="Great Vibes">Great Vibes</option>
+                <option value="Righteous">Righteous</option>
+                <option value="Lobster">Lobster</option>
+                <option value="Anton">Anton</option>
+              </select>
+            </div>
+            <div class="design-field">
+              <label>Fuente de texto</label>
+              <select id="f-body" onchange="previewTheme()">
+                <option value="DM Sans">DM Sans (por defecto)</option>
+                <option value="Inter">Inter</option>
+                <option value="Lato">Lato</option>
+                <option value="Nunito">Nunito</option>
+                <option value="Poppins">Poppins</option>
+                <option value="Quicksand">Quicksand</option>
+                <option value="Source Sans 3">Source Sans 3</option>
+                <option value="Ubuntu">Ubuntu</option>
+              </select>
+            </div>
+            <div class="design-field">
+              <label>Tamaño nombre del evento</label>
+              <div style="display:flex;align-items:center;gap:10px">
+                <input type="range" id="fs-title" min="16" max="40" value="22" oninput="previewTheme();document.getElementById('fs-title-val').textContent=this.value+'px'" style="flex:1"/>
+                <span id="fs-title-val" style="font-size:12px;color:var(--muted);min-width:32px">22px</span>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Tamaño texto burbuja</label>
+              <div style="display:flex;align-items:center;gap:10px">
+                <input type="range" id="fs-bubble" min="14" max="52" value="32" oninput="previewTheme();document.getElementById('fs-bubble-val').textContent=this.value+'px'" style="flex:1"/>
+                <span id="fs-bubble-val" style="font-size:12px;color:var(--muted);min-width:32px">32px</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OPTIONS -->
+        <div class="card">
+          <div class="card-title">⚙️ Opciones</div>
+          <div class="design-grid">
+            <div class="design-field">
+              <label>Tiempo entre fotos (seg)</label>
+              <input type="number" id="cfg-interval" value="6" min="3" max="60"/>
+            </div>
+            <div class="design-field">
+              <label>Sonido al recibir contenido</label>
               <select id="cfg-sound">
                 <option value="chime">Campanita 🔔</option>
                 <option value="pop">Pop suave 💫</option>
                 <option value="none">Sin sonido</option>
               </select>
             </div>
+            <div class="design-field">
+              <label>Opacidad overlay foto</label>
+              <div style="display:flex;align-items:center;gap:10px">
+                <input type="range" id="cfg-overlay" min="0" max="90" value="60" oninput="document.getElementById('cfg-overlay-val').textContent=this.value+'%'" style="flex:1"/>
+                <span id="cfg-overlay-val" style="font-size:12px;color:var(--muted);min-width:32px">60%</span>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Radio de burbuja</label>
+              <div style="display:flex;align-items:center;gap:10px">
+                <input type="range" id="cfg-radius" min="0" max="40" value="28" oninput="previewTheme();document.getElementById('cfg-radius-val').textContent=this.value+'px'" style="flex:1"/>
+                <span id="cfg-radius-val" style="font-size:12px;color:var(--muted);min-width:32px">28px</span>
+              </div>
+            </div>
           </div>
-          <button class="btn-pink" onclick="saveDesign()">Guardar diseño →</button>
+          <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+            <button class="btn-pink" onclick="saveDesign()">💾 Guardar diseño</button>
+            <button class="btn-ghost" onclick="resetDesign()">↺ Resetear</button>
+          </div>
         </div>
+
       </div>
     </div>
 
@@ -725,12 +872,12 @@ function downloadQR(){
 
 // ── DESIGN ───────────────────────────────────────────────────
 const TEMPLATES = {
-  dark:  {bg:'#07070f',accent:'#f0176f',text:'#ffffff'},
-  light: {bg:'#f8f4ef',accent:'#e91e8c',text:'#1a1a1a'},
-  neon:  {bg:'#000011',accent:'#00f5ff',text:'#ffffff'},
-  floral:{bg:'#1a0a14',accent:'#ff6b9d',text:'#fff0f5'},
-  gold:  {bg:'#0d0900',accent:'#f5a623',text:'#fff8e0'},
-  ocean: {bg:'#021020',accent:'#0ea5e9',text:'#e0f4ff'},
+  dark:  {bg:'#07070f',header:'#0c0c14',accent:'#f0176f',text:'#ffffff',bubble:'#ffffff',bubbleText:'#1a1a1a',fontTitle:'Syne',fontBody:'DM Sans'},
+  light: {bg:'#f8f4ef',header:'#ede8e0',accent:'#e91e8c',text:'#1a1a1a',bubble:'#1a1a1a',bubbleText:'#ffffff',fontTitle:'Playfair Display',fontBody:'Lato'},
+  neon:  {bg:'#000011',header:'#00001a',accent:'#00f5ff',text:'#ffffff',bubble:'#00f5ff',bubbleText:'#000011',fontTitle:'Bebas Neue',fontBody:'Inter'},
+  floral:{bg:'#1a0a14',header:'#240d1c',accent:'#ff6b9d',text:'#fff0f5',bubble:'#fff0f5',bubbleText:'#1a0a14',fontTitle:'Great Vibes',fontBody:'Nunito'},
+  gold:  {bg:'#0d0900',header:'#1a1200',accent:'#f5a623',text:'#fff8e0',bubble:'#f5a623',bubbleText:'#0d0900',fontTitle:'Playfair Display',fontBody:'Lato'},
+  ocean: {bg:'#021020',header:'#041830',accent:'#0ea5e9',text:'#e0f4ff',bubble:'#e0f4ff',bubbleText:'#021020',fontTitle:'Raleway',fontBody:'Source Sans 3'},
 };
 
 function showDesign(){
@@ -738,56 +885,121 @@ function showDesign(){
   const content=document.getElementById('design-content');
   if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
   notice.classList.remove('show');content.style.display='block';
-  // Load saved design
   const saved=JSON.parse(localStorage.getItem('ew_design_'+selectedEvent.id)||'{}');
-  if(saved.bg) document.getElementById('c-bg').value=saved.bg;
-  if(saved.accent) document.getElementById('c-accent').value=saved.accent;
-  if(saved.text) document.getElementById('c-text').value=saved.text;
-  if(saved.interval) document.getElementById('cfg-interval').value=saved.interval;
-  if(saved.sound) document.getElementById('cfg-sound').value=saved.sound;
+  const setVal=(id,val)=>{if(!val) return; const el=document.getElementById(id); if(el) el.value=val;};
+  const setHex=(cid,hid,val)=>{if(!val) return; setVal(cid,val); setVal(hid,val.toUpperCase());};
+  setHex('c-bg','c-bg-hex',saved.bg);
+  setHex('c-accent','c-accent-hex',saved.accent);
+  setHex('c-text','c-text-hex',saved.text);
+  setHex('c-bubble','c-bubble-hex',saved.bubble||'#ffffff');
+  setHex('c-bubble-text','c-bubble-text-hex',saved.bubbleText||'#1a1a1a');
+  setHex('c-header','c-header-hex',saved.header||'#0c0c14');
+  setVal('f-title',saved.fontTitle||'Syne');
+  setVal('f-body',saved.fontBody||'DM Sans');
+  setVal('cfg-interval',saved.interval||6);
+  setVal('cfg-sound',saved.sound||'chime');
+  if(saved.fsTitle){setVal('fs-title',saved.fsTitle);document.getElementById('fs-title-val').textContent=saved.fsTitle+'px';}
+  if(saved.fsBubble){setVal('fs-bubble',saved.fsBubble);document.getElementById('fs-bubble-val').textContent=saved.fsBubble+'px';}
+  if(saved.overlay){setVal('cfg-overlay',saved.overlay);document.getElementById('cfg-overlay-val').textContent=saved.overlay+'%';}
+  if(saved.radius){setVal('cfg-radius',saved.radius);document.getElementById('cfg-radius-val').textContent=saved.radius+'px';}
   if(saved.template){
     document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
     const el=document.querySelector('.tpl-'+saved.template);
     if(el) el.classList.add('active');
   }
   previewTheme();
+  loadGoogleFont(saved.fontTitle||'Syne');
+  loadGoogleFont(saved.fontBody||'DM Sans');
 }
 
 function selectTemplate(name,el){
   document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   const t=TEMPLATES[name];
-  document.getElementById('c-bg').value=t.bg;
-  document.getElementById('c-accent').value=t.accent;
-  document.getElementById('c-text').value=t.text;
+  const setC=(id,val)=>{
+    const el=document.getElementById(id); if(el) el.value=val;
+    const hex=document.getElementById(id+'-hex'); if(hex) hex.value=val.toUpperCase();
+  };
+  setC('c-bg',t.bg); setC('c-accent',t.accent); setC('c-text',t.text);
+  setC('c-bubble',t.bubble||'#ffffff');
+  setC('c-bubble-text',t.bubbleText||'#1a1a1a');
+  setC('c-header',t.header||t.bg);
+  if(t.fontTitle){document.getElementById('f-title').value=t.fontTitle;loadGoogleFont(t.fontTitle);}
+  if(t.fontBody){document.getElementById('f-body').value=t.fontBody;loadGoogleFont(t.fontBody);}
   previewTheme();
 }
 
+function getV(id){return document.getElementById(id)?.value||'';}
+
+function syncColorFromHex(colorId, hexId){
+  const hex=document.getElementById(hexId).value;
+  if(/^#[0-9A-Fa-f]{6}$/.test(hex)) document.getElementById(colorId).value=hex;
+  previewTheme();
+}
+
+function loadGoogleFont(font){
+  if(!font||font==='Syne'||font==='DM Sans') return;
+  const id='gf-'+font.replace(/\s/g,'-');
+  if(document.getElementById(id)) return;
+  const link=document.createElement('link');
+  link.id=id;link.rel='stylesheet';
+  link.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(font)+':wght@400;700;800&display=swap';
+  document.head.appendChild(link);
+}
+
 function previewTheme(){
-  const bg=document.getElementById('c-bg').value;
-  const accent=document.getElementById('c-accent').value;
-  const text=document.getElementById('c-text').value;
-  const prev=document.getElementById('theme-preview');
-  prev.style.background=bg;
-  prev.innerHTML=`<div style="text-align:center">
-    <div style="font-size:18px;font-weight:800;color:${text};font-family:Syne,sans-serif;margin-bottom:8px">Nombre del evento</div>
-    <div style="display:inline-block;background:${accent};color:#fff;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700">EN VIVO</div>
-    <div style="margin-top:10px;font-size:12px;color:${text};opacity:0.5">Vista previa de colores</div>
-  </div>`;
+  const bg=getV('c-bg')||'#07070f';
+  const accent=getV('c-accent')||'#f0176f';
+  const text=getV('c-text')||'#ffffff';
+  const bubble=getV('c-bubble')||'#ffffff';
+  const bubbleText=getV('c-bubble-text')||'#1a1a1a';
+  const header=getV('c-header')||'#0c0c14';
+  const fontTitle=getV('f-title')||'Syne';
+  const fontBody=getV('f-body')||'DM Sans';
+  const fsTitle=getV('fs-title')||22;
+  const fsBubble=getV('fs-bubble')||32;
+  const radius=getV('cfg-radius')||28;
+  // sync hex fields
+  ['bg','accent','text','bubble','bubble-text','header'].forEach(k=>{
+    const hex=document.getElementById('c-'+k)?.value;
+    const hexEl=document.getElementById('c-'+k+'-hex');
+    if(hex&&hexEl) hexEl.value=hex.toUpperCase();
+  });
+  loadGoogleFont(fontTitle);loadGoogleFont(fontBody);
+  // Update live preview
+  const dp=document.getElementById('design-preview');
+  if(!dp) return;
+  document.getElementById('dp-bg').style.background=bg;
+  document.getElementById('dp-header').style.background=header;
+  document.getElementById('dp-title').style.cssText='font-size:14px;font-weight:800;color:'+text+';font-family:'+fontTitle+',sans-serif';
+  document.getElementById('dp-sub').style.cssText='font-size:10px;color:'+text+';opacity:0.5;font-family:'+fontBody+',sans-serif';
+  document.getElementById('dp-live').style.cssText='font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;background:'+accent+';color:#fff;font-family:'+fontBody+',sans-serif';
+  document.getElementById('dp-bubble').style.cssText='background:'+bubble+';border-radius:'+radius+'px;padding:12px 20px;max-width:60%;text-align:center';
+  document.getElementById('dp-bubble-text').style.cssText='font-size:'+Math.round(fsBubble*0.35)+'px;font-weight:800;color:'+bubbleText+';font-family:'+fontTitle+',sans-serif';
+  document.getElementById('dp-bubble-author').style.cssText='font-size:10px;color:'+bubbleText+';opacity:0.5;margin-top:4px;font-family:'+fontBody+',sans-serif';
+  document.getElementById('dp-accent-bar').style.background=accent;
 }
 
 function saveDesign(){
   if(!selectedEvent){toast('Seleccioná un evento primero');return;}
   const design={
-    bg:document.getElementById('c-bg').value,
-    accent:document.getElementById('c-accent').value,
-    text:document.getElementById('c-text').value,
-    interval:document.getElementById('cfg-interval').value,
-    sound:document.getElementById('cfg-sound').value,
+    bg:getV('c-bg'), accent:getV('c-accent'), text:getV('c-text'),
+    bubble:getV('c-bubble'), bubbleText:getV('c-bubble-text'), header:getV('c-header'),
+    fontTitle:getV('f-title'), fontBody:getV('f-body'),
+    fsTitle:getV('fs-title'), fsBubble:getV('fs-bubble'),
+    interval:getV('cfg-interval'), sound:getV('cfg-sound'),
+    overlay:getV('cfg-overlay'), radius:getV('cfg-radius'),
     template:document.querySelector('.tpl-card.active')?.className.match(/tpl-(\w+)/)?.[1]||'dark'
   };
   localStorage.setItem('ew_design_'+selectedEvent.id,JSON.stringify(design));
-  toast('✅ Diseño guardado — se aplica en la pantalla del evento');
+  toast('✅ Diseño guardado — recargá la pantalla del evento para verlo');
+}
+
+function resetDesign(){
+  if(!confirm('¿Resetear el diseño al tema oscuro por defecto?')) return;
+  localStorage.removeItem('ew_design_'+selectedEvent?.id);
+  showDesign();
+  toast('↺ Diseño reseteado');
 }
 
 // ── ALBUM ────────────────────────────────────────────────────

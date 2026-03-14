@@ -8,10 +8,16 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;font-family:'DM Sans',sans-serif}
-:root{--bg:#07070f;--accent:#f0176f;--txt:#ffffff}
+:root{
+  --bg:#07070f;--accent:#f0176f;--txt:#ffffff;
+  --gold:#f5a623;
+  --bubble-bg:#ffffff;--bubble-txt:#1a1a1a;--header-bg:#0c0c14;
+  --font-title:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+  --fs-title:22px;--bubble-radius:28px;--overlay-opacity:0.6;
+}
 
-.header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);height:68px;z-index:10;position:relative}
-.ev-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--txt)}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:var(--header-bg);border-bottom:1px solid rgba(255,255,255,0.06);height:68px;z-index:10;position:relative}
+.ev-name{font-family:var(--font-title);font-size:var(--fs-title);font-weight:800;color:var(--txt)}
 .ev-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
 .live-pill{display:flex;align-items:center;gap:6px;background:rgba(240,23,111,0.15);border:1px solid rgba(240,23,111,0.35);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px}
 .live-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:blink 1.4s infinite}
@@ -90,7 +96,6 @@ body.theme-light .rsumm-pill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0
 body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
 
 /* POLL SCREEN */
-@keyframes barGrow{from{width:0}to{width:var(--target-w)}}
 .sbar-wrap{background:rgba(255,255,255,0.06);border-radius:12px;padding:16px 20px}
 .sbar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .sbar-label{font-size:16px;font-weight:600;color:#fff}
@@ -126,11 +131,11 @@ body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
 
 <!-- MESSAGE BUBBLE OVERLAY -->
 <div id="msg-bubble-overlay" style="position:fixed;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
-  <div id="msg-bubble-card" style="background:#fff;border-radius:28px;padding:36px 44px;max-width:680px;width:90%;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5);animation:bubbleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)">
-    <div style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:24px solid #fff"></div>
+  <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:680px;width:90%;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5);animation:bubbleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)">
+    <div id="bubble-tail" style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:24px solid var(--bubble-bg)"></div>
     <div id="msg-bubble-icon" style="font-size:36px;margin-bottom:14px">💬</div>
-    <div id="msg-bubble-text" style="font-family:'Syne',sans-serif;font-size:clamp(18px,3.5vw,38px);font-weight:800;color:#1a1a1a;line-height:1.35;margin-bottom:16px"></div>
-    <div id="msg-bubble-author" style="font-size:16px;font-weight:600;color:#888"></div>
+    <div id="msg-bubble-text" style="font-family:var(--font-title);font-size:clamp(18px,3.5vw,38px);font-weight:800;color:var(--bubble-txt);line-height:1.35;margin-bottom:16px"></div>
+    <div id="msg-bubble-author" style="font-size:16px;font-weight:600;color:var(--bubble-txt);opacity:0.55"></div>
   </div>
 </div>
 
@@ -242,14 +247,41 @@ function playSound(type){
 }
 
 // ── THEME ─────────────────────────────────────────────────────
+function loadScreenFont(font){
+  if(!font||font==='Syne'||font==='DM Sans') return;
+  const id='gf-'+font.replace(/\s/g,'-');
+  if(document.getElementById(id)) return;
+  const link=document.createElement('link');
+  link.id=id;link.rel='stylesheet';
+  link.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(font)+':wght@400;700;800&display=swap';
+  document.head.appendChild(link);
+}
+
 function applyTheme(design){
   if(!design) return;
-  document.documentElement.style.setProperty('--bg',design.bg||'#07070f');
-  document.documentElement.style.setProperty('--accent',design.accent||'#f0176f');
-  document.documentElement.style.setProperty('--txt',design.text||'#ffffff');
+  const r=document.documentElement;
+  const set=(k,v)=>r.style.setProperty(k,v);
+  set('--bg',         design.bg||'#07070f');
+  set('--accent',     design.accent||'#f0176f');
+  set('--txt',        design.text||'#ffffff');
+  set('--bubble-bg',  design.bubble||'#ffffff');
+  set('--bubble-txt', design.bubbleText||'#1a1a1a');
+  set('--header-bg',  design.header||design.bg||'#0c0c14');
+  set('--fs-title',   (design.fsTitle||22)+'px');
+  set('--bubble-radius',(design.radius||28)+'px');
+  set('--overlay-opacity',(design.overlay||60)/100);
   document.body.style.background=design.bg||'#07070f';
-  const isLight=design.bg&&(design.bg.startsWith('#f')||design.bg.startsWith('#e')||design.bg.startsWith('#d'));
-  document.body.classList.toggle('theme-light',isLight);
+  const isLight=(design.bg||'').match(/^#[def]/i);
+  document.body.classList.toggle('theme-light',!!isLight);
+  if(design.fontTitle){
+    loadScreenFont(design.fontTitle);
+    set('--font-title',"'"+design.fontTitle+"',sans-serif");
+  }
+  if(design.fontBody){
+    loadScreenFont(design.fontBody);
+    set('--font-body',"'"+design.fontBody+"',sans-serif");
+  }
+  if(design.fsBubble) cfg.fsBubble=parseInt(design.fsBubble);
   if(design.interval) cfg.interval=parseInt(design.interval)*1000;
   if(design.sound) cfg.sound=design.sound;
 }
