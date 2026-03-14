@@ -532,7 +532,7 @@ body{
         <div class="uz-txt">Tocá para sacar o elegir una foto</div>
         <div class="uz-sub">JPG, PNG · Máx 8MB · Mejor en horizontal</div>
       </div>
-      <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(event)"/>
+      <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(this)"/>
 
       <div class="canvas-wrap" id="canvas-preview-wrap">
         <canvas id="preview-canvas"></canvas>
