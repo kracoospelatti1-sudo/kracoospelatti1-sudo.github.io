@@ -961,7 +961,7 @@ async function sendPhoto(){
     await apiRest('posts',{method:'POST',body:JSON.stringify({
       event_id:eventId,type:'photo',author:name,
       content:url,content_text:caption||null,
-      frame:selectedFrame,approved:false
+      frame:selectedFrame,approved:true
     })});
     setProgress(100,'¡Listo!');
     setLastSent('photo');
@@ -1038,7 +1038,7 @@ async function sendWish(){
   showSending();setProgress(50,'Enviando deseo...');
   try{
     await apiRest('posts',{method:'POST',body:JSON.stringify({
-      event_id:eventId,type:'wish',author:name,content:text,approved:false
+      event_id:eventId,type:'wish',author:name,content:text,approved:true
     })});
     setProgress(100,'¡Enviado!');setTimeout(()=>{hideSending();showSuccess();},300);
   }catch(e){hideSending();showFormError('wish-error','Error: '+e.message);}
@@ -1053,7 +1053,7 @@ async function sendMessage(){
   try{
     const sizes={small:20,medium:32,large:48,xlarge:60};
     await apiRest('posts',{method:'POST',body:JSON.stringify({
-      event_id:eventId,type:'message',author:name,content:text,approved:false,
+      event_id:eventId,type:'message',author:name,content:text,approved:true,
       frame:JSON.stringify({emoji:msgEmoji==='none'?'':msgEmoji,bgColor:msgBgColor,textColor:msgTextColor,fontSize:sizes[msgSize]||32,bubbleStyle:msgBubbleStyle})
     })});
     setProgress(100,'¡Listo!');setLastSent('message');setTimeout(()=>{hideSending();showSuccess();},300);
@@ -1104,7 +1104,7 @@ async function sendAudio(){
     const ext=audioBlob.type.includes('mp4')?'mp4':'webm';
     const audioFile=new File([audioBlob],'audio.'+ext,{type:audioBlob.type});
     const url=await uploadFile(audioFile,'audios');
-    await apiRest('posts',{method:'POST',body:JSON.stringify({event_id:eventId,type:'audio',author:name,content:url,content_text:recSecs+'s',approved:false})});
+    await apiRest('posts',{method:'POST',body:JSON.stringify({event_id:eventId,type:'audio',author:name,content:url,content_text:recSecs+'s',approved:true})});
     setProgress(100,'¡Listo!');setLastSent('audio');setTimeout(()=>{hideSending();showSuccess();},400);
   }catch(e){hideSending();showFormError('audio-error','Error: '+e.message);}
 }

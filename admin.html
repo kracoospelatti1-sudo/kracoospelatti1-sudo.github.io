@@ -241,7 +241,7 @@ input[type=range]{accent-color:var(--pink)}
     <button class="nav-btn active" onclick="goNav('events')">🗓 Eventos</button>
     <button class="nav-btn" onclick="goNav('new-event')">➕ Nuevo evento</button>
     <div class="nav-sep"></div>
-    <button class="nav-btn" onclick="goNav('moderation')">🛡 Moderación</button>
+
     <button class="nav-btn" onclick="goNav('links')">🔗 Links & QR</button>
     <button class="nav-btn" onclick="goNav('design')">🎨 Diseño</button>
     <button class="nav-btn" onclick="goNav('album')">📥 Álbum</button>
@@ -299,42 +299,7 @@ input[type=range]{accent-color:var(--pink)}
       </div>
     </div>
 
-    <!-- MODERATION -->
-    <div class="page" id="page-moderation">
-      <div class="page-title">Moderación</div>
-      <div class="page-sub">Aprobá o rechazá el contenido</div>
-      <div class="notice" id="mod-notice">⚠️ Seleccioná un evento primero</div>
-      <div id="mod-content" style="display:none">
-        <div class="seb">
-          <div><div class="seb-name" id="mod-ev-name">—</div><div class="seb-sub" id="mod-ev-sub">—</div></div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <div class="auto-toggle" onclick="toggleAutoApprove()" id="auto-toggle">
-              <div class="auto-track" id="auto-track"><div class="auto-thumb"></div></div>
-              <span id="auto-label">Aprobación manual</span>
-            </div>
-            <button class="btn-ghost" onclick="loadPosts()">↻ Actualizar</button>
-            <button class="btn-pink" onclick="approveAll()">✓ Aprobar todo</button>
-          </div>
-        </div>
-        <div class="stat-row">
-          <div class="stat-card"><div class="num" id="st-total">0</div><div class="lbl">Total</div></div>
-          <div class="stat-card"><div class="num" id="st-pending">0</div><div class="lbl">Pendientes</div></div>
-          <div class="stat-card"><div class="num" id="st-approved">0</div><div class="lbl">Aprobados</div></div>
-          <div class="stat-card"><div class="num" id="st-photos">0</div><div class="lbl">Fotos</div></div>
-          <div class="stat-card"><div class="num" id="st-wishes">0</div><div class="lbl">💌 Deseos</div></div>
-        </div>
-        <div class="mod-filters">
-          <button class="filter-btn active" onclick="filterPosts('all',this)">Todos</button>
-          <button class="filter-btn" onclick="filterPosts('pending',this)">Pendientes</button>
-          <button class="filter-btn" onclick="filterPosts('approved',this)">Aprobados</button>
-          <button class="filter-btn" onclick="filterPosts('photo',this)">Fotos</button>
-          <button class="filter-btn" onclick="filterPosts('message',this)">Mensajes</button>
-          <button class="filter-btn" onclick="filterPosts('audio',this)">Audios</button>
-          <button class="filter-btn" onclick="filterPosts('wish',this)">💌 Deseos</button>
-        </div>
-        <div class="posts-grid" id="posts-grid"></div>
-      </div>
-    </div>
+
 
     <!-- LINKS -->
     <div class="page" id="page-links">
@@ -1089,13 +1054,7 @@ function logout(){
   location.reload();
 }
 
-function startGlobalPoller(){
-  setInterval(async()=>{
-    if(!selectedEvent) return;
-    if(!autoApprove) return;
-    await approveNewPosts();
-  }, 5000);
-}
+function startGlobalPoller(){}
 
 function formatExpiry(isoStr){
   const d=new Date(isoStr);
@@ -1188,7 +1147,7 @@ function goNav(page){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   closeSidebar(); // close on mobile after nav
-  const map={events:0,'new-event':1,moderation:2,links:3,design:4,album:5,print:6,polls:7,'guest-design':8,settings:9};
+  const map={events:0,'new-event':1,links:2,design:3,album:4,print:5,polls:6,'guest-design':7,settings:8};
   const btns=document.querySelectorAll('.nav-btn');
   if(map[page]!==undefined) btns[map[page]].classList.add('active');
   if(page==='events') loadEvents();
@@ -1234,15 +1193,7 @@ function updateAutoToggleUI(){
   label.textContent=autoApprove?'Auto-aprobación ON':'Aprobación manual';
 }
 
-async function approveNewPosts(){
-  if(!selectedEvent||!autoApprove) return;
-  const pending=await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.false');
-  if(!Array.isArray(pending)||!pending.length) return;
-  await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.false',{method:'PATCH',body:JSON.stringify({approved:true})});
-  pending.forEach(p=>{const idx=allPosts.findIndex(x=>x.id===p.id);if(idx>=0) allPosts[idx].approved=true;});
-  updateStats();renderPosts();
-  toast('⚡ '+pending.length+' publicaciones aprobadas automáticamente');
-}
+
 
 function loadAutoApproveState(){
   if(!selectedEvent) return;
@@ -1339,8 +1290,7 @@ function selectEvent(ev,cardEl){
   if(mob) mob.textContent=ev.name;
   document.querySelectorAll('.event-card').forEach(c=>c.classList.remove('selected'));
   cardEl.classList.add('selected');
-  // Reset auto-approve state when switching events
-  autoApprove=false;
+
   toast('✓ "'+ev.name+'" seleccionado');
 }
 
@@ -1431,14 +1381,7 @@ function renderPosts(){
     grid.appendChild(card);
   });
 }
-async function moderatePost(id,approve){
-  await api('posts?id=eq.'+id,{method:'PATCH',body:JSON.stringify({approved:approve})});
-  const idx=allPosts.findIndex(p=>p.id===id);
-  if(idx>=0) allPosts[idx].approved=approve;
-  if(!approve) allPosts=allPosts.filter(p=>p.id!==id);
-  updateStats();renderPosts();
-  toast(approve?'✅ Aprobado':'🗑 Rechazado');
-}
+
 async function deletePost(id){
   if(!confirm('¿Eliminar esta publicación? No se puede deshacer.')) return;
   await api('posts?id=eq.'+id,{method:'DELETE'});
@@ -1447,14 +1390,7 @@ async function deletePost(id){
   toast('🗑 Publicación eliminada');
 }
 
-async function approveAll(){
-  const pending=allPosts.filter(p=>!p.approved);
-  if(!pending.length){toast('Ya todo aprobado');return;}
-  await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.false',{method:'PATCH',body:JSON.stringify({approved:true})});
-  allPosts.forEach(p=>p.approved=true);
-  updateStats();renderPosts();
-  toast('✅ '+pending.length+' posts aprobados');
-}
+
 
 // ── LINKS ────────────────────────────────────────────────────
 function showLinks(){
