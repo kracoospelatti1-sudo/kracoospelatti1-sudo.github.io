@@ -1206,9 +1206,11 @@ async function deleteEvent(ev){
 // ── EVENTS ───────────────────────────────────────────────────
 async function loadEvents(restrictedId=null){
   const restricted=restrictedId||sessionStorage.getItem('ew_restricted_event');
-  // Hide create button if restricted
+  // Hide create buttons if restricted
   const createBtn=document.querySelector('.nav-btn[onclick*="new-event"]');
   if(createBtn) createBtn.style.display=restricted?'none':'';
+  const createPageBtn=document.querySelector('#page-events .btn-pink');
+  if(createPageBtn) createPageBtn.style.display=restricted?'none':'';
   const grid=document.getElementById('events-list');
   grid.innerHTML='<div class="empty"><div class="empty-ico">⏳</div><div class="empty-txt">Conectando...</div></div>';
   const query=restricted?'events?id=eq.'+restricted:'events?order=created_at.desc';
