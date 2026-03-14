@@ -1233,7 +1233,7 @@ function renderPosts(){
     let bodyHtml='';
     if(p.type==='photo'&&p.content&&p.content.startsWith('http')) bodyHtml='<img src="'+p.content+'" class="post-img" onerror="this.style.display=\'none\'"/>';
     card.innerHTML=bodyHtml+'<div class="post-body"><span class="tbadge '+cls[p.type]+'">'+labels[p.type]+'</span><div class="post-author">'+p.author+'</div>'+(p.type==='message'?'<div class="post-text">'+(p.content||'')+'</div>':'')+(p.type==='audio'?'<div style="font-size:12px;color:var(--muted)">🎤 Mensaje de voz · '+(p.content_text||'')+'</div>':'')+(p.type==='wish'?'<div class="post-text" style="border-left:3px solid #ff6b9d;padding-left:10px;margin-top:4px">'+(p.content||'')+'</div>':'')+
-    '<div class="post-actions"><button class="btn-approve'+(p.approved?' done':'')+'" onclick="moderatePost(\''+p.id+'\',true)">'+(p.approved?'✓ Aprobado':'✓ Aprobar')+'</button><button class="btn-reject" onclick="moderatePost(\''+p.id+'\',false)">✕ Rechazar</button></div><div class="post-time">'+t+'</div></div>';
+    '<div class="post-actions"><button class="btn-approve'+(p.approved?' done':'')+'" onclick="moderatePost(\''+p.id+'\',true)">'+(p.approved?'✓ Aprobado':'✓ Aprobar')+'</button><button class="btn-reject" onclick="moderatePost(\''+p.id+'\',false)">✕ Rechazar</button><button class="btn-delete-post" onclick="deletePost(\'\'+p.id+\'\')" title="Eliminar publicación">🗑</button></div><div class="post-time">'+t+'</div></div>';
     grid.appendChild(card);
   });
 }
