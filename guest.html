@@ -428,10 +428,13 @@ async function uploadFile(file,folder){
 
 // ── INIT ─────────────────────────────────────────────────────
 // ── GUEST DESIGN ─────────────────────────────────────────────
-function applyGuestDesign(ev){
-  const key='ew_guest_design_'+eventId;
+async function applyGuestDesign(ev){
+  // Load from Supabase so changes from admin apply instantly
   let d={};
-  try{ d=JSON.parse(localStorage.getItem(key)||'{}'); }catch(e){}
+  try{
+    const res=await apiRest('event_settings?event_id=eq.'+eventId+'&select=guest_design');
+    if(Array.isArray(res)&&res[0]?.guest_design) d=res[0].guest_design;
+  }catch(e){}
 
   // Colors
   const bg=d.bg||'#faf8f6';
@@ -533,6 +536,15 @@ async function init(){
     });
     loadStats();
     setInterval(loadStats,20000);
+    // Re-apply design every 15s so admin changes reflect live
+    setInterval(async()=>{
+      try{
+        const res=await apiRest('event_settings?event_id=eq.'+eventId+'&select=guest_design,updated_at');
+        if(Array.isArray(res)&&res[0]?.guest_design){
+          await applyGuestDesign(null);
+        }
+      }catch(e){}
+    },15000);
   }catch(e){document.getElementById('page-loading').innerHTML='<p style="color:red;padding:20px">'+e.message+'</p>';}
 }
 
