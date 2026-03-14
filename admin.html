@@ -117,6 +117,9 @@ input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1p
 .color-pick-row input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;flex-shrink:0}
 .hex-input{flex:1;font-family:monospace;font-size:13px;text-transform:uppercase}
 input[type=range]{accent-color:var(--pink)}
+/* GUEST DESIGN */
+.toggle-label{display:flex;align-items:center;gap:12px;cursor:pointer;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);transition:all 0.2s}
+.toggle-label:hover{border-color:var(--muted)}
 /* POLLS */
 .poll-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
 .poll-question{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px}
@@ -177,6 +180,7 @@ input[type=range]{accent-color:var(--pink)}
     <div class="nav-sep"></div>
     <button class="nav-btn" onclick="goNav('print')">🖨 Modo impresión</button>
     <button class="nav-btn" onclick="goNav('polls')">🗳 Votaciones</button>
+    <button class="nav-btn" onclick="goNav('guest-design')">📱 Vista invitado</button>
     <button class="nav-btn" onclick="goNav('settings')">⚙️ Configuración</button>
     <div style="margin-top:auto;font-size:11px;color:var(--muted);padding:10px 14px">
       Evento activo:<br>
@@ -572,6 +576,120 @@ input[type=range]{accent-color:var(--pink)}
       </div>
     </div>
 
+    <!-- GUEST DESIGN -->
+    <div class="page" id="page-guest-design">
+      <div class="page-title">Vista del invitado</div>
+      <div class="page-sub">Personalizá cómo ven la app los invitados al escanear el QR</div>
+      <div class="notice" id="gd-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="gd-content" style="display:none">
+
+        <!-- LIVE PREVIEW -->
+        <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start">
+          <div>
+
+            <!-- TEXTOS -->
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">✏️ Textos</div>
+              <div class="fg full" style="margin-bottom:12px">
+                <div><label>Título principal</label><input type="text" id="gd-title" placeholder="Nombre del evento (auto)" oninput="updateGuestPreview()"/></div>
+              </div>
+              <div class="fg full" style="margin-bottom:12px">
+                <div><label>Subtítulo</label><input type="text" id="gd-subtitle" placeholder="Fecha y lugar (auto)" oninput="updateGuestPreview()"/></div>
+              </div>
+              <div class="fg full" style="margin-bottom:12px">
+                <div><label>Mensaje de bienvenida</label><input type="text" id="gd-welcome" placeholder="Compartí tu momento con todos 📷" oninput="updateGuestPreview()"/></div>
+              </div>
+              <div class="fg full">
+                <div><label>Texto del botón de envío</label><input type="text" id="gd-btn-text" placeholder="Enviar a la pantalla ✨" oninput="updateGuestPreview()"/></div>
+              </div>
+            </div>
+
+            <!-- COLORES -->
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">🎨 Colores del menú</div>
+              <div class="design-grid">
+                <div class="design-field">
+                  <label>Color de fondo</label>
+                  <div class="color-pick-row">
+                    <input type="color" id="gd-bg" value="#faf8f6" oninput="syncGDHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
+                    <input type="text" id="gd-bg-hex" value="#FAF8F6" class="hex-input" oninput="syncColorFromHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
+                  </div>
+                </div>
+                <div class="design-field">
+                  <label>Color de acento</label>
+                  <div class="color-pick-row">
+                    <input type="color" id="gd-accent" value="#f0176f" oninput="syncGDHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
+                    <input type="text" id="gd-accent-hex" value="#F0176F" class="hex-input" oninput="syncColorFromHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
+                  </div>
+                </div>
+                <div class="design-field">
+                  <label>Color del hero (cabecera)</label>
+                  <div class="color-pick-row">
+                    <input type="color" id="gd-hero" value="#0c0c0f" oninput="syncGDHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
+                    <input type="text" id="gd-hero-hex" value="#0C0C0F" class="hex-input" oninput="syncColorFromHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
+                  </div>
+                </div>
+                <div class="design-field">
+                  <label>Color del texto hero</label>
+                  <div class="color-pick-row">
+                    <input type="color" id="gd-hero-txt" value="#ffffff" oninput="syncGDHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
+                    <input type="text" id="gd-hero-txt-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- OPCIONES -->
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">⚙️ Opciones visibles</div>
+              <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Elegí qué pueden hacer los invitados</p>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <label class="toggle-label"><div class="opt-toggle" id="tog-show-photo" onclick="toggleGDOption('show-photo')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">📷 Subir fotos</div><div style="font-size:12px;color:var(--muted)">Los invitados pueden subir fotos con marcos</div></div></label>
+                <label class="toggle-label"><div class="opt-toggle" id="tog-show-message" onclick="toggleGDOption('show-message')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💬 Enviar mensajes</div><div style="font-size:12px;color:var(--muted)">Mensajes en burbuja en pantalla grande</div></div></label>
+                <label class="toggle-label"><div class="opt-toggle" id="tog-show-audio" onclick="toggleGDOption('show-audio')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🎤 Grabar audios</div><div style="font-size:12px;color:var(--muted)">Mensajes de voz guardados en el álbum</div></div></label>
+                <label class="toggle-label"><div class="opt-toggle" id="tog-show-wish" onclick="toggleGDOption('show-wish')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💌 Mensajes especiales</div><div style="font-size:12px;color:var(--muted)">Aparecen en pantalla completa con animación</div></div></label>
+                <label class="toggle-label"><div class="opt-toggle" id="tog-show-vote" onclick="toggleGDOption('show-vote')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗳 Votaciones</div><div style="font-size:12px;color:var(--muted)">Participar en encuestas del evento</div></div></label>
+              </div>
+            </div>
+
+            <button class="btn-pink" onclick="saveGuestDesign()" style="width:100%">💾 Guardar configuración del menú</button>
+          </div>
+
+          <!-- PREVIEW -->
+          <div style="position:sticky;top:20px">
+            <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Vista previa</div>
+            <div id="gd-preview" style="border-radius:24px;overflow:hidden;border:1px solid var(--border);max-width:280px;font-family:'DM Sans',sans-serif;box-shadow:0 8px 32px rgba(0,0,0,0.3)">
+              <!-- hero -->
+              <div id="gd-prev-hero" style="background:#0c0c0f;padding:24px 20px 20px">
+                <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;color:#f0176f" id="gd-prev-logo">EVENTWALL</div>
+                <div id="gd-prev-title" style="font-size:18px;font-weight:800;color:#fff;margin-bottom:4px">Nombre del evento</div>
+                <div id="gd-prev-sub" style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:14px">Fecha · Lugar</div>
+                <div id="gd-prev-welcome" style="display:inline-flex;align-items:center;gap:6px;background:rgba(240,23,111,0.18);border:1px solid rgba(240,23,111,0.35);padding:6px 12px;border-radius:20px;font-size:11px;color:rgba(255,255,255,0.8)">📷 Compartí tu momento</div>
+              </div>
+              <!-- stats -->
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-bottom:1px solid #ece8e3">
+                <div style="text-align:center;padding:10px 0"><div style="font-size:16px;font-weight:800;color:#f0176f" id="gd-prev-accent1">0</div><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px">Fotos</div></div>
+                <div style="text-align:center;padding:10px 0"><div style="font-size:16px;font-weight:800;color:#f0176f" id="gd-prev-accent2">0</div><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px">Mensajes</div></div>
+                <div style="text-align:center;padding:10px 0"><div style="font-size:16px;font-weight:800;color:#f0176f" id="gd-prev-accent3">0</div><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px">Audios</div></div>
+              </div>
+              <!-- body -->
+              <div style="background:#faf8f6;padding:16px" id="gd-prev-body">
+                <div style="font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">Tu nombre</div>
+                <div style="background:#fff;border:1.5px solid #ece8e3;border-radius:10px;padding:10px 12px;font-size:12px;color:#aaa;margin-bottom:14px">Ej: Valentina García</div>
+                <div style="font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">¿Qué querés compartir?</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px" id="gd-prev-btns">
+                  <div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">📷<br>Foto</div>
+                  <div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">💬<br>Mensaje</div>
+                  <div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">🎤<br>Audio</div>
+                </div>
+                <div id="gd-prev-send-btn" style="background:#f0176f;color:#fff;border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:700">Enviar a la pantalla ✨</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- SETTINGS -->
     <div class="page" id="page-settings">
       <div class="page-title">Configuración</div>
@@ -644,7 +762,7 @@ function goNav(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
-  const map={events:0,'new-event':1,moderation:2,links:3,design:4,album:5,print:6,polls:7,settings:8};
+  const map={events:0,'new-event':1,moderation:2,links:3,design:4,album:5,print:6,polls:7,'guest-design':8,settings:9};
   const btns=document.querySelectorAll('.nav-btn');
   if(map[page]!==undefined) btns[map[page]].classList.add('active');
   if(page==='events') loadEvents();
@@ -654,6 +772,7 @@ function goNav(page){
   if(page==='album') showAlbum();
   if(page==='print') showPrint();
   if(page==='polls') showPolls();
+  if(page==='guest-design') showGuestDesign();
 }
 
 function toast(msg,dur=3000){
@@ -1290,6 +1409,112 @@ setInterval(async()=>{
   if(!autoApprove) return;
   await approveNewPosts();
 }, 5000);
+
+// ── GUEST DESIGN ─────────────────────────────────────────────
+const GD_DEFAULTS = {
+  title:'', subtitle:'', welcome:'Compartí tu momento con todos 📷',
+  btnText:'Enviar a la pantalla ✨',
+  bg:'#faf8f6', accent:'#f0176f', hero:'#0c0c0f', heroTxt:'#ffffff',
+  showPhoto:true, showMessage:true, showAudio:true, showWish:true, showVote:true
+};
+
+function getGDKey(){ return 'ew_guest_design_'+(selectedEvent?.id||''); }
+
+function showGuestDesign(){
+  const notice=document.getElementById('gd-notice');
+  const content=document.getElementById('gd-content');
+  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
+  notice.classList.remove('show');content.style.display='block';
+  const saved=JSON.parse(localStorage.getItem(getGDKey())||'{}');
+  const d={...GD_DEFAULTS,...saved};
+  document.getElementById('gd-title').value=d.title;
+  document.getElementById('gd-subtitle').value=d.subtitle;
+  document.getElementById('gd-welcome').value=d.welcome;
+  document.getElementById('gd-btn-text').value=d.btnText;
+  const setC=(id,val)=>{document.getElementById(id).value=val;document.getElementById(id+'-hex').value=val.toUpperCase();};
+  setC('gd-bg',d.bg);setC('gd-accent',d.accent);setC('gd-hero',d.hero);setC('gd-hero-txt',d.heroTxt);
+  // toggles
+  ['photo','message','audio','wish','vote'].forEach(k=>{
+    const on=d['show'+k.charAt(0).toUpperCase()+k.slice(1)];
+    const tog=document.getElementById('tog-show-'+k);
+    if(tog) tog.classList.toggle('on',on);
+  });
+  updateGuestPreview();
+}
+
+function syncGDHex(colorId, hexId){
+  const val=document.getElementById(colorId).value;
+  document.getElementById(hexId).value=val.toUpperCase();
+}
+
+function toggleGDOption(key){
+  const tog=document.getElementById('tog-show-'+key);
+  tog.classList.toggle('on');
+  updateGuestPreview();
+}
+
+function getGDToggle(key){
+  return document.getElementById('tog-show-'+key)?.classList.contains('on')!==false;
+}
+
+function updateGuestPreview(){
+  const title=document.getElementById('gd-title').value||selectedEvent?.name||'Nombre del evento';
+  const sub=document.getElementById('gd-subtitle').value||(selectedEvent?.date||'')+(selectedEvent?.subtitle?' · '+selectedEvent.subtitle:'');
+  const welcome=document.getElementById('gd-welcome').value||'Compartí tu momento con todos 📷';
+  const btnText=document.getElementById('gd-btn-text').value||'Enviar a la pantalla ✨';
+  const bg=document.getElementById('gd-bg').value||'#faf8f6';
+  const accent=document.getElementById('gd-accent').value||'#f0176f';
+  const hero=document.getElementById('gd-hero').value||'#0c0c0f';
+  const heroTxt=document.getElementById('gd-hero-txt').value||'#ffffff';
+
+  // Update preview
+  document.getElementById('gd-prev-hero').style.background=hero;
+  document.getElementById('gd-prev-title').style.color=heroTxt;
+  document.getElementById('gd-prev-title').textContent=title;
+  document.getElementById('gd-prev-sub').style.color=heroTxt+'99';
+  document.getElementById('gd-prev-sub').textContent=sub||'Fecha · Lugar';
+  document.getElementById('gd-prev-welcome').textContent='📷 '+welcome.replace(/📷\s*/,'');
+  document.getElementById('gd-prev-body').style.background=bg;
+  document.getElementById('gd-prev-send-btn').style.background=accent;
+  document.getElementById('gd-prev-send-btn').textContent=btnText;
+  ['gd-prev-accent1','gd-prev-accent2','gd-prev-accent3'].forEach(id=>{
+    document.getElementById(id).style.color=accent;
+  });
+
+  // Show/hide buttons in preview
+  const showPhoto=getGDToggle('photo');
+  const showMsg=getGDToggle('message');
+  const showAudio=getGDToggle('audio');
+  const showWish=getGDToggle('wish');
+  const showVote=getGDToggle('vote');
+  const btns=document.getElementById('gd-prev-btns');
+  btns.innerHTML='';
+  if(showPhoto) btns.innerHTML+=`<div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">📷<br>Foto</div>`;
+  if(showMsg)   btns.innerHTML+=`<div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">💬<br>Mensaje</div>`;
+  if(showAudio) btns.innerHTML+=`<div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">🎤<br>Audio</div>`;
+  if(btns.children.length===0) btns.innerHTML='<div style="font-size:10px;color:#aaa;padding:8px;text-align:center;grid-column:1/-1">Sin opciones habilitadas</div>';
+}
+
+function saveGuestDesign(){
+  if(!selectedEvent){toast('Seleccioná un evento primero');return;}
+  const design={
+    title:document.getElementById('gd-title').value,
+    subtitle:document.getElementById('gd-subtitle').value,
+    welcome:document.getElementById('gd-welcome').value,
+    btnText:document.getElementById('gd-btn-text').value,
+    bg:document.getElementById('gd-bg').value,
+    accent:document.getElementById('gd-accent').value,
+    hero:document.getElementById('gd-hero').value,
+    heroTxt:document.getElementById('gd-hero-txt').value,
+    showPhoto:getGDToggle('photo'),
+    showMessage:getGDToggle('message'),
+    showAudio:getGDToggle('audio'),
+    showWish:getGDToggle('wish'),
+    showVote:getGDToggle('vote'),
+  };
+  localStorage.setItem(getGDKey(),JSON.stringify(design));
+  toast('✅ Configuración del menú guardada — se aplica al recargar el guest');
+}
 
 // Auto-load if already unlocked this session
 if(sessionStorage.getItem('ew_unlocked')==='1'){

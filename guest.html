@@ -427,6 +427,82 @@ async function uploadFile(file,folder){
 }
 
 // ── INIT ─────────────────────────────────────────────────────
+// ── GUEST DESIGN ─────────────────────────────────────────────
+function applyGuestDesign(ev){
+  const key='ew_guest_design_'+eventId;
+  let d={};
+  try{ d=JSON.parse(localStorage.getItem(key)||'{}'); }catch(e){}
+
+  // Colors
+  const bg=d.bg||'#faf8f6';
+  const accent=d.accent||'#f0176f';
+  const hero=d.hero||'#0c0c0f';
+  const heroTxt=d.heroTxt||'#ffffff';
+
+  // Apply CSS vars
+  document.documentElement.style.setProperty('--pink', accent);
+  document.documentElement.style.setProperty('--pink-light', accent+'22');
+  document.documentElement.style.setProperty('--pink-border', accent+'66');
+  document.documentElement.style.setProperty('--bg', bg);
+  document.body.style.background=bg;
+
+  // Hero section
+  const heroEl=document.querySelector('.hero');
+  if(heroEl) heroEl.style.background=hero;
+
+  // Title
+  const titleEl=document.getElementById('ev-name');
+  if(titleEl&&d.title) titleEl.textContent=d.title;
+
+  // Subtitle
+  const subEl=document.getElementById('ev-sub');
+  if(subEl&&d.subtitle) subEl.textContent=d.subtitle;
+
+  // Welcome pill
+  const pillEl=document.querySelector('.hero-pill');
+  if(pillEl&&d.welcome) pillEl.textContent='📷 '+d.welcome.replace(/^📷\s*/,'');
+
+  // Send button text
+  if(d.btnText){
+    document.querySelectorAll('.send-btn').forEach(btn=>{
+      if(!btn.id||btn.id.startsWith('btn-send')) btn.textContent=d.btnText;
+    });
+  }
+
+  // Hero text color
+  document.querySelectorAll('.hero-title, .hero-sub, .hero-logo').forEach(el=>{
+    if(el.classList.contains('hero-logo')) el.style.color=accent;
+    else if(el.classList.contains('hero-title')) el.style.color=heroTxt;
+    else el.style.color=heroTxt+'70';
+  });
+
+  // Show/hide sections
+  const sections=[
+    {key:'showPhoto',   btn:0, section:'section-photo'},
+    {key:'showMessage', btn:1, section:'section-message'},
+    {key:'showAudio',   btn:2, section:'section-audio'},
+  ];
+  const typeBtns=document.querySelectorAll('.type-selector .type-btn');
+  sections.forEach((s,i)=>{
+    const show=d[s.key]!==false; // default true
+    if(typeBtns[i]) typeBtns[i].style.display=show?'':'none';
+  });
+
+  // Wish button
+  const wishBtn=document.querySelector('.wish-btn');
+  if(wishBtn) wishBtn.style.display=d.showWish!==false?'':'none';
+
+  // Vote button
+  const voteBtn=document.querySelector('.vote-btn');
+  if(voteBtn) voteBtn.style.display=d.showVote!==false?'':'none';
+
+  // If first visible type is hidden, activate first visible
+  const firstVisible=Array.from(typeBtns).find(b=>b.style.display!=='none');
+  if(firstVisible&&!document.querySelector('.type-btn.active:not([style*="none"])')) {
+    firstVisible.click();
+  }
+}
+
 async function init(){
   if(!eventId){document.getElementById('page-loading').innerHTML='<div style="text-align:center;padding:32px"><div style="font-size:40px">⚠️</div><p style="color:var(--pink);margin-top:12px">Falta el ID del evento.<br>Abrí este link desde el admin.</p></div>';return;}
   try{
