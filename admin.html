@@ -664,7 +664,7 @@ function toast(msg,dur=3000){
 
 // ── AUTO APPROVE ─────────────────────────────────────────────
 let autoApprove=false;
-let autoApproveInterval=null;
+
 
 function getAutoKey(){ return 'ew_auto_'+selectedEvent?.id; }
 
@@ -674,12 +674,10 @@ function toggleAutoApprove(){
   if(autoApprove){
     localStorage.setItem(getAutoKey(),'1');
     toast('✅ Aprobación automática activada — todo el contenido nuevo se aprueba al instante');
-    autoApproveInterval=setInterval(approveNewPosts,4000);
-    approveNewPosts();
+    approveNewPosts(); // run immediately
   } else {
     localStorage.removeItem(getAutoKey());
     toast('🛡 Aprobación manual activada — revisás cada publicación antes de mostrarla');
-    clearInterval(autoApproveInterval);
   }
 }
 
@@ -705,10 +703,6 @@ function loadAutoApproveState(){
   if(!selectedEvent) return;
   autoApprove=localStorage.getItem(getAutoKey())==='1';
   updateAutoToggleUI();
-  clearInterval(autoApproveInterval);
-  if(autoApprove){
-    autoApproveInterval=setInterval(approveNewPosts,4000);
-  }
 }
 
 // ── DELETE EVENT ─────────────────────────────────────────────
@@ -771,8 +765,7 @@ function selectEvent(ev,cardEl){
   document.getElementById('sidebar-event').textContent=ev.name;
   document.querySelectorAll('.event-card').forEach(c=>c.classList.remove('selected'));
   cardEl.classList.add('selected');
-  // Stop auto-approve from previous event
-  clearInterval(autoApproveInterval);
+  // Reset auto-approve state when switching events
   autoApprove=false;
   toast('✓ "'+ev.name+'" seleccionado');
 }
@@ -1289,6 +1282,14 @@ async function deletePoll(id){
   toast('🗑 Votación eliminada');
   loadPolls();
 }
+
+// ── GLOBAL BACKGROUND POLLER ─────────────────────────────────
+// Runs every 5s regardless of which page is active
+setInterval(async()=>{
+  if(!selectedEvent) return;
+  if(!autoApprove) return;
+  await approveNewPosts();
+}, 5000);
 
 // Auto-load if already unlocked this session
 if(sessionStorage.getItem('ew_unlocked')==='1'){
