@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>EventWall · Participar</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -17,7 +17,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;backgro
 .hero{background:var(--dark);padding:28px 20px 24px;position:relative;overflow:hidden;width:100%}
 .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(240,23,111,0.3),transparent 70%);pointer-events:none}
 .hero-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--pink);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
-.hero-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1.25;margin-bottom:6px}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(18px,6vw,26px);font-weight:800;color:#fff;line-height:1.25;margin-bottom:6px}
 .hero-sub{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:18px}
 .hero-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(240,23,111,0.18);border:1px solid rgba(240,23,111,0.35);padding:7px 14px;border-radius:20px;font-size:12px;color:rgba(255,255,255,0.8);font-weight:500}
 .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border-bottom:1px solid var(--border);width:100%}
@@ -30,7 +30,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;backgro
 .field{width:100%;padding:13px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
 .field:focus{border-color:var(--pink)}
 .type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:16px;width:100%;max-width:100%}
-.type-btn{padding:12px 4px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:11px;font-weight:600;min-width:0;overflow:hidden;color:var(--muted);transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px;-webkit-appearance:none}
+.type-btn{padding:12px 4px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;width:100%;min-width:0;font-size:11px;font-weight:600;min-width:0;overflow:hidden;color:var(--muted);transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px;-webkit-appearance:none}
 .type-btn .ico{font-size:24px;line-height:1}
 .type-btn.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
 .wish-btn{border-color:var(--border);color:var(--muted)}
@@ -109,7 +109,7 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
 .audio-info{font-size:13px;color:var(--text);font-weight:500}
 .audio-dur{font-size:11px;color:var(--muted);margin-top:2px}
 
-.send-btn{width:100%;padding:16px;background:var(--pink);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:18px;transition:all 0.2s;-webkit-appearance:none}
+.send-btn{width:100%;padding:16px;background:var(--pink);color:#fff;border:none;border-radius:14px;font-size:clamp(14px,4vw,16px);font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:18px;transition:all 0.2s;-webkit-appearance:none}
 .send-btn:hover{background:#c2185b}
 .send-btn:active{transform:scale(0.98)}
 .send-btn:disabled{opacity:0.55;cursor:not-allowed;transform:none}
@@ -163,6 +163,70 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
 .poll-lock-opt{padding:11px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;cursor:pointer;transition:all 0.2s;text-align:left;font-family:inherit;width:100%}
 .poll-lock-opt:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3)}
 .poll-lock-opt.voted{background:rgba(240,23,111,0.2);border-color:var(--pink);color:#fff;cursor:default}
+
+/* ── RESPONSIVE MOBILE-FIRST ───────────────────────────────── */
+/* Base: all screens */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Ensure nothing escapes viewport */
+html, body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  -webkit-text-size-adjust: 100%;
+}
+
+#app, .hero, .stats-bar, .body,
+.name-wrap, .type-selector, .form-section,
+.send-btn, .field, .upload-zone {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Very small phones (< 360px) */
+@media (max-width: 359px) {
+  .hero { padding: 20px 14px 18px; }
+  .body { padding: 12px; }
+  .type-btn { padding: 10px 2px; font-size: 11px; }
+  .type-btn .ico { font-size: 18px; }
+  .field { padding: 11px 12px; font-size: 14px; }
+  .send-btn { padding: 14px; font-size: 14px; }
+  .hero-title { font-size: 20px; }
+  .emoji-opt { width: 32px; height: 32px; font-size: 16px; }
+  .sticker-btn { width: 36px; height: 36px; font-size: 18px; }
+  .filter-opt { width: 56px; }
+  .filter-opt canvas { width: 56px; height: 56px; }
+}
+
+/* Normal phones (360px - 480px) */
+@media (min-width: 360px) and (max-width: 480px) {
+  .hero { padding: 24px 18px 20px; }
+  .body { padding: 16px; }
+  .hero-title { font-size: 22px; }
+}
+
+/* Large phones / small tablets (480px+) */
+@media (min-width: 481px) {
+  .hero { padding: 32px 28px 28px; }
+  .body { padding: 20px 24px; }
+  .hero-title { font-size: 26px; }
+  .type-btn { padding: 16px 12px; font-size: 13px; }
+  .send-btn { font-size: 17px; }
+}
+
+/* Touch-friendly tap targets */
+@media (hover: none) and (pointer: coarse) {
+  .type-btn, .send-btn, .record-btn,
+  .frame-card, .emoji-opt, .sticker-btn,
+  .bubble-style-btn, .size-opt, .color-opt {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .send-btn { min-height: 52px; }
+  .field { min-height: 48px; }
+}
 </style>
 </head>
 <body>
@@ -253,7 +317,7 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
       <textarea class="field" id="msg-text" placeholder="Escribí tu mensaje... 💌" oninput="updateCharCount(this)" maxlength="200"></textarea>
       <div class="char-count"><span id="char-count">0</span>/200</div>
 
-      <div style="margin-top:12px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px">
+      <div style="margin-top:12px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px;width:100%;box-sizing:border-box">
         <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px">Personalizar burbuja</div>
 
         <!-- BUBBLE STYLE -->
@@ -270,7 +334,7 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
         <!-- EMOJI -->
         <div style="margin-bottom:12px">
           <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Emoji decorativo</div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px">
+          <div style="display:flex;flex-wrap:wrap;gap:5px;width:100%">
             <button class="emoji-opt active" onclick="selectMsgEmoji('none',this)" style="font-size:12px;color:var(--muted)">✕</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('💬',this)">💬</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('❤️',this)">❤️</button>
