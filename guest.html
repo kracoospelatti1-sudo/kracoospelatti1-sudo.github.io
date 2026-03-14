@@ -1426,7 +1426,7 @@ function getGuestName(){
   return n;
 }
 function setProgress(pct,label){document.getElementById('sending-progress').style.width=pct+'%';document.getElementById('sending-label').textContent=label;}
-function showSending(){setProgress(5,'Preparando...');document.getElementById('sending-overlay').classList.add('show');}
+function showSending(){setProgress(10,'Preparando...');document.getElementById('sending-overlay').classList.add('show');}
 function hideSending(){document.getElementById('sending-overlay').classList.remove('show');setProgress(0,'');}
 function showSuccess(){document.getElementById('success-screen').classList.add('show');loadStats();}
 function showFormError(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');}
@@ -1438,7 +1438,7 @@ function resetForm(){
   document.getElementById('msg-preview').style.display='none';
   msgEmoji='💬';msgBgColor='#ffffff';msgTextColor='#1a1a1a';msgSize='medium';msgBubbleStyle='bubble';
   document.querySelectorAll('.emoji-opt').forEach((b,i)=>b.classList.toggle('active',i===0));
-  document.querySelectorAll('.color-opt').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.color-dot,.color-opt').forEach((b,i)=>b.classList.toggle('active',i===0));
   document.querySelectorAll('.size-opt').forEach((b,i)=>b.classList.toggle('active',i===1));
   document.querySelectorAll('.bubble-style-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
   const wishEl=document.getElementById('wish-text');
