@@ -7,9 +7,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden;width:100%}
 :root{--pink:#f0176f;--pink-light:#fde8f2;--pink-border:#fbc4dd;--bg:#faf8f6;--surface:#fff;--border:#ece8e3;--text:#1a1a1a;--muted:#8a8a95;--dark:#0c0c0f}
 html{background:var(--bg);-webkit-tap-highlight-color:transparent}
-body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;max-width:480px;margin:0 auto;background:var(--bg)}
+body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;max-width:480px;margin:0 auto;background:var(--bg);overflow-x:hidden;width:100%;position:relative}
 .hero{background:var(--dark);padding:28px 24px 24px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(240,23,111,0.3),transparent 70%);pointer-events:none}
 .hero-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--pink);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
@@ -20,12 +21,12 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;max-wid
 .stat{text-align:center;padding:12px 0}
 .stat-num{font-size:20px;font-weight:800;color:var(--pink);font-family:'Syne',sans-serif}
 .stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
-.body{padding:20px}
+.body{padding:20px;overflow-x:hidden;width:100%}
 .section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
 .name-wrap{margin-bottom:18px}
 .field{width:100%;padding:13px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
 .field:focus{border-color:var(--pink)}
-.type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;width:100%}
 .type-btn{padding:14px 8px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px;-webkit-appearance:none}
 .type-btn .ico{font-size:24px;line-height:1}
 .type-btn.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
@@ -69,7 +70,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;max-wid
 .upload-zone .uhint{font-size:11px;opacity:0.6}
 
 /* FRAME PICKER */
-.frame-picker{margin-top:14px;display:none}
+.frame-picker{margin-top:14px;display:none;width:100%;overflow:hidden}
 .frame-picker-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
 .frames-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
 .frame-opt{flex-shrink:0;width:72px;cursor:pointer;border-radius:10px;border:2px solid var(--border);overflow:hidden;transition:all 0.2s;position:relative}
@@ -81,7 +82,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;max-wid
 .frame-opt.active .frame-check{display:flex}
 
 /* CANVAS PREVIEW */
-.canvas-preview-wrap{margin-top:12px;display:none;position:relative}
+.canvas-preview-wrap{margin-top:12px;display:none;position:relative;width:100%;overflow:hidden}
 .canvas-preview-wrap canvas{width:100%;border-radius:12px;display:block}
 .preview-remove{position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(0,0,0,0.6);border-radius:50%;border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .preview-caption{margin-top:10px}
@@ -134,14 +135,14 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
 .size-opt{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:800;cursor:pointer;transition:all 0.2s;color:var(--muted);-webkit-appearance:none}
 .size-opt.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
 /* FILTERS */
-.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;max-width:100%}
 .filter-opt{flex-shrink:0;width:68px;cursor:pointer;border-radius:10px;border:2px solid var(--border);overflow:hidden;transition:all 0.2s}
 .filter-opt.active{border-color:var(--pink)}
 .filter-opt canvas{width:68px;height:68px;display:block}
 .filter-name{font-size:9px;text-align:center;padding:3px 2px;color:var(--muted);font-weight:600;background:var(--surface);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .filter-opt.active .filter-name{color:var(--pink)}
 /* STICKERS */
-.sticker-row{display:flex;flex-wrap:wrap;gap:6px}
+.sticker-row{display:flex;flex-wrap:wrap;gap:6px;max-width:100%}
 .sticker-btn{width:40px;height:40px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;-webkit-appearance:none;position:relative}
 .sticker-btn:hover{border-color:var(--pink);transform:scale(1.1)}
 .sticker-btn.active{border-color:var(--pink);background:var(--pink-light)}
@@ -168,7 +169,7 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
   <p style="font-size:14px">Cargando evento...</p>
 </div>
 
-<div id="app" style="display:none">
+<div id="app" style="display:none;overflow-x:hidden;width:100%;max-width:480px;margin:0 auto">
   <div class="hero">
     <div class="hero-logo">EventWall</div>
     <div class="hero-title" id="ev-name">Cargando...</div>
