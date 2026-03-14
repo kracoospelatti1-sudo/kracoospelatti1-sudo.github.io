@@ -829,197 +829,247 @@ input[type=range]{accent-color:var(--pink)}
 
     <!-- GUEST DESIGN -->
     <div class="page" id="page-guest-design">
-      <div class="page-title">Vista del invitado</div>
-      <div class="page-sub">Personalizá cómo ven la app los invitados al escanear el QR</div>
-      <div class="notice" id="gd-notice">⚠️ Seleccioná un evento primero</div>
-      <div id="gd-content" style="display:none">
+  <div class="page-title">Vista del invitado</div>
+  <div class="page-sub">Personalizá cómo ven la app los invitados en su celular</div>
+  <div class="notice" id="gd-notice">⚠️ Seleccioná un evento primero</div>
 
-        <!-- LIVE PREVIEW -->
-        <div style="display:grid;grid-template-columns:1fr 280px;gap:20px;align-items:start">
-          <div>
+  <div id="gd-content" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start">
 
-            <!-- TEXTOS -->
-            <div class="card" style="margin-bottom:16px">
-              <div class="card-title">✏️ Textos</div>
-              <div class="fg full" style="margin-bottom:12px">
-                <div><label>Título principal</label><input type="text" id="gd-title" placeholder="Nombre del evento (auto)" oninput="updateGuestPreview()"/></div>
-              </div>
-              <div class="fg full" style="margin-bottom:12px">
-                <div><label>Subtítulo</label><input type="text" id="gd-subtitle" placeholder="Fecha y lugar (auto)" oninput="updateGuestPreview()"/></div>
-              </div>
-              <div class="fg full" style="margin-bottom:12px">
-                <div><label>Mensaje de bienvenida</label><input type="text" id="gd-welcome" placeholder="Compartí tu momento con todos 📷" oninput="updateGuestPreview()"/></div>
-              </div>
-              <div class="fg full">
-                <div><label>Texto del botón de envío</label><input type="text" id="gd-btn-text" placeholder="Enviar a la pantalla ✨" oninput="updateGuestPreview()"/></div>
-              </div>
-            </div>
+      <!-- LEFT: TABBED EDITOR -->
+      <div>
+        <!-- TABS -->
+        <div style="display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap">
+          <button class="dtab active" onclick="switchGDTab('textos',this)">✏️ Textos</button>
+          <button class="dtab" onclick="switchGDTab('colores',this)">🎨 Colores</button>
+          <button class="dtab" onclick="switchGDTab('estilo',this)">🔤 Estilo</button>
+          <button class="dtab" onclick="switchGDTab('opciones',this)">⚙️ Funciones</button>
+        </div>
 
-            <!-- COLORES -->
-            <div class="card" style="margin-bottom:16px">
-              <div class="card-title">🎨 Colores</div>
-              <div class="design-grid">
-                <div class="design-field">
-                  <label>Fondo de la app</label>
-                  <div class="color-pick-row">
-                    <input type="color" id="gd-bg" value="#faf8f6" oninput="syncGDHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
-                    <input type="text" id="gd-bg-hex" value="#FAF8F6" class="hex-input" oninput="syncColorFromHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
-                  </div>
-                </div>
-                <div class="design-field">
-                  <label>Color de acento (botones)</label>
-                  <div class="color-pick-row">
-                    <input type="color" id="gd-accent" value="#f0176f" oninput="syncGDHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
-                    <input type="text" id="gd-accent-hex" value="#F0176F" class="hex-input" oninput="syncColorFromHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
-                  </div>
-                </div>
-                <div class="design-field">
-                  <label>Fondo del hero</label>
-                  <div class="color-pick-row">
-                    <input type="color" id="gd-hero" value="#0c0c0f" oninput="syncGDHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
-                    <input type="text" id="gd-hero-hex" value="#0C0C0F" class="hex-input" oninput="syncColorFromHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
-                  </div>
-                </div>
-                <div class="design-field">
-                  <label>Texto del hero</label>
-                  <div class="color-pick-row">
-                    <input type="color" id="gd-hero-txt" value="#ffffff" oninput="syncGDHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
-                    <input type="text" id="gd-hero-txt-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
-                  </div>
-                </div>
-                <div class="design-field">
-                  <label>Color del texto principal</label>
-                  <div class="color-pick-row">
-                    <input type="color" id="gd-text" value="#1a1a1a" oninput="syncGDHex('gd-text','gd-text-hex');updateGuestPreview()"/>
-                    <input type="text" id="gd-text-hex" value="#1A1A1A" class="hex-input" oninput="syncColorFromHex('gd-text','gd-text-hex');updateGuestPreview()"/>
-                  </div>
-                </div>
-                <div class="design-field">
-                  <label>Color de los campos</label>
-                  <div class="color-pick-row">
-                    <input type="color" id="gd-field-bg" value="#ffffff" oninput="syncGDHex('gd-field-bg','gd-field-bg-hex');updateGuestPreview()"/>
-                    <input type="text" id="gd-field-bg-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('gd-field-bg','gd-field-bg-hex');updateGuestPreview()"/>
-                  </div>
-                </div>
+        <!-- TAB: TEXTOS -->
+        <div class="dtab-panel active" id="gdtab-textos">
+          <div class="card">
+            <div class="card-title">✏️ Textos</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <label>Título del evento</label>
+                <input type="text" id="gd-title" placeholder="Se usa el nombre del evento por defecto" oninput="updateGuestPreview()"/>
+                <div style="font-size:11px;color:var(--muted);margin-top:4px">Dejá vacío para usar el nombre del evento automáticamente</div>
               </div>
-            </div>
-
-            <!-- FUENTE Y ESTILO -->
-            <div class="card" style="margin-bottom:16px">
-              <div class="card-title">🔤 Fuente y estilo</div>
-              <div class="design-grid">
-                <div class="design-field">
-                  <label>Fuente principal</label>
-                  <select id="gd-font" onchange="updateGuestPreview()">
-                    <option value="DM Sans">DM Sans (por defecto)</option>
-                    <option value="Inter">Inter</option>
-                    <option value="Nunito">Nunito</option>
-                    <option value="Poppins">Poppins</option>
-                    <option value="Quicksand">Quicksand</option>
-                    <option value="Lato">Lato</option>
-                    <option value="Raleway">Raleway</option>
-                    <option value="Montserrat">Montserrat</option>
-                  </select>
-                </div>
-                <div class="design-field">
-                  <label>Fuente de títulos</label>
-                  <select id="gd-font-title" onchange="updateGuestPreview()">
-                    <option value="Syne">Syne (por defecto)</option>
-                    <option value="Playfair Display">Playfair Display</option>
-                    <option value="Oswald">Oswald</option>
-                    <option value="Bebas Neue">Bebas Neue</option>
-                    <option value="Dancing Script">Dancing Script</option>
-                    <option value="Great Vibes">Great Vibes</option>
-                    <option value="Pacifico">Pacifico</option>
-                    <option value="Lobster">Lobster</option>
-                  </select>
-                </div>
-                <div class="design-field">
-                  <label>Forma de botones</label>
-                  <select id="gd-btn-radius" onchange="updateGuestPreview()">
-                    <option value="14">Redondeado (por defecto)</option>
-                    <option value="0">Cuadrado</option>
-                    <option value="4">Levemente redondeado</option>
-                    <option value="50">Píldora</option>
-                  </select>
-                </div>
-                <div class="design-field">
-                  <label>Estilo de campos</label>
-                  <select id="gd-field-radius" onchange="updateGuestPreview()">
-                    <option value="12">Redondeado</option>
-                    <option value="0">Cuadrado</option>
-                    <option value="4">Levemente redondeado</option>
-                    <option value="24">Muy redondeado</option>
-                  </select>
-                </div>
-                <div class="design-field">
-                  <label>Tamaño de texto base</label>
-                  <div style="display:flex;align-items:center;gap:10px">
-                    <input type="range" id="gd-font-size" min="12" max="18" value="15" oninput="updateGuestPreview();document.getElementById('gd-font-size-val').textContent=this.value+'px'" style="flex:1"/>
-                    <span id="gd-font-size-val" style="font-size:12px;color:var(--muted);min-width:36px">15px</span>
-                  </div>
-                </div>
-                <div class="design-field">
-                  <label>Mostrar logo "EventWall"</label>
-                  <select id="gd-show-logo" onchange="updateGuestPreview()">
-                    <option value="yes">Visible</option>
-                    <option value="no">Oculto</option>
-                  </select>
-                </div>
+              <div>
+                <label>Subtítulo</label>
+                <input type="text" id="gd-subtitle" placeholder="Fecha y lugar (automático)" oninput="updateGuestPreview()"/>
               </div>
-            </div>
-
-            <!-- OPCIONES -->
-            <div class="card" style="margin-bottom:16px">
-              <div class="card-title">⚙️ Opciones visibles</div>
-              <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Elegí qué pueden hacer los invitados</p>
-              <div style="display:flex;flex-direction:column;gap:10px">
-                <label class="toggle-label"><div class="opt-toggle on" id="tog-show-photo" onclick="toggleGDOption('photo')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">📷 Subir fotos</div><div style="font-size:12px;color:var(--muted)">Los invitados pueden subir fotos con marcos</div></div></label>
-                <label class="toggle-label"><div class="opt-toggle on" id="tog-show-message" onclick="toggleGDOption('message')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💬 Enviar mensajes</div><div style="font-size:12px;color:var(--muted)">Mensajes en burbuja en pantalla grande</div></div></label>
-                <label class="toggle-label"><div class="opt-toggle on" id="tog-show-audio" onclick="toggleGDOption('audio')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🎤 Grabar audios</div><div style="font-size:12px;color:var(--muted)">Mensajes de voz guardados en el álbum</div></div></label>
-                <label class="toggle-label"><div class="opt-toggle on" id="tog-show-wish" onclick="toggleGDOption('wish')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💌 Mensajes especiales</div><div style="font-size:12px;color:var(--muted)">Aparecen en pantalla completa con animación</div></div></label>
-                <label class="toggle-label"><div class="opt-toggle on" id="tog-show-vote" onclick="toggleGDOption('vote')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗳 Votaciones</div><div style="font-size:12px;color:var(--muted)">Participar en encuestas del evento</div></div></label>
+              <div>
+                <label>Mensaje de bienvenida</label>
+                <input type="text" id="gd-welcome" placeholder="Compartí tu momento con todos 📷" oninput="updateGuestPreview()"/>
               </div>
-            </div>
-
-            <button class="btn-pink" onclick="saveGuestDesign()" style="width:100%">💾 Guardar configuración del menú</button>
-          </div>
-
-          <!-- PREVIEW -->
-          <div style="position:sticky;top:20px">
-            <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Vista previa</div>
-            <div id="gd-preview" style="border-radius:24px;overflow:hidden;border:1px solid var(--border);max-width:280px;font-family:'DM Sans',sans-serif;box-shadow:0 8px 32px rgba(0,0,0,0.3)">
-              <!-- hero -->
-              <div id="gd-prev-hero" style="background:#0c0c0f;padding:24px 20px 20px">
-                <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;color:#f0176f" id="gd-prev-logo">EVENTWALL</div>
-                <div id="gd-prev-title" style="font-size:18px;font-weight:800;color:#fff;margin-bottom:4px">Nombre del evento</div>
-                <div id="gd-prev-sub" style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:14px">Fecha · Lugar</div>
-                <div id="gd-prev-welcome" style="display:inline-flex;align-items:center;gap:6px;background:rgba(240,23,111,0.18);border:1px solid rgba(240,23,111,0.35);padding:6px 12px;border-radius:20px;font-size:11px;color:rgba(255,255,255,0.8)">📷 Compartí tu momento</div>
+              <div>
+                <label>Texto del botón de envío</label>
+                <input type="text" id="gd-btn-text" placeholder="Enviar a la pantalla ✨" oninput="updateGuestPreview()"/>
               </div>
-              <!-- stats -->
-              <div style="display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border-bottom:1px solid #ece8e3">
-                <div style="text-align:center;padding:10px 0"><div style="font-size:16px;font-weight:800;color:#f0176f" id="gd-prev-accent1">0</div><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px">Fotos</div></div>
-                <div style="text-align:center;padding:10px 0"><div style="font-size:16px;font-weight:800;color:#f0176f" id="gd-prev-accent2">0</div><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px">Mensajes</div></div>
-                <div style="text-align:center;padding:10px 0"><div style="font-size:16px;font-weight:800;color:#f0176f" id="gd-prev-accent3">0</div><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.5px">Audios</div></div>
-              </div>
-              <!-- body -->
-              <div style="background:#faf8f6;padding:16px" id="gd-prev-body">
-                <div style="font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">Tu nombre</div>
-                <div class="prev-name-field" style="background:#fff;border:1.5px solid #ece8e3;border-radius:10px;padding:9px 12px;font-size:11px;color:#aaa;margin-bottom:12px">Ej: Valentina García</div>
-                <div style="font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">¿Qué querés compartir?</div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px" id="gd-prev-btns">
-                  <div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">📷<br>Foto</div>
-                  <div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">💬<br>Mensaje</div>
-                  <div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">🎤<br>Audio</div>
-                </div>
-                <div id="gd-prev-extra-btns"></div>
-                <div id="gd-prev-send-btn" style="background:#f0176f;color:#fff;border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:700;margin-top:10px">Enviar a la pantalla ✨</div>
+              <div>
+                <label>Mostrar logo "EventWall"</label>
+                <select id="gd-show-logo" onchange="updateGuestPreview()">
+                  <option value="yes">Visible</option>
+                  <option value="no">Oculto</option>
+                </select>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- TAB: COLORES -->
+        <div class="dtab-panel" id="gdtab-colores">
+          <div class="card">
+            <div class="card-title">🎨 Colores</div>
+            <!-- QUICK PALETTES -->
+            <div style="margin-bottom:16px">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Paletas rápidas</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button onclick="applyGDPalette('dark')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#07070f;color:#f0176f;font-size:12px;cursor:pointer;font-family:inherit">Dark</button>
+                <button onclick="applyGDPalette('light')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#faf8f6;color:#e91e8c;font-size:12px;cursor:pointer;font-family:inherit">Light</button>
+                <button onclick="applyGDPalette('rose')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#fff0f5;color:#e91e8c;font-size:12px;cursor:pointer;font-family:inherit">Rosa</button>
+                <button onclick="applyGDPalette('gold')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#fffbf0;color:#d97706;font-size:12px;cursor:pointer;font-family:inherit">Dorado</button>
+                <button onclick="applyGDPalette('ocean')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f0f7ff;color:#2563eb;font-size:12px;cursor:pointer;font-family:inherit">Ocean</button>
+                <button onclick="applyGDPalette('neon')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#0a0015;color:#a855f7;font-size:12px;cursor:pointer;font-family:inherit">Neon</button>
+              </div>
+            </div>
+            <div class="design-grid">
+              <div class="design-field">
+                <label>Fondo de la app</label>
+                <div class="color-pick-row">
+                  <input type="color" id="gd-bg" value="#faf8f6" oninput="syncGDHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
+                  <input type="text" id="gd-bg-hex" value="#FAF8F6" class="hex-input" oninput="syncColorFromHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
+                </div>
+              </div>
+              <div class="design-field">
+                <label>Color de acento</label>
+                <div class="color-pick-row">
+                  <input type="color" id="gd-accent" value="#f0176f" oninput="syncGDHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
+                  <input type="text" id="gd-accent-hex" value="#F0176F" class="hex-input" oninput="syncColorFromHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
+                </div>
+              </div>
+              <div class="design-field">
+                <label>Fondo del hero</label>
+                <div class="color-pick-row">
+                  <input type="color" id="gd-hero" value="#0c0c0f" oninput="syncGDHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
+                  <input type="text" id="gd-hero-hex" value="#0C0C0F" class="hex-input" oninput="syncColorFromHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
+                </div>
+              </div>
+              <div class="design-field">
+                <label>Texto del hero</label>
+                <div class="color-pick-row">
+                  <input type="color" id="gd-hero-txt" value="#ffffff" oninput="syncGDHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
+                  <input type="text" id="gd-hero-txt-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
+                </div>
+              </div>
+              <div class="design-field">
+                <label>Texto principal</label>
+                <div class="color-pick-row">
+                  <input type="color" id="gd-text" value="#1a1a1a" oninput="syncGDHex('gd-text','gd-text-hex');updateGuestPreview()"/>
+                  <input type="text" id="gd-text-hex" value="#1A1A1A" class="hex-input" oninput="syncColorFromHex('gd-text','gd-text-hex');updateGuestPreview()"/>
+                </div>
+              </div>
+              <div class="design-field">
+                <label>Fondo de campos</label>
+                <div class="color-pick-row">
+                  <input type="color" id="gd-field-bg" value="#ffffff" oninput="syncGDHex('gd-field-bg','gd-field-bg-hex');updateGuestPreview()"/>
+                  <input type="text" id="gd-field-bg-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('gd-field-bg','gd-field-bg-hex');updateGuestPreview()"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: ESTILO -->
+        <div class="dtab-panel" id="gdtab-estilo">
+          <div class="card">
+            <div class="card-title">🔤 Tipografía y estilo</div>
+            <div class="design-grid">
+              <div class="design-field">
+                <label>Fuente de títulos</label>
+                <select id="gd-font-title" onchange="updateGuestPreview()">
+                  <option value="Syne">Syne</option>
+                  <option value="Playfair Display">Playfair Display</option>
+                  <option value="Dancing Script">Dancing Script</option>
+                  <option value="Great Vibes">Great Vibes</option>
+                  <option value="Pacifico">Pacifico</option>
+                  <option value="Lobster">Lobster</option>
+                  <option value="Oswald">Oswald</option>
+                  <option value="Bebas Neue">Bebas Neue</option>
+                </select>
+              </div>
+              <div class="design-field">
+                <label>Fuente del cuerpo</label>
+                <select id="gd-font" onchange="updateGuestPreview()">
+                  <option value="DM Sans">DM Sans</option>
+                  <option value="Inter">Inter</option>
+                  <option value="Nunito">Nunito</option>
+                  <option value="Poppins">Poppins</option>
+                  <option value="Quicksand">Quicksand</option>
+                  <option value="Lato">Lato</option>
+                  <option value="Raleway">Raleway</option>
+                  <option value="Montserrat">Montserrat</option>
+                </select>
+              </div>
+              <div class="design-field">
+                <label>Forma de botones</label>
+                <select id="gd-btn-radius" onchange="updateGuestPreview()">
+                  <option value="14">Redondeado</option>
+                  <option value="50">Píldora</option>
+                  <option value="4">Levemente redondeado</option>
+                  <option value="0">Cuadrado</option>
+                </select>
+              </div>
+              <div class="design-field">
+                <label>Estilo de campos</label>
+                <select id="gd-field-radius" onchange="updateGuestPreview()">
+                  <option value="12">Redondeado</option>
+                  <option value="24">Muy redondeado</option>
+                  <option value="4">Levemente redondeado</option>
+                  <option value="0">Cuadrado</option>
+                </select>
+              </div>
+              <div class="design-field">
+                <label>Tamaño base del texto</label>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <input type="range" id="gd-font-size" min="12" max="18" value="15" oninput="updateGuestPreview();document.getElementById('gd-font-size-val').textContent=this.value+'px'" style="flex:1"/>
+                  <span id="gd-font-size-val" style="font-size:12px;color:var(--muted);min-width:36px">15px</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: OPCIONES -->
+        <div class="dtab-panel" id="gdtab-opciones">
+          <div class="card">
+            <div class="card-title">⚙️ Funciones habilitadas</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Elegí qué pueden hacer los invitados</p>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-photo" onclick="toggleGDOption('photo')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">📷 Subir fotos</div><div style="font-size:12px;color:var(--muted)">Con marcos, filtros y stickers</div></div></label>
+              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-message" onclick="toggleGDOption('message')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💬 Enviar mensajes</div><div style="font-size:12px;color:var(--muted)">Burbujas personalizadas en pantalla</div></div></label>
+              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-audio" onclick="toggleGDOption('audio')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🎤 Grabar audios</div><div style="font-size:12px;color:var(--muted)">Mensajes de voz en el álbum</div></div></label>
+              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-wish" onclick="toggleGDOption('wish')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💌 Mensajes especiales</div><div style="font-size:12px;color:var(--muted)">Pantalla completa con animación</div></div></label>
+              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-vote" onclick="toggleGDOption('vote')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗳 Votaciones</div><div style="font-size:12px;color:var(--muted)">Participar en encuestas</div></div></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- SAVE -->
+        <div style="display:flex;gap:10px;margin-top:4px">
+          <button class="btn-pink" onclick="saveGuestDesign()">💾 Guardar y aplicar</button>
+          <button class="btn-ghost" onclick="resetGuestDesign()">↺ Resetear</button>
+        </div>
       </div>
+
+      <!-- RIGHT: LIVE PHONE PREVIEW -->
+      <div style="position:sticky;top:20px">
+        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Vista previa del celular</div>
+        <!-- Phone frame -->
+        <div style="background:#1a1a1a;border-radius:32px;padding:10px;box-shadow:0 16px 48px rgba(0,0,0,0.5);max-width:220px;margin:0 auto">
+          <div style="background:#000;border-radius:24px;overflow:hidden">
+            <!-- Screen -->
+            <div id="gd-preview" style="font-family:'DM Sans',sans-serif;font-size:11px">
+              <!-- hero -->
+              <div id="gd-prev-hero" style="background:#0c0c0f;padding:16px 14px 12px">
+                <div id="gd-prev-logo" style="font-size:8px;font-weight:700;letter-spacing:2px;color:#f0176f;margin-bottom:8px">EVENTWALL</div>
+                <div id="gd-prev-title" style="font-size:14px;font-weight:800;color:#fff;margin-bottom:2px;font-family:'Syne',sans-serif">Nombre del evento</div>
+                <div id="gd-prev-sub" style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:10px">Fecha · Lugar</div>
+                <div id="gd-prev-welcome" style="display:inline-flex;align-items:center;gap:4px;background:rgba(240,23,111,0.18);border:1px solid rgba(240,23,111,0.35);padding:4px 8px;border-radius:12px;font-size:8px;color:rgba(255,255,255,0.8)">📷 Compartí tu momento</div>
+              </div>
+              <!-- stats -->
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #ece8e3" id="gd-prev-stats">
+                <div style="text-align:center;padding:6px 0;background:#fff"><div style="font-size:12px;font-weight:800;color:#f0176f" id="gd-prev-accent1">0</div><div style="font-size:7px;color:#aaa;text-transform:uppercase">Fotos</div></div>
+                <div style="text-align:center;padding:6px 0;background:#fff"><div style="font-size:12px;font-weight:800;color:#f0176f" id="gd-prev-accent2">0</div><div style="font-size:7px;color:#aaa;text-transform:uppercase">Msgs</div></div>
+                <div style="text-align:center;padding:6px 0;background:#fff"><div style="font-size:12px;font-weight:800;color:#f0176f" id="gd-prev-accent3">0</div><div style="font-size:7px;color:#aaa;text-transform:uppercase">Audios</div></div>
+              </div>
+              <!-- body -->
+              <div id="gd-prev-body" style="background:#faf8f6;padding:10px">
+                <div style="font-size:7px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Tu nombre</div>
+                <div class="prev-name-field" style="background:#fff;border:1.5px solid #ece8e3;border-radius:8px;padding:6px 8px;font-size:9px;color:#aaa;margin-bottom:8px">Ej: Valentina García</div>
+                <div style="font-size:7px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">¿Qué querés compartir?</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:6px" id="gd-prev-btns"></div>
+                <div id="gd-prev-extra-btns"></div>
+                <div id="gd-prev-send-btn" style="background:#f0176f;color:#fff;border-radius:8px;padding:7px;text-align:center;font-size:9px;font-weight:700;margin-top:6px">Enviar a la pantalla ✨</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Color swatches -->
+        <div style="display:flex;gap:5px;margin-top:12px;justify-content:center;flex-wrap:wrap">
+          <div id="gd-swatch-bg" title="Fondo" style="width:14px;height:14px;border-radius:3px;border:1px solid var(--border);background:#faf8f6"></div>
+          <div id="gd-swatch-accent" title="Acento" style="width:14px;height:14px;border-radius:3px;background:#f0176f"></div>
+          <div id="gd-swatch-hero" title="Hero" style="width:14px;height:14px;border-radius:3px;background:#0c0c0f"></div>
+          <div id="gd-swatch-text" title="Texto" style="width:14px;height:14px;border-radius:3px;border:1px solid var(--border);background:#1a1a1a"></div>
+        </div>
+      </div>
+
     </div>
+  </div>
+</div>
+
 
     <!-- SETTINGS -->
     <div class="page" id="page-settings">
@@ -1569,6 +1619,39 @@ function applyTemplate(name, el){
   previewTheme();
 }
 
+function switchGDTab(tab, btn){
+  document.querySelectorAll('#page-guest-design .dtab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.dtab-panel[id^="gdtab-"]').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('gdtab-'+tab).classList.add('active');
+}
+
+function applyGDPalette(name){
+  const palettes={
+    dark: {bg:'#0d0d0d',accent:'#f0176f',hero:'#07070f',heroTxt:'#ffffff',textColor:'#e0e0e0',fieldBg:'#1a1a1a'},
+    light:{bg:'#faf8f6',accent:'#e91e8c',hero:'#ffffff',heroTxt:'#1a1a1a',textColor:'#1a1a1a',fieldBg:'#ffffff'},
+    rose: {bg:'#fff0f5',accent:'#e91e8c',hero:'#1a0010',heroTxt:'#ffe0ef',textColor:'#3d0020',fieldBg:'#fff8fb'},
+    gold: {bg:'#fffbf0',accent:'#d97706',hero:'#0d0900',heroTxt:'#fff8e1',textColor:'#3d2800',fieldBg:'#fffef8'},
+    ocean:{bg:'#f0f7ff',accent:'#2563eb',hero:'#0a1628',heroTxt:'#e0f2fe',textColor:'#0a1628',fieldBg:'#f8fbff'},
+    neon: {bg:'#0a0015',accent:'#a855f7',hero:'#0d001a',heroTxt:'#f0d0ff',textColor:'#e0c0ff',fieldBg:'#150025'},
+  };
+  const p=palettes[name];if(!p) return;
+  const setC=(id,val)=>{
+    const el=document.getElementById(id);const hex=document.getElementById(id+'-hex');
+    if(el) el.value=val;if(hex) hex.value=val.toUpperCase();
+  };
+  setC('gd-bg',p.bg);setC('gd-accent',p.accent);setC('gd-hero',p.hero);
+  setC('gd-hero-txt',p.heroTxt);setC('gd-text',p.textColor);setC('gd-field-bg',p.fieldBg);
+  updateGuestPreview();
+}
+
+function resetGuestDesign(){
+  if(!confirm('¿Resetear el diseño del invitado?')) return;
+  localStorage.removeItem('ew_guest_design_'+(selectedEvent?.id||''));
+  showGuestDesign();
+  toast('Diseño reseteado');
+}
+
 function switchDesignTab(tab, btn){
   document.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.dtab-panel').forEach(p=>p.classList.remove('active'));
@@ -2028,6 +2111,12 @@ function updateGuestPreview(){
   if(showMsg)   btns.innerHTML+=`<div style="${btnStyle}">💬<br>Mensaje</div>`;
   if(showAudio) btns.innerHTML+=`<div style="${btnStyle}">🎤<br>Audio</div>`;
   if(btns.children.length===0) btns.innerHTML=`<div style="font-size:10px;color:#aaa;padding:8px;text-align:center;grid-column:1/-1">Sin opciones</div>`;
+
+  // Update swatches
+  const sb=document.getElementById('gd-swatch-bg');if(sb) sb.style.background=bg;
+  const sa=document.getElementById('gd-swatch-accent');if(sa) sa.style.background=accent;
+  const sh=document.getElementById('gd-swatch-hero');if(sh) sh.style.background=hero;
+  const st=document.getElementById('gd-swatch-text');if(st) st.style.background=textColor;
 
   // Extra buttons
   const extraBtns=document.getElementById('gd-prev-extra-btns');
