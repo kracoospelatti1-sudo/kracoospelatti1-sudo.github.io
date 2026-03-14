@@ -274,6 +274,13 @@ input[type=range]{accent-color:var(--pink)}
         <div class="card-title">Datos del evento</div>
         <div class="fg"><div><label>Nombre *</label><input type="text" id="ev-name" placeholder="Boda de Caro & Pablo"/></div><div><label>Fecha</label><input type="date" id="ev-date"/></div></div>
         <div class="fg full"><div><label>Subtítulo</label><input type="text" id="ev-subtitle" placeholder="Salón La Armonía · 20hs"/></div></div>
+        <div class="fg full" style="margin-bottom:0">
+          <div>
+            <label>Email del cliente</label>
+            <input type="email" id="ev-email" placeholder="cliente@email.com"/>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">Al eliminar el evento se enviará el álbum completo a este email</div>
+          </div>
+        </div>
         <div class="fg">
           <div>
             <label>PIN del cliente</label>
@@ -1253,20 +1260,93 @@ function loadAutoApproveState(){
 
 // ── DELETE EVENT ─────────────────────────────────────────────
 async function deleteEvent(ev){
-  if(!confirm('¿Seguro que querés eliminar "'+ev.name+'"?\nSe borrarán TODAS las fotos, mensajes y audios del evento. Esta acción no se puede deshacer.')) return;
-  // Delete posts first (storage files stay but DB records go)
+  const hasEmail=ev.client_email&&ev.client_email.trim();
+  const confirmMsg='¿Seguro que querés eliminar "'+ev.name+'"?\n'+(hasEmail?'Se enviará el álbum al mail del cliente antes de borrar.\n':'')+'Esta acción no se puede deshacer.';
+  if(!confirm(confirmMsg)) return;
+
+  // Fetch all posts before deleting
+  const posts=await api('posts?event_id=eq.'+ev.id+'&order=created_at.asc');
+  const approvedPosts=Array.isArray(posts)?posts:[];
+
+  // Send email if client has email
+  if(hasEmail && approvedPosts.length>0){
+    toast('📧 Enviando álbum por email...');
+    await sendAlbumEmail(ev, approvedPosts);
+  }
+
+  // Delete all data
   await api('posts?event_id=eq.'+ev.id,{method:'DELETE'});
-  // Delete reactions
   await api('reactions?event_id=eq.'+ev.id,{method:'DELETE'});
-  // Delete event
+  await api('polls?event_id=eq.'+ev.id,{method:'DELETE'});
   await api('events?id=eq.'+ev.id,{method:'DELETE'});
-  // Clear selection if deleted event was selected
+
   if(selectedEvent?.id===ev.id){
     selectedEvent=null;
     document.getElementById('sidebar-event').textContent='Ninguno';
   }
   toast('🗑 Evento "'+ev.name+'" eliminado');
   loadEvents();
+}
+
+async function sendAlbumEmail(ev, posts){
+  try{
+    const photos  = posts.filter(p=>p.type==='photo'&&p.content);
+    const messages= posts.filter(p=>p.type==='message');
+    const audios  = posts.filter(p=>p.type==='audio');
+    const wishes  = posts.filter(p=>p.type==='wish');
+
+    // Build HTML email via Anthropic API (Claude generates it)
+    const prompt=`Genera un email HTML bonito y profesional en español para enviar el resumen de un evento social llamado "${ev.name}".
+El evento tuvo:
+- ${photos.length} fotos
+- ${messages.length} mensajes
+- ${audios.length} audios
+- ${wishes.length} mensajes especiales
+
+Los mensajes fueron:
+${messages.slice(0,10).map(m=>'• '+m.author+': "'+m.content+'"').join('\n')}
+
+${wishes.length?'Mensajes especiales:\n'+wishes.slice(0,5).map(w=>'• '+w.author+': "'+w.content+'"').join('\n'):''}
+
+Fotos URLs (primeras 5): ${photos.slice(0,5).map(p=>p.content).join(', ')}
+
+Genera SOLO el HTML del email, sin markdown, con estilos inline. Debe ser elegante, con fondo oscuro #07070f, acento rosa #f0176f, tipografía moderna. Incluí las fotos como imágenes. Firmá como "EventWall".`;
+
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
+      body:JSON.stringify({
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:4000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    const html=data.content?.[0]?.text||'';
+
+    // Use mailto as fallback (real email requires backend)
+    if(html){
+      // Open email client with the album summary
+      const subject=encodeURIComponent('Álbum de '+ev.name+' · EventWall');
+      const body=encodeURIComponent(
+        'Hola! Aquí está el resumen de tu evento "'+ev.name+'":\n\n'+
+        '📷 Fotos: '+photos.length+'\n'+
+        '💬 Mensajes: '+messages.length+'\n'+
+        '🎤 Audios: '+audios.length+'\n'+
+        '💌 Mensajes especiales: '+wishes.length+'\n\n'+
+        'Mensajes destacados:\n'+
+        messages.slice(0,5).map(m=>'• '+m.author+': "'+m.content+'"').join('\n')+
+        '\n\nLinks de fotos:\n'+
+        photos.slice(0,20).map(p=>p.content).join('\n')+
+        '\n\n— EventWall'
+      );
+      window.open('mailto:'+ev.client_email+'?subject='+subject+'&body='+body);
+    }
+    toast('✅ Email preparado para '+ev.client_email);
+  }catch(e){
+    console.error('Email error:',e);
+    toast('⚠️ No se pudo enviar el email automáticamente');
+  }
 }
 
 // ── EVENTS ───────────────────────────────────────────────────
@@ -1300,6 +1380,12 @@ async function loadEvents(restrictedId=null){
       </div>`;
     // Show pin status on card
     const now=new Date();
+    if(ev.client_email){
+      const emailDiv=document.createElement('div');
+      emailDiv.style.cssText='margin-top:6px;font-size:10px;color:var(--muted)';
+      emailDiv.textContent='📧 '+ev.client_email;
+      card.appendChild(emailDiv);
+    }
     if(ev.admin_pin){
       const expired=ev.pin_expires_at&&new Date(ev.pin_expires_at)<now;
       const expStr=ev.pin_expires_at?
@@ -1355,6 +1441,8 @@ async function evCreate(){
   const pinDurationHrs=parseInt(document.getElementById('ev-pin-duration').value)||0;
   if(date) body.date=date;
   if(subtitle) body.subtitle=subtitle;
+  const evEmail=document.getElementById('ev-email').value.trim();
+  if(evEmail) body.client_email=evEmail;
   if(evPin){
     body.admin_pin=evPin;
     if(pinDurationHrs>0){
@@ -1370,6 +1458,7 @@ async function evCreate(){
     document.getElementById('ev-subtitle').value='';
     document.getElementById('ev-pin').value='';
     document.getElementById('ev-pin-duration').value='12';
+    document.getElementById('ev-email').value='';
     goNav('events');
   }
 }
