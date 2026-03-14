@@ -3,253 +3,594 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>EventWall · Participar</title>
+<title>EventWall</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;max-width:480px;margin:0 auto;background:var(--bg)}
+/* ── RESET & BASE ───────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
 
-/* HERO */
-.hero{background:var(--dark);padding:28px 24px 24px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(240,23,111,0.3),transparent 70%);pointer-events:none}
-.hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:150px;height:150px;background:radial-gradient(circle,rgba(240,23,111,0.15),transparent 70%);pointer-events:none}
-.hero-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--pink);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
-.hero-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1.25;margin-bottom:6px}
-.hero-sub{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:18px}
-.hero-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(240,23,111,0.18);border:1px solid rgba(240,23,111,0.35);padding:7px 14px;border-radius:20px;font-size:12px;color:rgba(255,255,255,0.8);font-weight:500}
+:root{
+  --pink:#f0176f; --pink-light:#f0176f18; --pink-border:#f0176f44;
+  --dark:#09090f; --surface:#ffffff; --surface2:#f5f3f0;
+  --border:#e8e4df; --text:#1a1a1a; --muted:#9a9590;
+  --bg:#f7f5f2; --gold:#f5a623;
+  --radius:16px; --radius-sm:10px;
+}
 
-/* STATS BAR */
-.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border-bottom:1px solid var(--border)}
-.stat{text-align:center;padding:12px 0}
-.stat-num{font-size:20px;font-weight:800;color:var(--pink);font-family:'Syne',sans-serif}
-.stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
 
-/* BODY */
-.body{padding:20px}
-.section-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
+/* ── HERO ───────────────────────────────────────────────────── */
+.hero{
+  background:var(--dark);
+  padding:36px 24px 32px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-80px;right:-60px;
+  width:240px;height:240px;
+  background:radial-gradient(circle,rgba(240,23,111,0.25),transparent 70%);
+  pointer-events:none;
+}
+.hero-logo{
+  font-size:10px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--pink);margin-bottom:16px;
+  display:flex;align-items:center;gap:6px;
+}
+.hero-logo::before{
+  content:'';width:18px;height:2px;background:var(--pink);
+}
+.hero-name{
+  font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
+  color:#fff;line-height:1.15;margin-bottom:6px;
+}
+.hero-sub{
+  font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:20px;
+}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(240,23,111,0.15);
+  border:1px solid rgba(240,23,111,0.3);
+  padding:8px 16px;border-radius:40px;
+  font-size:13px;color:rgba(255,255,255,0.85);font-weight:500;
+}
 
-/* NAME FIELD */
-.name-wrap{margin-bottom:18px}
-.field{width:100%;padding:13px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
-.field:focus{border-color:var(--pink)}
+/* ── STATS ──────────────────────────────────────────────────── */
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  background:#fff;border-bottom:1px solid var(--border);
+}
+.stat{
+  padding:14px 8px;text-align:center;
+  border-right:1px solid var(--border);
+}
+.stat:last-child{border-right:none}
+.stat-num{
+  font-family:'Syne',sans-serif;font-size:22px;
+  font-weight:800;color:var(--pink);line-height:1;
+}
+.stat-lbl{
+  font-size:10px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.8px;margin-top:3px;
+}
+
+/* ── MAIN CONTENT ───────────────────────────────────────────── */
+.content{padding:20px 16px 32px;}
+
+/* NAME INPUT */
+.name-block{margin-bottom:20px}
+.label{
+  font-size:11px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;
+  display:block;
+}
+.input{
+  width:100%;padding:14px 16px;
+  background:#fff;border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);
+  font-size:16px;font-family:'DM Sans',sans-serif;
+  outline:none;transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+.input:focus{border-color:var(--pink)}
 
 /* TYPE SELECTOR */
-.type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
-.type-btn{padding:14px 8px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px;-webkit-appearance:none}
-.type-btn .ico{font-size:24px;line-height:1}
-.type-btn.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
+.type-label{margin-bottom:10px}
+.type-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:8px;margin-bottom:10px;
+}
+.type-btn{
+  display:flex;flex-direction:column;align-items:center;
+  gap:6px;padding:16px 6px;
+  background:#fff;border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;
+  transition:all 0.2s;-webkit-appearance:none;
+  font-family:'DM Sans',sans-serif;
+}
+.type-btn .ico{font-size:26px;line-height:1}
+.type-btn .lbl{font-size:12px;font-weight:600;color:var(--muted)}
+.type-btn.active{
+  border-color:var(--pink);background:var(--pink-light);
+}
+.type-btn.active .lbl{color:var(--pink)}
 
-/* FORM SECTIONS */
-.form-section{display:none}
-.form-section.active{display:block}
+/* EXTRA BUTTONS */
+.extra-btns{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.extra-btn{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;background:#fff;
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  cursor:pointer;transition:all 0.2s;-webkit-appearance:none;
+  font-family:'DM Sans',sans-serif;width:100%;text-align:left;
+}
+.extra-btn .ico{font-size:22px}
+.extra-btn .info{flex:1}
+.extra-btn .info strong{display:block;font-size:14px;font-weight:600;color:var(--text)}
+.extra-btn .info span{font-size:12px;color:var(--muted)}
+.extra-btn.active{border-color:var(--pink);background:var(--pink-light)}
+.extra-btn.active .info strong{color:var(--pink)}
 
-/* UPLOAD AREA */
-.upload-zone{width:100%;min-height:140px;border:2px dashed var(--border);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--muted);font-size:13px;transition:all 0.2s;background:var(--surface);position:relative;overflow:hidden}
-.upload-zone:hover,.upload-zone:active{border-color:var(--pink);color:var(--pink)}
-.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upload-zone .uico{font-size:32px;line-height:1}
-.upload-zone .uhint{font-size:11px;opacity:0.6;margin-top:2px}
-.preview-wrap{margin-top:12px;position:relative;display:none}
-.preview-wrap img{width:100%;border-radius:12px;max-height:220px;object-fit:cover;display:block}
-.preview-caption{margin-top:10px}
-.preview-remove{position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(0,0,0,0.55);border-radius:50%;border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+/* ── FORM SECTIONS ──────────────────────────────────────────── */
+.section{display:none}
+.section.active{display:block}
 
-/* TEXTAREA */
-textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
-.char-count{text-align:right;font-size:11px;color:var(--muted);margin-top:6px}
+/* PHOTO */
+.upload-zone{
+  width:100%;min-height:160px;
+  border:2px dashed var(--border);border-radius:var(--radius);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:8px;cursor:pointer;
+  background:#fff;transition:all 0.2s;margin-bottom:12px;
+}
+.upload-zone:active{border-color:var(--pink);background:var(--pink-light)}
+.upload-zone .uz-ico{font-size:40px}
+.upload-zone .uz-txt{font-size:14px;font-weight:600;color:var(--muted)}
+.upload-zone .uz-sub{font-size:11px;color:var(--border)}
+
+.orient-warn{
+  background:#fef3c7;border:1px solid #f59e0b;border-radius:var(--radius-sm);
+  padding:12px 14px;font-size:13px;color:#92400e;
+  display:none;align-items:center;gap:10px;margin-bottom:10px;
+}
+.orient-warn.show{display:flex}
+
+.canvas-wrap{
+  position:relative;width:100%;margin-bottom:12px;display:none;
+}
+.canvas-wrap canvas{width:100%;border-radius:var(--radius);display:block}
+.remove-photo{
+  position:absolute;top:8px;right:8px;
+  background:rgba(0,0,0,0.6);color:#fff;border:none;
+  border-radius:50%;width:32px;height:32px;font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+
+/* PICKER SECTION (frames, filters, stickers) */
+.picker-section{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:14px;
+  margin-bottom:10px;display:none;
+}
+.picker-title{
+  font-size:11px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;
+}
+.frames-row,.filter-row{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.frames-row::-webkit-scrollbar,.filter-row::-webkit-scrollbar{display:none}
+.frame-card{
+  flex-shrink:0;display:flex;flex-direction:column;align-items:center;
+  gap:4px;cursor:pointer;
+}
+.frame-card img,.frame-card canvas,.filter-opt canvas{
+  width:64px;height:64px;border-radius:8px;
+  border:2px solid var(--border);object-fit:cover;display:block;
+}
+.frame-card.active img,.frame-card.active canvas{border-color:var(--pink)}
+.frame-card .fname,.filter-name{
+  font-size:9px;font-weight:600;color:var(--muted);
+  white-space:nowrap;text-align:center;
+}
+.frame-card.active .fname{color:var(--pink)}
+.filter-opt{flex-shrink:0;cursor:pointer;border-radius:8px;border:2px solid var(--border);overflow:hidden;transition:all 0.2s}
+.filter-opt.active{border-color:var(--pink)}
+.filter-opt canvas{width:64px;height:64px}
+.filter-name{padding:3px 2px;background:var(--surface2)}
+.filter-opt.active .filter-name{color:var(--pink)}
+
+.sticker-grid{display:flex;flex-wrap:wrap;gap:6px}
+.sticker-btn{
+  width:40px;height:40px;border-radius:8px;
+  border:1.5px solid var(--border);background:var(--surface2);
+  font-size:22px;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;transition:all 0.2s;
+  -webkit-appearance:none;
+}
+.sticker-btn.active{border-color:var(--pink);background:var(--pink-light)}
+
+.caption-input{margin-top:10px}
+
+/* MESSAGE */
+.textarea{
+  width:100%;padding:14px 16px;
+  background:#fff;border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);
+  font-size:16px;font-family:'DM Sans',sans-serif;
+  outline:none;transition:border-color 0.2s;
+  resize:none;height:120px;line-height:1.55;
+  -webkit-appearance:none;
+}
+.textarea:focus{border-color:var(--pink)}
+.char-count{text-align:right;font-size:12px;color:var(--muted);margin-top:4px}
+
+/* MESSAGE CUSTOMIZATION */
+.msg-custom{
+  background:#fff;border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:14px;margin-top:10px;
+}
+.custom-row{margin-bottom:12px}
+.custom-row:last-child{margin-bottom:0}
+.custom-label{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:6px;display:block}
+.emoji-row,.size-row{display:flex;flex-wrap:wrap;gap:6px}
+.emoji-opt{
+  width:38px;height:38px;border-radius:8px;
+  border:1.5px solid var(--border);background:var(--surface2);
+  font-size:18px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;-webkit-appearance:none;transition:all 0.2s;
+}
+.emoji-opt.active{border-color:var(--pink);background:var(--pink-light)}
+.color-row{display:flex;flex-wrap:wrap;gap:8px}
+.color-dot{
+  width:30px;height:30px;border-radius:50%;
+  border:2px solid transparent;cursor:pointer;transition:all 0.2s;
+}
+.color-dot.active{
+  box-shadow:0 0 0 2px #fff,0 0 0 4px var(--pink);
+  transform:scale(1.1);
+}
+.size-opt{
+  padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);
+  background:var(--surface2);cursor:pointer;font-weight:700;
+  color:var(--muted);-webkit-appearance:none;transition:all 0.2s;
+  font-family:'DM Sans',sans-serif;
+}
+.size-opt.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
+.style-row{display:flex;gap:6px}
+.bubble-style-btn{
+  flex:1;padding:9px 4px;border-radius:8px;
+  border:1.5px solid var(--border);background:var(--surface2);
+  cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);
+  text-align:center;-webkit-appearance:none;transition:all 0.2s;
+  font-family:'DM Sans',sans-serif;
+}
+.bubble-style-btn.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
+
+/* MSG PREVIEW */
+.msg-preview{
+  background:var(--surface2);border-radius:var(--radius-sm);
+  padding:14px;margin-top:10px;text-align:center;display:none;
+}
+.preview-label{font-size:10px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
 
 /* AUDIO */
-.audio-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:14px}
-.record-btn{width:72px;height:72px;border-radius:50%;border:none;background:var(--pink);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;transition:all 0.2s;box-shadow:0 6px 24px rgba(240,23,111,0.35);-webkit-appearance:none}
-.record-btn.recording{background:#c62828;box-shadow:0 6px 24px rgba(198,40,40,0.4);animation:recPulse 1s infinite}
-@keyframes recPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-.record-status{font-size:13px;color:var(--muted);text-align:center}
-.record-timer{font-size:28px;font-weight:800;color:var(--pink);font-family:'Syne',sans-serif;display:none;font-variant-numeric:tabular-nums}
-.waveform{display:none;align-items:center;gap:4px;height:36px}
-.wbar{width:4px;border-radius:3px;background:var(--pink);animation:wv 0.7s infinite ease-in-out}
-.wbar:nth-child(2){animation-delay:0.1s}.wbar:nth-child(3){animation-delay:0.2s}.wbar:nth-child(4){animation-delay:0.3s}.wbar:nth-child(5){animation-delay:0.4s}.wbar:nth-child(6){animation-delay:0.5s}.wbar:nth-child(7){animation-delay:0.3s}
-@keyframes wv{0%,100%{height:5px}50%{height:28px}}
-.audio-ready{background:rgba(240,23,111,0.08);border:1.5px solid var(--pink-border);border-radius:12px;padding:14px 16px;display:none;align-items:center;gap:12px;margin-top:4px}
-.audio-play-btn{width:38px;height:38px;background:var(--pink);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.audio-info{font-size:13px;color:var(--text)}
-.audio-dur{font-size:11px;color:var(--muted);margin-top:2px}
+.audio-area{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:24px 16px;text-align:center;margin-bottom:12px}
+.record-status{font-size:14px;color:var(--muted);margin-bottom:20px}
+.record-btn{
+  width:72px;height:72px;border-radius:50%;
+  background:var(--pink);border:none;font-size:28px;
+  cursor:pointer;margin:0 auto 12px;display:flex;
+  align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(240,23,111,0.3);transition:all 0.2s;
+}
+.record-btn.recording{
+  background:#ef4444;animation:pulse 1s infinite;
+  box-shadow:0 8px 24px rgba(239,68,68,0.4);
+}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.record-timer{font-size:20px;font-weight:700;color:var(--text);display:none}
+.waveform{display:none;align-items:center;justify-content:center;gap:3px;height:36px;margin:12px 0}
+.wbar{width:4px;border-radius:2px;background:var(--pink);animation:wave 0.8s ease-in-out infinite}
+@keyframes wave{0%,100%{height:8px}50%{height:28px}}
+.audio-ready{
+  display:none;background:var(--pink-light);border:1.5px solid var(--pink-border);
+  border-radius:var(--radius-sm);padding:14px;align-items:center;gap:12px;
+}
+.audio-play-btn{
+  width:44px;height:44px;border-radius:50%;background:var(--pink);
+  border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.audio-info{flex:1;text-align:left}
+.audio-info strong{font-size:14px;font-weight:600;color:var(--text);display:block}
+.audio-info span{font-size:12px;color:var(--muted)}
 
-/* SEND BTN */
-.send-btn{width:100%;padding:16px;background:var(--pink);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:18px;transition:all 0.2s;letter-spacing:0.2px;-webkit-appearance:none}
-.send-btn:hover{background:#c2185b}
-.send-btn:active{transform:scale(0.98)}
-.send-btn:disabled{opacity:0.55;cursor:not-allowed}
+/* WISH */
+.wish-banner{
+  background:linear-gradient(135deg,#1a0a14,#2d1020);
+  border-radius:var(--radius);padding:24px 20px;
+  text-align:center;margin-bottom:14px;
+}
+.wish-banner .ico{font-size:36px;margin-bottom:10px}
+.wish-banner h3{font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:18px;margin-bottom:6px}
+.wish-banner p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6}
 
-/* SENDING STATE */
-.sending-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px}
+/* VOTE */
+.poll-item{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:12px}
+.poll-q{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:14px}
+.poll-opt-btn{
+  width:100%;padding:12px 16px;margin-bottom:8px;
+  background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;text-align:left;
+  font-size:14px;font-family:'DM Sans',sans-serif;transition:all 0.2s;
+}
+.poll-opt-btn:hover{border-color:var(--pink)}
+.poll-opt-btn.selected{border-color:var(--pink);background:var(--pink-light);color:var(--pink);font-weight:600}
+.poll-bar-wrap{margin-bottom:8px}
+.poll-bar-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:13px}
+.poll-bar-row .opt-name{color:var(--text)}
+.poll-bar-row .opt-pct{font-weight:700;color:var(--pink)}
+.poll-bar-bg{background:var(--surface2);border-radius:4px;height:8px;overflow:hidden}
+.poll-bar-fill{height:100%;background:var(--pink);border-radius:4px;transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1)}
+.poll-total{font-size:12px;color:var(--muted);margin-top:8px}
+.vote-empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.vote-empty .ico{font-size:40px;margin-bottom:12px}
+
+/* SEND BUTTON */
+.send-btn{
+  width:100%;padding:17px;margin-top:12px;
+  background:var(--pink);color:#fff;border:none;
+  border-radius:var(--radius-sm);font-size:16px;font-weight:700;
+  font-family:'DM Sans',sans-serif;cursor:pointer;
+  transition:all 0.2s;letter-spacing:0.3px;
+}
+.send-btn:active{transform:scale(0.98);opacity:0.9}
+.send-btn:disabled{opacity:0.5;cursor:not-allowed}
+
+/* ERROR & COOLDOWN */
+.error-bar{
+  background:#fde8e8;border:1px solid #fca5a5;
+  border-radius:var(--radius-sm);padding:12px 14px;
+  font-size:13px;color:#991b1b;margin-top:10px;display:none;
+}
+.error-bar.show{display:block}
+.cooldown-bar{
+  background:#fff3cd;border:1px solid #f5a623;
+  border-radius:var(--radius-sm);padding:12px 14px;
+  font-size:13px;color:#7a4f00;margin-top:10px;
+  display:none;align-items:center;gap:10px;
+}
+.cooldown-bar.show{display:flex}
+.cooldown-progress{flex:1;background:#ffe0a0;border-radius:4px;height:5px;overflow:hidden}
+.cooldown-fill{height:100%;background:#f5a623;border-radius:4px;transition:width 0.5s linear}
+
+/* SENDING OVERLAY */
+.sending-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(9,9,15,0.85);backdrop-filter:blur(8px);
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;
+}
 .sending-overlay.show{display:flex}
-.spin{width:44px;height:44px;border:3px solid rgba(255,255,255,0.15);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.sending-label{color:#fff;font-size:15px;font-weight:500}
+.progress-ring{width:60px;height:60px}
+.progress-ring circle{fill:none;stroke:var(--pink);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 0.4s}
+.sending-msg{font-size:14px;color:rgba(255,255,255,0.7);font-weight:500}
 
 /* SUCCESS */
-.success-screen{position:fixed;inset:0;background:var(--dark);display:none;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px;text-align:center;padding:32px}
+.success-screen{
+  position:fixed;inset:0;z-index:210;
+  background:#fff;display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;padding:32px;
+}
 .success-screen.show{display:flex}
 .success-ico{font-size:64px;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)}
 @keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
-.success-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;margin-top:8px}
-.success-sub{font-size:14px;color:rgba(255,255,255,0.5);max-width:280px;line-height:1.6}
-.success-again{background:var(--pink);color:#fff;border:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px;font-family:'DM Sans',sans-serif}
-
-/* ERROR */
-.error-bar{background:#fde8e8;border:1px solid #fca5a5;border-radius:10px;padding:12px 16px;font-size:13px;color:#991b1b;margin-top:12px;display:none}
-.error-bar.show{display:block}
-
-/* LOADING */
-.page-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:12px;color:var(--muted)}
-
-/* FILTERS */
-.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
-.filter-opt{flex-shrink:0;width:68px;cursor:pointer;border-radius:10px;border:2px solid var(--border);overflow:hidden;transition:all 0.2s}
-.filter-opt.active{border-color:var(--pink)}
-.filter-opt canvas{width:68px;height:68px;display:block}
-.filter-name{font-size:9px;text-align:center;padding:3px 2px;color:var(--muted);font-weight:600;background:var(--surface);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.filter-opt.active .filter-name{color:var(--pink)}
-
-/* STICKERS */
-.sticker-row{display:flex;flex-wrap:wrap;gap:6px}
-.sticker-btn{width:40px;height:40px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;-webkit-appearance:none;position:relative}
-.sticker-btn:hover{border-color:var(--pink);transform:scale(1.1)}
-.sticker-btn.active{border-color:var(--pink);background:var(--pink-light)}
-
-/* MESSAGE CUSTOMIZATION */
-.emoji-opt{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:18px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;-webkit-appearance:none}
-.emoji-opt.active{border-color:var(--pink);background:var(--pink-light);transform:scale(1.15)}
-.color-opt{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;-webkit-appearance:none;transition:all 0.2s}
-.color-opt.active{border-color:var(--pink);transform:scale(1.2);box-shadow:0 0 0 2px white,0 0 0 4px var(--pink)}
-.size-opt{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:800;cursor:pointer;transition:all 0.2s;color:var(--muted);-webkit-appearance:none}
-.size-opt.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
-.bubble-style-btn{flex:1;padding:10px 6px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);transition:all 0.2s;text-align:center;-webkit-appearance:none}
-.bubble-style-btn.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
+.success-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--text)}
+.success-sub{font-size:15px;color:var(--muted);text-align:center}
+.success-btn{
+  margin-top:8px;padding:14px 32px;
+  background:var(--pink);color:#fff;border:none;
+  border-radius:var(--radius-sm);font-size:16px;font-weight:700;
+  font-family:'DM Sans',sans-serif;cursor:pointer;
+}
 
 /* POLL LOCK */
+.poll-lock{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.9);
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:16px;text-align:center;padding:32px;
+}
+.poll-lock.show{display:flex}
+.poll-lock-ico{font-size:52px;animation:recPulse 1s infinite}
+.poll-lock-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff}
+.poll-lock-q{font-size:15px;color:rgba(255,255,255,0.7);max-width:300px;line-height:1.5}
+.poll-lock-timer{font-size:52px;font-weight:800;color:var(--pink);font-variant-numeric:tabular-nums}
+.poll-lock-opts{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:16px 20px;min-width:260px;display:flex;flex-direction:column;gap:8px}
+.poll-lock-opt{
+  padding:12px 16px;border-radius:var(--radius-sm);
+  border:1.5px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.06);color:#fff;
+  font-size:14px;cursor:pointer;transition:all 0.2s;
+  text-align:left;font-family:'DM Sans',sans-serif;width:100%;
+}
+.poll-lock-opt:hover{background:rgba(255,255,255,0.12)}
+.poll-lock-opt.voted{background:rgba(240,23,111,0.2);border-color:var(--pink);cursor:default}
+.poll-lock-total{font-size:12px;color:rgba(255,255,255,0.35)}
 @keyframes recPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.poll-lock-opt{padding:11px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;font-size:14px;cursor:pointer;transition:all 0.2s;text-align:left;font-family:inherit;width:100%}
-.poll-lock-opt:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3)}
-.poll-lock-opt.voted{background:rgba(240,23,111,0.2);border-color:var(--pink);color:#fff;cursor:default}
 
-/* COOLDOWN */
-.cooldown-bar{background:#fff3cd;border:1px solid #f5a623;border-radius:10px;padding:12px 16px;font-size:13px;color:#7a4f00;margin-top:12px;display:none;align-items:center;gap:10px}
-.cooldown-bar.show{display:flex}
-.cooldown-progress{flex:1;background:#ffe0a0;border-radius:6px;height:6px;overflow:hidden}
-.cooldown-fill{height:100%;background:#f5a623;border-radius:6px;transition:width 0.5s linear}
-
-/* OVERFLOW PREVENTION */
-html,body{overflow-x:hidden !important;margin:0;padding:0}
-*,*::before,*::after{box-sizing:border-box}
-
+/* LOADING */
+.page-loading{
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;flex-direction:column;gap:14px;color:var(--muted);
+}
+.spinner{
+  width:36px;height:36px;border:3px solid var(--border);
+  border-top-color:var(--pink);border-radius:50%;animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
+<!-- LOADING -->
 <div id="page-loading" class="page-loading">
-  <div style="font-size:32px">✨</div>
-  <p style="font-size:14px">Cargando evento...</p>
+  <div class="spinner"></div>
+  <p>Cargando evento...</p>
 </div>
 
-<div id="app" style="display:none;overflow-x:hidden;width:100%;max-width:100%">
+<!-- POLL LOCK -->
+<div class="poll-lock" id="poll-lock-overlay">
+  <div class="poll-lock-ico">🗳</div>
+  <div class="poll-lock-title">¡Votación en curso!</div>
+  <div class="poll-lock-q" id="poll-lock-question"></div>
+  <div class="poll-lock-timer" id="poll-lock-timer"></div>
+  <div class="poll-lock-opts" id="poll-lock-options"></div>
+  <div class="poll-lock-total" id="poll-lock-total"></div>
+</div>
+
+<!-- SENDING OVERLAY -->
+<div class="sending-overlay" id="sending-overlay">
+  <svg class="progress-ring" viewBox="0 0 60 60">
+    <circle cx="30" cy="30" r="24" stroke-dasharray="150" stroke-dashoffset="150" id="progress-circle"/>
+  </svg>
+  <div class="sending-msg" id="sending-msg">Enviando...</div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="success-screen">
+  <div class="success-ico">🎉</div>
+  <div class="success-title">¡Enviado!</div>
+  <div class="success-sub">Tu contenido ya está en la pantalla del evento</div>
+  <button class="success-btn" onclick="resetForm()">Enviar algo más</button>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+
+  <!-- HERO -->
   <div class="hero">
-    <div class="hero-logo">EventWall</div>
-    <div class="hero-title" id="ev-name">Cargando...</div>
+    <div class="hero-logo" id="hero-logo">EventWall</div>
+    <div class="hero-name" id="ev-name">Cargando...</div>
     <div class="hero-sub" id="ev-sub"></div>
-    <div class="hero-pill">📷 Compartí tu momento con todos</div>
+    <div class="hero-pill" id="hero-pill">📷 Compartí tu momento con todos</div>
   </div>
-  <div class="stats-bar">
+
+  <!-- STATS -->
+  <div class="stats">
     <div class="stat"><div class="stat-num" id="cnt-photos">0</div><div class="stat-lbl">Fotos</div></div>
     <div class="stat"><div class="stat-num" id="cnt-msgs">0</div><div class="stat-lbl">Mensajes</div></div>
     <div class="stat"><div class="stat-num" id="cnt-audios">0</div><div class="stat-lbl">Audios</div></div>
   </div>
-  <div class="body">
-    <div class="name-wrap">
-      <div class="section-label">Tu nombre</div>
-      <input type="text" class="field" id="guest-name" placeholder="Tu nombre" autocomplete="name"/>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- NAME -->
+    <div class="name-block">
+      <label class="label">Tu nombre</label>
+      <input type="text" class="input" id="guest-name" placeholder="¿Cómo te llamás?" autocomplete="name"/>
     </div>
-    <div class="section-label">¿Qué querés compartir?</div>
-    <div class="type-selector">
-      <button class="type-btn active" onclick="selectType('photo',this)"><span class="ico">📷</span>Foto</button>
-      <button class="type-btn" onclick="selectType('message',this)"><span class="ico">💬</span>Mensaje</button>
-      <button class="type-btn" onclick="selectType('audio',this)"><span class="ico">🎤</span>Audio</button>
+
+    <!-- TYPE SELECTOR -->
+    <label class="label type-label">¿Qué querés compartir?</label>
+    <div class="type-grid">
+      <button class="type-btn active" onclick="selectType('photo',this)"><span class="ico">📷</span><span class="lbl">Foto</span></button>
+      <button class="type-btn" onclick="selectType('message',this)"><span class="ico">💬</span><span class="lbl">Mensaje</span></button>
+      <button class="type-btn" onclick="selectType('audio',this)"><span class="ico">🎤</span><span class="lbl">Audio</span></button>
     </div>
-    <div style="margin-bottom:16px;width:100%;box-sizing:border-box;overflow:hidden">
-      <button class="type-btn wish-btn" onclick="selectType('wish',this)" style="width:100%;flex-direction:row;gap:10px;padding:14px 20px;justify-content:center"><span class="ico" style="font-size:20px">💌</span><span class="wish-btn-label" style="font-size:16px">Mensaje especial para el festejado</span></button>
-      <button class="type-btn vote-btn" onclick="selectType('vote',this);loadVotePolls()" style="width:100%;flex-direction:row;gap:10px;padding:14px 20px;justify-content:center"><span class="ico" style="font-size:20px">🗳</span><span class="vote-btn-label" style="font-size:14px;font-weight:600">Votaciones activas</span></button>
-    <!-- PHOTO -->
-    <div class="form-section active" id="section-photo">
+
+    <!-- EXTRA BUTTONS -->
+    <div class="extra-btns" id="extra-btns">
+      <button class="extra-btn wish-btn" id="wish-btn" onclick="selectType('wish',this)">
+        <span class="ico">💌</span>
+        <div class="info"><strong>Mensaje especial</strong><span>Aparece en pantalla completa con animación</span></div>
+      </button>
+      <button class="extra-btn vote-btn" id="vote-btn" onclick="selectType('vote',this);loadVotePolls()">
+        <span class="ico">🗳</span>
+        <div class="info"><strong id="vote-label">Votaciones activas</strong><span>Participá en encuestas del evento</span></div>
+      </button>
+    </div>
+
+    <!-- ── PHOTO SECTION ── -->
+    <div class="section active" id="section-photo">
       <div class="orient-warn" id="orient-warn">
-        <span class="ow-ico">📱</span>
-        <div>
-          <strong>Solo se aceptan fotos horizontales</strong><br>
-          Girá el celular y sacá la foto en modo paisaje 🌄
-        </div>
+        <span>📱</span>
+        <div><strong>Solo fotos horizontales</strong><br>Girá el celular en modo paisaje 🌄</div>
       </div>
-      <div class="upload-zone" id="upload-zone">
-        <input type="file" accept="image/*" capture="environment" id="file-input" onchange="handleFileSelect(this)"/>
-        <span class="uico">📸</span>
-        <span>Tocá para sacar o elegir una foto</span>
-        <span class="uhint">JPG, PNG · Máx 8MB · Mejor en horizontal</span>
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+        <div class="uz-ico">📸</div>
+        <div class="uz-txt">Tocá para sacar o elegir una foto</div>
+        <div class="uz-sub">JPG, PNG · Máx 8MB · Mejor en horizontal</div>
+      </div>
+      <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(event)"/>
+
+      <div class="canvas-wrap" id="canvas-preview-wrap">
+        <canvas id="preview-canvas"></canvas>
+        <button class="remove-photo" onclick="removePhoto()">✕</button>
       </div>
 
-      <!-- FRAME PICKER -->
-      <div class="frame-picker" id="frame-picker">
-        <div class="frame-picker-label">Elegí un marco</div>
+      <!-- FRAMES -->
+      <div class="picker-section" id="frame-picker">
+        <div class="picker-title">🖼 Marco</div>
         <div class="frames-row" id="frames-row"></div>
       </div>
 
-      <!-- CANVAS PREVIEW -->
-      <div class="canvas-preview-wrap" id="canvas-preview-wrap">
-        <canvas id="preview-canvas" style="position:relative"></canvas>
-        <!-- Sticker overlay for preview -->
-        <div id="sticker-overlay-preview" style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;border-radius:12px"></div>
-        <button class="preview-remove" onclick="removePhoto()">✕</button>
-        <div class="preview-caption">
-          <input type="text" class="field" id="photo-caption" placeholder="Añadí una descripción (opcional)" style="margin-top:8px"/>
-        </div>
-      </div>
-
-      <!-- FILTER PICKER -->
-      <div class="frame-picker" id="filter-picker" style="display:none;margin-top:10px">
-        <div class="frame-picker-label">🎨 Filtro de color</div>
+      <!-- FILTERS -->
+      <div class="picker-section" id="filter-picker">
+        <div class="picker-title">🎨 Filtro</div>
         <div class="filter-row" id="filter-row"></div>
       </div>
 
-      <!-- STICKER PICKER -->
-      <div class="frame-picker" id="sticker-picker" style="display:none;margin-top:10px">
-        <div class="frame-picker-label">🎭 Stickers</div>
-        <div class="sticker-row" id="sticker-row"></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:6px">Tocá para agregar · tocá de nuevo para quitar</div>
+      <!-- STICKERS -->
+      <div class="picker-section" id="sticker-picker">
+        <div class="picker-title">🎭 Stickers <span style="font-size:10px;color:var(--muted);font-weight:400">máx. 5</span></div>
+        <div class="sticker-grid" id="sticker-row"></div>
       </div>
+
+      <!-- CAPTION -->
+      <div class="caption-input" id="caption-wrap" style="display:none">
+        <input type="text" class="input" id="photo-caption" placeholder="Descripción (opcional)"/>
+      </div>
+
       <div class="error-bar" id="photo-error"></div>
-      <div class="cooldown-bar" id="cooldown-photo"><span>⏳</span><div style="flex:1"><div id="cooldown-photo-txt">Esperá un momento antes de enviar otra foto</div><div class="cooldown-progress"><div class="cooldown-fill" id="cooldown-photo-fill" style="width:100%"></div></div></div></div>
+      <div class="cooldown-bar" id="cooldown-photo">
+        <span>⏳</span>
+        <div style="flex:1">
+          <div id="cooldown-photo-txt"></div>
+          <div class="cooldown-progress"><div class="cooldown-fill" id="cooldown-photo-fill" style="width:100%"></div></div>
+        </div>
+      </div>
       <button class="send-btn" id="btn-send-photo" onclick="sendPhoto()">Enviar a la pantalla ✨</button>
     </div>
 
-    <!-- MESSAGE -->
-    <div class="form-section" id="section-message">
-      <textarea class="field" id="msg-text" placeholder="Escribí tu mensaje... 💌" oninput="updateCharCount(this)" maxlength="200"></textarea>
+    <!-- ── MESSAGE SECTION ── -->
+    <div class="section" id="section-message">
+      <textarea class="textarea" id="msg-text" placeholder="Escribí tu mensaje... 💌" oninput="updateCharCount(this)" maxlength="200"></textarea>
       <div class="char-count"><span id="char-count">0</span>/200</div>
 
-      <div style="margin-top:12px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px;width:100%;box-sizing:border-box">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px">Personalizar burbuja</div>
-
-        <!-- BUBBLE STYLE -->
-        <div style="margin-bottom:12px">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Estilo de burbuja</div>
-          <div style="display:flex;gap:6px">
+      <div class="msg-custom">
+        <div class="custom-row">
+          <span class="custom-label">Estilo de burbuja</span>
+          <div class="style-row">
             <button class="bubble-style-btn active" onclick="selectBubbleStyle('bubble',this)">💬 Burbuja</button>
             <button class="bubble-style-btn" onclick="selectBubbleStyle('card',this)">🃏 Tarjeta</button>
             <button class="bubble-style-btn" onclick="selectBubbleStyle('banner',this)">📣 Banner</button>
             <button class="bubble-style-btn" onclick="selectBubbleStyle('minimal',this)">✏️ Minimal</button>
           </div>
         </div>
-
-        <!-- EMOJI -->
-        <div style="margin-bottom:12px">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Emoji decorativo</div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px;width:100%">
+        <div class="custom-row">
+          <span class="custom-label">Emoji</span>
+          <div class="emoji-row">
             <button class="emoji-opt active" onclick="selectMsgEmoji('none',this)" style="font-size:12px;color:var(--muted)">✕</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('💬',this)">💬</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('❤️',this)">❤️</button>
@@ -257,42 +598,29 @@ html,body{overflow-x:hidden !important;margin:0;padding:0}
             <button class="emoji-opt" onclick="selectMsgEmoji('🎉',this)">🎉</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('🔥',this)">🔥</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('😍',this)">😍</button>
-            <button class="emoji-opt" onclick="selectMsgEmoji('👏',this)">👏</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('💕',this)">💕</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('🥳',this)">🥳</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('✨',this)">✨</button>
             <button class="emoji-opt" onclick="selectMsgEmoji('🍾',this)">🍾</button>
-            <button class="emoji-opt" onclick="selectMsgEmoji('🎊',this)">🎊</button>
-            <button class="emoji-opt" onclick="selectMsgEmoji('💎',this)">💎</button>
-            <button class="emoji-opt" onclick="selectMsgEmoji('🌟',this)">🌟</button>
-            <button class="emoji-opt" onclick="selectMsgEmoji('🙌',this)">🙌</button>
           </div>
         </div>
-
-        <!-- COLOR -->
-        <div style="margin-bottom:12px">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Color</div>
-          <div style="display:flex;flex-wrap:wrap;gap:7px">
-            <button class="color-opt active" onclick="selectMsgColor('#ffffff','#1a1a1a',this)" style="background:#ffffff;border-color:#ddd"></button>
-            <button class="color-opt" onclick="selectMsgColor('#fce4f3','#c2185b',this)" style="background:#fce4f3"></button>
-            <button class="color-opt" onclick="selectMsgColor('#ffecd2','#d84315',this)" style="background:#ffecd2"></button>
-            <button class="color-opt" onclick="selectMsgColor('#e8f5e9','#2e7d32',this)" style="background:#e8f5e9"></button>
-            <button class="color-opt" onclick="selectMsgColor('#e3f2fd','#1565c0',this)" style="background:#e3f2fd"></button>
-            <button class="color-opt" onclick="selectMsgColor('#fff8e1','#f57f17',this)" style="background:#fff8e1"></button>
-            <button class="color-opt" onclick="selectMsgColor('#f3e5f5','#7b1fa2',this)" style="background:#f3e5f5"></button>
-            <button class="color-opt" onclick="selectMsgColor('#e0f2f1','#00695c',this)" style="background:#e0f2f1"></button>
-            <button class="color-opt" onclick="selectMsgColor('#1a1a2e','#ffffff',this)" style="background:#1a1a2e"></button>
-            <button class="color-opt" onclick="selectMsgColor('#0d0900','#f5a623',this)" style="background:#0d0900"></button>
-            <button class="color-opt" onclick="selectMsgColor('#1a0a14','#ff6b9d',this)" style="background:#1a0a14"></button>
-            <button class="color-opt" onclick="selectMsgColor('#0a1628','#60a5fa',this)" style="background:#0a1628"></button>
+        <div class="custom-row">
+          <span class="custom-label">Color</span>
+          <div class="color-row">
+            <div class="color-dot active" onclick="selectMsgColor('#ffffff','#1a1a1a',this)" style="background:#ffffff;border:2px solid #e0e0e0"></div>
+            <div class="color-dot" onclick="selectMsgColor('#fce4f3','#c2185b',this)" style="background:#fce4f3"></div>
+            <div class="color-dot" onclick="selectMsgColor('#e8f5e9','#2e7d32',this)" style="background:#e8f5e9"></div>
+            <div class="color-dot" onclick="selectMsgColor('#e3f2fd','#1565c0',this)" style="background:#e3f2fd"></div>
+            <div class="color-dot" onclick="selectMsgColor('#fff8e1','#f57f17',this)" style="background:#fff8e1"></div>
+            <div class="color-dot" onclick="selectMsgColor('#f3e5f5','#7b1fa2',this)" style="background:#f3e5f5"></div>
+            <div class="color-dot" onclick="selectMsgColor('#1a1a2e','#ffffff',this)" style="background:#1a1a2e"></div>
+            <div class="color-dot" onclick="selectMsgColor('#0d0900','#f5a623',this)" style="background:#0d0900;border:2px solid #333"></div>
           </div>
         </div>
-
-        <!-- SIZE -->
-        <div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Tamaño del texto</div>
-          <div style="display:flex;gap:6px">
-            <button class="size-opt" onclick="selectMsgSize('small',this)" style="font-size:11px">A</button>
+        <div class="custom-row">
+          <span class="custom-label">Tamaño</span>
+          <div class="size-row">
+            <button class="size-opt" onclick="selectMsgSize('small',this)" style="font-size:12px">A</button>
             <button class="size-opt active" onclick="selectMsgSize('medium',this)" style="font-size:16px">A</button>
             <button class="size-opt" onclick="selectMsgSize('large',this)" style="font-size:20px">A</button>
             <button class="size-opt" onclick="selectMsgSize('xlarge',this)" style="font-size:24px">A</button>
@@ -300,95 +628,92 @@ html,body{overflow-x:hidden !important;margin:0;padding:0}
         </div>
       </div>
 
-      <div id="msg-preview" style="margin-top:12px;background:#f0ede8;border-radius:12px;padding:14px;display:none;text-align:center">
-        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Vista previa</div>
-        <div id="msg-preview-bubble" style="display:inline-block;background:#fff;border-radius:20px;padding:14px 20px;max-width:90%;box-shadow:0 4px 16px rgba(0,0,0,0.1)">
-          <div id="msg-preview-icon" style="font-size:22px;margin-bottom:6px">💬</div>
-          <div id="msg-preview-text" style="font-size:18px;font-weight:800;color:#1a1a1a;font-family:'Syne',sans-serif;line-height:1.3">Tu mensaje aquí</div>
+      <div class="msg-preview" id="msg-preview">
+        <div class="preview-label">Vista previa</div>
+        <div id="msg-preview-bubble" style="display:inline-block;background:#fff;border-radius:16px;padding:12px 18px;max-width:90%;box-shadow:0 4px 16px rgba(0,0,0,0.08)">
+          <div id="msg-preview-icon" style="font-size:20px;margin-bottom:5px">💬</div>
+          <div id="msg-preview-text" style="font-size:16px;font-weight:800;color:#1a1a1a;font-family:'Syne',sans-serif;line-height:1.3">Tu mensaje aquí</div>
         </div>
       </div>
 
       <div class="error-bar" id="msg-error"></div>
-      <div class="cooldown-bar" id="cooldown-message"><span>⏳</span><div style="flex:1"><div id="cooldown-message-txt">Esperá un momento antes de enviar otro mensaje</div><div class="cooldown-progress"><div class="cooldown-fill" id="cooldown-message-fill" style="width:100%"></div></div></div></div>
+      <div class="cooldown-bar" id="cooldown-message">
+        <span>⏳</span>
+        <div style="flex:1">
+          <div id="cooldown-message-txt"></div>
+          <div class="cooldown-progress"><div class="cooldown-fill" id="cooldown-message-fill" style="width:100%"></div></div>
+        </div>
+      </div>
       <button class="send-btn" id="btn-send-message" onclick="sendMessage()">Enviar a la pantalla ✨</button>
     </div>
 
-    <!-- WISH -->
-    <div class="form-section" id="section-wish">
-      <div style="background:linear-gradient(135deg,#1a0a14,#2d1020);border-radius:14px;padding:20px;text-align:center;margin-bottom:14px">
-        <div style="font-size:32px;margin-bottom:8px">💌</div>
-        <div style="font-family:'Syne',sans-serif;font-weight:800;color:#fff;font-size:16px;margin-bottom:6px">Mensaje especial</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6">Tu mensaje aparecerá en pantalla completa<br>con una animación especial para el festejado</div>
+    <!-- ── AUDIO SECTION ── -->
+    <div class="section" id="section-audio">
+      <div class="audio-area">
+        <div class="record-status" id="record-status">Tocá para grabar tu mensaje de voz</div>
+        <button class="record-btn" id="record-btn" onclick="toggleRecording()">🎤</button>
+        <div class="record-timer" id="record-timer">0:00</div>
+        <div class="waveform" id="waveform">
+          <div class="wbar" style="animation-delay:0s"></div>
+          <div class="wbar" style="animation-delay:0.1s"></div>
+          <div class="wbar" style="animation-delay:0.2s"></div>
+          <div class="wbar" style="animation-delay:0.3s"></div>
+          <div class="wbar" style="animation-delay:0.4s"></div>
+          <div class="wbar" style="animation-delay:0.2s"></div>
+          <div class="wbar" style="animation-delay:0.1s"></div>
+        </div>
       </div>
-      <textarea class="field" id="wish-text" placeholder="Escribí tu mensaje especial para el festejado... 💕" maxlength="200" oninput="updateWishCount(this)" style="height:120px;resize:none;border-color:#ff6b9d"></textarea>
+      <div class="audio-ready" id="audio-ready">
+        <button class="audio-play-btn" onclick="playAudio()">▶</button>
+        <div class="audio-info">
+          <strong>Audio listo</strong>
+          <span>Tocá ▶ para escuchar antes de enviar</span>
+        </div>
+      </div>
+      <div class="error-bar" id="audio-error"></div>
+      <div class="cooldown-bar" id="cooldown-audio">
+        <span>⏳</span>
+        <div style="flex:1">
+          <div id="cooldown-audio-txt"></div>
+          <div class="cooldown-progress"><div class="cooldown-fill" id="cooldown-audio-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+      <button class="send-btn" id="btn-send-audio" onclick="sendAudio()">Enviar audio ✨</button>
+    </div>
+
+    <!-- ── WISH SECTION ── -->
+    <div class="section" id="section-wish">
+      <div class="wish-banner">
+        <div class="ico">💌</div>
+        <h3>Mensaje especial</h3>
+        <p>Aparecerá en pantalla completa<br>con una animación especial para el festejado</p>
+      </div>
+      <textarea class="textarea" id="wish-text" placeholder="Escribí tu mensaje especial... 💕" maxlength="200" oninput="updateWishCount(this)" style="border-color:#ff6b9d"></textarea>
       <div class="char-count"><span id="wish-count">0</span>/200</div>
       <div class="error-bar" id="wish-error"></div>
       <button class="send-btn" onclick="sendWish()" style="background:linear-gradient(135deg,#f0176f,#ff6b9d)">Enviar mensaje especial 💌</button>
     </div>
 
-    <!-- VOTE -->
-    <div class="form-section" id="section-vote">
-      <div id="vote-loading" style="text-align:center;padding:32px;color:var(--muted)">
+    <!-- ── VOTE SECTION ── -->
+    <div class="section" id="section-vote">
+      <div id="vote-loading" style="text-align:center;padding:40px 0;color:var(--muted)">
         <div style="font-size:32px;margin-bottom:8px">🗳</div>
-        <p style="font-size:14px">Cargando votaciones...</p>
+        <p>Cargando votaciones...</p>
       </div>
       <div id="vote-list"></div>
-      <div id="vote-empty" style="display:none;text-align:center;padding:32px;color:var(--muted)">
-        <div style="font-size:40px;margin-bottom:10px">🗳</div>
-        <p style="font-size:14px">No hay votaciones activas por ahora</p>
-        <p style="font-size:12px;margin-top:6px;opacity:0.6">El organizador creará una en breve</p>
+      <div id="vote-empty" class="vote-empty" style="display:none">
+        <div class="ico">🗳</div>
+        <p style="font-size:14px">No hay votaciones activas</p>
+        <p style="font-size:12px;margin-top:4px;opacity:0.6">El organizador creará una en breve</p>
       </div>
     </div>
 
-    <!-- AUDIO -->
-    <div class="form-section" id="section-audio">
-      <div class="audio-wrap">
-        <div class="waveform" id="waveform">
-          <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
-          <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
-        </div>
-        <button class="record-btn" id="record-btn" onclick="toggleRecording()">🎤</button>
-        <div class="record-timer" id="record-timer">00:00</div>
-        <div class="record-status" id="record-status">Tocá para grabar tu mensaje de voz</div>
-      </div>
-      <div class="audio-ready" id="audio-ready">
-        <button class="audio-play-btn" onclick="playAudio()">▶</button>
-        <div><div class="audio-info">Audio grabado ✓</div><div class="audio-dur" id="audio-dur">0 segundos</div></div>
-      </div>
-      <div class="error-bar" id="audio-error"></div>
-      <div class="cooldown-bar" id="cooldown-audio"><span>⏳</span><div style="flex:1"><div id="cooldown-audio-txt">Esperá un momento antes de enviar otro audio</div><div class="cooldown-progress"><div class="cooldown-fill" id="cooldown-audio-fill" style="width:100%"></div></div></div></div>
-      <button class="send-btn" id="btn-send-audio" onclick="sendAudio()">Enviar audio ✨</button>
-    </div>
-  </div>
-</div>
+  </div><!-- end content -->
+</div><!-- end app -->
 
-<!-- POLL LOCK OVERLAY -->
-<div id="poll-lock-overlay" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:32px">
-  <div style="font-size:52px;animation:recPulse 1s infinite">🗳</div>
-  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff">¡Votación en curso!</div>
-  <div id="poll-lock-question" style="font-size:15px;color:rgba(255,255,255,0.7);max-width:300px;line-height:1.5"></div>
-  <div id="poll-lock-timer" style="font-size:48px;font-weight:800;color:#f0176f;font-variant-numeric:tabular-nums"></div>
-  <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:16px 24px;margin-top:8px">
-    <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:12px">Tu voto</div>
-    <div id="poll-lock-options" style="display:flex;flex-direction:column;gap:8px;min-width:260px"></div>
-  </div>
-  <div id="poll-lock-total" style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:4px"></div>
-</div>
-
-<div class="sending-overlay" id="sending-overlay">
-  <div class="spin"></div>
-  <div class="sending-label" id="sending-label">Subiendo archivo...</div>
-  <div class="sending-progress"><div class="sending-progress-fill" id="sending-progress"></div></div>
-</div>
-
-<div class="success-screen" id="success-screen">
-  <div class="success-ico">🎉</div>
-  <div class="success-title">¡Enviado!</div>
-  <div class="success-sub">Tu contenido fue enviado para revisión y pronto aparecerá en la pantalla del evento</div>
-  <button class="success-again" onclick="resetForm()">Compartir algo más</button>
-</div>
 
 <script>
+
 const SUPABASE_URL='https://jxqwrbmnfmnzddkcimrm.supabase.co';
 const SUPABASE_KEY='sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 const BUCKET='eventwall';
@@ -762,7 +1087,7 @@ async function applyGuestDesign(ev){
   `;
 
   // Logo visibility
-  const logoEl=document.querySelector('.hero-logo');
+  const logoEl=document.getElementById('hero-logo');
   if(logoEl) logoEl.style.display=showLogo?'':'none';
 
   // Texts
@@ -775,7 +1100,7 @@ async function applyGuestDesign(ev){
     if(el) el.textContent=d.subtitle;
   }
   if(d.welcome){
-    const el=document.querySelector('.hero-pill');
+    const el=document.getElementById('hero-pill');
     if(el) el.textContent='📷 '+d.welcome.replace(/^📷\s*/,'');
   }
   if(d.btnText){
@@ -790,7 +1115,7 @@ async function applyGuestDesign(ev){
     {key:'showMessage', idx:1, section:'section-message'},
     {key:'showAudio',   idx:2, section:'section-audio'},
   ];
-  const typeBtns=document.querySelectorAll('.type-selector .type-btn');
+  const typeBtns=document.querySelectorAll('.type-grid .type-btn');
   let firstVisible=null;
   map.forEach(({key,idx,section})=>{
     const show = d[key]!==false;
@@ -800,11 +1125,11 @@ async function applyGuestDesign(ev){
   });
 
   // Wish button
-  const wishBtn=document.querySelector('.wish-btn');
+  const wishBtn=document.getElementById('wish-btn');
   if(wishBtn) wishBtn.style.display=d.showWish!==false?'':'none';
 
   // Vote button
-  const voteBtn=document.querySelector('.vote-btn');
+  const voteBtn=document.getElementById('vote-btn');
   if(voteBtn) voteBtn.style.display=d.showVote!==false?'':'none';
 
   // Activate first visible tab if current is hidden
@@ -860,7 +1185,7 @@ async function init(){
   }catch(e){document.getElementById('page-loading').innerHTML='<p style="color:red;padding:20px">'+e.message+'</p>';}
 }
 
-async function loadStats(){
+async async function loadStats(){
   try{
     const posts=await apiRest('posts?event_id=eq.'+eventId+'&approved=eq.true&select=type');
     document.getElementById('cnt-photos').textContent=posts.filter(p=>p.type==='photo').length;
@@ -871,9 +1196,9 @@ async function loadStats(){
 
 // ── TYPE ─────────────────────────────────────────────────────
 function selectType(type,btn){
-  document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.type-btn,.extra-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('section-'+type).classList.add('active');
 }
 
@@ -902,6 +1227,7 @@ function handleFileSelect(input){
       originalImage=img;
       renderPreviewCanvas();
       document.getElementById('canvas-preview-wrap').style.display='block';
+      document.getElementById('caption-wrap').style.display='block';
       document.getElementById('upload-zone').style.display='none';
       document.getElementById('frame-picker').style.display='block';
       document.getElementById('filter-picker').style.display='block';
@@ -920,6 +1246,7 @@ function removePhoto(){
   selectedFile=null;originalImage=null;selectedFrame='none';
   selectedFilter='none';selectedStickers=[];
   document.getElementById('canvas-preview-wrap').style.display='none';
+  document.getElementById('caption-wrap').style.display='none';
   document.getElementById('upload-zone').style.display='flex';
   document.getElementById('frame-picker').style.display='none';
   document.getElementById('filter-picker').style.display='none';
@@ -973,7 +1300,7 @@ function selectMsgEmoji(emoji,btn){
 
 function selectMsgColor(bg,txt,btn){
   msgBgColor=bg;msgTextColor=txt;
-  document.querySelectorAll('.color-opt').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.color-dot,.color-opt').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   updateMsgPreview();
 }
@@ -1126,9 +1453,9 @@ function resetForm(){
   document.getElementById('waveform').style.display='none';
   ['photo-error','msg-error','audio-error','wish-error'].forEach(id=>hideFormError(id));
   // Reset to photo tab
-  document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.type-btn,.extra-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.type-btn')[0]?.classList.add('active');
-  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('section-photo')?.classList.add('active');
 }
 // ── POLLS / VOTING ───────────────────────────────────────────
@@ -1468,6 +1795,7 @@ async function moderatePhotoWithAI(imageDataUrl){
 
 init();
 resumeCooldowns();
+
 </script>
 </body>
 </html>
