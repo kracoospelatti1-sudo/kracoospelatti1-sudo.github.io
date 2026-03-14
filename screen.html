@@ -9,14 +9,14 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;font-family:'DM Sans',sans-serif}
 :root{
-  --bg:#07070f;--accent:#f0176f;--txt:#ffffff;
-  --gold:#f5a623;
-  --bubble-bg:#ffffff;--bubble-txt:#1a1a1a;--header-bg:#0c0c14;
-  --font-title:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
-  --fs-title:22px;--bubble-radius:28px;--overlay-opacity:0.6;
+  --bg:#07070f; --accent:#f0176f; --txt:#ffffff; --gold:#f5a623;
+  --bubble-bg:#ffffff; --bubble-txt:#1a1a1a; --header-bg:#0c0c14;
+  --font-title:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+  --fs-title:22px; --bubble-radius:28px;
 }
 
-.header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:var(--header-bg);border-bottom:1px solid rgba(255,255,255,0.06);height:68px;z-index:10;position:relative}
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:var(--header-bg);border-bottom:1px solid rgba(255,255,255,0.06);height:68px;position:relative;z-index:10}
 .ev-name{font-family:var(--font-title);font-size:var(--fs-title);font-weight:800;color:var(--txt)}
 .ev-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
 .live-pill{display:flex;align-items:center;gap:6px;background:rgba(240,23,111,0.15);border:1px solid rgba(240,23,111,0.35);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px}
@@ -26,112 +26,91 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .cpill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);padding:5px 12px;border-radius:20px;font-size:12px;color:rgba(255,255,255,0.7)}
 .cpill span{color:var(--accent);font-weight:700}
 
-.grid{display:grid;grid-template-columns:1fr 200px;height:calc(100vh - 68px);overflow:hidden}
+/* MAIN LAYOUT */
+.grid{display:grid;grid-template-columns:1fr 180px;height:calc(100vh - 68px);overflow:hidden}
+
+/* FEATURED */
 .featured-side{position:relative;overflow:hidden;background:#000}
 .featured-img{width:100%;height:100%;object-fit:contain;display:block;transition:opacity 0.8s ease;position:absolute;inset:0;background:#000}
-.featured-img.fade{opacity:0}
-.featured-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px 28px;background:linear-gradient(transparent,rgba(0,0,0,0.88));z-index:2}
-.featured-caption{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;line-height:1.4;margin-bottom:6px;color:var(--txt)}
+.featured-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px 28px;background:linear-gradient(transparent,rgba(0,0,0,0.85));z-index:2;display:none}
+.featured-caption{font-family:var(--font-title);font-size:20px;font-weight:700;line-height:1.4;margin-bottom:6px;color:var(--txt)}
 .featured-author{font-size:13px;color:var(--accent);font-weight:600}
 .no-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:rgba(255,255,255,0.2);z-index:1}
 .no-content .big{font-size:64px}
 
-/* REACTION OVERLAY ON FEATURED */
+/* REACTION OVERLAY */
 .reaction-overlay{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden}
 .floating-emoji{position:absolute;font-size:40px;animation:floatUp 2.5s ease-out forwards;pointer-events:none}
-@keyframes floatUp{
-  0%{transform:translateY(0) scale(0.5) rotate(-10deg);opacity:1}
-  50%{transform:translateY(-40%) scale(1.2) rotate(5deg);opacity:1}
-  100%{transform:translateY(-90%) scale(0.8) rotate(-5deg);opacity:0}
-}
-
-/* REACTION BUTTON BAR */
-.reaction-bar{position:absolute;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:center;padding:12px;gap:10px;background:linear-gradient(transparent,rgba(0,0,0,0.75));opacity:1;transition:opacity 0.3s}
-.react-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:8px 16px;font-size:20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px}
+@keyframes floatUp{0%{transform:translateY(0) scale(0.5);opacity:1}100%{transform:translateY(-90%) scale(0.8);opacity:0}}
+.reaction-bar{position:absolute;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:center;padding:10px;gap:8px;background:linear-gradient(transparent,rgba(0,0,0,0.75))}
+.react-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:7px 14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:5px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px}
 .react-btn:hover{background:rgba(255,255,255,0.25);transform:scale(1.1)}
-.react-btn .cnt{font-size:12px;font-weight:700;color:rgba(255,255,255,0.8)}
-
-/* REACTION TOAST */
-.reaction-toast{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:8px 18px;font-size:14px;color:#fff;white-space:nowrap;display:none;z-index:15;animation:toastPop 0.3s ease}
-@keyframes toastPop{from{transform:translateX(-50%) scale(0.8);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
-
-/* SIDEBAR */
-.sidebar{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(0,0,0,0.3);overflow:hidden;min-height:0}
-.s-section{padding:14px 14px 0}
-.s-title{font-size:10px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
-.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 14px 12px;border-bottom:1px solid rgba(255,255,255,0.06);overflow:hidden}
-.strip-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:1.5px solid rgba(255,255,255,0.1);cursor:pointer;transition:all 0.2s;display:block}
-.strip-img.active{border-color:var(--accent);transform:scale(1.03)}
-/* msg-item kept minimal for potential future use */
-@keyframes msgIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
-
-/* NEW CONTENT BADGE */
+.react-btn .cnt{font-size:11px;font-weight:700;color:rgba(255,255,255,0.8)}
+.reaction-toast{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:8px 18px;font-size:14px;color:#fff;white-space:nowrap;display:none;z-index:15}
 .new-badge{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;display:none;z-index:20;pointer-events:none;animation:badgePop 0.4s cubic-bezier(0.175,0.885,0.32,1.275)}
 @keyframes badgePop{from{transform:translateX(-50%) scale(0.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
 
-/* QR */
-.qr-section{padding:16px;border-top:1px solid rgba(255,255,255,0.06)}
+/* SIDEBAR */
+.sidebar{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(0,0,0,0.3);overflow:hidden;min-height:0}
+.qr-section{padding:16px;margin-top:auto}
 .qr-inner{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
-.qr-box{background:#fff;padding:10px;border-radius:10px;flex-shrink:0}
+.qr-box{background:#fff;padding:10px;border-radius:10px}
 .qr-text{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.6}
 .qr-text strong{color:rgba(255,255,255,0.8);display:block;font-size:12px;margin-bottom:2px}
 
-/* REACTION SUMMARY BAR (sidebar) */
-.reaction-summary{display:flex;gap:6px;flex-wrap:wrap;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.06)}
-.rsumm-pill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:4px 10px;font-size:13px;display:flex;align-items:center;gap:4px}
-.rsumm-pill .rcnt{font-size:11px;color:rgba(255,255,255,0.6);font-weight:600}
+/* MESSAGE BUBBLE OVERLAY */
+@keyframes bubbleIn{from{transform:scale(0.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+@keyframes bubbleOut{from{transform:scale(1);opacity:1}to{transform:scale(0.8) translateY(-20px);opacity:0}}
 
-/* LIGHT THEME */
-body.theme-light{background:#f8f4ef}
-body.theme-light .header{background:rgba(0,0,0,0.04);border-bottom:1px solid rgba(0,0,0,0.08)}
-body.theme-light .ev-sub,.theme-light .qr-text{color:rgba(0,0,0,0.4)}
-body.theme-light .sidebar{background:rgba(0,0,0,0.04);border-left:1px solid rgba(0,0,0,0.1)}
-
-body.theme-light .cpill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.7)}
-body.theme-light .msg-body{color:rgba(0,0,0,0.8)}
-body.theme-light .s-title{color:rgba(0,0,0,0.35)}
-body.theme-light .photo-strip{border-bottom-color:rgba(0,0,0,0.08)}
-body.theme-light .reaction-summary{border-bottom-color:rgba(0,0,0,0.08)}
-body.theme-light .rsumm-pill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1)}
-body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
+/* WISH OVERLAY */
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+@keyframes particleFly{0%{transform:translateY(100vh) rotate(0deg);opacity:1}100%{transform:translateY(-20vh) rotate(720deg);opacity:0}}
+@keyframes wishTextIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 
 /* POLL SCREEN */
-.sbar-wrap{background:rgba(255,255,255,0.06);border-radius:12px;padding:16px 20px}
+.sbar-wrap{background:rgba(255,255,255,0.06);border-radius:12px;padding:16px 20px;margin-bottom:12px}
 .sbar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .sbar-label{font-size:16px;font-weight:600;color:#fff}
 .sbar-count{font-size:14px;font-weight:700;color:var(--accent)}
 .sbar-bg{background:rgba(255,255,255,0.08);border-radius:8px;height:14px;overflow:hidden}
 .sbar-fill{height:100%;border-radius:8px;background:var(--accent);transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1)}
 .sbar-fill.winner{background:var(--gold)}
-@keyframes bubbleIn{from{transform:scale(0.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
-@keyframes bubbleOut{from{transform:scale(1);opacity:1}to{transform:scale(0.8) translateY(-20px);opacity:0}}
-@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-@keyframes particleFly{0%{transform:translateY(100vh) rotate(0deg);opacity:1}100%{transform:translateY(-20vh) rotate(720deg);opacity:0}}
-@keyframes wishTextIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* LOADING */
 .screen-loading{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;color:rgba(255,255,255,0.4)}
 .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* LIGHT THEME */
+body.theme-light .sidebar{background:rgba(0,0,0,0.06);border-left-color:rgba(0,0,0,0.1)}
+body.theme-light .cpill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.7)}
+body.theme-light .qr-text{color:rgba(0,0,0,0.4)}
+body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 </style>
 </head>
 <body>
-<div id="loading" class="screen-loading"><div class="spinner"></div><p>Cargando evento...</p></div>
+
+<div id="loading" class="screen-loading">
+  <div class="spinner"></div>
+  <p>Cargando evento...</p>
+</div>
 
 <!-- POLL OVERLAY -->
 <div id="poll-overlay" style="position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(7,7,15,0.96);padding:40px">
   <div style="width:100%;max-width:700px">
     <div style="text-align:center;margin-bottom:28px">
       <div style="font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">🗳 VOTACIÓN EN VIVO</div>
-      <div id="poll-screen-question" style="font-family:'Syne',sans-serif;font-size:clamp(20px,3.5vw,36px);font-weight:800;color:#fff;line-height:1.3"></div>
+      <div id="poll-screen-question" style="font-family:var(--font-title);font-size:clamp(20px,3.5vw,36px);font-weight:800;color:#fff;line-height:1.3"></div>
     </div>
-    <div id="poll-screen-bars" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div id="poll-screen-bars"></div>
     <div id="poll-screen-total" style="text-align:center;margin-top:20px;font-size:14px;color:rgba(255,255,255,0.4)"></div>
   </div>
 </div>
 
 <!-- MESSAGE BUBBLE OVERLAY -->
 <div id="msg-bubble-overlay" style="position:fixed;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
-  <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:680px;width:90%;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5);animation:bubbleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)">
+  <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:680px;width:90%;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5)">
     <div id="bubble-tail" style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:24px solid var(--bubble-bg)"></div>
     <div id="msg-bubble-icon" style="font-size:36px;margin-bottom:14px">💬</div>
     <div id="msg-bubble-text" style="font-family:var(--font-title);font-size:clamp(18px,3.5vw,38px);font-weight:800;color:var(--bubble-txt);line-height:1.35;margin-bottom:16px"></div>
@@ -139,16 +118,14 @@ body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
   </div>
 </div>
 
-<!-- WISH WALL OVERLAY -->
+<!-- WISH OVERLAY -->
 <div id="wish-overlay" style="position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;overflow:hidden">
   <div id="wish-bg" style="position:absolute;inset:0;background:linear-gradient(135deg,#1a0a14,#2d1020,#1a0a14);background-size:400% 400%;animation:gradShift 8s ease infinite"></div>
-  <!-- particles -->
   <div id="wish-particles" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
   <div style="position:relative;z-index:2;text-align:center;padding:40px;max-width:800px">
     <div id="wish-heart" style="font-size:72px;margin-bottom:20px;animation:heartBeat 1.5s ease infinite">💌</div>
     <div id="wish-author" style="font-size:18px;font-weight:600;color:rgba(255,192,210,0.8);margin-bottom:16px;letter-spacing:1px;text-transform:uppercase"></div>
-    <div id="wish-text" style="font-family:'Syne',sans-serif;font-size:clamp(22px,4vw,48px);font-weight:800;color:#fff;line-height:1.4;text-shadow:0 2px 40px rgba(240,23,111,0.5)"></div>
-    <div style="margin-top:32px;width:80px;height:2px;background:rgba(255,107,157,0.5);margin-left:auto;margin-right:auto;border-radius:2px"></div>
+    <div id="wish-text" style="font-family:var(--font-title);font-size:clamp(22px,4vw,48px);font-weight:800;color:#fff;line-height:1.4;text-shadow:0 2px 40px rgba(240,23,111,0.5)"></div>
   </div>
 </div>
 
@@ -178,12 +155,11 @@ body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
         <p style="font-size:13px">Los invitados están escaneando el QR</p>
       </div>
       <img id="featured-img" class="featured-img" src="" alt="" style="display:none"/>
-      <div class="featured-overlay" id="featured-overlay" style="display:none">
+      <div class="featured-overlay" id="featured-overlay">
         <div class="featured-caption" id="featured-caption"></div>
         <div class="featured-author" id="featured-author"></div>
       </div>
       <div class="reaction-overlay" id="reaction-overlay"></div>
-      <!-- REACTION BUTTONS -->
       <div class="reaction-bar" id="reaction-bar">
         <button class="react-btn" onclick="sendReaction('❤️')">❤️ <span class="cnt" id="rc-heart">0</span></button>
         <button class="react-btn" onclick="sendReaction('😂')">😂 <span class="cnt" id="rc-laugh">0</span></button>
@@ -198,16 +174,17 @@ body.theme-light .rsumm-pill .rcnt{color:rgba(0,0,0,0.5)}
       <div style="flex:1"></div>
       <div class="qr-section">
         <div class="qr-inner">
-          <div class="qr-box"><canvas id="qr-canvas" width="80" height="80"></canvas></div>
+          <div class="qr-box"><canvas id="qr-canvas" width="120" height="120"></canvas></div>
           <div class="qr-text"><strong>Escaneá para participar</strong>Subí fotos y mensajes<br>en tiempo real</div>
         </div>
       </div>
     </div>
-    <!-- hidden elements for internal tracking -->
-    <div id="photo-strip" style="display:none"></div>
-    <div id="reaction-summary" style="display:none"></div>
   </div>
 </div>
+
+<!-- hidden for internal tracking -->
+<div id="photo-strip" style="display:none"></div>
+<div id="reaction-summary" style="display:none"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
@@ -215,38 +192,25 @@ const SUPABASE_URL='https://jxqwrbmnfmnzddkcimrm.supabase.co';
 const SUPABASE_KEY='sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 
 async function api(path){
-  try{const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});const t=await res.text();return t?JSON.parse(t):[];}
-  catch(e){return[];}
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    const t=await res.text();return t?JSON.parse(t):[];
+  }catch(e){return[];}
 }
 async function apiPost(path,body){
-  try{const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(body)});const t=await res.text();return t?JSON.parse(t):[];}
-  catch(e){return[];}
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(body)});
+    const t=await res.text();return t?JSON.parse(t):[];
+  }catch(e){return[];}
 }
 
 const params=new URLSearchParams(location.search);
 const eventId=params.get('event');
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
-let currentFeaturedPostId=null;
-let reactionCounts={};
-let lastReactionCount=0;
-let cfg={interval:6000,sound:'chime'};
+let currentFeaturedPostId=null,reactionCounts={};
+let cfg={interval:6000,sound:'chime',fsBubble:32};
 
-const EMOJI_MAP={'❤️':'rc-heart','😂':'rc-laugh','😍':'rc-love','🔥':'rc-fire','👏':'rc-clap','🥳':'rc-party'};
-
-// ── SOUNDS ───────────────────────────────────────────────────
-function playSound(type){
-  if(type==='none') return;
-  try{
-    const ctx=new(window.AudioContext||window.webkitAudioContext)();
-    if(type==='chime'){
-      [523,659,784].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,ctx.currentTime+i*0.15);g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+i*0.15+0.05);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.5);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.5);});
-    } else if(type==='pop'){
-      const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(800,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(400,ctx.currentTime+0.15);g.gain.setValueAtTime(0.4,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.2);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.2);
-    }
-  }catch(e){}
-}
-
-// ── THEME ─────────────────────────────────────────────────────
+// ── FONT LOADER ───────────────────────────────────────────────
 function loadScreenFont(font){
   if(!font||font==='Syne'||font==='DM Sans') return;
   const id='gf-'+font.replace(/\s/g,'-');
@@ -257,6 +221,7 @@ function loadScreenFont(font){
   document.head.appendChild(link);
 }
 
+// ── THEME ─────────────────────────────────────────────────────
 function applyTheme(design){
   if(!design) return;
   const r=document.documentElement;
@@ -269,36 +234,40 @@ function applyTheme(design){
   set('--header-bg',  design.header||design.bg||'#0c0c14');
   set('--fs-title',   (design.fsTitle||22)+'px');
   set('--bubble-radius',(design.radius||28)+'px');
-  set('--overlay-opacity',(design.overlay||60)/100);
   document.body.style.background=design.bg||'#07070f';
   const isLight=(design.bg||'').match(/^#[def]/i);
   document.body.classList.toggle('theme-light',!!isLight);
-  if(design.fontTitle){
-    loadScreenFont(design.fontTitle);
-    set('--font-title',"'"+design.fontTitle+"',sans-serif");
-  }
-  if(design.fontBody){
-    loadScreenFont(design.fontBody);
-    set('--font-body',"'"+design.fontBody+"',sans-serif");
-  }
+  if(design.fontTitle){loadScreenFont(design.fontTitle);set('--font-title',"'"+design.fontTitle+"',sans-serif");}
+  if(design.fontBody){loadScreenFont(design.fontBody);set('--font-body',"'"+design.fontBody+"',sans-serif");}
   if(design.fsBubble) cfg.fsBubble=parseInt(design.fsBubble);
   if(design.interval) cfg.interval=parseInt(design.interval)*1000;
   if(design.sound) cfg.sound=design.sound;
 }
 
-// ── REACTIONS ────────────────────────────────────────────────
+// ── SOUNDS ────────────────────────────────────────────────────
+function playSound(type){
+  if(type==='none') return;
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(type==='chime'){
+      [523,659,784].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,ctx.currentTime+i*0.15);g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+i*0.15+0.05);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.5);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.5);});
+    } else if(type==='pop'){
+      const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(800,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(400,ctx.currentTime+0.15);g.gain.setValueAtTime(0.4,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.2);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.2);
+    }
+  }catch(e){}
+}
+
+// ── REACTIONS ─────────────────────────────────────────────────
+const EMOJI_MAP={'❤️':'rc-heart','😂':'rc-laugh','😍':'rc-love','🔥':'rc-fire','👏':'rc-clap','🥳':'rc-party'};
+
 function spawnEmoji(emoji){
   const overlay=document.getElementById('reaction-overlay');
   for(let i=0;i<3;i++){
     setTimeout(()=>{
-      const el=document.createElement('div');
-      el.className='floating-emoji';
-      el.textContent=emoji;
-      el.style.left=Math.random()*80+10+'%';
-      el.style.bottom='60px';
+      const el=document.createElement('div');el.className='floating-emoji';el.textContent=emoji;
+      el.style.left=Math.random()*80+10+'%';el.style.bottom='80px';
       el.style.animationDelay=Math.random()*0.3+'s';
-      overlay.appendChild(el);
-      setTimeout(()=>el.remove(),3000);
+      overlay.appendChild(el);setTimeout(()=>el.remove(),3000);
     },i*150);
   }
 }
@@ -306,18 +275,12 @@ function spawnEmoji(emoji){
 async function sendReaction(emoji){
   if(!currentFeaturedPostId) return;
   spawnEmoji(emoji);
-  // optimistic update
   reactionCounts[emoji]=(reactionCounts[emoji]||0)+1;
   updateReactionUI();
-  showReactionToast(emoji);
-  await apiPost('reactions',{post_id:currentFeaturedPostId,event_id:eventId,emoji});
-}
-
-function showReactionToast(emoji){
   const t=document.getElementById('reaction-toast');
-  t.textContent=emoji+' ¡Reacción enviada!';
-  t.style.display='block';
+  t.textContent=emoji+' ¡Reacción enviada!';t.style.display='block';
   clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2000);
+  await apiPost('reactions',{post_id:currentFeaturedPostId,event_id:eventId,emoji});
 }
 
 async function loadReactions(){
@@ -327,93 +290,17 @@ async function loadReactions(){
   reactionCounts={};
   data.forEach(r=>{reactionCounts[r.emoji]=(reactionCounts[r.emoji]||0)+1;});
   updateReactionUI();
-  updateReactionSummary();
-  lastReactionCount=data.length;
 }
 
 function updateReactionUI(){
   Object.entries(EMOJI_MAP).forEach(([emoji,id])=>{
-    const el=document.getElementById(id);
-    if(el) el.textContent=reactionCounts[emoji]||0;
+    const el=document.getElementById(id);if(el) el.textContent=reactionCounts[emoji]||0;
   });
 }
 
-function updateReactionSummary(){
-  const bar=document.getElementById('reaction-summary');
-  const sorted=Object.entries(reactionCounts).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
-  if(!sorted.length){bar.innerHTML='';return;}
-  bar.innerHTML=sorted.map(([e,c])=>`<div class="rsumm-pill">${e}<span class="rcnt">${c}</span></div>`).join('');
-}
-
-// ── INIT ─────────────────────────────────────────────────────
-// ── WISH WALL ────────────────────────────────────────────────
-let wishQueue=[];
-let wishShowing=false;
-const playedAudioIds=new Set();
-
-// Persist shown wish IDs in sessionStorage so reloads don't repeat them
-function getShownWishIds(){
-  try{ return new Set(JSON.parse(sessionStorage.getItem('ew_shown_wishes_'+eventId)||'[]')); }
-  catch(e){ return new Set(); }
-}
-function markWishShown(id){
-  const ids=getShownWishIds();
-  ids.add(id);
-  sessionStorage.setItem('ew_shown_wishes_'+eventId, JSON.stringify([...ids]));
-}
-
-async function pollWishes(){
-  const wishes=await api('posts?event_id=eq.'+eventId+'&type=eq.wish&approved=eq.true&order=created_at.asc');
-  if(!Array.isArray(wishes)) return;
-  const shown=getShownWishIds();
-  const newWishes=wishes.filter(w=>w.id&&!shown.has(w.id)&&!wishQueue.find(q=>q.id===w.id));
-  if(newWishes.length){
-    wishQueue.push(...newWishes);
-    if(!wishShowing) showNextWish();
-  }
-}
-
-function spawnParticles(){
-  const container=document.getElementById('wish-particles');
-  container.innerHTML='';
-  const emojis=['💕','✨','🌸','💖','⭐','🎀','💫','🌺'];
-  for(let i=0;i<20;i++){
-    const el=document.createElement('div');
-    el.style.cssText='position:absolute;font-size:'+(Math.random()*20+16)+'px;left:'+Math.random()*100+'%;animation:particleFly '+(Math.random()*4+4)+'s linear '+(Math.random()*3)+'s infinite;';
-    el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-    container.appendChild(el);
-  }
-}
-
-function showNextWish(){
-  if(!wishQueue.length){wishShowing=false;return;}
-  wishShowing=true;
-  const wish=wishQueue.shift();
-  markWishShown(wish.id);
-  document.getElementById('wish-author').textContent=wish.author+' dice:';
-  const textEl=document.getElementById('wish-text');
-  textEl.textContent=wish.content;
-  textEl.style.animation='none';void textEl.offsetWidth;
-  textEl.style.animation='wishTextIn 0.8s ease 0.3s both';
-  spawnParticles();
-  const overlay=document.getElementById('wish-overlay');
-  overlay.style.display='flex';
-  // Auto-hide after reading time (min 6s, +1s per 20 chars)
-  const readTime=Math.max(6000, 6000 + wish.content.length*80);
-  setTimeout(()=>{
-    overlay.style.opacity='0';overlay.style.transition='opacity 0.8s';
-    setTimeout(()=>{overlay.style.display='none';overlay.style.opacity='1';overlay.style.transition='';
-      setTimeout(showNextWish,1500);
-    },800);
-  },readTime);
-}
-
-// ── MESSAGE BUBBLES ──────────────────────────────────────────
-let msgBubbleQueue=[];
-let msgBubbleShowing=false;
+// ── MESSAGE BUBBLES ───────────────────────────────────────────
 const shownMsgIds=new Set();
-
-// Fun icons for variety
+let msgBubbleQueue=[],msgBubbleShowing=false;
 const MSG_ICONS=['💬','😂','❤️','🔥','😍','🎉','👏','💕','😎','🥳','💯','✨'];
 
 async function pollMessages(){
@@ -433,68 +320,186 @@ function showNextBubble(){
   shownMsgIds.add(msg.id);
   const icon=MSG_ICONS[Math.floor(Math.random()*MSG_ICONS.length)];
   document.getElementById('msg-bubble-icon').textContent=icon;
-  document.getElementById('msg-bubble-text').textContent=msg.content;
+  const textEl=document.getElementById('msg-bubble-text');
+  textEl.textContent=msg.content;
+  textEl.style.fontSize='clamp(18px,3.5vw,'+cfg.fsBubble+'px)';
   document.getElementById('msg-bubble-author').textContent='— '+msg.author;
   const overlay=document.getElementById('msg-bubble-overlay');
   const card=document.getElementById('msg-bubble-card');
-  card.style.animation='none'; void card.offsetWidth;
-  card.style.animation='bubbleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)';
+  card.style.animation='none';void card.offsetWidth;
+  card.style.animation='bubbleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards';
   overlay.style.display='flex';
-  // Read time: min 4s + extra per char
-  const readTime=Math.max(4000, 3000+msg.content.length*60);
+  const readTime=Math.max(4000,3000+msg.content.length*60);
   setTimeout(()=>{
     card.style.animation='bubbleOut 0.4s ease forwards';
-    setTimeout(()=>{
-      overlay.style.display='none';
-      setTimeout(showNextBubble, 800);
-    },400);
-  }, readTime);
+    setTimeout(()=>{overlay.style.display='none';setTimeout(showNextBubble,800);},400);
+  },readTime);
 }
 
-// ── POLL SCREEN ──────────────────────────────────────────────
-let activePollId=null;
+// ── WISH WALL ─────────────────────────────────────────────────
+let wishQueue=[],wishShowing=false;
+
+function getShownWishIds(){
+  try{return new Set(JSON.parse(sessionStorage.getItem('ew_shown_wishes_'+eventId)||'[]'));}
+  catch(e){return new Set();}
+}
+function markWishShown(id){
+  const ids=getShownWishIds();ids.add(id);
+  sessionStorage.setItem('ew_shown_wishes_'+eventId,JSON.stringify([...ids]));
+}
+
+async function pollWishes(){
+  const wishes=await api('posts?event_id=eq.'+eventId+'&type=eq.wish&approved=eq.true&order=created_at.asc');
+  if(!Array.isArray(wishes)) return;
+  const shown=getShownWishIds();
+  const newWishes=wishes.filter(w=>w.id&&!shown.has(w.id)&&!wishQueue.find(q=>q.id===w.id));
+  if(newWishes.length){wishQueue.push(...newWishes);if(!wishShowing) showNextWish();}
+}
+
+function spawnParticles(){
+  const container=document.getElementById('wish-particles');container.innerHTML='';
+  const emojis=['💕','✨','🌸','💖','⭐','🎀','💫','🌺'];
+  for(let i=0;i<20;i++){
+    const el=document.createElement('div');
+    el.style.cssText='position:absolute;font-size:'+(Math.random()*20+16)+'px;left:'+Math.random()*100+'%;animation:particleFly '+(Math.random()*4+4)+'s linear '+(Math.random()*3)+'s infinite;';
+    el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    container.appendChild(el);
+  }
+}
+
+function showNextWish(){
+  if(!wishQueue.length){wishShowing=false;return;}
+  wishShowing=true;
+  const wish=wishQueue.shift();markWishShown(wish.id);
+  document.getElementById('wish-author').textContent=wish.author+' dice:';
+  const textEl=document.getElementById('wish-text');
+  textEl.textContent=wish.content;
+  textEl.style.animation='none';void textEl.offsetWidth;
+  textEl.style.animation='wishTextIn 0.8s ease 0.3s both';
+  spawnParticles();
+  const overlay=document.getElementById('wish-overlay');
+  overlay.style.display='flex';overlay.style.opacity='1';overlay.style.transition='';
+  const readTime=Math.max(6000,6000+wish.content.length*80);
+  setTimeout(()=>{
+    overlay.style.transition='opacity 0.8s';overlay.style.opacity='0';
+    setTimeout(()=>{overlay.style.display='none';overlay.style.opacity='1';overlay.style.transition='';setTimeout(showNextWish,1500);},800);
+  },readTime);
+}
+
+// ── POLL SCREEN ───────────────────────────────────────────────
 let pollScreenVisible=false;
 
 async function pollForPolls(){
   const polls=await api('polls?event_id=eq.'+eventId+'&active=eq.true&order=created_at.desc&limit=1');
   if(!Array.isArray(polls)||!polls.length){
-    if(pollScreenVisible) hidePollScreen();
+    if(pollScreenVisible){document.getElementById('poll-overlay').style.display='none';pollScreenVisible=false;}
     return;
   }
   const poll=polls[0];
   const votes=await api('poll_votes?poll_id=eq.'+poll.id+'&select=option_idx');
-  renderPollScreen(poll, Array.isArray(votes)?votes:[]);
+  renderPollScreen(poll,Array.isArray(votes)?votes:[]);
 }
 
-function renderPollScreen(poll, votes){
+function renderPollScreen(poll,votes){
   const opts=Array.isArray(poll.options)?poll.options:[];
   const total=votes.length;
   const counts=opts.map((_,i)=>votes.filter(v=>v.option_idx===i).length);
   const maxVotes=Math.max(...counts,1);
   document.getElementById('poll-screen-question').textContent=poll.question;
   document.getElementById('poll-screen-total').textContent=total+' voto'+(total!==1?'s':'')+' en tiempo real';
-  const barsDiv=document.getElementById('poll-screen-bars');
-  barsDiv.innerHTML='';
+  const barsDiv=document.getElementById('poll-screen-bars');barsDiv.innerHTML='';
   opts.forEach((opt,i)=>{
     const pct=total>0?Math.round((counts[i]/total)*100):0;
     const isWinner=counts[i]===maxVotes&&total>0;
     const bar=document.createElement('div');bar.className='sbar-wrap';
-    bar.innerHTML=`<div class="sbar-top"><span class="sbar-label">${opt}</span><span class="sbar-count">${counts[i]} · ${pct}%</span></div>
-      <div class="sbar-bg"><div class="sbar-fill${isWinner?' winner':''}" style="width:${pct}%"></div></div>`;
+    bar.innerHTML='<div class="sbar-top"><span class="sbar-label">'+opt+'</span><span class="sbar-count">'+counts[i]+' · '+pct+'%</span></div><div class="sbar-bg"><div class="sbar-fill'+(isWinner?' winner':'')+'" style="width:'+pct+'%"></div></div>';
     barsDiv.appendChild(bar);
   });
-  const overlay=document.getElementById('poll-overlay');
-  overlay.style.display='flex';
+  document.getElementById('poll-overlay').style.display='flex';
   pollScreenVisible=true;
-  activePollId=poll.id;
 }
 
-function hidePollScreen(){
-  document.getElementById('poll-overlay').style.display='none';
-  pollScreenVisible=false;
-  activePollId=null;
+// ── PHOTOS ────────────────────────────────────────────────────
+const playedAudioIds=new Set();
+
+function showFeatured(post,idx){
+  featuredIdx=idx;currentFeaturedPostId=post.id;
+  const img=document.getElementById('featured-img');
+  img.style.opacity='0';
+  setTimeout(()=>{
+    img.src=post.content;img.style.display='block';img.style.opacity='1';
+    document.getElementById('no-content').style.display='none';
+    const hasCaption=post.content_text&&post.content_text.trim();
+    const overlay=document.getElementById('featured-overlay');
+    overlay.style.display=hasCaption?'block':'none';
+    if(hasCaption){
+      document.getElementById('featured-caption').textContent='"'+post.content_text+'"';
+      document.getElementById('featured-author').textContent='— '+post.author;
+    }
+  },300);
+  reactionCounts={};updateReactionUI();loadReactions();
 }
 
+function rotateFeatured(){
+  if(!photoPosts.length) return;
+  featuredIdx=(featuredIdx+1)%photoPosts.length;
+  showFeatured(photoPosts[featuredIdx],featuredIdx);
+}
+
+function addToStrip(post){
+  const strip=document.getElementById('photo-strip');
+  const img=document.createElement('img');img.src=post.content;
+  strip.insertBefore(img,strip.firstChild);
+  if(strip.children.length>6) strip.removeChild(strip.lastChild);
+}
+
+function buildStrip(){
+  const strip=document.getElementById('photo-strip');strip.innerHTML='';
+  photoPosts.slice(0,6).forEach(p=>addToStrip(p));
+}
+
+function updateCounters(){
+  document.getElementById('cnt-p').textContent=posts.filter(p=>p.type==='photo').length;
+  document.getElementById('cnt-m').textContent=posts.filter(p=>p.type==='message').length;
+  document.getElementById('cnt-a').textContent=posts.filter(p=>p.type==='audio').length;
+}
+
+function showNewBadge(){
+  const b=document.getElementById('new-badge');b.style.display='block';
+  clearTimeout(b._t);b._t=setTimeout(()=>b.style.display='none',3000);
+}
+
+// ── POLLING ───────────────────────────────────────────────────
+async function loadPosts(){
+  posts=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
+  if(!Array.isArray(posts)) posts=[];
+  lastPostCount=posts.length;
+  updateCounters();
+  photoPosts=posts.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
+  buildStrip();
+  if(photoPosts.length) showFeatured(photoPosts[0],0);
+}
+
+async function pollPosts(){
+  const fresh=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
+  if(!Array.isArray(fresh)) return;
+  if(fresh.length>lastPostCount){
+    const newItems=fresh.filter(f=>!posts.find(p=>p.id===f.id));
+    posts=fresh;lastPostCount=fresh.length;updateCounters();
+    newItems.forEach(p=>{
+      if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
+        photoPosts.unshift(p);addToStrip(p);showFeatured(p,0);
+      }
+      if(p.type==='audio'&&p.content&&!playedAudioIds.has(p.id)){
+        playedAudioIds.add(p.id);
+        setTimeout(()=>{try{new Audio(p.content).play();}catch(e){}},800);
+      }
+    });
+    playSound(cfg.sound);showNewBadge();
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────
 async function init(){
   if(!eventId){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Error: falta ?event= en la URL</p>';return;}
   const events=await api('events?id=eq.'+eventId);
@@ -509,128 +514,23 @@ async function init(){
   const guestUrl=location.origin+'/guest.html?event='+eventId;
   const tmp=document.createElement('div');tmp.style.display='none';document.body.appendChild(tmp);
   try{
-    new QRCode(tmp,{text:guestUrl,width:80,height:80,correctLevel:QRCode.CorrectLevel.M});
-    setTimeout(()=>{const img=tmp.querySelector('img');if(img){const i=new Image();i.onload=()=>{const ctx=document.getElementById('qr-canvas').getContext('2d');ctx.drawImage(i,0,0,80,80)};i.src=img.src;}tmp.remove();},200);
+    new QRCode(tmp,{text:guestUrl,width:120,height:120,correctLevel:QRCode.CorrectLevel.M});
+    setTimeout(()=>{
+      const img=tmp.querySelector('img');
+      if(img){const i=new Image();i.onload=()=>{const ctx=document.getElementById('qr-canvas').getContext('2d');ctx.drawImage(i,0,0,120,120);};i.src=img.src;}
+      tmp.remove();
+    },200);
   }catch(e){tmp.remove();}
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   await loadPosts();
-  clearInterval(rotateTimer);rotateTimer=setInterval(rotateFeatured,cfg.interval);
+  clearInterval(rotateTimer);
+  rotateTimer=setInterval(rotateFeatured,cfg.interval);
   setInterval(pollPosts,3000);
   setInterval(()=>{if(currentFeaturedPostId) loadReactions();},4000);
   setInterval(pollWishes,5000);
-  setInterval(pollForPolls,4000);
   setInterval(pollMessages,3500);
-}
-
-async function loadPosts(){
-  posts=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
-  if(!Array.isArray(posts)) posts=[];
-  lastPostCount=posts.length;
-  updateCounters();
-  photoPosts=posts.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
-  buildStrip();
-  if(photoPosts.length){showFeatured(photoPosts[0],0);}
-  buildMessages();
-}
-
-async function pollPosts(){
-  const fresh=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
-  if(!Array.isArray(fresh)) return;
-  if(fresh.length>lastPostCount){
-    const newItems=fresh.filter(f=>!posts.find(p=>p.id===f.id));
-    posts=fresh;lastPostCount=fresh.length;updateCounters();
-    newItems.forEach(p=>{
-      if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
-        photoPosts.unshift(p);addToStrip(p);showFeatured(p,0);
-      } else {
-        addMsgCard(p,true);
-        if(p.type==='audio'&&p.content&&!playedAudioIds.has(p.id)){
-          playedAudioIds.add(p.id);
-          setTimeout(()=>{
-            try{const a=new Audio(p.content);a.play();}catch(e){}
-          },800);
-        }
-      }
-    });
-    playSound(cfg.sound);showNewBadge();
-  }
-}
-
-function showNewBadge(){
-  const b=document.getElementById('new-badge');b.style.display='block';
-  clearTimeout(b._t);b._t=setTimeout(()=>b.style.display='none',3000);
-}
-
-function updateCounters(){
-  document.getElementById('cnt-p').textContent=posts.filter(p=>p.type==='photo').length;
-  document.getElementById('cnt-m').textContent=posts.filter(p=>p.type==='message').length;
-  document.getElementById('cnt-a').textContent=posts.filter(p=>p.type==='audio').length;
-}
-
-function showFeatured(post,idx){
-  featuredIdx=idx;currentFeaturedPostId=post.id;
-  const img=document.getElementById('featured-img');
-  img.style.opacity='0';
-  setTimeout(()=>{
-    img.src=post.content;img.style.display='block';img.style.opacity='1';
-    document.getElementById('no-content').style.display='none';
-    const hasCaption=post.content_text&&post.content_text.trim();
-    document.getElementById('featured-overlay').style.display=hasCaption?'block':'none';
-    if(hasCaption){
-      document.getElementById('featured-caption').textContent='"'+post.content_text+'"';
-      document.getElementById('featured-author').textContent='— '+post.author;
-    }
-  },300);
-  document.querySelectorAll('.strip-img').forEach((el,i)=>el.classList.toggle('active',i===idx));
-  reactionCounts={};updateReactionUI();updateReactionSummary();
-  loadReactions();
-}
-
-function rotateFeatured(){
-  if(!photoPosts.length) return;
-  featuredIdx=(featuredIdx+1)%photoPosts.length;
-  showFeatured(photoPosts[featuredIdx],featuredIdx);
-}
-
-function buildStrip(){
-  const strip=document.getElementById('photo-strip');strip.innerHTML='';
-  photoPosts.slice(0,6).forEach((p,i)=>addToStrip(p,i));
-}
-
-function addToStrip(post,idx){
-  const strip=document.getElementById('photo-strip');
-  const img=document.createElement('img');
-  img.className='strip-img';img.src=post.content;
-  img.onclick=()=>showFeatured(post,idx||0);
-  strip.insertBefore(img,strip.firstChild);
-  if(strip.children.length>6) strip.removeChild(strip.lastChild);
-}
-
-function buildMessages(){
-  const list=document.getElementById('messages-list');
-  const title=list.querySelector('.s-title');
-  list.innerHTML='';list.appendChild(title);
-  posts.filter(p=>p.type==='audio').slice(0,5).forEach(p=>addMsgCard(p,false));
-}
-
-function addMsgCard(post,animate){
-  if(post.type!=='audio') return; // messages show as bubbles now
-  const list=document.getElementById('messages-list');
-  const card=document.createElement('div');card.className='msg-item';
-  if(!animate) card.style.animation='none';
-  const d=new Date(post.created_at);
-  const t=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
-  if(post.type==='message'){
-    card.innerHTML='<div class="msg-author">'+post.author+'</div><div class="msg-body">'+post.content+'</div><div class="msg-time">'+t+'</div>';
-  } else if(post.type==='audio'){
-    card.innerHTML='<div class="msg-author">'+post.author+'</div><div class="msg-audio-row"><div class="audio-dot" onclick="new Audio(\''+post.content+'\').play()"><svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg></div><span style="font-size:12px;color:rgba(255,255,255,0.55)">Audio · '+(post.content_text||'')+'</span></div><div class="msg-time">'+t+'</div>';
-  }
-  // Remove excess first to prevent layout jump
-  const items=list.querySelectorAll('.msg-item');
-  if(items.length>=5) list.removeChild(items[items.length-1]);
-  const title=list.querySelector('.s-title');
-  list.insertBefore(card,title?title.nextSibling:list.firstChild);
+  setInterval(pollForPolls,4000);
 }
 
 init();
