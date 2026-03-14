@@ -508,6 +508,8 @@ async function pollForPolls(){
       document.getElementById('poll-overlay').style.display='none';
       pollScreenVisible=false;
       clearInterval(pollTimerInterval);
+      const rbar=document.getElementById('reaction-bar');
+      if(rbar) rbar.style.display='flex';
     }
     return;
   }
@@ -544,6 +546,9 @@ function renderPollScreen(poll,votes){
   document.getElementById('poll-overlay').style.display='flex';
   pollScreenVisible=true;
   startPollTimer(poll);
+  // Hide reactions while poll is active
+  const rbar=document.getElementById('reaction-bar');
+  if(rbar) rbar.style.display='none';
 }
 
 function startPollTimer(poll){
