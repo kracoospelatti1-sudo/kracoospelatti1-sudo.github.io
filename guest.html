@@ -1388,7 +1388,7 @@ async function toggleRecording(){
       document.getElementById('waveform').style.display='none';
       document.getElementById('record-timer').style.display='none';
       document.getElementById('record-status').textContent='Audio grabado ✓ · tocá para volver a grabar';
-      document.getElementById('audio-dur').textContent=recSecs+' segundo'+(recSecs===1?'':'s');
+      const durEl=document.querySelector('#audio-ready .audio-info span');if(durEl) durEl.textContent='Duración: '+recSecs+' segundo'+(recSecs===1?'':'s')+' · Tocá ▶ para escuchar';
       document.getElementById('audio-ready').style.display='flex';
       clearInterval(recTimer);
     };
