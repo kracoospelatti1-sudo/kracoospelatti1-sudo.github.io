@@ -299,14 +299,28 @@ function updateReactionUI(){
 }
 
 // ── MESSAGE BUBBLES ───────────────────────────────────────────
-const shownMsgIds=new Set();
 let msgBubbleQueue=[],msgBubbleShowing=false;
 const MSG_ICONS=['💬','😂','❤️','🔥','😍','🎉','👏','💕','😎','🥳','💯','✨'];
+
+function getShownKey(prefix){
+  // Key includes today's date so it auto-clears next day
+  const today=new Date().toISOString().slice(0,10);
+  return prefix+'_'+eventId+'_'+today;
+}
+function getShownMsgIds(){
+  try{return new Set(JSON.parse(localStorage.getItem(getShownKey('ew_msgs'))||'[]'));}
+  catch(e){return new Set();}
+}
+function markMsgShown(id){
+  const ids=getShownMsgIds();ids.add(id);
+  localStorage.setItem(getShownKey('ew_msgs'),JSON.stringify([...ids]));
+}
 
 async function pollMessages(){
   const msgs=await api('posts?event_id=eq.'+eventId+'&type=eq.message&approved=eq.true&order=created_at.asc');
   if(!Array.isArray(msgs)) return;
-  const newMsgs=msgs.filter(m=>m.id&&!shownMsgIds.has(m.id)&&!msgBubbleQueue.find(q=>q.id===m.id));
+  const shown=getShownMsgIds();
+  const newMsgs=msgs.filter(m=>m.id&&!shown.has(m.id)&&!msgBubbleQueue.find(q=>q.id===m.id));
   if(newMsgs.length){
     msgBubbleQueue.push(...newMsgs);
     if(!msgBubbleShowing) showNextBubble();
@@ -317,7 +331,7 @@ function showNextBubble(){
   if(!msgBubbleQueue.length){msgBubbleShowing=false;return;}
   msgBubbleShowing=true;
   const msg=msgBubbleQueue.shift();
-  shownMsgIds.add(msg.id);
+  markMsgShown(msg.id);
   const icon=MSG_ICONS[Math.floor(Math.random()*MSG_ICONS.length)];
   document.getElementById('msg-bubble-icon').textContent=icon;
   const textEl=document.getElementById('msg-bubble-text');
@@ -340,12 +354,12 @@ function showNextBubble(){
 let wishQueue=[],wishShowing=false;
 
 function getShownWishIds(){
-  try{return new Set(JSON.parse(sessionStorage.getItem('ew_shown_wishes_'+eventId)||'[]'));}
+  try{return new Set(JSON.parse(localStorage.getItem(getShownKey('ew_wishes'))||'[]'));}
   catch(e){return new Set();}
 }
 function markWishShown(id){
   const ids=getShownWishIds();ids.add(id);
-  sessionStorage.setItem('ew_shown_wishes_'+eventId,JSON.stringify([...ids]));
+  localStorage.setItem(getShownKey('ew_wishes'),JSON.stringify([...ids]));
 }
 
 async function pollWishes(){
@@ -420,7 +434,14 @@ function renderPollScreen(poll,votes){
 }
 
 // ── PHOTOS ────────────────────────────────────────────────────
-const playedAudioIds=new Set();
+function getPlayedAudioIds(){
+  try{return new Set(JSON.parse(localStorage.getItem(getShownKey('ew_audios'))||'[]'));}
+  catch(e){return new Set();}
+}
+function markAudioPlayed(id){
+  const ids=getPlayedAudioIds();ids.add(id);
+  localStorage.setItem(getShownKey('ew_audios'),JSON.stringify([...ids]));
+}
 
 function showFeatured(post,idx){
   featuredIdx=idx;currentFeaturedPostId=post.id;
@@ -490,8 +511,8 @@ async function pollPosts(){
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
         photoPosts.unshift(p);addToStrip(p);showFeatured(p,0);
       }
-      if(p.type==='audio'&&p.content&&!playedAudioIds.has(p.id)){
-        playedAudioIds.add(p.id);
+      if(p.type==='audio'&&p.content&&!getPlayedAudioIds().has(p.id)){
+        markAudioPlayed(p.id);
         setTimeout(()=>{try{new Audio(p.content).play();}catch(e){}},800);
       }
     });
