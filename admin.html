@@ -742,7 +742,7 @@ input[type=range]{accent-color:var(--pink)}
             </div>
             <div style="display:flex;align-items:center;gap:12px">
               <span id="album-count" style="font-size:13px;color:var(--muted)">0 fotos</span>
-              <button class="btn-pink" onclick="downloadAllPhotos()">⬇ Descargar todas</button>
+              <button class="btn-pink" onclick="downloadAlbum()">⬇ Descargar todas</button>
             </div>
           </div>
         </div>
@@ -827,7 +827,7 @@ input[type=range]{accent-color:var(--pink)}
           </div>
           <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
             <button class="btn-ghost" onclick="addPollOption()">+ Opción</button>
-            <button class="btn-pink" onclick="createPoll()">🗳 Crear votación</button>
+            <button class="btn-pink" id="create-poll-btn" onclick="createPoll()">🗳 Crear votación</button>
           </div>
         </div>
         <div id="polls-list"></div>
@@ -1227,36 +1227,7 @@ function toast(msg,dur=3000){
 let autoApprove=false;
 
 
-function getAutoKey(){ return 'ew_auto_'+selectedEvent?.id; }
 
-function toggleAutoApprove(){
-  autoApprove=!autoApprove;
-  updateAutoToggleUI();
-  if(autoApprove){
-    localStorage.setItem(getAutoKey(),'1');
-    toast('✅ Aprobación automática activada — todo el contenido nuevo se aprueba al instante');
-    approveNewPosts(); // run immediately
-  } else {
-    localStorage.removeItem(getAutoKey());
-    toast('🛡 Aprobación manual activada — revisás cada publicación antes de mostrarla');
-  }
-}
-
-function updateAutoToggleUI(){
-  const toggle=document.getElementById('auto-toggle');
-  const label=document.getElementById('auto-label');
-  if(!toggle) return;
-  toggle.classList.toggle('on', autoApprove);
-  label.textContent=autoApprove?'Auto-aprobación ON':'Aprobación manual';
-}
-
-
-
-function loadAutoApproveState(){
-  if(!selectedEvent) return;
-  autoApprove=localStorage.getItem(getAutoKey())==='1';
-  updateAutoToggleUI();
-}
 
 // ── DELETE EVENT ─────────────────────────────────────────────
 async function deleteEvent(ev){
@@ -1464,16 +1435,7 @@ async function evCreate(){
 }
 
 // ── MODERATION ───────────────────────────────────────────────
-function showMod(){
-  const notice=document.getElementById('mod-notice');
-  const content=document.getElementById('mod-content');
-  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  notice.classList.remove('show');content.style.display='block';
-  document.getElementById('mod-ev-name').textContent=selectedEvent.name;
-  document.getElementById('mod-ev-sub').textContent=(selectedEvent.date||'')+(selectedEvent.subtitle?' · '+selectedEvent.subtitle:'');
-  loadAutoApproveState();
-  loadPosts();
-}
+
 async function loadPosts(){
   const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&order=created_at.desc');
   allPosts=Array.isArray(posts)?posts:[];
@@ -1484,41 +1446,13 @@ async function loadPosts(){
     if(Array.isArray(fresh)&&fresh.length!==allPosts.length){allPosts=fresh;updateStats();renderPosts();}
   },5000);
 }
-function updateStats(){
-  document.getElementById('st-total').textContent=allPosts.length;
-  const pendEl=document.getElementById('st-pending');if(pendEl) pendEl.textContent='0';
-  document.getElementById('st-approved').textContent=allPosts.filter(p=>p.approved).length;
-  document.getElementById('st-photos').textContent=allPosts.filter(p=>p.type==='photo').length;
-  const wishEl=document.getElementById('st-wishes'); if(wishEl) wishEl.textContent=allPosts.filter(p=>p.type==='wish').length;
-}
+function updateStats(){}
 function filterPosts(f,btn){
   currentFilter=f;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');renderPosts();
 }
-function renderPosts(){
-  let posts=[...allPosts];
-  if(currentFilter==='pending') posts=posts.filter(p=>!p.approved);
-  else if(currentFilter==='approved') posts=posts.filter(p=>p.approved);
-  else if(['photo','message','audio'].includes(currentFilter)) posts=posts.filter(p=>p.type===currentFilter);
-  const grid=document.getElementById('posts-grid');
-  if(!posts.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">✨</div><div class="empty-txt">Sin contenido aquí</div></div>';return;}
-  grid.innerHTML='';
-  posts.forEach(p=>{
-    const card=document.createElement('div');
-    card.className='post-card'+(p.approved?' approved':'');
-    card.id='post-'+p.id;
-    const labels={photo:'📷 Foto',message:'💬 Mensaje',audio:'🎤 Audio',wish:'💌 Deseo'};
-    const cls={photo:'type-photo',message:'type-message',audio:'type-audio',wish:'type-wish'};
-    const d=new Date(p.created_at);
-    const t=d.toLocaleDateString('es-AR')+' '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-    let bodyHtml='';
-    if(p.type==='photo'&&p.content&&p.content.startsWith('http')) bodyHtml='<img src="'+p.content+'" class="post-img" onerror="this.style.display=\'none\'"/>';
-    card.innerHTML=bodyHtml+'<div class="post-body"><span class="tbadge '+cls[p.type]+'">'+labels[p.type]+'</span><div class="post-author">'+p.author+'</div>'+(p.type==='message'?'<div class="post-text">'+(p.content||'')+'</div>':'')+(p.type==='audio'?'<div style="font-size:12px;color:var(--muted)">🎤 Mensaje de voz · '+(p.content_text||'')+'</div>':'')+(p.type==='wish'?'<div class="post-text" style="border-left:3px solid #ff6b9d;padding-left:10px;margin-top:4px">'+(p.content||'')+'</div>':'')+
-    '<div class="post-actions"><button class="btn-approve'+(p.approved?' done':'')+'" onclick="moderatePost(\''+p.id+'\',true)">'+(p.approved?'✓ Aprobado':'✓ Aprobar')+'</button><button class="btn-reject" onclick="moderatePost(\''+p.id+'\',false)">✕ Rechazar</button><button class="btn-delete-post" data-id="'+p.id+'" onclick="deletePost(this.dataset.id)" title="Eliminar publicación">🗑</button></div><div class="post-time">'+t+'</div></div>';
-    grid.appendChild(card);
-  });
-}
+function renderPosts(){}
 
 async function deletePost(id){
   if(!confirm('¿Eliminar esta publicación? No se puede deshacer.')) return;
@@ -1612,7 +1546,6 @@ function showDesign(){
   previewTheme();
   loadGoogleFont(saved.fontTitle||'Syne');
   loadGoogleFont(saved.fontBody||'DM Sans');
-  loadCooldownSettings();
 }
 
 function selectTemplate(name,el){
@@ -1633,6 +1566,7 @@ function selectTemplate(name,el){
 }
 
 function getV(id){return document.getElementById(id)?.value||'';}
+function setVal(id,val){const el=document.getElementById(id);if(el&&val!==undefined&&val!==null) el.value=val;}
 
 function syncColorFromHex(colorId, hexId){
   const hex=document.getElementById(hexId).value;
@@ -1778,24 +1712,9 @@ function saveDesign(){
   toast('✅ Diseño guardado — recargá la pantalla del evento para verlo');
 }
 
-function saveCooldowns(){
-  if(!selectedEvent) return;
-  const cd={
-    photo: parseInt(document.getElementById('cd-photo').value)||30,
-    message: parseInt(document.getElementById('cd-message').value)||20,
-    audio: parseInt(document.getElementById('cd-audio').value)||40,
-  };
-  localStorage.setItem('ew_cooldowns_'+selectedEvent.id, JSON.stringify(cd));
-  toast('✅ Límites de spam guardados');
-}
 
-function loadCooldownSettings(){
-  if(!selectedEvent) return;
-  const saved=JSON.parse(localStorage.getItem('ew_cooldowns_'+selectedEvent.id)||'{}');
-  if(saved.photo!==undefined) document.getElementById('cd-photo').value=saved.photo;
-  if(saved.message!==undefined) document.getElementById('cd-message').value=saved.message;
-  if(saved.audio!==undefined) document.getElementById('cd-audio').value=saved.audio;
-}
+
+
 
 function resetDesign(){
   if(!confirm('¿Resetear el diseño al tema oscuro por defecto?')) return;
@@ -1805,7 +1724,7 @@ function resetDesign(){
 }
 
 // ── ALBUM ────────────────────────────────────────────────────
-async function showAlbum(){
+async async function showAlbum(){
   const notice=document.getElementById('album-notice');
   const content=document.getElementById('album-content');
   if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
