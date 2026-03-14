@@ -996,6 +996,14 @@ const SUPABASE_KEY = 'sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 // ── PIN ──────────────────────────────────────────────────────
 const DEFAULT_PIN = '1234';
 function getPin(){ return localStorage.getItem('ew_pin')||DEFAULT_PIN; }
+function startGlobalPoller(){
+  setInterval(async()=>{
+    if(!selectedEvent) return;
+    if(!autoApprove) return;
+    await approveNewPosts();
+  }, 5000);
+}
+
 function submitPin(){
   const input=document.getElementById('pin-input');
   if(input.value===getPin()){
@@ -1003,6 +1011,7 @@ function submitPin(){
     document.getElementById('main-app').style.display='grid';
     sessionStorage.setItem('ew_unlocked','1');
     loadEvents();
+    startGlobalPoller();
   } else {
     document.getElementById('pin-error').classList.add('show');
     input.value='';
@@ -1738,14 +1747,6 @@ async function deletePoll(id){
   loadPolls();
 }
 
-// ── GLOBAL BACKGROUND POLLER ─────────────────────────────────
-// Runs every 5s regardless of which page is active
-setInterval(async()=>{
-  if(!selectedEvent) return;
-  if(!autoApprove) return;
-  await approveNewPosts();
-}, 5000);
-
 // ── GUEST DESIGN ─────────────────────────────────────────────
 const GD_DEFAULTS = {
   title:'', subtitle:'', welcome:'Compartí tu momento con todos 📷',
@@ -1968,6 +1969,7 @@ if(sessionStorage.getItem('ew_unlocked')==='1'){
   document.getElementById('pin-lock').style.display='none';
   document.getElementById('main-app').style.display='grid';
   loadEvents();
+  startGlobalPoller();
 }
 // Save session on unlock
 
