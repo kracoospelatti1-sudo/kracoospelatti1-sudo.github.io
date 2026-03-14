@@ -1185,7 +1185,7 @@ async function init(){
   }catch(e){document.getElementById('page-loading').innerHTML='<p style="color:red;padding:20px">'+e.message+'</p>';}
 }
 
-async async function loadStats(){
+async function loadStats(){
   try{
     const posts=await apiRest('posts?event_id=eq.'+eventId+'&approved=eq.true&select=type');
     document.getElementById('cnt-photos').textContent=posts.filter(p=>p.type==='photo').length;
