@@ -489,7 +489,7 @@ input[type=range]{accent-color:var(--pink)}
 
         <!-- OPTIONS -->
         <div class="card">
-          <div class="card-title">⚙️ Opciones</div>
+          <div class="card-title">⚙️ Comportamiento</div>
           <div class="design-grid">
             <div class="design-field">
               <label>Tiempo entre fotos (seg)</label>
@@ -504,24 +504,154 @@ input[type=range]{accent-color:var(--pink)}
               </select>
             </div>
             <div class="design-field">
-              <label>Opacidad overlay foto</label>
-              <div style="display:flex;align-items:center;gap:10px">
-                <input type="range" id="cfg-overlay" min="0" max="90" value="60" oninput="document.getElementById('cfg-overlay-val').textContent=this.value+'%'" style="flex:1"/>
-                <span id="cfg-overlay-val" style="font-size:12px;color:var(--muted);min-width:32px">60%</span>
-              </div>
+              <label>Transición entre fotos</label>
+              <select id="cfg-transition">
+                <option value="fade">Fade suave</option>
+                <option value="slide">Deslizar</option>
+                <option value="zoom">Zoom</option>
+                <option value="none">Sin transición</option>
+              </select>
             </div>
+            <div class="design-field">
+              <label>Ajuste de foto</label>
+              <select id="cfg-fit">
+                <option value="contain">Completa (contain)</option>
+                <option value="cover">Recortada (cover)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">💬 Estilo de burbuja</div>
+          <div class="design-grid">
             <div class="design-field">
               <label>Radio de burbuja</label>
               <div style="display:flex;align-items:center;gap:10px">
-                <input type="range" id="cfg-radius" min="0" max="40" value="28" oninput="previewTheme();document.getElementById('cfg-radius-val').textContent=this.value+'px'" style="flex:1"/>
-                <span id="cfg-radius-val" style="font-size:12px;color:var(--muted);min-width:32px">28px</span>
+                <input type="range" id="cfg-radius" min="0" max="48" value="28" oninput="previewTheme();document.getElementById('cfg-radius-val').textContent=this.value+'px'" style="flex:1"/>
+                <span id="cfg-radius-val" style="font-size:12px;color:var(--muted);min-width:36px">28px</span>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Opacidad overlay foto</label>
+              <div style="display:flex;align-items:center;gap:10px">
+                <input type="range" id="cfg-overlay" min="0" max="95" value="60" oninput="document.getElementById('cfg-overlay-val').textContent=this.value+'%'" style="flex:1"/>
+                <span id="cfg-overlay-val" style="font-size:12px;color:var(--muted);min-width:36px">60%</span>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Sombra de burbuja</label>
+              <select id="cfg-shadow">
+                <option value="heavy">Intensa</option>
+                <option value="soft">Suave</option>
+                <option value="none">Sin sombra</option>
+              </select>
+            </div>
+            <div class="design-field">
+              <label>Posición de burbuja</label>
+              <select id="cfg-bubble-pos">
+                <option value="center">Centro</option>
+                <option value="bottom">Abajo</option>
+                <option value="top">Arriba</option>
+              </select>
+            </div>
+            <div class="design-field">
+              <label>Mostrar cola de burbuja</label>
+              <select id="cfg-bubble-tail">
+                <option value="yes">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div class="design-field">
+              <label>Ícono de burbuja</label>
+              <select id="cfg-bubble-icon">
+                <option value="random">Aleatorio 🎲</option>
+                <option value="fixed">Fijo 💬</option>
+                <option value="none">Sin ícono</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📺 Header y QR</div>
+          <div class="design-grid">
+            <div class="design-field">
+              <label>Mostrar header</label>
+              <select id="cfg-show-header">
+                <option value="yes">Visible</option>
+                <option value="no">Oculto (pantalla completa)</option>
+              </select>
+            </div>
+            <div class="design-field">
+              <label>Tamaño del QR</label>
+              <select id="cfg-qr-size">
+                <option value="120">Grande (120px)</option>
+                <option value="80">Mediano (80px)</option>
+                <option value="60">Pequeño (60px)</option>
+                <option value="0">Ocultar QR</option>
+              </select>
+            </div>
+            <div class="design-field">
+              <label>Texto bajo el QR</label>
+              <input type="text" id="cfg-qr-text" placeholder="Escaneá para participar"/>
+            </div>
+            <div class="design-field">
+              <label>Ancho del sidebar</label>
+              <select id="cfg-sidebar-width">
+                <option value="180">Angosto (180px)</option>
+                <option value="240">Normal (240px)</option>
+                <option value="0">Sin sidebar</option>
+              </select>
+            </div>
+            <div class="design-field">
+              <label>Mostrar contadores</label>
+              <select id="cfg-show-counters">
+                <option value="yes">Visibles</option>
+                <option value="no">Ocultos</option>
+              </select>
+            </div>
+            <div class="design-field">
+              <label>Mostrar reacciones</label>
+              <select id="cfg-show-reactions">
+                <option value="yes">Visibles</option>
+                <option value="no">Ocultas</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">✨ Extras</div>
+          <div class="design-grid">
+            <div class="design-field">
+              <label>Ticker inferior</label>
+              <input type="text" id="cfg-ticker" placeholder="Texto que se desplaza... (vacío = oculto)"/>
+            </div>
+            <div class="design-field">
+              <label>Color del ticker</label>
+              <div class="color-pick-row">
+                <input type="color" id="cfg-ticker-color" value="#f0176f" oninput="syncColorFromHex('cfg-ticker-color','cfg-ticker-color-hex')"/>
+                <input type="text" id="cfg-ticker-color-hex" value="#F0176F" class="hex-input"/>
+              </div>
+            </div>
+            <div class="design-field">
+              <label>Imagen de fondo (URL)</label>
+              <input type="text" id="cfg-bg-image" placeholder="https://... (opcional)"/>
+            </div>
+            <div class="design-field">
+              <label>Opacidad imagen de fondo</label>
+              <div style="display:flex;align-items:center;gap:10px">
+                <input type="range" id="cfg-bg-opacity" min="5" max="100" value="30" oninput="document.getElementById('cfg-bg-opacity-val').textContent=this.value+'%'" style="flex:1"/>
+                <span id="cfg-bg-opacity-val" style="font-size:12px;color:var(--muted);min-width:36px">30%</span>
               </div>
             </div>
           </div>
-          <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-            <button class="btn-pink" onclick="saveDesign()">💾 Guardar diseño</button>
-            <button class="btn-ghost" onclick="resetDesign()">↺ Resetear</button>
-          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn-pink" onclick="saveDesign()">💾 Guardar diseño</button>
+          <button class="btn-ghost" onclick="resetDesign()">↺ Resetear</button>
         </div>
 
         <!-- MODERATION SETTINGS -->
@@ -664,35 +794,114 @@ input[type=range]{accent-color:var(--pink)}
 
             <!-- COLORES -->
             <div class="card" style="margin-bottom:16px">
-              <div class="card-title">🎨 Colores del menú</div>
+              <div class="card-title">🎨 Colores</div>
               <div class="design-grid">
                 <div class="design-field">
-                  <label>Color de fondo</label>
+                  <label>Fondo de la app</label>
                   <div class="color-pick-row">
                     <input type="color" id="gd-bg" value="#faf8f6" oninput="syncGDHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
                     <input type="text" id="gd-bg-hex" value="#FAF8F6" class="hex-input" oninput="syncColorFromHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
                   </div>
                 </div>
                 <div class="design-field">
-                  <label>Color de acento</label>
+                  <label>Color de acento (botones)</label>
                   <div class="color-pick-row">
                     <input type="color" id="gd-accent" value="#f0176f" oninput="syncGDHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
                     <input type="text" id="gd-accent-hex" value="#F0176F" class="hex-input" oninput="syncColorFromHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
                   </div>
                 </div>
                 <div class="design-field">
-                  <label>Color del hero (cabecera)</label>
+                  <label>Fondo del hero</label>
                   <div class="color-pick-row">
                     <input type="color" id="gd-hero" value="#0c0c0f" oninput="syncGDHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
                     <input type="text" id="gd-hero-hex" value="#0C0C0F" class="hex-input" oninput="syncColorFromHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
                   </div>
                 </div>
                 <div class="design-field">
-                  <label>Color del texto hero</label>
+                  <label>Texto del hero</label>
                   <div class="color-pick-row">
                     <input type="color" id="gd-hero-txt" value="#ffffff" oninput="syncGDHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
                     <input type="text" id="gd-hero-txt-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
                   </div>
+                </div>
+                <div class="design-field">
+                  <label>Color del texto principal</label>
+                  <div class="color-pick-row">
+                    <input type="color" id="gd-text" value="#1a1a1a" oninput="syncGDHex('gd-text','gd-text-hex');updateGuestPreview()"/>
+                    <input type="text" id="gd-text-hex" value="#1A1A1A" class="hex-input" oninput="syncColorFromHex('gd-text','gd-text-hex');updateGuestPreview()"/>
+                  </div>
+                </div>
+                <div class="design-field">
+                  <label>Color de los campos</label>
+                  <div class="color-pick-row">
+                    <input type="color" id="gd-field-bg" value="#ffffff" oninput="syncGDHex('gd-field-bg','gd-field-bg-hex');updateGuestPreview()"/>
+                    <input type="text" id="gd-field-bg-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('gd-field-bg','gd-field-bg-hex');updateGuestPreview()"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FUENTE Y ESTILO -->
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-title">🔤 Fuente y estilo</div>
+              <div class="design-grid">
+                <div class="design-field">
+                  <label>Fuente principal</label>
+                  <select id="gd-font" onchange="updateGuestPreview()">
+                    <option value="DM Sans">DM Sans (por defecto)</option>
+                    <option value="Inter">Inter</option>
+                    <option value="Nunito">Nunito</option>
+                    <option value="Poppins">Poppins</option>
+                    <option value="Quicksand">Quicksand</option>
+                    <option value="Lato">Lato</option>
+                    <option value="Raleway">Raleway</option>
+                    <option value="Montserrat">Montserrat</option>
+                  </select>
+                </div>
+                <div class="design-field">
+                  <label>Fuente de títulos</label>
+                  <select id="gd-font-title" onchange="updateGuestPreview()">
+                    <option value="Syne">Syne (por defecto)</option>
+                    <option value="Playfair Display">Playfair Display</option>
+                    <option value="Oswald">Oswald</option>
+                    <option value="Bebas Neue">Bebas Neue</option>
+                    <option value="Dancing Script">Dancing Script</option>
+                    <option value="Great Vibes">Great Vibes</option>
+                    <option value="Pacifico">Pacifico</option>
+                    <option value="Lobster">Lobster</option>
+                  </select>
+                </div>
+                <div class="design-field">
+                  <label>Forma de botones</label>
+                  <select id="gd-btn-radius" onchange="updateGuestPreview()">
+                    <option value="14">Redondeado (por defecto)</option>
+                    <option value="0">Cuadrado</option>
+                    <option value="4">Levemente redondeado</option>
+                    <option value="50">Píldora</option>
+                  </select>
+                </div>
+                <div class="design-field">
+                  <label>Estilo de campos</label>
+                  <select id="gd-field-radius" onchange="updateGuestPreview()">
+                    <option value="12">Redondeado</option>
+                    <option value="0">Cuadrado</option>
+                    <option value="4">Levemente redondeado</option>
+                    <option value="24">Muy redondeado</option>
+                  </select>
+                </div>
+                <div class="design-field">
+                  <label>Tamaño de texto base</label>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <input type="range" id="gd-font-size" min="12" max="18" value="15" oninput="updateGuestPreview();document.getElementById('gd-font-size-val').textContent=this.value+'px'" style="flex:1"/>
+                    <span id="gd-font-size-val" style="font-size:12px;color:var(--muted);min-width:36px">15px</span>
+                  </div>
+                </div>
+                <div class="design-field">
+                  <label>Mostrar logo "EventWall"</label>
+                  <select id="gd-show-logo" onchange="updateGuestPreview()">
+                    <option value="yes">Visible</option>
+                    <option value="no">Oculto</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -1111,6 +1320,22 @@ function showDesign(){
   if(saved.fsBubble){setVal('fs-bubble',saved.fsBubble);document.getElementById('fs-bubble-val').textContent=saved.fsBubble+'px';}
   if(saved.overlay){setVal('cfg-overlay',saved.overlay);document.getElementById('cfg-overlay-val').textContent=saved.overlay+'%';}
   if(saved.radius){setVal('cfg-radius',saved.radius);document.getElementById('cfg-radius-val').textContent=saved.radius+'px';}
+  setVal('cfg-transition',saved.transition||'fade');
+  setVal('cfg-fit',saved.fit||'contain');
+  setVal('cfg-shadow',saved.shadow||'heavy');
+  setVal('cfg-bubble-pos',saved.bubblePos||'center');
+  setVal('cfg-bubble-tail',saved.bubbleTail||'yes');
+  setVal('cfg-bubble-icon',saved.bubbleIcon||'random');
+  setVal('cfg-show-header',saved.showHeader||'yes');
+  setVal('cfg-qr-size',saved.qrSize||'120');
+  setVal('cfg-qr-text',saved.qrText||'');
+  setVal('cfg-sidebar-width',saved.sidebarWidth||'180');
+  setVal('cfg-show-counters',saved.showCounters||'yes');
+  setVal('cfg-show-reactions',saved.showReactions||'yes');
+  setVal('cfg-ticker',saved.ticker||'');
+  if(saved.tickerColor){setVal('cfg-ticker-color',saved.tickerColor);setVal('cfg-ticker-color-hex',(saved.tickerColor||'').toUpperCase());}
+  setVal('cfg-bg-image',saved.bgImage||'');
+  if(saved.bgOpacity){setVal('cfg-bg-opacity',saved.bgOpacity);document.getElementById('cfg-bg-opacity-val').textContent=saved.bgOpacity+'%';}
   if(saved.template){
     document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
     const el=document.querySelector('.tpl-'+saved.template);
@@ -1199,6 +1424,22 @@ function saveDesign(){
     fsTitle:getV('fs-title'), fsBubble:getV('fs-bubble'),
     interval:getV('cfg-interval'), sound:getV('cfg-sound'),
     overlay:getV('cfg-overlay'), radius:getV('cfg-radius'),
+    transition:getV('cfg-transition')||'fade',
+    fit:getV('cfg-fit')||'contain',
+    shadow:getV('cfg-shadow')||'heavy',
+    bubblePos:getV('cfg-bubble-pos')||'center',
+    bubbleTail:getV('cfg-bubble-tail')||'yes',
+    bubbleIcon:getV('cfg-bubble-icon')||'random',
+    showHeader:getV('cfg-show-header')||'yes',
+    qrSize:getV('cfg-qr-size')||'120',
+    qrText:getV('cfg-qr-text')||'Escaneá para participar',
+    sidebarWidth:getV('cfg-sidebar-width')||'180',
+    showCounters:getV('cfg-show-counters')||'yes',
+    showReactions:getV('cfg-show-reactions')||'yes',
+    ticker:getV('cfg-ticker')||'',
+    tickerColor:getV('cfg-ticker-color')||'#f0176f',
+    bgImage:getV('cfg-bg-image')||'',
+    bgOpacity:getV('cfg-bg-opacity')||'30',
     template:document.querySelector('.tpl-card.active')?.className.match(/tpl-(\w+)/)?.[1]||'dark'
   };
   localStorage.setItem('ew_design_'+selectedEvent.id,JSON.stringify(design));
@@ -1505,6 +1746,15 @@ async function showGuestDesign(){
   document.getElementById('gd-btn-text').value=d.btnText;
   const setC=(id,val)=>{document.getElementById(id).value=val;document.getElementById(id+'-hex').value=val.toUpperCase();};
   setC('gd-bg',d.bg);setC('gd-accent',d.accent);setC('gd-hero',d.hero);setC('gd-hero-txt',d.heroTxt);
+  if(d.textColor){const el=document.getElementById('gd-text');if(el){el.value=d.textColor;const h=document.getElementById('gd-text-hex');if(h)h.value=d.textColor.toUpperCase();}}
+  if(d.fieldBg){const el=document.getElementById('gd-field-bg');if(el){el.value=d.fieldBg;const h=document.getElementById('gd-field-bg-hex');if(h)h.value=d.fieldBg.toUpperCase();}}
+  const setV2=(id,val)=>{const el=document.getElementById(id);if(el&&val!==undefined) el.value=val;};
+  setV2('gd-font',d.font||'DM Sans');
+  setV2('gd-font-title',d.fontTitle||'Syne');
+  setV2('gd-btn-radius',d.btnRadius||'14');
+  setV2('gd-field-radius',d.fieldRadius||'12');
+  setV2('gd-show-logo',d.showLogo||'yes');
+  if(d.fontSize){setV2('gd-font-size',d.fontSize);const fv=document.getElementById('gd-font-size-val');if(fv)fv.textContent=d.fontSize+'px';}
   // toggles
   ['photo','message','audio','wish','vote'].forEach(k=>{
     const on=d['show'+k.charAt(0).toUpperCase()+k.slice(1)];
@@ -1578,6 +1828,14 @@ async function saveGuestDesign(){
     accent:document.getElementById('gd-accent').value,
     hero:document.getElementById('gd-hero').value,
     heroTxt:document.getElementById('gd-hero-txt').value,
+    textColor:getV('gd-text')||'#1a1a1a',
+    fieldBg:getV('gd-field-bg')||'#ffffff',
+    font:getV('gd-font')||'DM Sans',
+    fontTitle:getV('gd-font-title')||'Syne',
+    btnRadius:getV('gd-btn-radius')||'14',
+    fieldRadius:getV('gd-field-radius')||'12',
+    fontSize:getV('gd-font-size')||'15',
+    showLogo:getV('gd-show-logo')||'yes',
     showPhoto:getGDToggle('photo'),
     showMessage:getGDToggle('message'),
     showAudio:getGDToggle('audio'),

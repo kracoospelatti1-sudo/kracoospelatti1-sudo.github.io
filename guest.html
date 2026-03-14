@@ -440,25 +440,58 @@ async function applyGuestDesign(ev){
   const hero    = d.hero    || '#0c0c0f';
   const heroTxt = d.heroTxt || '#ffffff';
 
+  // Load extra fields
+  const textColor = d.textColor  || '#1a1a1a';
+  const fieldBg   = d.fieldBg   || '#ffffff';
+  const font      = d.font      || 'DM Sans';
+  const fontTitle = d.fontTitle || 'Syne';
+  const btnRadius = d.btnRadius || '14';
+  const fieldRadius = d.fieldRadius || '12';
+  const fontSize  = d.fontSize  || '15';
+  const showLogo  = d.showLogo  !== 'no';
+
+  // Load Google Fonts if needed
+  [font, fontTitle].forEach(f=>{
+    if(f&&f!=='DM Sans'&&f!=='Syne'){
+      const id='gf-'+f.replace(/\s/g,'-');
+      if(!document.getElementById(id)){
+        const link=document.createElement('link');link.id=id;link.rel='stylesheet';
+        link.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(f)+':wght@400;600;700;800&display=swap';
+        document.head.appendChild(link);
+      }
+    }
+  });
+
   // Inject dynamic CSS
   let styleEl = document.getElementById('gd-dynamic-style');
   if(!styleEl){ styleEl=document.createElement('style'); styleEl.id='gd-dynamic-style'; document.head.appendChild(styleEl); }
   styleEl.textContent = `
     :root { --pink: ${accent}; --pink-light: ${accent}22; --pink-border: ${accent}66; --bg: ${bg}; }
-    body { background: ${bg}; }
+    body { background: ${bg}; color: ${textColor}; font-family: '${font}', sans-serif; font-size: ${fontSize}px; }
     .hero { background: ${hero} !important; }
-    .hero-title { color: ${heroTxt} !important; }
+    .hero-title { color: ${heroTxt} !important; font-family: '${fontTitle}', sans-serif !important; }
     .hero-sub { color: ${heroTxt}99 !important; }
-    .hero-logo { color: ${accent} !important; }
+    .hero-logo { color: ${accent} !important; display: ${showLogo?'block':'none'} !important; }
     .hero-pill { background: ${accent}22 !important; border-color: ${accent}55 !important; color: ${heroTxt}cc !important; }
     .stat-num { color: ${accent} !important; }
+    .section-label { font-family: '${fontTitle}', sans-serif !important; }
+    .type-btn { font-family: '${font}', sans-serif !important; border-radius: ${btnRadius}px !important; }
     .type-btn.active { border-color: ${accent} !important; background: ${accent}15 !important; color: ${accent} !important; }
+    .field { background: ${fieldBg} !important; border-radius: ${fieldRadius}px !important; color: ${textColor} !important; font-family: '${font}', sans-serif !important; font-size: ${fontSize}px !important; }
     .field:focus { border-color: ${accent} !important; }
-    .send-btn { background: ${accent} !important; }
-    .send-btn:hover { background: ${accent}dd !important; }
+    .send-btn { background: ${accent} !important; border-radius: ${btnRadius}px !important; font-family: '${font}', sans-serif !important; font-size: ${parseInt(fontSize)+1}px !important; }
+    .send-btn:hover { opacity: 0.88; }
     .record-btn { background: ${accent} !important; }
     .wish-btn.active { border-color: ${accent}99 !important; }
+    .vote-btn.active { border-color: ${accent}99 !important; }
+    .audio-ready { border-color: ${accent}66 !important; }
+    .audio-play-btn { background: ${accent} !important; }
+    .name-wrap .section-label, .section-label { color: ${textColor}99 !important; }
   `;
+
+  // Logo visibility
+  const logoEl=document.querySelector('.hero-logo');
+  if(logoEl) logoEl.style.display=showLogo?'':'none';
 
   // Texts
   if(d.title){
