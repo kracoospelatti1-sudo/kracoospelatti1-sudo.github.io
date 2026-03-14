@@ -784,7 +784,7 @@ input[type=range]{accent-color:var(--pink)}
             <input type="text" id="print-msg" placeholder="Ej: Escaneá y subí tu foto al mural 📸"/>
           </div>
           <div style="display:flex;gap:10px;margin-top:16px">
-            <button class="btn-pink" onclick="printCards()">🖨 Imprimir</button>
+            <button class="btn-pink" onclick="doPrint()">🖨 Imprimir</button>
             <button class="btn-ghost" onclick="previewPrint()">👁 Vista previa</button>
           </div>
         </div>
@@ -1897,11 +1897,11 @@ async function getQRDataUrl(){
   });
 }
 
-async function previewPrint(){
+async async function previewPrint(){
   const area=document.getElementById('print-preview-area');
   area.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px">Generando vista previa...</div>';
   const msg=document.getElementById('print-msg').value||'¡Escaneá y participá!';
-  const sub=document.getElementById('print-sub').value||'Subí fotos y mensajes en tiempo real';
+  const sub='Subí fotos y mensajes en tiempo real';
   const style=document.getElementById('print-style').value;
   const qty=parseInt(document.getElementById('print-qty').value);
   const qrDataUrl=await getQRDataUrl();
@@ -1921,7 +1921,7 @@ async function previewPrint(){
 
 async function doPrint(){
   const msg=document.getElementById('print-msg').value||'¡Escaneá y participá!';
-  const sub=document.getElementById('print-sub').value||'Subí fotos y mensajes en tiempo real';
+  const sub='Subí fotos y mensajes en tiempo real';
   const style=document.getElementById('print-style').value;
   const qty=parseInt(document.getElementById('print-qty').value);
   const qrDataUrl=await getQRDataUrl();
