@@ -428,12 +428,28 @@ function showNextBubble(){
   msgBubbleShowing=true;
   const msg=msgBubbleQueue.shift();
   markMsgShown(msg.id);
-  const icon=MSG_ICONS[Math.floor(Math.random()*MSG_ICONS.length)];
-  document.getElementById('msg-bubble-icon').textContent=icon;
+  // Parse custom styling from frame field
+  let custom={};
+  try{if(msg.frame) custom=JSON.parse(msg.frame);}catch(e){}
+  const icon=custom.emoji||(cfg.bubbleIcon==='none'?'':cfg.bubbleIcon==='fixed'?'💬':MSG_ICONS[Math.floor(Math.random()*MSG_ICONS.length)]);
+  const iconEl=document.getElementById('msg-bubble-icon');
+  iconEl.textContent=icon;
+  iconEl.style.display=icon?'block':'none';
   const textEl=document.getElementById('msg-bubble-text');
   textEl.textContent=msg.content;
-  textEl.style.fontSize='clamp(18px,3.5vw,'+cfg.fsBubble+'px)';
+  const fontSize=custom.fontSize||cfg.fsBubble||32;
+  textEl.style.fontSize='clamp(16px,3.5vw,'+fontSize+'px)';
   document.getElementById('msg-bubble-author').textContent='— '+msg.author;
+  // Apply custom colors
+  const card=document.getElementById('msg-bubble-card');
+  const tail=document.getElementById('bubble-tail');
+  const bgColor=custom.bgColor||'var(--bubble-bg)';
+  const txtColor=custom.textColor||'var(--bubble-txt)';
+  card.style.background=bgColor;
+  if(tail) tail.style.borderTopColor=bgColor;
+  textEl.style.color=txtColor;
+  document.getElementById('msg-bubble-author').style.color=txtColor;
+  document.getElementById('msg-bubble-author').style.opacity='0.55';
   const overlay=document.getElementById('msg-bubble-overlay');
   const card=document.getElementById('msg-bubble-card');
   card.style.animation='none';void card.offsetWidth;

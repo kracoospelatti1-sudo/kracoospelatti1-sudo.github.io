@@ -127,6 +127,12 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
 .success-again{background:var(--pink);color:#fff;border:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:20px;font-family:'DM Sans',sans-serif}
 
 .error-bar{background:#fde8e8;border:1px solid #fca5a5;border-radius:10px;padding:12px 16px;font-size:13px;color:#991b1b;margin-top:12px;display:none}
+.emoji-opt{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:18px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;-webkit-appearance:none}
+.emoji-opt.active{border-color:var(--pink);background:var(--pink-light);transform:scale(1.15)}
+.color-opt{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;-webkit-appearance:none;transition:all 0.2s}
+.color-opt.active{border-color:var(--pink);transform:scale(1.2);box-shadow:0 0 0 2px white,0 0 0 4px var(--pink)}
+.size-opt{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:800;cursor:pointer;transition:all 0.2s;color:var(--muted);-webkit-appearance:none}
+.size-opt.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
 /* COOLDOWN */
 .cooldown-bar{background:#fff3cd;border:1px solid #f5a623;border-radius:10px;padding:12px 16px;font-size:13px;color:#7a4f00;margin-top:12px;display:none;align-items:center;gap:10px}
 .cooldown-bar.show{display:flex}
@@ -210,8 +216,57 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
 
     <!-- MESSAGE -->
     <div class="form-section" id="section-message">
-      <textarea class="field" id="msg-text" placeholder="Escribí tu mensaje... 💌" oninput="updateCharCount(this)" maxlength="280"></textarea>
-      <div class="char-count"><span id="char-count">0</span>/280</div>
+      <textarea class="field" id="msg-text" placeholder="Escribí tu mensaje... 💌" oninput="updateCharCount(this)" maxlength="200"></textarea>
+      <div class="char-count"><span id="char-count">0</span>/200</div>
+
+      <div style="margin-top:12px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">Personalizar burbuja</div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Emoji</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <button class="emoji-opt active" onclick="selectMsgEmoji('💬',this)">💬</button>
+            <button class="emoji-opt" onclick="selectMsgEmoji('❤️',this)">❤️</button>
+            <button class="emoji-opt" onclick="selectMsgEmoji('😂',this)">😂</button>
+            <button class="emoji-opt" onclick="selectMsgEmoji('🎉',this)">🎉</button>
+            <button class="emoji-opt" onclick="selectMsgEmoji('🔥',this)">🔥</button>
+            <button class="emoji-opt" onclick="selectMsgEmoji('😍',this)">😍</button>
+            <button class="emoji-opt" onclick="selectMsgEmoji('👏',this)">👏</button>
+            <button class="emoji-opt" onclick="selectMsgEmoji('💕',this)">💕</button>
+            <button class="emoji-opt" onclick="selectMsgEmoji('🥳',this)">🥳</button>
+            <button class="emoji-opt" onclick="selectMsgEmoji('✨',this)">✨</button>
+          </div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Color de la burbuja</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <button class="color-opt active" onclick="selectMsgColor('#ffffff','#1a1a1a',this)" style="background:#ffffff;border-color:#ddd"></button>
+            <button class="color-opt" onclick="selectMsgColor('#fce4f3','#c2185b',this)" style="background:#fce4f3"></button>
+            <button class="color-opt" onclick="selectMsgColor('#e8f5e9','#2e7d32',this)" style="background:#e8f5e9"></button>
+            <button class="color-opt" onclick="selectMsgColor('#e3f2fd','#1565c0',this)" style="background:#e3f2fd"></button>
+            <button class="color-opt" onclick="selectMsgColor('#fff8e1','#f57f17',this)" style="background:#fff8e1"></button>
+            <button class="color-opt" onclick="selectMsgColor('#f3e5f5','#7b1fa2',this)" style="background:#f3e5f5"></button>
+            <button class="color-opt" onclick="selectMsgColor('#1a1a2e','#ffffff',this)" style="background:#1a1a2e"></button>
+            <button class="color-opt" onclick="selectMsgColor('#0d0900','#f5a623',this)" style="background:#0d0900"></button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Tamaño del texto</div>
+          <div style="display:flex;gap:6px">
+            <button class="size-opt" onclick="selectMsgSize('small',this)" style="font-size:11px">A</button>
+            <button class="size-opt active" onclick="selectMsgSize('medium',this)" style="font-size:16px">A</button>
+            <button class="size-opt" onclick="selectMsgSize('large',this)" style="font-size:20px">A</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="msg-preview" style="margin-top:12px;background:#f0ede8;border-radius:12px;padding:14px;display:none;text-align:center">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px">Vista previa</div>
+        <div id="msg-preview-bubble" style="display:inline-block;background:#fff;border-radius:20px;padding:14px 20px;max-width:90%;box-shadow:0 4px 16px rgba(0,0,0,0.1)">
+          <div id="msg-preview-icon" style="font-size:22px;margin-bottom:6px">💬</div>
+          <div id="msg-preview-text" style="font-size:18px;font-weight:800;color:#1a1a1a;font-family:'Syne',sans-serif;line-height:1.3">Tu mensaje aquí</div>
+        </div>
+      </div>
+
       <div class="error-bar" id="msg-error"></div>
       <div class="cooldown-bar" id="cooldown-message"><span>⏳</span><div style="flex:1"><div id="cooldown-message-txt">Esperá un momento antes de enviar otro mensaje</div><div class="cooldown-progress"><div class="cooldown-fill" id="cooldown-message-fill" style="width:100%"></div></div></div></div>
       <button class="send-btn" id="btn-send-message" onclick="sendMessage()">Enviar a la pantalla ✨</button>
@@ -306,70 +361,96 @@ let selectedFrame='none';
 // ── FRAMES ───────────────────────────────────────────────────
 const FRAMES=[
   {id:'none', name:'Sin marco', draw:null},
-  {
-    id:'hearts', name:'Corazones', 
-    draw:(ctx,w,h)=>{
-      ctx.strokeStyle='rgba(240,23,111,0.9)';ctx.lineWidth=Math.max(w*0.035,8);
-      ctx.strokeRect(0,0,w,h);
-      const emojis=['❤️','💕','💖'];
-      ctx.font=Math.floor(w*0.07)+'px serif';
-      const step=w/6;
-      for(let x=step;x<w;x+=step){
-        ctx.fillText(emojis[Math.floor(Math.random()*emojis.length)],x-12,22);
-        ctx.fillText(emojis[Math.floor(Math.random()*emojis.length)],x-12,h-6);
-      }
-    }
-  },
-  {
-    id:'stars',name:'Estrellas',
-    draw:(ctx,w,h)=>{
-      const grad=ctx.createLinearGradient(0,0,w,h);
-      grad.addColorStop(0,'rgba(245,166,35,0.9)');grad.addColorStop(1,'rgba(240,23,111,0.9)');
-      ctx.strokeStyle=grad;ctx.lineWidth=Math.max(w*0.04,10);ctx.strokeRect(0,0,w,h);
-      ctx.font=Math.floor(w*0.07)+'px serif';
-      const step=w/7;
-      for(let x=step/2;x<w;x+=step){
-        ctx.fillText('⭐',x-12,20);ctx.fillText('✨',x-12,h-4);
-      }
-    }
-  },
-  {
-    id:'flowers',name:'Flores',
-    draw:(ctx,w,h)=>{
-      ctx.strokeStyle='rgba(255,107,157,0.85)';ctx.lineWidth=Math.max(w*0.045,10);ctx.strokeRect(0,0,w,h);
-      ctx.font=Math.floor(w*0.075)+'px serif';
-      const flowers=['🌸','🌺','🌹','💐'];
-      const step=w/6;
-      for(let x=step/2;x<w;x+=step){
-        ctx.fillText(flowers[Math.floor(x/step)%flowers.length],x-14,22);
-        ctx.fillText(flowers[(Math.floor(x/step)+2)%flowers.length],x-14,h-4);
-      }
-    }
-  },
-  {
-    id:'gold',name:'Dorado',
-    draw:(ctx,w,h)=>{
-      ctx.strokeStyle='#c9a84c';ctx.lineWidth=Math.max(w*0.05,12);ctx.strokeRect(0,0,w,h);
-      ctx.strokeStyle='rgba(201,168,76,0.4)';ctx.lineWidth=2;ctx.strokeRect(14,14,w-28,h-28);
-      ctx.font=Math.floor(w*0.065)+'px serif';
-      ['💫','✨','⭐','💫'].forEach((e,i)=>{
-        ctx.fillText(e,i*(w/4),24);ctx.fillText(e,i*(w/4),h-4);
-      });
-    }
-  },
-  {
-    id:'party',name:'Fiesta',
-    draw:(ctx,w,h)=>{
-      ctx.strokeStyle='rgba(99,102,241,0.9)';ctx.lineWidth=Math.max(w*0.04,8);ctx.strokeRect(0,0,w,h);
-      ctx.font=Math.floor(w*0.075)+'px serif';
-      const p=['🎉','🎊','🎈','🥳'];
-      const step=w/6;
-      for(let x=step/2;x<w;x+=step){
-        ctx.fillText(p[Math.floor(x/step)%p.length],x-14,22);
-        ctx.fillText(p[(Math.floor(x/step)+2)%p.length],x-14,h-4);
-      }
-    }
-  },
+  {id:'hearts', name:'❤️ Corazones', draw:(ctx,w,h)=>{
+    ctx.strokeStyle='rgba(240,23,111,0.9)';ctx.lineWidth=Math.max(w*0.035,8);ctx.strokeRect(0,0,w,h);
+    ctx.font=Math.floor(w*0.08)+'px serif';
+    const e=['❤️','💕','💖','💗'];const step=w/6;
+    for(let x=step;x<w;x+=step){ctx.fillText(e[Math.floor(x/step)%e.length],x-14,22);ctx.fillText(e[(Math.floor(x/step)+2)%e.length],x-14,h-4);}
+  }},
+  {id:'stars', name:'⭐ Estrellas', draw:(ctx,w,h)=>{
+    const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'rgba(245,166,35,0.9)');g.addColorStop(1,'rgba(240,23,111,0.9)');
+    ctx.strokeStyle=g;ctx.lineWidth=Math.max(w*0.04,10);ctx.strokeRect(0,0,w,h);
+    ctx.font=Math.floor(w*0.07)+'px serif';const step=w/7;
+    for(let x=step/2;x<w;x+=step){ctx.fillText('⭐',x-12,20);ctx.fillText('✨',x-12,h-4);}
+  }},
+  {id:'flowers', name:'🌸 Flores', draw:(ctx,w,h)=>{
+    ctx.strokeStyle='rgba(255,107,157,0.85)';ctx.lineWidth=Math.max(w*0.045,10);ctx.strokeRect(0,0,w,h);
+    ctx.font=Math.floor(w*0.075)+'px serif';const f=['🌸','🌺','🌹','💐'];const step=w/6;
+    for(let x=step/2;x<w;x+=step){ctx.fillText(f[Math.floor(x/step)%f.length],x-14,22);ctx.fillText(f[(Math.floor(x/step)+2)%f.length],x-14,h-4);}
+  }},
+  {id:'gold', name:'✨ Dorado', draw:(ctx,w,h)=>{
+    ctx.strokeStyle='#c9a84c';ctx.lineWidth=Math.max(w*0.05,12);ctx.strokeRect(0,0,w,h);
+    ctx.strokeStyle='rgba(201,168,76,0.4)';ctx.lineWidth=2;ctx.strokeRect(14,14,w-28,h-28);
+    ctx.font=Math.floor(w*0.065)+'px serif';
+    ['💫','✨','⭐','💫'].forEach((e,i)=>{ctx.fillText(e,i*(w/4),24);ctx.fillText(e,i*(w/4),h-4);});
+  }},
+  {id:'party', name:'🎉 Fiesta', draw:(ctx,w,h)=>{
+    ctx.strokeStyle='rgba(99,102,241,0.9)';ctx.lineWidth=Math.max(w*0.04,8);ctx.strokeRect(0,0,w,h);
+    ctx.font=Math.floor(w*0.075)+'px serif';const p=['🎉','🎊','🎈','🥳'];const step=w/6;
+    for(let x=step/2;x<w;x+=step){ctx.fillText(p[Math.floor(x/step)%p.length],x-14,22);ctx.fillText(p[(Math.floor(x/step)+2)%p.length],x-14,h-4);}
+  }},
+  {id:'rainbow', name:'🌈 Arcoíris', draw:(ctx,w,h)=>{
+    const colors=['#ff0000','#ff8800','#ffff00','#00cc00','#0088ff','#8800ff'];
+    const bw=Math.max(w*0.025,6);
+    colors.forEach((col,i)=>{ctx.strokeStyle=col;ctx.lineWidth=bw;ctx.strokeRect(i*bw/2,i*bw/2,w-i*bw,h-i*bw);});
+  }},
+  {id:'neon', name:'💜 Neón', draw:(ctx,w,h)=>{
+    ctx.shadowColor='#a855f7';ctx.shadowBlur=20;
+    ctx.strokeStyle='#a855f7';ctx.lineWidth=Math.max(w*0.04,8);ctx.strokeRect(0,0,w,h);
+    ctx.shadowColor='#00f5ff';ctx.strokeStyle='#00f5ff';ctx.lineWidth=Math.max(w*0.015,3);ctx.strokeRect(8,8,w-16,h-16);
+    ctx.shadowBlur=0;
+  }},
+  {id:'polaroid', name:'📷 Polaroid', draw:(ctx,w,h)=>{
+    // White thick bottom border (polaroid style)
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,h-Math.floor(h*0.15),w,Math.floor(h*0.15));
+    ctx.fillRect(0,0,Math.floor(w*0.04),h);
+    ctx.fillRect(w-Math.floor(w*0.04),0,Math.floor(w*0.04),h);
+    ctx.fillRect(0,0,w,Math.floor(h*0.04));
+    ctx.strokeStyle='#e0e0e0';ctx.lineWidth=1;ctx.strokeRect(0,0,w,h);
+  }},
+  {id:'vintage', name:'🎞️ Vintage', draw:(ctx,w,h)=>{
+    // Sepia vignette effect
+    const grad=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.3,w/2,h/2,Math.max(w,h)*0.8);
+    grad.addColorStop(0,'rgba(0,0,0,0)');grad.addColorStop(1,'rgba(101,67,33,0.6)');
+    ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle='rgba(101,67,33,0.7)';ctx.lineWidth=Math.max(w*0.05,10);ctx.strokeRect(0,0,w,h);
+  }},
+  {id:'balloons', name:'🎈 Globos', draw:(ctx,w,h)=>{
+    ctx.strokeStyle='rgba(240,23,111,0.85)';ctx.lineWidth=Math.max(w*0.035,7);ctx.strokeRect(0,0,w,h);
+    ctx.font=Math.floor(w*0.085)+'px serif';
+    const b=['🎈','🎀','🎁','🎊'];const step=w/5;
+    for(let x=step/2;x<w;x+=step){ctx.fillText(b[Math.floor(x/step)%b.length],x-16,24);ctx.fillText(b[(Math.floor(x/step)+2)%b.length],x-16,h-4);}
+  }},
+  {id:'xv', name:'👑 XV Años', draw:(ctx,w,h)=>{
+    const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'#d4af37');g.addColorStop(0.5,'#fff8dc');g.addColorStop(1,'#d4af37');
+    ctx.strokeStyle=g;ctx.lineWidth=Math.max(w*0.05,12);ctx.strokeRect(0,0,w,h);
+    ctx.font=Math.floor(w*0.07)+'px serif';
+    const r=['👑','💎','🌟','💐'];const step=w/5;
+    for(let x=step/2;x<w;x+=step){ctx.fillText(r[Math.floor(x/step)%r.length],x-14,22);ctx.fillText(r[(Math.floor(x/step)+2)%r.length],x-14,h-4);}
+  }},
+  {id:'wedding', name:'💍 Boda', draw:(ctx,w,h)=>{
+    ctx.strokeStyle='rgba(255,255,255,0.9)';ctx.lineWidth=Math.max(w*0.05,12);ctx.strokeRect(0,0,w,h);
+    ctx.strokeStyle='rgba(201,168,76,0.6)';ctx.lineWidth=2;ctx.strokeRect(10,10,w-20,h-20);
+    ctx.font=Math.floor(w*0.07)+'px serif';
+    const e=['💍','🤍','🕊️','🌹'];const step=w/5;
+    for(let x=step/2;x<w;x+=step){ctx.fillText(e[Math.floor(x/step)%e.length],x-14,22);ctx.fillText(e[(Math.floor(x/step)+2)%e.length],x-14,h-4);}
+  }},
+  {id:'soccer', name:'⚽ Fútbol', draw:(ctx,w,h)=>{
+    ctx.strokeStyle='rgba(34,197,94,0.9)';ctx.lineWidth=Math.max(w*0.04,8);ctx.strokeRect(0,0,w,h);
+    ctx.strokeStyle='rgba(34,197,94,0.3)';ctx.lineWidth=2;ctx.strokeRect(8,8,w-16,h-16);
+    ctx.font=Math.floor(w*0.08)+'px serif';
+    const e=['⚽','🏆','🥅','👟'];const step=w/5;
+    for(let x=step/2;x<w;x+=step){ctx.fillText(e[Math.floor(x/step)%e.length],x-14,22);ctx.fillText(e[(Math.floor(x/step)+2)%e.length],x-14,h-4);}
+  }},
+  {id:'simple_pink', name:'🩷 Rosa simple', draw:(ctx,w,h)=>{
+    ctx.strokeStyle='#f0176f';ctx.lineWidth=Math.max(w*0.04,10);ctx.strokeRect(0,0,w,h);
+    ctx.strokeStyle='rgba(240,23,111,0.3)';ctx.lineWidth=2;ctx.strokeRect(10,10,w-20,h-20);
+  }},
+  {id:'simple_black', name:'🖤 Negro elegante', draw:(ctx,w,h)=>{
+    ctx.strokeStyle='#1a1a1a';ctx.lineWidth=Math.max(w*0.05,12);ctx.strokeRect(0,0,w,h);
+    ctx.strokeStyle='rgba(0,0,0,0.2)';ctx.lineWidth=2;ctx.strokeRect(12,12,w-24,h-24);
+  }},
 ];
 
 function buildFramePicker(){
@@ -701,7 +782,52 @@ async function sendPhoto(){
 }
 
 // ── MESSAGE ───────────────────────────────────────────────────
-function updateCharCount(el){document.getElementById('char-count').textContent=el.value.length;}
+function updateCharCount(el){
+  document.getElementById('char-count').textContent=el.value.length;
+  updateMsgPreview();
+}
+
+// Message customization state
+let msgEmoji='💬';
+let msgBgColor='#ffffff';
+let msgTextColor='#1a1a1a';
+let msgSize='medium';
+
+function selectMsgEmoji(emoji,btn){
+  msgEmoji=emoji;
+  document.querySelectorAll('.emoji-opt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateMsgPreview();
+}
+
+function selectMsgColor(bg,txt,btn){
+  msgBgColor=bg;msgTextColor=txt;
+  document.querySelectorAll('.color-opt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateMsgPreview();
+}
+
+function selectMsgSize(size,btn){
+  msgSize=size;
+  document.querySelectorAll('.size-opt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateMsgPreview();
+}
+
+function updateMsgPreview(){
+  const text=document.getElementById('msg-text').value.trim();
+  const preview=document.getElementById('msg-preview');
+  if(!text){preview.style.display='none';return;}
+  preview.style.display='block';
+  const bubble=document.getElementById('msg-preview-bubble');
+  const sizes={small:'13px',medium:'18px',large:'24px'};
+  bubble.style.background=msgBgColor;
+  document.getElementById('msg-preview-icon').textContent=msgEmoji;
+  const textEl=document.getElementById('msg-preview-text');
+  textEl.style.color=msgTextColor;
+  textEl.style.fontSize=sizes[msgSize];
+  textEl.textContent=text;
+}
 function updateWishCount(el){document.getElementById('wish-count').textContent=el.value.length;}
 
 async function sendWish(){
@@ -724,7 +850,11 @@ async function sendMessage(){
   if(!checkCooldown('message')) return;
   showSending();setProgress(50,'Enviando mensaje...');
   try{
-    await apiRest('posts',{method:'POST',body:JSON.stringify({event_id:eventId,type:'message',author:name,content:text,approved:false})});
+    const sizes={small:20,medium:32,large:48};
+    await apiRest('posts',{method:'POST',body:JSON.stringify({
+      event_id:eventId,type:'message',author:name,content:text,approved:false,
+      frame:JSON.stringify({emoji:msgEmoji,bgColor:msgBgColor,textColor:msgTextColor,fontSize:sizes[msgSize]})
+    })});
     setProgress(100,'¡Listo!');setLastSent('message');setTimeout(()=>{hideSending();showSuccess();},300);
   }catch(e){hideSending();showFormError('msg-error','Error: '+e.message);}
 }
@@ -794,6 +924,11 @@ function resetForm(){
   document.getElementById('success-screen').classList.remove('show');
   document.getElementById('msg-text').value='';
   document.getElementById('char-count').textContent='0';
+  document.getElementById('msg-preview').style.display='none';
+  msgEmoji='💬';msgBgColor='#ffffff';msgTextColor='#1a1a1a';msgSize='medium';
+  document.querySelectorAll('.emoji-opt').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.color-opt').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.querySelectorAll('.size-opt').forEach((b,i)=>b.classList.toggle('active',i===1));
   const wishEl=document.getElementById('wish-text');
   if(wishEl){wishEl.value='';document.getElementById('wish-count').textContent='0';}
   removePhoto();
