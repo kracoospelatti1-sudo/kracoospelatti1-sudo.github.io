@@ -263,6 +263,27 @@ input[type=range]{accent-color:var(--pink)}
         <div class="card-title">Datos del evento</div>
         <div class="fg"><div><label>Nombre *</label><input type="text" id="ev-name" placeholder="Boda de Caro & Pablo"/></div><div><label>Fecha</label><input type="date" id="ev-date"/></div></div>
         <div class="fg full"><div><label>Subtítulo</label><input type="text" id="ev-subtitle" placeholder="Salón La Armonía · 20hs"/></div></div>
+        <div class="fg">
+          <div>
+            <label>PIN del cliente</label>
+            <div style="display:flex;gap:8px">
+              <input type="text" id="ev-pin" placeholder="Ej: 4892" maxlength="20" style="flex:1"/>
+              <button type="button" onclick="generatePin()" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0 14px;cursor:pointer;color:var(--muted);font-size:13px;white-space:nowrap">🎲 Auto</button>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">El cliente usa este PIN. Vos usás tu PIN maestro.</div>
+          </div>
+          <div>
+            <label>Duración del acceso</label>
+            <select id="ev-pin-duration">
+              <option value="0">Sin vencimiento</option>
+              <option value="6">6 horas</option>
+              <option value="12" selected>12 horas</option>
+              <option value="24">24 horas</option>
+              <option value="48">48 horas</option>
+              <option value="72">72 horas (3 días)</option>
+            </select>
+          </div>
+        </div>
         <button class="btn-pink" id="create-btn" onclick="evCreate()">Crear evento →</button>
       </div>
     </div>
@@ -1004,19 +1025,57 @@ function startGlobalPoller(){
   }, 5000);
 }
 
-function submitPin(){
+function formatExpiry(isoStr){
+  const d=new Date(isoStr);
+  return d.toLocaleDateString('es-AR')+' '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+}
+
+async function submitPin(){
   const input=document.getElementById('pin-input');
-  if(input.value===getPin()){
-    document.getElementById('pin-lock').style.display='none';
-    document.getElementById('main-app').style.display='grid';
-    sessionStorage.setItem('ew_unlocked','1');
-    loadEvents();
-    startGlobalPoller();
-  } else {
-    document.getElementById('pin-error').classList.add('show');
-    input.value='';
-    setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),2000);
+  const val=input.value;
+  // Check master PIN first
+  if(val===getPin()){
+    unlockAdmin();
+    return;
   }
+  // Check event PINs in Supabase
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/events?admin_pin=eq.'+encodeURIComponent(val)+'&select=id,name,pin_expires_at',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    const events=await res.json();
+    if(Array.isArray(events)&&events.length){
+      const ev=events[0];
+      // Check expiry
+      if(ev.pin_expires_at&&new Date(ev.pin_expires_at)<new Date()){
+        document.getElementById('pin-error').textContent='El acceso a este evento venció.';
+        document.getElementById('pin-error').classList.add('show');
+        input.value='';
+        setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),3000);
+        return;
+      }
+      // Valid event PIN — unlock but restrict to this event only
+      unlockAdmin(ev.id);
+      return;
+    }
+  }catch(e){}
+  document.getElementById('pin-error').textContent='PIN incorrecto. Intentá de nuevo.';
+  document.getElementById('pin-error').classList.add('show');
+  input.value='';
+  setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),2000);
+}
+
+function unlockAdmin(restrictedEventId=null){
+  document.getElementById('pin-lock').style.display='none';
+  document.getElementById('main-app').style.display='grid';
+  sessionStorage.setItem('ew_unlocked','1');
+  if(restrictedEventId){
+    sessionStorage.setItem('ew_restricted_event',restrictedEventId);
+  } else {
+    sessionStorage.removeItem('ew_restricted_event');
+  }
+  loadEvents(restrictedEventId);
+  startGlobalPoller();
 }
 function checkPin(input){ if(event&&event.key==='Enter') submitPin(); }
 function changePin(){
@@ -1047,6 +1106,11 @@ async function api(path, opts={}){
 let selectedEvent=null, allPosts=[], currentFilter='all';
 
 // ── NAV ──────────────────────────────────────────────────────
+function generatePin(){
+  const pin=Math.floor(1000+Math.random()*9000).toString();
+  document.getElementById('ev-pin').value=pin;
+}
+
 function goNav(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1133,10 +1197,15 @@ async function deleteEvent(ev){
 }
 
 // ── EVENTS ───────────────────────────────────────────────────
-async function loadEvents(){
+async function loadEvents(restrictedId=null){
+  const restricted=restrictedId||sessionStorage.getItem('ew_restricted_event');
+  // Hide create button if restricted
+  const createBtn=document.querySelector('.nav-btn[onclick*="new-event"]');
+  if(createBtn) createBtn.style.display=restricted?'none':'';
   const grid=document.getElementById('events-list');
   grid.innerHTML='<div class="empty"><div class="empty-ico">⏳</div><div class="empty-txt">Conectando...</div></div>';
-  const events=await api('events?order=created_at.desc');
+  const query=restricted?'events?id=eq.'+restricted:'events?order=created_at.desc';
+  const events=await api(query);
   if(!Array.isArray(events)||!events.length){
     grid.innerHTML='<div class="empty"><div class="empty-ico">📭</div><div class="empty-txt">No hay eventos. ¡Creá el primero!</div></div>';return;
   }
@@ -1155,7 +1224,24 @@ async function loadEvents(){
       <div class="event-stats"><div class="estat"><div class="estat-num">${posts.length}</div><div class="estat-lbl">Total</div></div>
       <div class="estat"><div class="estat-num">${approved}</div><div class="estat-lbl">Aprob.</div></div>
       <div class="estat"><div class="estat-num">${pending}</div><div class="estat-lbl">Pend.</div></div></div>`;
+    // Show pin status on card
+    const now=new Date();
+    if(ev.admin_pin){
+      const expired=ev.pin_expires_at&&new Date(ev.pin_expires_at)<now;
+      const expStr=ev.pin_expires_at?
+        (expired?'<span style="color:var(--red);font-size:10px">🔒 PIN vencido</span>':
+        '<span style="color:var(--green);font-size:10px">🔑 PIN: '+ev.admin_pin+' · vence '+formatExpiry(ev.pin_expires_at)+'</span>'):
+        '<span style="color:var(--muted);font-size:10px">🔑 PIN: '+ev.admin_pin+' (sin vencimiento)</span>';
+      const pinDiv=document.createElement('div');
+      pinDiv.style.marginTop='8px';
+      pinDiv.innerHTML=expStr;
+      card.appendChild(pinDiv);
+    }
     card.onclick=function(e){if(!e.target.closest('.del-btn')) selectEvent(ev,this);};
+    // Auto-select if restricted to this event
+    if(sessionStorage.getItem('ew_restricted_event')===ev.id){
+      setTimeout(()=>card.click(),100);
+    }
     const delBtn=document.createElement('button');
     delBtn.className='del-btn';
     delBtn.innerHTML='🗑';
@@ -1189,8 +1275,16 @@ async function evCreate(){
   const body={name};
   const date=document.getElementById('ev-date').value;
   const subtitle=document.getElementById('ev-subtitle').value.trim();
+  const evPin=document.getElementById('ev-pin').value.trim();
+  const pinDurationHrs=parseInt(document.getElementById('ev-pin-duration').value)||0;
   if(date) body.date=date;
   if(subtitle) body.subtitle=subtitle;
+  if(evPin){
+    body.admin_pin=evPin;
+    if(pinDurationHrs>0){
+      body.pin_expires_at=new Date(Date.now()+pinDurationHrs*3600*1000).toISOString();
+    }
+  }
   const res=await api('events',{method:'POST',body:JSON.stringify(body)});
   btn.disabled=false;btn.textContent='Crear evento →';
   if(Array.isArray(res)&&res[0]?.id){
@@ -1198,6 +1292,8 @@ async function evCreate(){
     document.getElementById('ev-name').value='';
     document.getElementById('ev-date').value='';
     document.getElementById('ev-subtitle').value='';
+    document.getElementById('ev-pin').value='';
+    document.getElementById('ev-pin-duration').value='12';
     goNav('events');
   }
 }
@@ -1970,6 +2066,22 @@ if(sessionStorage.getItem('ew_unlocked')==='1'){
   document.getElementById('main-app').style.display='grid';
   loadEvents();
   startGlobalPoller();
+  // Check restricted event PIN expiry periodically
+  setInterval(async()=>{
+    const rid=sessionStorage.getItem('ew_restricted_event');
+    if(!rid) return;
+    try{
+      const res=await fetch(SUPABASE_URL+'/rest/v1/events?id=eq.'+rid+'&select=pin_expires_at',{
+        headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+      });
+      const data=await res.json();
+      if(data[0]?.pin_expires_at&&new Date(data[0].pin_expires_at)<new Date()){
+        sessionStorage.clear();
+        alert('Tu acceso a este evento ha vencido.');
+        location.reload();
+      }
+    }catch(e){}
+  },60000); // Check every minute
 }
 // Save session on unlock
 
