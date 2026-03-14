@@ -429,66 +429,69 @@ async function uploadFile(file,folder){
 // ── INIT ─────────────────────────────────────────────────────
 // ── GUEST DESIGN ─────────────────────────────────────────────
 async function applyGuestDesign(ev){
-  // Load from Supabase so changes from admin apply instantly
   let d={};
   try{
     const res=await apiRest('event_settings?event_id=eq.'+eventId+'&select=guest_design');
     if(Array.isArray(res)&&res[0]?.guest_design) d=res[0].guest_design;
-  }catch(e){}
+  }catch(e){ console.error('applyGuestDesign error:',e); }
 
-  // Colors
-  const bg=d.bg||'#faf8f6';
-  const accent=d.accent||'#f0176f';
-  const hero=d.hero||'#0c0c0f';
-  const heroTxt=d.heroTxt||'#ffffff';
+  const bg      = d.bg      || '#faf8f6';
+  const accent  = d.accent  || '#f0176f';
+  const hero    = d.hero    || '#0c0c0f';
+  const heroTxt = d.heroTxt || '#ffffff';
 
-  // Apply CSS vars
-  document.documentElement.style.setProperty('--pink', accent);
-  document.documentElement.style.setProperty('--pink-light', accent+'22');
-  document.documentElement.style.setProperty('--pink-border', accent+'66');
-  document.documentElement.style.setProperty('--bg', bg);
-  document.body.style.background=bg;
+  // Inject dynamic CSS
+  let styleEl = document.getElementById('gd-dynamic-style');
+  if(!styleEl){ styleEl=document.createElement('style'); styleEl.id='gd-dynamic-style'; document.head.appendChild(styleEl); }
+  styleEl.textContent = `
+    :root { --pink: ${accent}; --pink-light: ${accent}22; --pink-border: ${accent}66; --bg: ${bg}; }
+    body { background: ${bg}; }
+    .hero { background: ${hero} !important; }
+    .hero-title { color: ${heroTxt} !important; }
+    .hero-sub { color: ${heroTxt}99 !important; }
+    .hero-logo { color: ${accent} !important; }
+    .hero-pill { background: ${accent}22 !important; border-color: ${accent}55 !important; color: ${heroTxt}cc !important; }
+    .stat-num { color: ${accent} !important; }
+    .type-btn.active { border-color: ${accent} !important; background: ${accent}15 !important; color: ${accent} !important; }
+    .field:focus { border-color: ${accent} !important; }
+    .send-btn { background: ${accent} !important; }
+    .send-btn:hover { background: ${accent}dd !important; }
+    .record-btn { background: ${accent} !important; }
+    .wish-btn.active { border-color: ${accent}99 !important; }
+  `;
 
-  // Hero section
-  const heroEl=document.querySelector('.hero');
-  if(heroEl) heroEl.style.background=hero;
-
-  // Title
-  const titleEl=document.getElementById('ev-name');
-  if(titleEl&&d.title) titleEl.textContent=d.title;
-
-  // Subtitle
-  const subEl=document.getElementById('ev-sub');
-  if(subEl&&d.subtitle) subEl.textContent=d.subtitle;
-
-  // Welcome pill
-  const pillEl=document.querySelector('.hero-pill');
-  if(pillEl&&d.welcome) pillEl.textContent='📷 '+d.welcome.replace(/^📷\s*/,'');
-
-  // Send button text
+  // Texts
+  if(d.title){
+    const el=document.getElementById('ev-name');
+    if(el) el.textContent=d.title;
+  }
+  if(d.subtitle){
+    const el=document.getElementById('ev-sub');
+    if(el) el.textContent=d.subtitle;
+  }
+  if(d.welcome){
+    const el=document.querySelector('.hero-pill');
+    if(el) el.textContent='📷 '+d.welcome.replace(/^📷\s*/,'');
+  }
   if(d.btnText){
     document.querySelectorAll('.send-btn').forEach(btn=>{
-      if(!btn.id||btn.id.startsWith('btn-send')) btn.textContent=d.btnText;
+      btn.textContent=d.btnText;
     });
   }
 
-  // Hero text color
-  document.querySelectorAll('.hero-title, .hero-sub, .hero-logo').forEach(el=>{
-    if(el.classList.contains('hero-logo')) el.style.color=accent;
-    else if(el.classList.contains('hero-title')) el.style.color=heroTxt;
-    else el.style.color=heroTxt+'70';
-  });
-
-  // Show/hide sections
-  const sections=[
-    {key:'showPhoto',   btn:0, section:'section-photo'},
-    {key:'showMessage', btn:1, section:'section-message'},
-    {key:'showAudio',   btn:2, section:'section-audio'},
+  // Show/hide type buttons and sections
+  const map=[
+    {key:'showPhoto',   idx:0, section:'section-photo'},
+    {key:'showMessage', idx:1, section:'section-message'},
+    {key:'showAudio',   idx:2, section:'section-audio'},
   ];
   const typeBtns=document.querySelectorAll('.type-selector .type-btn');
-  sections.forEach((s,i)=>{
-    const show=d[s.key]!==false; // default true
-    if(typeBtns[i]) typeBtns[i].style.display=show?'':'none';
+  let firstVisible=null;
+  map.forEach(({key,idx,section})=>{
+    const show = d[key]!==false;
+    const btn=typeBtns[idx];
+    if(btn) btn.style.display=show?'':'none';
+    if(show&&!firstVisible) firstVisible=btn;
   });
 
   // Wish button
@@ -499,12 +502,13 @@ async function applyGuestDesign(ev){
   const voteBtn=document.querySelector('.vote-btn');
   if(voteBtn) voteBtn.style.display=d.showVote!==false?'':'none';
 
-  // If first visible type is hidden, activate first visible
-  const firstVisible=Array.from(typeBtns).find(b=>b.style.display!=='none');
-  if(firstVisible&&!document.querySelector('.type-btn.active:not([style*="none"])')) {
+  // Activate first visible tab if current is hidden
+  const activeBtn=document.querySelector('.type-btn.active');
+  if(activeBtn&&activeBtn.style.display==='none'&&firstVisible){
     firstVisible.click();
   }
 }
+
 
 async function init(){
   if(!eventId){document.getElementById('page-loading').innerHTML='<div style="text-align:center;padding:32px"><div style="font-size:40px">⚠️</div><p style="color:var(--pink);margin-top:12px">Falta el ID del evento.<br>Abrí este link desde el admin.</p></div>';return;}
@@ -518,6 +522,7 @@ async function init(){
     document.getElementById('page-loading').style.display='none';
     document.getElementById('app').style.display='block';
     buildFramePicker();
+    await applyGuestDesign(ev);
     // Live orientation warning while camera is not open
     if(window.DeviceOrientationEvent){
       window.addEventListener('orientationchange',()=>{
