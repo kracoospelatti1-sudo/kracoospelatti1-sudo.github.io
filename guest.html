@@ -467,26 +467,37 @@ async function applyGuestDesign(ev){
   if(!styleEl){ styleEl=document.createElement('style'); styleEl.id='gd-dynamic-style'; document.head.appendChild(styleEl); }
   styleEl.textContent = `
     :root { --pink: ${accent}; --pink-light: ${accent}22; --pink-border: ${accent}66; --bg: ${bg}; }
-    body { background: ${bg}; color: ${textColor}; font-family: '${font}', sans-serif; font-size: ${fontSize}px; }
+    html body { background: ${bg} !important; color: ${textColor} !important; font-family: '${font}', sans-serif !important; font-size: ${fontSize}px !important; }
     .hero { background: ${hero} !important; }
     .hero-title { color: ${heroTxt} !important; font-family: '${fontTitle}', sans-serif !important; }
     .hero-sub { color: ${heroTxt}99 !important; }
-    .hero-logo { color: ${accent} !important; display: ${showLogo?'block':'none'} !important; }
+    .hero-logo { color: ${accent} !important; }
     .hero-pill { background: ${accent}22 !important; border-color: ${accent}55 !important; color: ${heroTxt}cc !important; }
     .stat-num { color: ${accent} !important; }
-    .section-label { font-family: '${fontTitle}', sans-serif !important; }
-    .type-btn { font-family: '${font}', sans-serif !important; border-radius: ${btnRadius}px !important; }
-    .type-btn.active { border-color: ${accent} !important; background: ${accent}15 !important; color: ${accent} !important; }
-    .field { background: ${fieldBg} !important; border-radius: ${fieldRadius}px !important; color: ${textColor} !important; font-family: '${font}', sans-serif !important; font-size: ${fontSize}px !important; }
-    .field:focus { border-color: ${accent} !important; }
-    .send-btn { background: ${accent} !important; border-radius: ${btnRadius}px !important; font-family: '${font}', sans-serif !important; font-size: ${parseInt(fontSize)+1}px !important; }
-    .send-btn:hover { opacity: 0.88; }
-    .record-btn { background: ${accent} !important; }
-    .wish-btn.active { border-color: ${accent}99 !important; }
-    .vote-btn.active { border-color: ${accent}99 !important; }
-    .audio-ready { border-color: ${accent}66 !important; }
-    .audio-play-btn { background: ${accent} !important; }
-    .name-wrap .section-label, .section-label { color: ${textColor}99 !important; }
+    .section-label { font-family: '${fontTitle}', sans-serif !important; color: ${textColor}88 !important; }
+    .type-btn, button.type-btn { font-family: '${font}', sans-serif !important; border-radius: ${btnRadius}px !important; }
+    .type-btn.active, button.type-btn.active { border-color: ${accent} !important; background: ${accent}15 !important; color: ${accent} !important; }
+    input.field, textarea.field, select.field, .field { 
+      background: ${fieldBg} !important; 
+      border-radius: ${fieldRadius}px !important; 
+      color: ${textColor} !important; 
+      font-family: '${font}', sans-serif !important; 
+      font-size: ${fontSize}px !important; 
+    }
+    input.field:focus, textarea.field:focus, .field:focus { border-color: ${accent} !important; }
+    button.send-btn, .send-btn { 
+      background: ${accent} !important; 
+      border-radius: ${btnRadius}px !important; 
+      font-family: '${font}', sans-serif !important; 
+      font-size: ${parseInt(fontSize)+1}px !important; 
+    }
+    button.send-btn:disabled, .send-btn:disabled { opacity: 0.55 !important; }
+    button.record-btn { background: ${accent} !important; }
+    button.audio-play-btn { background: ${accent} !important; }
+    .audio-ready { border-color: ${accent}66 !important; background: ${accent}08 !important; }
+    .wbar { background: ${accent} !important; }
+    .cooldown-bar .cooldown-fill { background: ${accent} !important; }
+    .upload-zone:hover { border-color: ${accent} !important; color: ${accent} !important; }
   `;
 
   // Logo visibility
