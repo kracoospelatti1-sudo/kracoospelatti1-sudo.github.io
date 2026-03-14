@@ -113,7 +113,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 
 <!-- MESSAGE BUBBLE OVERLAY -->
 <div id="msg-bubble-overlay" style="position:fixed;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
-  <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:680px;width:90%;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5)">
+  <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:min(680px,90vw);width:fit-content;min-width:200px;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5)">
     <div id="bubble-tail" style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:24px solid var(--bubble-bg)"></div>
     <div id="msg-bubble-icon" style="font-size:36px;margin-bottom:14px">💬</div>
     <div id="msg-bubble-text" style="font-family:var(--font-title);font-size:clamp(18px,3.5vw,38px);font-weight:800;color:var(--bubble-txt);line-height:1.35;margin-bottom:16px"></div>
@@ -440,7 +440,10 @@ function showNextBubble(){
   const textEl=document.getElementById('msg-bubble-text');
   textEl.textContent=msg.content;
   const fontSize=custom.fontSize||cfg.fsBubble||32;
-  textEl.style.fontSize='clamp(16px,3.5vw,'+fontSize+'px)';
+  // Scale font based on text length for better fit
+  const textLen=msg.content.length;
+  const dynMax=textLen<=10?fontSize:textLen<=30?Math.round(fontSize*0.85):textLen<=60?Math.round(fontSize*0.7):Math.round(fontSize*0.6);
+  textEl.style.fontSize='clamp(16px,3.5vw,'+dynMax+'px)';
   document.getElementById('msg-bubble-author').textContent='— '+msg.author;
   // Apply custom style
   const card=document.getElementById('msg-bubble-card');
