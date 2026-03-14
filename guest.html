@@ -174,8 +174,8 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
       <div class="orient-warn" id="orient-warn">
         <span class="ow-ico">📱</span>
         <div>
-          <strong>Girá el celular horizontalmente</strong><br>
-          Las fotos se ven mejor en la pantalla del evento si las sacás en modo paisaje 🌄
+          <strong>Solo se aceptan fotos horizontales</strong><br>
+          Girá el celular y sacá la foto en modo paisaje 🌄
         </div>
       </div>
       <div class="upload-zone" id="upload-zone">
@@ -564,42 +564,23 @@ function handleFileSelect(input){
     const img=new Image();
     img.onload=()=>{
       const isVertical=img.naturalHeight>img.naturalWidth;
-      // Show/hide orientation warning
-      const warn=document.getElementById('orient-warn');
-      if(isVertical) warn.classList.add('show');
-      else warn.classList.remove('show');
-      // Auto-crop vertical to 16:9 landscape
+      // BLOCK vertical photos entirely
       if(isVertical){
-        const canvas=document.createElement('canvas');
-        const targetW=img.naturalHeight*(16/9);
-        const targetH=img.naturalHeight;
-        // If width allows 16:9 crop, use it; otherwise use full width → letterbox
-        const srcW=Math.min(img.naturalWidth, targetW);
-        const srcH=srcW*(9/16);
-        const srcX=(img.naturalWidth-srcW)/2;
-        const srcY=(img.naturalHeight-srcH)/2;
-        canvas.width=Math.round(srcW);
-        canvas.height=Math.round(srcH);
-        const ctx=canvas.getContext('2d');
-        ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, canvas.width, canvas.height);
-        const cropped=new Image();
-        cropped.onload=()=>{
-          originalImage=cropped;
-          renderPreviewCanvas();
-          document.getElementById('canvas-preview-wrap').style.display='block';
-          document.getElementById('upload-zone').style.display='none';
-          document.getElementById('frame-picker').style.display='block';
-          buildFramePicker();
-        };
-        cropped.src=canvas.toDataURL('image/jpeg',0.95);
-      } else {
-        originalImage=img;
-        renderPreviewCanvas();
-        document.getElementById('canvas-preview-wrap').style.display='block';
-        document.getElementById('upload-zone').style.display='none';
-        document.getElementById('frame-picker').style.display='block';
-        buildFramePicker();
+        const warn=document.getElementById('orient-warn');
+        warn.classList.add('show');
+        selectedFile=null;
+        document.getElementById('file-input').value='';
+        showFormError('photo-error','📱 La foto es vertical. Girá el celular y sacala en horizontal para poder subirla.');
+        return;
       }
+      document.getElementById('orient-warn').classList.remove('show');
+      hideFormError('photo-error');
+      originalImage=img;
+      renderPreviewCanvas();
+      document.getElementById('canvas-preview-wrap').style.display='block';
+      document.getElementById('upload-zone').style.display='none';
+      document.getElementById('frame-picker').style.display='block';
+      buildFramePicker();
     };
     img.src=e.target.result;
   };
