@@ -462,6 +462,33 @@ input[type=range]{accent-color:var(--pink)}
           </div>
         </div>
 
+        <!-- MODERATION SETTINGS -->
+        <div class="card">
+          <div class="card-title">🛡 Control de spam</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Tiempo mínimo (en segundos) que debe esperar un invitado entre cada envío.</p>
+          <div class="design-grid">
+            <div class="design-field">
+              <label>Cooldown entre fotos (seg)</label>
+              <input type="number" id="cd-photo" value="30" min="0" max="300"/>
+            </div>
+            <div class="design-field">
+              <label>Cooldown entre mensajes (seg)</label>
+              <input type="number" id="cd-message" value="20" min="0" max="300"/>
+            </div>
+            <div class="design-field">
+              <label>Cooldown entre audios (seg)</label>
+              <input type="number" id="cd-audio" value="40" min="0" max="300"/>
+            </div>
+            <div class="design-field">
+              <label>Poner en 0 para deshabilitar</label>
+              <button class="btn-ghost" onclick="saveCooldowns()" style="margin-top:4px">Guardar límites →</button>
+            </div>
+          </div>
+          <div id="cd-info" style="font-size:12px;color:var(--muted);margin-top:12px;padding:10px;background:var(--surface2);border-radius:8px">
+            💡 Los límites se aplican por dispositivo. Un invitado con 2 celulares podría saltárselo, pero evita el spam casual.
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -910,6 +937,7 @@ function showDesign(){
   previewTheme();
   loadGoogleFont(saved.fontTitle||'Syne');
   loadGoogleFont(saved.fontBody||'DM Sans');
+  loadCooldownSettings();
 }
 
 function selectTemplate(name,el){
@@ -993,6 +1021,25 @@ function saveDesign(){
   };
   localStorage.setItem('ew_design_'+selectedEvent.id,JSON.stringify(design));
   toast('✅ Diseño guardado — recargá la pantalla del evento para verlo');
+}
+
+function saveCooldowns(){
+  if(!selectedEvent) return;
+  const cd={
+    photo: parseInt(document.getElementById('cd-photo').value)||30,
+    message: parseInt(document.getElementById('cd-message').value)||20,
+    audio: parseInt(document.getElementById('cd-audio').value)||40,
+  };
+  localStorage.setItem('ew_cooldowns_'+selectedEvent.id, JSON.stringify(cd));
+  toast('✅ Límites de spam guardados');
+}
+
+function loadCooldownSettings(){
+  if(!selectedEvent) return;
+  const saved=JSON.parse(localStorage.getItem('ew_cooldowns_'+selectedEvent.id)||'{}');
+  if(saved.photo!==undefined) document.getElementById('cd-photo').value=saved.photo;
+  if(saved.message!==undefined) document.getElementById('cd-message').value=saved.message;
+  if(saved.audio!==undefined) document.getElementById('cd-audio').value=saved.audio;
 }
 
 function resetDesign(){
