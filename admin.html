@@ -3,1644 +3,220 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>EventWall · Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<title>EventWall · Pantalla</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0c0c0f;--surface:#16161a;--surface2:#1e1e24;--border:#2a2a35;--pink:#f0176f;--pink-dim:rgba(240,23,111,0.12);--gold:#f5a623;--text:#f0ede8;--muted:#6b6b7a;--green:#22c55e;--red:#ef4444}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
-.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh;position:relative}
-.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:28px 20px;display:flex;flex-direction:column;gap:8px;transition:transform 0.3s ease;z-index:100}
-.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--pink);margin-bottom:20px}
-.logo span{color:var(--text)}
-.nav-btn{width:100%;text-align:left;padding:10px 14px;border-radius:10px;border:none;background:transparent;color:var(--muted);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
-.nav-btn:hover{background:var(--surface2);color:var(--text)}
-.nav-btn.active{background:var(--pink-dim);color:var(--pink);font-weight:500}
-.nav-sep{height:1px;background:var(--border);margin:8px 0}
-.main{padding:32px 36px;overflow-y:auto}
-.page{display:none}.page.active{display:block}
-.page-title{font-size:26px;font-weight:800;margin-bottom:6px;font-family:'Syne',sans-serif}
-.page-sub{color:var(--muted);font-size:14px;margin-bottom:28px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px}
-.card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px}
-label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;letter-spacing:0.3px}
-input[type=text],input[type=date],input[type=password],input[type=number],textarea,select{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s}
-input:focus,textarea:focus,select:focus{border-color:var(--pink)}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.fg.full{grid-template-columns:1fr}
-.fg.three{grid-template-columns:1fr 1fr 1fr}
-.btn-pink{background:var(--pink);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s}
-.btn-pink:hover{opacity:0.88}.btn-pink:disabled{opacity:0.5;cursor:not-allowed}
-.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);padding:8px 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s}
-.btn-ghost:hover{border-color:var(--text);color:var(--text)}
-.events-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:20px}
-.event-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;position:relative}
-.event-card:hover{border-color:var(--pink);transform:translateY(-2px)}
-.event-card.selected{border-color:var(--pink);background:var(--pink-dim)}
-.event-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px}
-.event-date{font-size:12px;color:var(--muted)}
-.event-stats{display:flex;gap:12px;margin-top:14px}
-.estat{text-align:center}.estat-num{font-size:18px;font-weight:700;color:var(--pink)}.estat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.badge-pending{position:absolute;top:14px;right:14px;background:#f5a62322;color:var(--gold);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid #f5a62344}
-.mod-filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.filter-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-.filter-btn.active{background:var(--pink);border-color:var(--pink);color:#fff}
-.posts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.post-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.post-card.approved{border-color:#22c55e44}
-.post-img{width:100%;height:150px;object-fit:cover;display:block}
-.post-body{padding:14px}
-.post-author{font-size:12px;font-weight:600;color:var(--pink);margin-bottom:5px}
-.post-text{font-size:13px;color:var(--text);line-height:1.5}
-.tbadge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
-.type-photo{background:#3b82f622;color:#60a5fa}.type-message{background:#a855f722;color:#c084fc}.type-audio{background:#f5a62322;color:var(--gold)}.type-wish{background:rgba(255,107,157,0.15);color:#ff6b9d}
-.post-actions{display:flex;gap:8px;margin-top:12px}
-.btn-approve{flex:1;padding:8px;background:#22c55e22;border:1px solid #22c55e44;color:var(--green);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-.btn-approve:hover{background:#22c55e44}.btn-approve.done{background:#22c55e;color:#fff;border-color:#22c55e}
-.btn-reject{flex:1;padding:8px;background:#ef444422;border:1px solid #ef444444;color:var(--red);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-.btn-delete-post{padding:8px 10px;background:rgba(100,100,100,0.15);border:1px solid rgba(100,100,100,0.25);color:var(--muted);border-radius:8px;cursor:pointer;font-size:13px;transition:all 0.2s;flex-shrink:0}
-.btn-delete-post:hover{background:#ef444422;border-color:#ef444444;color:var(--red)}
-.post-time{font-size:10px;color:var(--muted);margin-top:8px}
-.link-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.link-label{font-size:12px;color:var(--muted);width:80px;flex-shrink:0}
-.link-box{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--text);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.copy-btn{padding:7px 14px;background:var(--pink-dim);border:1px solid rgba(240,23,111,0.3);color:var(--pink);border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
-.copy-btn:hover{background:var(--pink);color:#fff}
-.qr-wrap{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
-.qr-box{background:#fff;padding:14px;border-radius:12px}
-.toast{position:fixed;bottom:28px;right:28px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 20px;border-radius:12px;font-size:14px;display:none;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-width:360px}
-.toast.show{display:block;animation:toastIn 0.3s ease}
-@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.empty{text-align:center;padding:48px 20px;color:var(--muted)}
-.empty-ico{font-size:40px;margin-bottom:12px}.empty-txt{font-size:14px}
-.notice{background:var(--pink-dim);border:1px solid rgba(240,23,111,0.3);border-radius:12px;padding:16px 20px;color:var(--pink);font-size:14px;margin-bottom:20px;display:none}
-.notice.show{display:block}
-.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
-.stat-card .num{font-size:28px;font-weight:800;color:var(--pink);font-family:'Syne',sans-serif}
-.stat-card .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
-.seb{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.seb-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
-.seb-sub{font-size:12px;color:var(--muted);margin-top:2px}
-
-/* PIN LOCK */
-.pin-lock{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:20px}
-.pin-lock h2{font-family:'Syne',sans-serif;font-size:24px;font-weight:800}
-.pin-lock p{color:var(--muted);font-size:14px}
-.pin-input{width:180px;text-align:center;font-size:24px;letter-spacing:8px;padding:14px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:monospace}
-.pin-error{color:var(--red);font-size:13px;display:none}
-.pin-error.show{display:block}
-
-/* THEME EDITOR */
-.theme-preview{width:100%;height:180px;border-radius:12px;overflow:hidden;border:1px solid var(--border);position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:13px;color:rgba(255,255,255,0.5)}
-.color-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-.color-row label{margin:0;width:120px;flex-shrink:0}
-input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer}
-.template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.tpl-card{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.2s;aspect-ratio:16/9;position:relative}
-.tpl-card:hover{border-color:var(--muted)}
-.tpl-card.active{border-color:var(--pink)}
-.tpl-card .tpl-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.7);color:#fff;font-size:11px;font-weight:600;padding:5px 8px;text-align:center}
-/* template preview backgrounds */
-.tpl-dark{background:linear-gradient(135deg,#07070f,#1a1a2e)}
-.tpl-light{background:linear-gradient(135deg,#f8f4ef,#ede8e0)}
-.tpl-neon{background:linear-gradient(135deg,#000,#0d0d2b)}
-.tpl-floral{background:linear-gradient(135deg,#1a0a14,#2d1020)}
-.tpl-gold{background:linear-gradient(135deg,#1a1200,#2d2000)}
-.tpl-ocean{background:linear-gradient(135deg,#021020,#041830)}
-
-.print-sheet{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px;margin-top:16px}
-.print-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:12px;break-inside:avoid}
-/* DESIGN EDITOR */
-.design-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:4px}
-.design-field{display:flex;flex-direction:column;gap:6px}
-.design-field label{font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0.3px}
-.color-pick-row{display:flex;align-items:center;gap:8px}
-.color-pick-row input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;flex-shrink:0}
-.hex-input{flex:1;font-family:monospace;font-size:13px;text-transform:uppercase}
-input[type=range]{accent-color:var(--pink)}
-/* GUEST DESIGN */
-.toggle-label{display:flex;align-items:center;gap:12px;cursor:pointer;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);transition:all 0.2s}
-.toggle-label:hover{border-color:var(--muted)}
-/* DESIGN TABS */
-.dtab{flex:1;padding:8px 10px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
-.dtab.active{background:var(--surface2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.2)}
-.dtab:hover:not(.active){color:var(--text)}
-.dtab-panel{display:none}
-.dtab-panel.active{display:block}
-@media(max-width:768px){
-  #design-content>div{grid-template-columns:1fr !important}
-  #design-content>div>div:last-child{position:relative !important;top:auto !important}
-}
-/* POLLS */
-.poll-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
-.poll-question{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px}
-.poll-option-bar{margin-bottom:10px}
-.poll-option-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;color:var(--text)}
-.poll-option-label .pvotes{color:var(--muted);font-size:12px}
-.poll-bar-bg{background:var(--surface2);border-radius:6px;height:10px;overflow:hidden}
-.poll-bar-fill{height:100%;border-radius:6px;background:var(--pink);transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1)}
-.poll-bar-fill.winner{background:var(--gold)}
-.poll-meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-.poll-total{font-size:12px;color:var(--muted)}
-.poll-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px}
-.poll-status.active{background:rgba(34,197,94,0.15);color:var(--green)}
-.poll-status.closed{background:var(--surface2);color:var(--muted)}
-/* AUTO APPROVE TOGGLE */
-.auto-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);transition:all 0.2s;user-select:none}
-.auto-toggle:hover{border-color:var(--green)}
-.auto-toggle.on{border-color:var(--green);background:rgba(34,197,94,0.1)}
-.auto-track{width:36px;height:20px;background:var(--border);border-radius:10px;position:relative;transition:background 0.3s;flex-shrink:0}
-.auto-toggle.on .auto-track{background:var(--green)}
-.auto-thumb{width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:left 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
-.auto-toggle.on .auto-thumb{left:19px}
-.auto-toggle span{font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap}
-.auto-toggle.on span{color:var(--green)}
-/* WISH WALL */
-.wish-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column}
-.wish-overlay.show{display:flex;animation:wishIn 0.5s ease}
-@keyframes wishIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
-
-/* ALBUM */
-.album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
-.album-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
-
-/* ── RESPONSIVE ── */
-.mobile-header{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
-.mobile-header .logo{margin:0;font-size:18px}
-.hamburger{background:transparent;border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;color:var(--text);font-size:16px;line-height:1}
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99}
-.sidebar-overlay.show{display:block}
-
-@media(max-width:768px){
-  .mobile-header{display:flex}
-  .shell{grid-template-columns:1fr;min-height:auto}
-  .sidebar{position:fixed;top:0;left:0;bottom:0;width:260px;transform:translateX(-100%);padding:20px 16px;overflow-y:auto}
-  .sidebar.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,0.4)}
-  .main{padding:20px 16px;overflow-y:auto}
-  .page-title{font-size:20px}
-  .fg{grid-template-columns:1fr !important}
-  .fg.three{grid-template-columns:1fr !important}
-  .design-grid{grid-template-columns:1fr !important}
-  .stat-row{grid-template-columns:1fr 1fr !important}
-  .events-grid{grid-template-columns:1fr !important}
-  .posts-grid{grid-template-columns:1fr !important}
-  .template-grid{grid-template-columns:1fr 1fr !important}
-  .seb{flex-direction:column;gap:10px;align-items:flex-start}
-  .seb > div:last-child{width:100%;justify-content:flex-start}
-  .link-row{flex-wrap:wrap}
-  .link-box{min-width:0;width:100%}
-  .qr-wrap{flex-direction:column}
-  #design-preview{height:150px}
-  .mod-filters{gap:6px}
-  .filter-btn{padding:5px 10px;font-size:12px}
-  /* Guest design preview hidden on mobile */
-  #gd-content > div{grid-template-columns:1fr !important}
-  #gd-preview{display:none}
-  /* Pin lock */
-  .pin-lock{padding:24px}
-  .pin-input{width:100%;font-size:20px}
+html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;font-family:'DM Sans',sans-serif}
+:root{
+  --bg:#07070f; --accent:#f0176f; --txt:#ffffff; --gold:#f5a623;
+  --bubble-bg:#ffffff; --bubble-txt:#1a1a1a; --header-bg:#0c0c14;
+  --font-title:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+  --fs-title:22px; --bubble-radius:28px;
 }
 
-@media(max-width:480px){
-  .main{padding:16px 12px}
-  .card{padding:16px}
-  .btn-pink,.btn-ghost{padding:10px 16px;font-size:13px}
-  .post-actions{flex-wrap:wrap}
-  .event-stats{gap:6px}
-  .estat-num{font-size:15px}
-}
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:var(--header-bg);border-bottom:1px solid rgba(255,255,255,0.06);height:68px;position:relative;z-index:10}
+.ev-name{font-family:var(--font-title);font-size:var(--fs-title);font-weight:800;color:var(--txt)}
+.ev-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
+.live-pill{display:flex;align-items:center;gap:6px;background:rgba(240,23,111,0.15);border:1px solid rgba(240,23,111,0.35);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px}
+.live-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.counter-pills{display:flex;gap:8px}
+.cpill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);padding:5px 12px;border-radius:20px;font-size:12px;color:rgba(255,255,255,0.7)}
+.cpill span{color:var(--accent);font-weight:700}
+
+/* MAIN LAYOUT */
+.grid{display:grid;grid-template-columns:1fr 180px;height:calc(100vh - 68px);overflow:hidden}
+
+/* FEATURED */
+.featured-side{position:relative;overflow:hidden;background:#000}
+.featured-img{width:100%;height:100%;object-fit:contain;display:block;transition:opacity 0.8s ease;position:absolute;inset:0;background:#000}
+.featured-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px 28px;background:linear-gradient(transparent,rgba(0,0,0,0.85));z-index:2;display:none}
+.featured-caption{font-family:var(--font-title);font-size:20px;font-weight:700;line-height:1.4;margin-bottom:6px;color:var(--txt)}
+.featured-author{font-size:13px;color:var(--accent);font-weight:600}
+.no-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:rgba(255,255,255,0.2);z-index:1}
+.no-content .big{font-size:64px}
+
+/* REACTION OVERLAY */
+.reaction-overlay{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+.floating-emoji{position:absolute;font-size:40px;animation:floatUp 2.5s ease-out forwards;pointer-events:none}
+@keyframes floatUp{0%{transform:translateY(0) scale(0.5);opacity:1}100%{transform:translateY(-90%) scale(0.8);opacity:0}}
+.reaction-bar{position:absolute;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:center;padding:10px;gap:8px;background:linear-gradient(transparent,rgba(0,0,0,0.75))}
+.react-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:7px 14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:5px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px}
+.react-btn:hover{background:rgba(255,255,255,0.25);transform:scale(1.1)}
+.react-btn .cnt{font-size:11px;font-weight:700;color:rgba(255,255,255,0.8)}
+.reaction-toast{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:8px 18px;font-size:14px;color:#fff;white-space:nowrap;display:none;z-index:15}
+.new-badge{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;display:none;z-index:20;pointer-events:none;animation:badgePop 0.4s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes badgePop{from{transform:translateX(-50%) scale(0.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+
+/* SIDEBAR */
+.sidebar{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(0,0,0,0.3);overflow:hidden;min-height:0}
+.qr-section{padding:16px;margin-top:auto}
+.qr-inner{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.qr-box{background:#fff;padding:10px;border-radius:10px}
+.qr-text{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.6}
+.qr-text strong{color:rgba(255,255,255,0.8);display:block;font-size:12px;margin-bottom:2px}
+
+/* MESSAGE BUBBLE OVERLAY */
+@keyframes bubbleIn{from{transform:scale(0.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+@keyframes bubbleOut{from{transform:scale(1);opacity:1}to{transform:scale(0.8) translateY(-20px);opacity:0}}
+
+/* WISH OVERLAY */
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+@keyframes particleFly{0%{transform:translateY(100vh) rotate(0deg);opacity:1}100%{transform:translateY(-20vh) rotate(720deg);opacity:0}}
+@keyframes wishTextIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* POLL SCREEN */
+.sbar-wrap{background:rgba(255,255,255,0.06);border-radius:12px;padding:16px 20px;margin-bottom:12px}
+.sbar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sbar-label{font-size:16px;font-weight:600;color:#fff}
+.sbar-count{font-size:14px;font-weight:700;color:var(--accent)}
+.sbar-bg{background:rgba(255,255,255,0.08);border-radius:8px;height:14px;overflow:hidden}
+.sbar-fill{height:100%;border-radius:8px;background:var(--accent);transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1)}
+.sbar-fill.winner{background:var(--gold)}
+
+/* LOADING */
+.screen-loading{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;color:rgba(255,255,255,0.4)}
+.spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LIGHT THEME */
+body.theme-light .sidebar{background:rgba(0,0,0,0.06);border-left-color:rgba(0,0,0,0.1)}
+body.theme-light .cpill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.7)}
+body.theme-light .qr-text{color:rgba(0,0,0,0.4)}
+body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 </style>
 </head>
 <body>
 
-<!-- PIN LOCK -->
-<div class="pin-lock" id="pin-lock">
-  <div style="font-size:40px">🔒</div>
-  <h2>EventWall Admin</h2>
-  <p>Ingresá el PIN de acceso</p>
-  <input type="password" class="pin-input" id="pin-input" maxlength="20" placeholder="••••••••" onkeydown="if(event.key==='Enter')submitPin()"/>
-  <button onclick="submitPin()" style="background:var(--pink);color:#fff;border:none;padding:12px 32px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:4px">Ingresar →</button>
-  <div class="pin-error" id="pin-error">PIN incorrecto. Intentá de nuevo.</div>
-  <div style="font-size:12px;color:var(--muted);margin-top:8px">PIN por defecto: <strong style="color:var(--pink)">1234</strong></div>
+<div id="loading" class="screen-loading">
+  <div class="spinner"></div>
+  <p>Cargando evento...</p>
 </div>
 
-<div id="main-app" style="display:none">
-<!-- MOBILE HEADER -->
-<div class="mobile-header" id="mobile-header">
-  <div class="logo">Event<span>Wall</span></div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <span id="mob-event-badge" style="font-size:11px;color:var(--pink);font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
-    <button class="hamburger" onclick="toggleSidebar()">☰</button>
-  </div>
-</div>
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
-<div class="shell">
-  <nav class="sidebar">
-    <div class="logo">Event<span>Wall</span></div>
-    <button class="nav-btn active" onclick="goNav('events')">🗓 Eventos</button>
-    <button class="nav-btn" onclick="goNav('new-event')">➕ Nuevo evento</button>
-    <div class="nav-sep"></div>
-
-    <button class="nav-btn" onclick="goNav('links')">🔗 Links & QR</button>
-    <button class="nav-btn" onclick="goNav('design')">🎨 Diseño</button>
-    <button class="nav-btn" onclick="goNav('album')">📥 Álbum</button>
-    <div class="nav-sep"></div>
-    <button class="nav-btn" onclick="goNav('print')">🖨 Modo impresión</button>
-    <button class="nav-btn" onclick="goNav('polls')">🗳 Votaciones</button>
-    <button class="nav-btn" onclick="goNav('guest-design')">📱 Vista invitado</button>
-    <button class="nav-btn" onclick="goNav('settings')">⚙️ Configuración</button>
-    <div style="margin-top:auto;font-size:11px;color:var(--muted);padding:10px 14px">
-      Evento activo:<br>
-      <span id="sidebar-event" style="color:var(--pink);font-weight:600">Ninguno</span>
-      <button onclick="logout()" style="display:block;width:100%;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left;transition:all 0.2s;margin-top:12px" onmouseenter="this.style.borderColor='#ef4444';this.style.color='#ef4444'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">🚪 Cerrar sesión</button>
+<!-- POLL OVERLAY -->
+<div id="poll-overlay" style="position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(7,7,15,0.96);padding:40px">
+  <div style="width:100%;max-width:700px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">🗳 VOTACIÓN EN VIVO</div>
+      <div id="poll-screen-question" style="font-family:var(--font-title);font-size:clamp(20px,3.5vw,36px);font-weight:800;color:#fff;line-height:1.3"></div>
     </div>
-  </nav>
-  <main class="main">
-
-    <!-- EVENTS -->
-    <div class="page active" id="page-events">
-      <div class="page-title">Mis eventos</div>
-      <div class="page-sub">Seleccioná un evento para trabajar con él</div>
-      <button class="btn-pink" onclick="goNav('new-event')" style="margin-bottom:20px">+ Crear nuevo evento</button>
-      <div class="events-grid" id="events-list"><div class="empty"><div class="empty-ico">⏳</div><div class="empty-txt">Cargando...</div></div></div>
-    </div>
-
-    <!-- NEW EVENT -->
-    <div class="page" id="page-new-event">
-      <div class="page-title">Crear evento</div>
-      <div class="page-sub">Completá los datos del evento</div>
-      <div class="card">
-        <div class="card-title">Datos del evento</div>
-        <div class="fg"><div><label>Nombre *</label><input type="text" id="ev-name" placeholder="Boda de Caro & Pablo"/></div><div><label>Fecha</label><input type="date" id="ev-date"/></div></div>
-        <div class="fg full"><div><label>Subtítulo</label><input type="text" id="ev-subtitle" placeholder="Salón La Armonía · 20hs"/></div></div>
-        <div class="fg full" style="margin-bottom:0">
-          <div>
-            <label>Email del cliente</label>
-            <input type="email" id="ev-email" placeholder="cliente@email.com"/>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">Al eliminar el evento se enviará el álbum completo a este email</div>
-          </div>
-        </div>
-        <div class="fg">
-          <div>
-            <label>PIN del cliente</label>
-            <div style="display:flex;gap:8px">
-              <input type="text" id="ev-pin" placeholder="Ej: 4892" maxlength="20" style="flex:1"/>
-              <button type="button" onclick="generatePin()" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0 14px;cursor:pointer;color:var(--muted);font-size:13px;white-space:nowrap">🎲 Auto</button>
-            </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">El cliente usa este PIN. Vos usás tu PIN maestro.</div>
-          </div>
-          <div>
-            <label>Duración del acceso</label>
-            <select id="ev-pin-duration">
-              <option value="0">Sin vencimiento</option>
-              <option value="6">6 horas</option>
-              <option value="12" selected>12 horas</option>
-              <option value="24">24 horas</option>
-              <option value="48">48 horas</option>
-              <option value="72">72 horas (3 días)</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn-pink" id="create-btn" onclick="evCreate()">Crear evento →</button>
-      </div>
-    </div>
-
-
-
-    <!-- LINKS -->
-    <div class="page" id="page-links">
-      <div class="page-title">Links & QR</div>
-      <div class="page-sub">Compartí con tu equipo e invitados</div>
-      <div class="notice" id="links-notice">⚠️ Seleccioná un evento primero</div>
-      <div id="links-content" style="display:none">
-        <div class="card">
-          <div class="card-title">Código del evento</div>
-          <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;padding:20px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)">
-            <div style="text-align:center">
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Código</div>
-              <div id="event-code-display" style="font-family:monospace;font-size:52px;font-weight:800;color:var(--pink);letter-spacing:8px;line-height:1">—</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:8px">Escribí este código en el TV</div>
-            </div>
-            <div style="flex:1;border-left:1px solid var(--border);padding-left:20px">
-              <div style="font-size:13px;color:var(--muted);line-height:1.8">
-                En el televisor abrí el navegador y escribí:<br>
-                <span id="screen-short-url" style="font-family:monospace;font-size:14px;color:var(--text);background:var(--surface);padding:4px 10px;border-radius:6px;display:inline-block;margin-top:6px"></span>
-              </div>
-              <button class="copy-btn" style="margin-top:12px" onclick="copyText(document.getElementById('link-screen').textContent)">Copiar URL pantalla</button>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">URLs del evento</div>
-          <div class="link-row"><span class="link-label">📺 Pantalla</span><div class="link-box" id="link-screen">—</div><button class="copy-btn" onclick="copyLink('link-screen')">Copiar</button></div>
-          <div class="link-row"><span class="link-label">📱 Invitados</span><div class="link-box" id="link-guest">—</div><button class="copy-btn" onclick="copyLink('link-guest')">Copiar</button></div>
-        </div>
-        <div class="card">
-          <div class="card-title">QR para imprimir</div>
-          <div class="qr-wrap">
-            <div class="qr-box"><div id="qr-container"></div></div>
-            <div>
-              <p style="font-size:13px;color:var(--muted);line-height:1.7;max-width:300px">Poné este QR en cada mesa. Los invitados lo escanean y participan al instante.</p>
-              <button class="btn-pink" style="margin-top:14px" onclick="downloadQR()">⬇ Descargar QR</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DESIGN -->
-    <div class="page" id="page-design">
-  <div class="page-title">Diseño de pantalla</div>
-  <div class="page-sub">Personalizá cómo se ve la pantalla del evento</div>
-  <div class="notice" id="design-notice">⚠️ Seleccioná un evento primero</div>
-
-  <div id="design-content" style="display:none">
-
-    <!-- LAYOUT: editor + preview side by side -->
-    <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start">
-
-      <!-- LEFT: TABBED EDITOR -->
-      <div>
-        <!-- TAB BUTTONS -->
-        <div style="display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="dtab active" onclick="switchDesignTab('plantillas',this)">🎨 Plantillas</button>
-          <button class="dtab" onclick="switchDesignTab('colores',this)">🖌 Colores</button>
-          <button class="dtab" onclick="switchDesignTab('tipografia',this)">🔤 Tipografía</button>
-          <button class="dtab" onclick="switchDesignTab('layout',this)">📐 Layout</button>
-          <button class="dtab" onclick="switchDesignTab('burbuja',this)">💬 Burbuja</button>
-          <button class="dtab" onclick="switchDesignTab('extras',this)">✨ Extras</button>
-        </div>
-
-        <!-- TAB: PLANTILLAS -->
-        <div class="dtab-panel active" id="dtab-plantillas">
-          <div class="card">
-            <div class="card-title">🎨 Plantillas rápidas</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Empezá con una plantilla y luego personalizá los detalles</p>
-            <div class="template-grid">
-              <div class="tpl-card tpl-dark" onclick="applyTemplate('dark',this)">
-                <div class="tpl-preview" style="background:#07070f;border:2px solid #f0176f"></div>
-                <div class="tpl-name">Dark</div>
-              </div>
-              <div class="tpl-card tpl-light" onclick="applyTemplate('light',this)">
-                <div class="tpl-preview" style="background:#f5f5f0;border:2px solid #e91e8c"></div>
-                <div class="tpl-name">Light</div>
-              </div>
-              <div class="tpl-card tpl-neon" onclick="applyTemplate('neon',this)">
-                <div class="tpl-preview" style="background:#0a0015;border:2px solid #a855f7"></div>
-                <div class="tpl-name">Neon</div>
-              </div>
-              <div class="tpl-card tpl-floral" onclick="applyTemplate('floral',this)">
-                <div class="tpl-preview" style="background:#1a0a14;border:2px solid #ff6b9d"></div>
-                <div class="tpl-name">Floral</div>
-              </div>
-              <div class="tpl-card tpl-gold" onclick="applyTemplate('gold',this)">
-                <div class="tpl-preview" style="background:#0d0900;border:2px solid #f5a623"></div>
-                <div class="tpl-name">Gold</div>
-              </div>
-              <div class="tpl-card tpl-ocean" onclick="applyTemplate('ocean',this)">
-                <div class="tpl-preview" style="background:#0a1628;border:2px solid #60a5fa"></div>
-                <div class="tpl-name">Ocean</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB: COLORES -->
-        <div class="dtab-panel" id="dtab-colores">
-          <div class="card">
-            <div class="card-title">🖌 Colores</div>
-            <div class="design-grid">
-              <div class="design-field">
-                <label>Fondo de pantalla</label>
-                <div class="color-pick-row">
-                  <input type="color" id="c-bg" value="#07070f" oninput="syncColorFromHex('c-bg','c-bg-hex');previewTheme()"/>
-                  <input type="text" id="c-bg-hex" value="#07070F" class="hex-input" oninput="syncColorFromHex('c-bg','c-bg-hex');previewTheme()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Color de acento</label>
-                <div class="color-pick-row">
-                  <input type="color" id="c-accent" value="#f0176f" oninput="syncColorFromHex('c-accent','c-accent-hex');previewTheme()"/>
-                  <input type="text" id="c-accent-hex" value="#F0176F" class="hex-input" oninput="syncColorFromHex('c-accent','c-accent-hex');previewTheme()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Texto principal</label>
-                <div class="color-pick-row">
-                  <input type="color" id="c-text" value="#ffffff" oninput="syncColorFromHex('c-text','c-text-hex');previewTheme()"/>
-                  <input type="text" id="c-text-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('c-text','c-text-hex');previewTheme()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Header</label>
-                <div class="color-pick-row">
-                  <input type="color" id="c-header" value="#0c0c14" oninput="syncColorFromHex('c-header','c-header-hex');previewTheme()"/>
-                  <input type="text" id="c-header-hex" value="#0C0C14" class="hex-input" oninput="syncColorFromHex('c-header','c-header-hex');previewTheme()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Burbuja de mensaje</label>
-                <div class="color-pick-row">
-                  <input type="color" id="c-bubble" value="#ffffff" oninput="syncColorFromHex('c-bubble','c-bubble-hex');previewTheme()"/>
-                  <input type="text" id="c-bubble-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('c-bubble','c-bubble-hex');previewTheme()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Texto de burbuja</label>
-                <div class="color-pick-row">
-                  <input type="color" id="c-bubble-text" value="#1a1a1a" oninput="syncColorFromHex('c-bubble-text','c-bubble-text-hex');previewTheme()"/>
-                  <input type="text" id="c-bubble-text-hex" value="#1A1A1A" class="hex-input" oninput="syncColorFromHex('c-bubble-text','c-bubble-text-hex');previewTheme()"/>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB: TIPOGRAFIA -->
-        <div class="dtab-panel" id="dtab-tipografia">
-          <div class="card">
-            <div class="card-title">🔤 Tipografía</div>
-            <div class="design-grid">
-              <div class="design-field">
-                <label>Fuente de títulos</label>
-                <select id="f-title" onchange="previewTheme();loadGoogleFont(this.value)">
-                  <option value="Syne">Syne</option>
-                  <option value="Playfair Display">Playfair Display</option>
-                  <option value="Oswald">Oswald</option>
-                  <option value="Bebas Neue">Bebas Neue</option>
-                  <option value="Montserrat">Montserrat</option>
-                  <option value="Raleway">Raleway</option>
-                  <option value="Dancing Script">Dancing Script</option>
-                  <option value="Great Vibes">Great Vibes</option>
-                  <option value="Pacifico">Pacifico</option>
-                  <option value="Lobster">Lobster</option>
-                  <option value="Anton">Anton</option>
-                  <option value="Righteous">Righteous</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Fuente de texto</label>
-                <select id="f-body" onchange="previewTheme();loadGoogleFont(this.value)">
-                  <option value="DM Sans">DM Sans</option>
-                  <option value="Inter">Inter</option>
-                  <option value="Lato">Lato</option>
-                  <option value="Nunito">Nunito</option>
-                  <option value="Poppins">Poppins</option>
-                  <option value="Quicksand">Quicksand</option>
-                  <option value="Source Sans 3">Source Sans 3</option>
-                  <option value="Ubuntu">Ubuntu</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Tamaño nombre del evento</label>
-                <div style="display:flex;align-items:center;gap:10px">
-                  <input type="range" id="fs-title" min="14" max="40" value="22" oninput="previewTheme();document.getElementById('fs-title-val').textContent=this.value+'px'" style="flex:1"/>
-                  <span id="fs-title-val" style="font-size:12px;color:var(--muted);min-width:36px">22px</span>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Tamaño texto burbuja</label>
-                <div style="display:flex;align-items:center;gap:10px">
-                  <input type="range" id="fs-bubble" min="16" max="60" value="32" oninput="document.getElementById('fs-bubble-val').textContent=this.value+'px'" style="flex:1"/>
-                  <span id="fs-bubble-val" style="font-size:12px;color:var(--muted);min-width:36px">32px</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB: LAYOUT -->
-        <div class="dtab-panel" id="dtab-layout">
-          <div class="card">
-            <div class="card-title">📐 Layout</div>
-            <div class="design-grid">
-              <div class="design-field">
-                <label>Mostrar header</label>
-                <select id="cfg-show-header">
-                  <option value="yes">Visible</option>
-                  <option value="no">Oculto (pantalla completa)</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Ajuste de foto</label>
-                <select id="cfg-fit">
-                  <option value="contain">Completa (contain)</option>
-                  <option value="cover">Recortada (cover)</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Ancho del sidebar</label>
-                <select id="cfg-sidebar-width">
-                  <option value="180">Angosto (180px)</option>
-                  <option value="240">Normal (240px)</option>
-                  <option value="0">Sin sidebar</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Tamaño del QR</label>
-                <select id="cfg-qr-size">
-                  <option value="120">Grande (120px)</option>
-                  <option value="80">Mediano (80px)</option>
-                  <option value="60">Pequeño (60px)</option>
-                  <option value="0">Ocultar QR</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Texto bajo el QR</label>
-                <input type="text" id="cfg-qr-text" placeholder="Escaneá para participar"/>
-              </div>
-              <div class="design-field">
-                <label>Mostrar contadores</label>
-                <select id="cfg-show-counters">
-                  <option value="yes">Visibles</option>
-                  <option value="no">Ocultos</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Mostrar reacciones</label>
-                <select id="cfg-show-reactions">
-                  <option value="yes">Visibles</option>
-                  <option value="no">Ocultas</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Tiempo entre fotos (seg)</label>
-                <input type="number" id="cfg-interval" value="6" min="3" max="60"/>
-              </div>
-              <div class="design-field">
-                <label>Transición entre fotos</label>
-                <select id="cfg-transition">
-                  <option value="fade">Fade suave</option>
-                  <option value="slide">Deslizar</option>
-                  <option value="zoom">Zoom</option>
-                  <option value="none">Sin transición</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Sonido al recibir contenido</label>
-                <select id="cfg-sound">
-                  <option value="chime">Campanita 🔔</option>
-                  <option value="pop">Pop suave 💫</option>
-                  <option value="none">Sin sonido</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB: BURBUJA -->
-        <div class="dtab-panel" id="dtab-burbuja">
-          <div class="card">
-            <div class="card-title">💬 Estilo de burbuja</div>
-            <div class="design-grid">
-              <div class="design-field">
-                <label>Radio de burbuja</label>
-                <div style="display:flex;align-items:center;gap:10px">
-                  <input type="range" id="cfg-radius" min="0" max="48" value="28" oninput="previewTheme();document.getElementById('cfg-radius-val').textContent=this.value+'px'" style="flex:1"/>
-                  <span id="cfg-radius-val" style="font-size:12px;color:var(--muted);min-width:36px">28px</span>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Opacidad overlay foto</label>
-                <div style="display:flex;align-items:center;gap:10px">
-                  <input type="range" id="cfg-overlay" min="0" max="95" value="60" oninput="document.getElementById('cfg-overlay-val').textContent=this.value+'%'" style="flex:1"/>
-                  <span id="cfg-overlay-val" style="font-size:12px;color:var(--muted);min-width:36px">60%</span>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Sombra de burbuja</label>
-                <select id="cfg-shadow">
-                  <option value="heavy">Intensa</option>
-                  <option value="soft">Suave</option>
-                  <option value="none">Sin sombra</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Posición de burbuja</label>
-                <select id="cfg-bubble-pos">
-                  <option value="center">Centro</option>
-                  <option value="bottom">Abajo</option>
-                  <option value="top">Arriba</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Mostrar cola de burbuja</label>
-                <select id="cfg-bubble-tail">
-                  <option value="yes">Sí</option>
-                  <option value="no">No</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Ícono de burbuja</label>
-                <select id="cfg-bubble-icon">
-                  <option value="random">Aleatorio 🎲</option>
-                  <option value="fixed">Fijo 💬</option>
-                  <option value="none">Sin ícono</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB: EXTRAS -->
-        <div class="dtab-panel" id="dtab-extras">
-          <div class="card">
-            <div class="card-title">✨ Extras visuales</div>
-            <div class="design-grid">
-              <div class="design-field">
-                <label>Ticker inferior</label>
-                <input type="text" id="cfg-ticker" placeholder="Texto desplazante... (vacío = oculto)"/>
-              </div>
-              <div class="design-field">
-                <label>Color del ticker</label>
-                <div class="color-pick-row">
-                  <input type="color" id="cfg-ticker-color" value="#f0176f" oninput="syncColorFromHex('cfg-ticker-color','cfg-ticker-color-hex')"/>
-                  <input type="text" id="cfg-ticker-color-hex" value="#F0176F" class="hex-input"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Imagen de fondo (URL)</label>
-                <input type="text" id="cfg-bg-image" placeholder="https://... (opcional)"/>
-              </div>
-              <div class="design-field">
-                <label>Opacidad imagen de fondo</label>
-                <div style="display:flex;align-items:center;gap:10px">
-                  <input type="range" id="cfg-bg-opacity" min="5" max="100" value="30" oninput="document.getElementById('cfg-bg-opacity-val').textContent=this.value+'%'" style="flex:1"/>
-                  <span id="cfg-bg-opacity-val" style="font-size:12px;color:var(--muted);min-width:36px">30%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SAVE BUTTONS - always visible -->
-        <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
-          <button class="btn-pink" onclick="saveDesign()">💾 Guardar diseño</button>
-          <button class="btn-ghost" onclick="resetDesign()">↺ Resetear</button>
-        </div>
-      </div>
-
-      <!-- RIGHT: LIVE PREVIEW -->
-      <div style="position:sticky;top:20px">
-        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Vista previa en vivo</div>
-        <div id="design-preview" style="border-radius:16px;overflow:hidden;border:1px solid var(--border);background:#07070f;aspect-ratio:16/9;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.4)">
-          <!-- header preview -->
-          <div id="prev-header" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#0c0c14;border-bottom:1px solid rgba(255,255,255,0.06)">
-            <div>
-              <div id="prev-ev-name" style="font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff">Nombre del evento</div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.4)">Fecha · Lugar</div>
-            </div>
-            <div id="prev-live" style="display:flex;align-items:center;gap:3px;background:rgba(240,23,111,0.15);border:1px solid rgba(240,23,111,0.35);padding:3px 7px;border-radius:10px;font-size:7px;font-weight:700;color:#f0176f;letter-spacing:1px">
-              <div style="width:4px;height:4px;background:#f0176f;border-radius:50%"></div>EN VIVO
-            </div>
-          </div>
-          <!-- main area -->
-          <div style="display:grid;grid-template-columns:1fr 50px;height:calc(100% - 36px)">
-            <div style="background:#111;position:relative;display:flex;align-items:center;justify-content:center">
-              <div style="color:rgba(255,255,255,0.15);font-size:24px">📸</div>
-              <!-- Sample bubble preview -->
-              <div id="prev-bubble" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:#fff;border-radius:16px;padding:8px 14px;max-width:80%;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.4)">
-                <div style="font-size:10px;margin-bottom:3px">💬</div>
-                <div id="prev-bubble-text" style="font-size:9px;font-weight:800;color:#1a1a1a;font-family:'Syne',sans-serif">¡Vivan los novios! 🎉</div>
-                <div style="font-size:7px;color:#888;margin-top:2px">— María</div>
-              </div>
-            </div>
-            <!-- sidebar preview -->
-            <div id="prev-sidebar" style="background:rgba(0,0,0,0.3);border-left:1px solid rgba(255,255,255,0.06);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px">
-              <div style="background:#fff;padding:4px;border-radius:4px;width:36px;height:36px"></div>
-            </div>
-          </div>
-        </div>
-        <!-- Preview color swatches -->
-        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
-          <div style="font-size:11px;color:var(--muted)">Colores activos:</div>
-          <div id="swatch-bg" style="width:16px;height:16px;border-radius:4px;border:1px solid var(--border);background:#07070f" title="Fondo"></div>
-          <div id="swatch-accent" style="width:16px;height:16px;border-radius:4px;background:#f0176f" title="Acento"></div>
-          <div id="swatch-bubble" style="width:16px;height:16px;border-radius:4px;border:1px solid var(--border);background:#ffffff" title="Burbuja"></div>
-          <div id="swatch-header" style="width:16px;height:16px;border-radius:4px;background:#0c0c14" title="Header"></div>
-        </div>
-      </div>
-
-    </div><!-- end grid -->
-  </div><!-- end design-content -->
-</div>
-
-
-
-    <!-- ALBUM -->
-    <div class="page" id="page-album">
-      <div class="page-title">Álbum de fotos</div>
-      <div class="page-sub">Todas las fotos aprobadas del evento</div>
-      <div class="notice" id="album-notice">⚠️ Seleccioná un evento primero</div>
-      <div id="album-content" style="display:none">
-        <div class="card" style="margin-bottom:16px">
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-            <div>
-              <div id="album-ev-name" style="font-size:18px;font-weight:700;color:var(--text)">—</div>
-              <div id="album-ev-sub" style="font-size:13px;color:var(--muted)">—</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:12px">
-              <span id="album-count" style="font-size:13px;color:var(--muted)">0 fotos</span>
-              <button class="btn-pink" onclick="downloadAllPhotos()">⬇ Descargar todas</button>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div id="album-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRINT -->
-    <div class="page" id="page-print">
-      <div class="page-title">Modo impresión</div>
-      <div class="page-sub">Generá hojas para imprimir con el QR del evento</div>
-      <div class="notice" id="print-notice">⚠️ Seleccioná un evento primero</div>
-      <div id="print-content" style="display:none">
-        <div class="card" style="margin-bottom:16px">
-          <div class="card-title">⚙️ Opciones de impresión</div>
-          <div class="fg">
-            <div>
-              <label>Estilo</label>
-              <select id="print-style">
-                <option value="qr-only">Solo QR</option>
-                <option value="with-title">QR + título del evento</option>
-                <option value="full" selected>QR + título + instrucciones</option>
-                <option value="table">Para mesa (compacto)</option>
-              </select>
-            </div>
-            <div>
-              <label>Cantidad por hoja</label>
-              <select id="print-qty">
-                <option value="1">1 por hoja</option>
-                <option value="2" selected>2 por hoja</option>
-                <option value="4">4 por hoja</option>
-              </select>
-            </div>
-          </div>
-          <div style="margin-top:12px">
-            <label>Mensaje personalizado (opcional)</label>
-            <input type="text" id="print-msg" placeholder="Ej: Escaneá y subí tu foto al mural 📸"/>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:16px">
-            <button class="btn-pink" onclick="printCards()">🖨 Imprimir</button>
-            <button class="btn-ghost" onclick="previewPrint()">👁 Vista previa</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">Vista previa</div>
-          <div id="print-preview-area" style="background:#f5f5f0;border-radius:10px;padding:20px;min-height:200px;display:flex;align-items:center;justify-content:center;color:#aaa">
-            <div style="text-align:center"><div style="font-size:32px;margin-bottom:8px">🖨</div>Hacé click en "Vista previa" para ver el resultado</div>
-          </div>
-          <div id="print-sub" style="font-size:12px;color:var(--muted);margin-top:10px"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- POLLS -->
-    <div class="page" id="page-polls">
-      <div class="page-title">Votaciones</div>
-      <div class="page-sub">Creá y gestioná votaciones en tiempo real</div>
-      <div class="notice" id="polls-notice">⚠️ Seleccioná un evento primero</div>
-      <div id="polls-content" style="display:none">
-        <div class="card" style="margin-bottom:16px">
-          <div class="card-title">Nueva votación</div>
-          <div class="fg" style="margin-bottom:12px">
-            <div><label>Pregunta</label><input type="text" id="poll-question" placeholder="Ej: ¿Cuál es tu canción favorita de la noche?"/></div>
-            <div><label>Duración</label>
-              <select id="poll-duration">
-                <option value="0">Sin límite de tiempo</option>
-                <option value="30">30 segundos</option>
-                <option value="60">1 minuto</option>
-                <option value="120">2 minutos</option>
-                <option value="180">3 minutos</option>
-                <option value="300">5 minutos</option>
-                <option value="600">10 minutos</option>
-              </select>
-            </div>
-          </div>
-          <label style="margin-bottom:8px;display:block">Opciones (mínimo 2)</label>
-          <div id="poll-options-list">
-            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="Opción 1"/></div>
-            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="Opción 2"/></div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
-            <button class="btn-ghost" onclick="addPollOption()">+ Opción</button>
-            <button class="btn-pink" onclick="createPoll()">🗳 Crear votación</button>
-          </div>
-        </div>
-        <div id="polls-list"></div>
-      </div>
-    </div>
-
-    <!-- GUEST DESIGN -->
-    <div class="page" id="page-guest-design">
-  <div class="page-title">Vista del invitado</div>
-  <div class="page-sub">Personalizá cómo ven la app los invitados en su celular</div>
-  <div class="notice" id="gd-notice">⚠️ Seleccioná un evento primero</div>
-
-  <div id="gd-content" style="display:none">
-    <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start">
-
-      <!-- LEFT: TABBED EDITOR -->
-      <div>
-        <!-- TABS -->
-        <div style="display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="dtab active" onclick="switchGDTab('textos',this)">✏️ Textos</button>
-          <button class="dtab" onclick="switchGDTab('colores',this)">🎨 Colores</button>
-          <button class="dtab" onclick="switchGDTab('estilo',this)">🔤 Estilo</button>
-          <button class="dtab" onclick="switchGDTab('opciones',this)">⚙️ Funciones</button>
-        </div>
-
-        <!-- TAB: TEXTOS -->
-        <div class="dtab-panel active" id="gdtab-textos">
-          <div class="card">
-            <div class="card-title">✏️ Textos</div>
-            <div style="display:flex;flex-direction:column;gap:12px">
-              <div>
-                <label>Título del evento</label>
-                <input type="text" id="gd-title" placeholder="Se usa el nombre del evento por defecto" oninput="updateGuestPreview()"/>
-                <div style="font-size:11px;color:var(--muted);margin-top:4px">Dejá vacío para usar el nombre del evento automáticamente</div>
-              </div>
-              <div>
-                <label>Subtítulo</label>
-                <input type="text" id="gd-subtitle" placeholder="Fecha y lugar (automático)" oninput="updateGuestPreview()"/>
-              </div>
-              <div>
-                <label>Mensaje de bienvenida</label>
-                <input type="text" id="gd-welcome" placeholder="Compartí tu momento con todos 📷" oninput="updateGuestPreview()"/>
-              </div>
-              <div>
-                <label>Texto del botón de envío</label>
-                <input type="text" id="gd-btn-text" placeholder="Enviar a la pantalla ✨" oninput="updateGuestPreview()"/>
-              </div>
-              <div>
-                <label>Mostrar logo "EventWall"</label>
-                <select id="gd-show-logo" onchange="updateGuestPreview()">
-                  <option value="yes">Visible</option>
-                  <option value="no">Oculto</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB: COLORES -->
-        <div class="dtab-panel" id="gdtab-colores">
-          <div class="card">
-            <div class="card-title">🎨 Colores</div>
-            <!-- QUICK PALETTES -->
-            <div style="margin-bottom:16px">
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Paletas rápidas</div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button onclick="applyGDPalette('dark')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#07070f;color:#f0176f;font-size:12px;cursor:pointer;font-family:inherit">Dark</button>
-                <button onclick="applyGDPalette('light')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#faf8f6;color:#e91e8c;font-size:12px;cursor:pointer;font-family:inherit">Light</button>
-                <button onclick="applyGDPalette('rose')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#fff0f5;color:#e91e8c;font-size:12px;cursor:pointer;font-family:inherit">Rosa</button>
-                <button onclick="applyGDPalette('gold')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#fffbf0;color:#d97706;font-size:12px;cursor:pointer;font-family:inherit">Dorado</button>
-                <button onclick="applyGDPalette('ocean')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#f0f7ff;color:#2563eb;font-size:12px;cursor:pointer;font-family:inherit">Ocean</button>
-                <button onclick="applyGDPalette('neon')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#0a0015;color:#a855f7;font-size:12px;cursor:pointer;font-family:inherit">Neon</button>
-              </div>
-            </div>
-            <div class="design-grid">
-              <div class="design-field">
-                <label>Fondo de la app</label>
-                <div class="color-pick-row">
-                  <input type="color" id="gd-bg" value="#faf8f6" oninput="syncGDHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
-                  <input type="text" id="gd-bg-hex" value="#FAF8F6" class="hex-input" oninput="syncColorFromHex('gd-bg','gd-bg-hex');updateGuestPreview()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Color de acento</label>
-                <div class="color-pick-row">
-                  <input type="color" id="gd-accent" value="#f0176f" oninput="syncGDHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
-                  <input type="text" id="gd-accent-hex" value="#F0176F" class="hex-input" oninput="syncColorFromHex('gd-accent','gd-accent-hex');updateGuestPreview()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Fondo del hero</label>
-                <div class="color-pick-row">
-                  <input type="color" id="gd-hero" value="#0c0c0f" oninput="syncGDHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
-                  <input type="text" id="gd-hero-hex" value="#0C0C0F" class="hex-input" oninput="syncColorFromHex('gd-hero','gd-hero-hex');updateGuestPreview()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Texto del hero</label>
-                <div class="color-pick-row">
-                  <input type="color" id="gd-hero-txt" value="#ffffff" oninput="syncGDHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
-                  <input type="text" id="gd-hero-txt-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('gd-hero-txt','gd-hero-txt-hex');updateGuestPreview()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Texto principal</label>
-                <div class="color-pick-row">
-                  <input type="color" id="gd-text" value="#1a1a1a" oninput="syncGDHex('gd-text','gd-text-hex');updateGuestPreview()"/>
-                  <input type="text" id="gd-text-hex" value="#1A1A1A" class="hex-input" oninput="syncColorFromHex('gd-text','gd-text-hex');updateGuestPreview()"/>
-                </div>
-              </div>
-              <div class="design-field">
-                <label>Fondo de campos</label>
-                <div class="color-pick-row">
-                  <input type="color" id="gd-field-bg" value="#ffffff" oninput="syncGDHex('gd-field-bg','gd-field-bg-hex');updateGuestPreview()"/>
-                  <input type="text" id="gd-field-bg-hex" value="#FFFFFF" class="hex-input" oninput="syncColorFromHex('gd-field-bg','gd-field-bg-hex');updateGuestPreview()"/>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB: ESTILO -->
-        <div class="dtab-panel" id="gdtab-estilo">
-          <div class="card">
-            <div class="card-title">🔤 Tipografía y estilo</div>
-            <div class="design-grid">
-              <div class="design-field">
-                <label>Fuente de títulos</label>
-                <select id="gd-font-title" onchange="updateGuestPreview()">
-                  <option value="Syne">Syne</option>
-                  <option value="Playfair Display">Playfair Display</option>
-                  <option value="Dancing Script">Dancing Script</option>
-                  <option value="Great Vibes">Great Vibes</option>
-                  <option value="Pacifico">Pacifico</option>
-                  <option value="Lobster">Lobster</option>
-                  <option value="Oswald">Oswald</option>
-                  <option value="Bebas Neue">Bebas Neue</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Fuente del cuerpo</label>
-                <select id="gd-font" onchange="updateGuestPreview()">
-                  <option value="DM Sans">DM Sans</option>
-                  <option value="Inter">Inter</option>
-                  <option value="Nunito">Nunito</option>
-                  <option value="Poppins">Poppins</option>
-                  <option value="Quicksand">Quicksand</option>
-                  <option value="Lato">Lato</option>
-                  <option value="Raleway">Raleway</option>
-                  <option value="Montserrat">Montserrat</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Forma de botones</label>
-                <select id="gd-btn-radius" onchange="updateGuestPreview()">
-                  <option value="14">Redondeado</option>
-                  <option value="50">Píldora</option>
-                  <option value="4">Levemente redondeado</option>
-                  <option value="0">Cuadrado</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Estilo de campos</label>
-                <select id="gd-field-radius" onchange="updateGuestPreview()">
-                  <option value="12">Redondeado</option>
-                  <option value="24">Muy redondeado</option>
-                  <option value="4">Levemente redondeado</option>
-                  <option value="0">Cuadrado</option>
-                </select>
-              </div>
-              <div class="design-field">
-                <label>Tamaño base del texto</label>
-                <div style="display:flex;align-items:center;gap:10px">
-                  <input type="range" id="gd-font-size" min="12" max="18" value="15" oninput="updateGuestPreview();document.getElementById('gd-font-size-val').textContent=this.value+'px'" style="flex:1"/>
-                  <span id="gd-font-size-val" style="font-size:12px;color:var(--muted);min-width:36px">15px</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TAB: OPCIONES -->
-        <div class="dtab-panel" id="gdtab-opciones">
-          <div class="card">
-            <div class="card-title">⚙️ Funciones habilitadas</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Elegí qué pueden hacer los invitados</p>
-            <div style="display:flex;flex-direction:column;gap:10px">
-              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-photo" onclick="toggleGDOption('photo')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">📷 Subir fotos</div><div style="font-size:12px;color:var(--muted)">Con marcos, filtros y stickers</div></div></label>
-              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-message" onclick="toggleGDOption('message')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💬 Enviar mensajes</div><div style="font-size:12px;color:var(--muted)">Burbujas personalizadas en pantalla</div></div></label>
-              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-audio" onclick="toggleGDOption('audio')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🎤 Grabar audios</div><div style="font-size:12px;color:var(--muted)">Mensajes de voz en el álbum</div></div></label>
-              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-wish" onclick="toggleGDOption('wish')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💌 Mensajes especiales</div><div style="font-size:12px;color:var(--muted)">Pantalla completa con animación</div></div></label>
-              <label class="toggle-label"><div class="opt-toggle on" id="tog-show-vote" onclick="toggleGDOption('vote')"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗳 Votaciones</div><div style="font-size:12px;color:var(--muted)">Participar en encuestas</div></div></label>
-            </div>
-          </div>
-        </div>
-
-        <!-- SAVE -->
-        <div style="display:flex;gap:10px;margin-top:4px">
-          <button class="btn-pink" onclick="saveGuestDesign()">💾 Guardar y aplicar</button>
-          <button class="btn-ghost" onclick="resetGuestDesign()">↺ Resetear</button>
-        </div>
-      </div>
-
-      <!-- RIGHT: LIVE PHONE PREVIEW -->
-      <div style="position:sticky;top:20px">
-        <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">Vista previa del celular</div>
-        <!-- Phone frame -->
-        <div style="background:#1a1a1a;border-radius:32px;padding:10px;box-shadow:0 16px 48px rgba(0,0,0,0.5);max-width:220px;margin:0 auto">
-          <div style="background:#000;border-radius:24px;overflow:hidden">
-            <!-- Screen -->
-            <div id="gd-preview" style="font-family:'DM Sans',sans-serif;font-size:11px">
-              <!-- hero -->
-              <div id="gd-prev-hero" style="background:#0c0c0f;padding:16px 14px 12px">
-                <div id="gd-prev-logo" style="font-size:8px;font-weight:700;letter-spacing:2px;color:#f0176f;margin-bottom:8px">EVENTWALL</div>
-                <div id="gd-prev-title" style="font-size:14px;font-weight:800;color:#fff;margin-bottom:2px;font-family:'Syne',sans-serif">Nombre del evento</div>
-                <div id="gd-prev-sub" style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:10px">Fecha · Lugar</div>
-                <div id="gd-prev-welcome" style="display:inline-flex;align-items:center;gap:4px;background:rgba(240,23,111,0.18);border:1px solid rgba(240,23,111,0.35);padding:4px 8px;border-radius:12px;font-size:8px;color:rgba(255,255,255,0.8)">📷 Compartí tu momento</div>
-              </div>
-              <!-- stats -->
-              <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #ece8e3" id="gd-prev-stats">
-                <div style="text-align:center;padding:6px 0;background:#fff"><div style="font-size:12px;font-weight:800;color:#f0176f" id="gd-prev-accent1">0</div><div style="font-size:7px;color:#aaa;text-transform:uppercase">Fotos</div></div>
-                <div style="text-align:center;padding:6px 0;background:#fff"><div style="font-size:12px;font-weight:800;color:#f0176f" id="gd-prev-accent2">0</div><div style="font-size:7px;color:#aaa;text-transform:uppercase">Msgs</div></div>
-                <div style="text-align:center;padding:6px 0;background:#fff"><div style="font-size:12px;font-weight:800;color:#f0176f" id="gd-prev-accent3">0</div><div style="font-size:7px;color:#aaa;text-transform:uppercase">Audios</div></div>
-              </div>
-              <!-- body -->
-              <div id="gd-prev-body" style="background:#faf8f6;padding:10px">
-                <div style="font-size:7px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Tu nombre</div>
-                <div class="prev-name-field" style="background:#fff;border:1.5px solid #ece8e3;border-radius:8px;padding:6px 8px;font-size:9px;color:#aaa;margin-bottom:8px">Ej: Valentina García</div>
-                <div style="font-size:7px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">¿Qué querés compartir?</div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:6px" id="gd-prev-btns"></div>
-                <div id="gd-prev-extra-btns"></div>
-                <div id="gd-prev-send-btn" style="background:#f0176f;color:#fff;border-radius:8px;padding:7px;text-align:center;font-size:9px;font-weight:700;margin-top:6px">Enviar a la pantalla ✨</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- Color swatches -->
-        <div style="display:flex;gap:5px;margin-top:12px;justify-content:center;flex-wrap:wrap">
-          <div id="gd-swatch-bg" title="Fondo" style="width:14px;height:14px;border-radius:3px;border:1px solid var(--border);background:#faf8f6"></div>
-          <div id="gd-swatch-accent" title="Acento" style="width:14px;height:14px;border-radius:3px;background:#f0176f"></div>
-          <div id="gd-swatch-hero" title="Hero" style="width:14px;height:14px;border-radius:3px;background:#0c0c0f"></div>
-          <div id="gd-swatch-text" title="Texto" style="width:14px;height:14px;border-radius:3px;border:1px solid var(--border);background:#1a1a1a"></div>
-        </div>
-      </div>
-
+    <div id="poll-screen-bars"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;gap:20px">
+      <div id="poll-screen-total" style="font-size:14px;color:rgba(255,255,255,0.4)"></div>
+      <div id="poll-screen-timer" style="display:none;font-size:56px;font-weight:800;font-family:var(--font-title);min-width:90px;text-align:right;color:var(--accent)"></div>
     </div>
   </div>
 </div>
 
+<!-- MESSAGE BUBBLE OVERLAY -->
+<div id="msg-bubble-overlay" style="position:fixed;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
+  <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:680px;width:90%;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5)">
+    <div id="bubble-tail" style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:24px solid var(--bubble-bg)"></div>
+    <div id="msg-bubble-icon" style="font-size:36px;margin-bottom:14px">💬</div>
+    <div id="msg-bubble-text" style="font-family:var(--font-title);font-size:clamp(18px,3.5vw,38px);font-weight:800;color:var(--bubble-txt);line-height:1.35;margin-bottom:16px"></div>
+    <div id="msg-bubble-author" style="font-size:16px;font-weight:600;color:var(--bubble-txt);opacity:0.55"></div>
+  </div>
+</div>
 
-    <!-- SETTINGS -->
-    <div class="page" id="page-settings">
-      <div class="page-title">Configuración</div>
-      <div class="page-sub">Ajustes generales del panel</div>
-      <div class="card">
-        <div class="card-title">🔒 Cambiar PIN de acceso</div>
-        <div class="fg">
-          <div><label>PIN actual</label><input type="password" id="pin-current" placeholder="••••••••" maxlength="20"/></div>
-          <div><label>PIN nuevo</label><input type="password" id="pin-new" placeholder="••••••••" maxlength="20"/></div>
-        </div>
-        <button class="btn-pink" onclick="changePin()">Cambiar PIN →</button>
+<!-- WISH OVERLAY -->
+<div id="wish-overlay" style="position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;overflow:hidden">
+  <div id="wish-bg" style="position:absolute;inset:0;background:linear-gradient(135deg,#1a0a14,#2d1020,#1a0a14);background-size:400% 400%;animation:gradShift 8s ease infinite"></div>
+  <div id="wish-particles" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+  <div style="position:relative;z-index:2;text-align:center;padding:40px;max-width:800px">
+    <div id="wish-heart" style="font-size:72px;margin-bottom:20px;animation:heartBeat 1.5s ease infinite">💌</div>
+    <div id="wish-author" style="font-size:18px;font-weight:600;color:rgba(255,192,210,0.8);margin-bottom:16px;letter-spacing:1px;text-transform:uppercase"></div>
+    <div id="wish-text" style="font-family:var(--font-title);font-size:clamp(22px,4vw,48px);font-weight:800;color:#fff;line-height:1.4;text-shadow:0 2px 40px rgba(240,23,111,0.5)"></div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <div class="header">
+    <div>
+      <div class="ev-name" id="ev-name">—</div>
+      <div class="ev-sub" id="ev-sub">—</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="counter-pills">
+        <div class="cpill">📷 <span id="cnt-p">0</span></div>
+        <div class="cpill">💬 <span id="cnt-m">0</span></div>
+        <div class="cpill">🎤 <span id="cnt-a">0</span></div>
+      </div>
+      <div class="live-pill"><div class="live-dot"></div>EN VIVO</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="featured-side" id="featured-side">
+      <div class="new-badge" id="new-badge">¡Nuevo contenido! 🎉</div>
+      <div class="reaction-toast" id="reaction-toast"></div>
+      <div class="no-content" id="no-content">
+        <div class="big">📸</div>
+        <p style="font-size:16px">Esperando contenido...</p>
+        <p style="font-size:13px">Los invitados están escaneando el QR</p>
+      </div>
+      <img id="featured-img" class="featured-img" src="" alt="" style="display:none"/>
+      <div class="featured-overlay" id="featured-overlay">
+        <div class="featured-caption" id="featured-caption"></div>
+        <div class="featured-author" id="featured-author"></div>
+      </div>
+      <div class="reaction-overlay" id="reaction-overlay"></div>
+      <div class="reaction-bar" id="reaction-bar">
+        <button class="react-btn" onclick="sendReaction('❤️')">❤️ <span class="cnt" id="rc-heart">0</span></button>
+        <button class="react-btn" onclick="sendReaction('😂')">😂 <span class="cnt" id="rc-laugh">0</span></button>
+        <button class="react-btn" onclick="sendReaction('😍')">😍 <span class="cnt" id="rc-love">0</span></button>
+        <button class="react-btn" onclick="sendReaction('🔥')">🔥 <span class="cnt" id="rc-fire">0</span></button>
+        <button class="react-btn" onclick="sendReaction('👏')">👏 <span class="cnt" id="rc-clap">0</span></button>
+        <button class="react-btn" onclick="sendReaction('🥳')">🥳 <span class="cnt" id="rc-party">0</span></button>
       </div>
     </div>
 
-  </main>
+    <div class="sidebar">
+      <div style="flex:1"></div>
+      <div class="qr-section">
+        <div class="qr-inner">
+          <div class="qr-box"><canvas id="qr-canvas" width="120" height="120"></canvas></div>
+          <div class="qr-text"><strong>Escaneá para participar</strong>Subí fotos y mensajes<br>en tiempo real</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-</div><!-- end main-app -->
 
-<div class="toast" id="toast"></div>
+<!-- hidden for internal tracking -->
+<div id="photo-strip" style="display:none"></div>
+<div id="reaction-summary" style="display:none"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-const SUPABASE_URL = 'https://jxqwrbmnfmnzddkcimrm.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
+const SUPABASE_URL='https://jxqwrbmnfmnzddkcimrm.supabase.co';
+const SUPABASE_KEY='sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 
-// ── PIN ──────────────────────────────────────────────────────
-const DEFAULT_PIN = '1234';
-function getPin(){ return localStorage.getItem('ew_pin')||DEFAULT_PIN; }
-function logout(){
-  if(!confirm('¿Cerrar sesión?')) return;
-  sessionStorage.clear();
-  location.reload();
-}
-
-function startGlobalPoller(){}
-
-function formatExpiry(isoStr){
-  const d=new Date(isoStr);
-  return d.toLocaleDateString('es-AR')+' '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-}
-
-async function submitPin(){
-  const input=document.getElementById('pin-input');
-  const val=input.value;
-  // Check master PIN first
-  if(val===getPin()){
-    unlockAdmin();
-    return;
-  }
-  // Check event PINs in Supabase
+async function api(path){
   try{
-    const res=await fetch(SUPABASE_URL+'/rest/v1/events?admin_pin=eq.'+encodeURIComponent(val)+'&select=id,name,pin_expires_at',{
-      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
-    });
-    const events=await res.json();
-    if(Array.isArray(events)&&events.length){
-      const ev=events[0];
-      // Check expiry
-      if(ev.pin_expires_at&&new Date(ev.pin_expires_at)<new Date()){
-        document.getElementById('pin-error').textContent='El acceso a este evento venció.';
-        document.getElementById('pin-error').classList.add('show');
-        input.value='';
-        setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),3000);
-        return;
-      }
-      // Valid event PIN — unlock but restrict to this event only
-      unlockAdmin(ev.id);
-      return;
-    }
-  }catch(e){}
-  document.getElementById('pin-error').textContent='PIN incorrecto. Intentá de nuevo.';
-  document.getElementById('pin-error').classList.add('show');
-  input.value='';
-  setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),2000);
+    const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    const t=await res.text();
+    if(!res.ok){console.error('API error',res.status,t);return[];}
+    return t?JSON.parse(t):[];
+  }catch(e){console.error('API fetch error',e);return[];}
 }
-
-function unlockAdmin(restrictedEventId=null){
-  document.getElementById('pin-lock').style.display='none';
-  document.getElementById('main-app').style.display='grid';
-  sessionStorage.setItem('ew_unlocked','1');
-  if(restrictedEventId){
-    sessionStorage.setItem('ew_restricted_event',restrictedEventId);
-  } else {
-    sessionStorage.removeItem('ew_restricted_event');
-  }
-  loadEvents(restrictedEventId);
-  startGlobalPoller();
-}
-function checkPin(input){ if(event&&event.key==='Enter') submitPin(); }
-function changePin(){
-  const cur=document.getElementById('pin-current').value;
-  const nw=document.getElementById('pin-new').value;
-  if(cur!==getPin()){toast('❌ PIN actual incorrecto');return;}
-  if(nw.length<4){toast('❌ El PIN debe tener al menos 4 dígitos');return;}
-  localStorage.setItem('ew_pin',nw);
-  document.getElementById('pin-current').value='';
-  document.getElementById('pin-new').value='';
-  toast('✅ PIN actualizado');
-}
-
-// ── API ──────────────────────────────────────────────────────
-async function api(path, opts={}){
-  const fetchOpts={method:opts.method||'GET',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
-  if(opts.method==='DELETE') fetchOpts.headers['Prefer']='';
-  if(opts.body) fetchOpts.body=opts.body;
+async function apiPost(path,body){
   try{
-    const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,fetchOpts);
-    const text=await res.text();
-    if(!res.ok){toast('❌ Error: '+text.slice(0,100));return[];}
-    return text?JSON.parse(text):[];
-  }catch(e){toast('❌ Red: '+e.message);return[];}
+    const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(body)});
+    const t=await res.text();return t?JSON.parse(t):[];
+  }catch(e){return[];}
 }
 
-// ── STATE ────────────────────────────────────────────────────
-let selectedEvent=null, allPosts=[], currentFilter='all';
+const params=new URLSearchParams(location.search);
+const eventId=params.get('event');
+let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
+let currentFeaturedPostId=null,reactionCounts={};
+let cfg={interval:6000,sound:'chime',fsBubble:32};
 
-// ── NAV ──────────────────────────────────────────────────────
-function generatePin(){
-  const pin=Math.floor(1000+Math.random()*9000).toString();
-  document.getElementById('ev-pin').value=pin;
-}
-
-function goNav(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  closeSidebar(); // close on mobile after nav
-  const map={events:0,'new-event':1,links:2,design:3,album:4,print:5,polls:6,'guest-design':7,settings:8};
-  const btns=document.querySelectorAll('.nav-btn');
-  if(map[page]!==undefined) btns[map[page]].classList.add('active');
-  if(page==='events') loadEvents();
-  if(page==='moderation') showMod();
-  if(page==='links') showLinks();
-  if(page==='design') showDesign();
-  if(page==='album') showAlbum();
-  if(page==='print') showPrint();
-  if(page==='polls') showPolls();
-  if(page==='guest-design') showGuestDesign();
-}
-
-function toast(msg,dur=3000){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);
-}
-
-// ── AUTO APPROVE ─────────────────────────────────────────────
-let autoApprove=false;
-
-
-function getAutoKey(){ return 'ew_auto_'+selectedEvent?.id; }
-
-function toggleAutoApprove(){
-  autoApprove=!autoApprove;
-  updateAutoToggleUI();
-  if(autoApprove){
-    localStorage.setItem(getAutoKey(),'1');
-    toast('✅ Aprobación automática activada — todo el contenido nuevo se aprueba al instante');
-    approveNewPosts(); // run immediately
-  } else {
-    localStorage.removeItem(getAutoKey());
-    toast('🛡 Aprobación manual activada — revisás cada publicación antes de mostrarla');
-  }
-}
-
-function updateAutoToggleUI(){
-  const toggle=document.getElementById('auto-toggle');
-  const label=document.getElementById('auto-label');
-  if(!toggle) return;
-  toggle.classList.toggle('on', autoApprove);
-  label.textContent=autoApprove?'Auto-aprobación ON':'Aprobación manual';
-}
-
-
-
-function loadAutoApproveState(){
-  if(!selectedEvent) return;
-  autoApprove=localStorage.getItem(getAutoKey())==='1';
-  updateAutoToggleUI();
-}
-
-// ── DELETE EVENT ─────────────────────────────────────────────
-async function deleteEvent(ev){
-  const hasEmail=ev.client_email&&ev.client_email.trim();
-  const confirmMsg='¿Seguro que querés eliminar "'+ev.name+'"?\n'+(hasEmail?'Se enviará el álbum al mail del cliente antes de borrar.\n':'')+'Esta acción no se puede deshacer.';
-  if(!confirm(confirmMsg)) return;
-
-  // Fetch all posts before deleting
-  const posts=await api('posts?event_id=eq.'+ev.id+'&order=created_at.asc');
-  const approvedPosts=Array.isArray(posts)?posts:[];
-
-  // Send email if client has email
-  if(hasEmail && approvedPosts.length>0){
-    toast('📧 Enviando álbum por email...');
-    await sendAlbumEmail(ev, approvedPosts);
-  }
-
-  // Delete all data
-  await api('posts?event_id=eq.'+ev.id,{method:'DELETE'});
-  await api('reactions?event_id=eq.'+ev.id,{method:'DELETE'});
-  await api('polls?event_id=eq.'+ev.id,{method:'DELETE'});
-  await api('events?id=eq.'+ev.id,{method:'DELETE'});
-
-  if(selectedEvent?.id===ev.id){
-    selectedEvent=null;
-    document.getElementById('sidebar-event').textContent='Ninguno';
-  }
-  toast('🗑 Evento "'+ev.name+'" eliminado');
-  loadEvents();
-}
-
-async function sendAlbumEmail(ev, posts){
-  try{
-    const photos  = posts.filter(p=>p.type==='photo'&&p.content);
-    const messages= posts.filter(p=>p.type==='message');
-    const audios  = posts.filter(p=>p.type==='audio');
-    const wishes  = posts.filter(p=>p.type==='wish');
-
-    // Build HTML email via Anthropic API (Claude generates it)
-    const prompt=`Genera un email HTML bonito y profesional en español para enviar el resumen de un evento social llamado "${ev.name}".
-El evento tuvo:
-- ${photos.length} fotos
-- ${messages.length} mensajes
-- ${audios.length} audios
-- ${wishes.length} mensajes especiales
-
-Los mensajes fueron:
-${messages.slice(0,10).map(m=>'• '+m.author+': "'+m.content+'"').join('\n')}
-
-${wishes.length?'Mensajes especiales:\n'+wishes.slice(0,5).map(w=>'• '+w.author+': "'+w.content+'"').join('\n'):''}
-
-Fotos URLs (primeras 5): ${photos.slice(0,5).map(p=>p.content).join(', ')}
-
-Genera SOLO el HTML del email, sin markdown, con estilos inline. Debe ser elegante, con fondo oscuro #07070f, acento rosa #f0176f, tipografía moderna. Incluí las fotos como imágenes. Firmá como "EventWall".`;
-
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
-      body:JSON.stringify({
-        model:'claude-haiku-4-5-20251001',
-        max_tokens:4000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data=await res.json();
-    const html=data.content?.[0]?.text||'';
-
-    // Use mailto as fallback (real email requires backend)
-    if(html){
-      // Open email client with the album summary
-      const subject=encodeURIComponent('Álbum de '+ev.name+' · EventWall');
-      const body=encodeURIComponent(
-        'Hola! Aquí está el resumen de tu evento "'+ev.name+'":\n\n'+
-        '📷 Fotos: '+photos.length+'\n'+
-        '💬 Mensajes: '+messages.length+'\n'+
-        '🎤 Audios: '+audios.length+'\n'+
-        '💌 Mensajes especiales: '+wishes.length+'\n\n'+
-        'Mensajes destacados:\n'+
-        messages.slice(0,5).map(m=>'• '+m.author+': "'+m.content+'"').join('\n')+
-        '\n\nLinks de fotos:\n'+
-        photos.slice(0,20).map(p=>p.content).join('\n')+
-        '\n\n— EventWall'
-      );
-      window.open('mailto:'+ev.client_email+'?subject='+subject+'&body='+body);
-    }
-    toast('✅ Email preparado para '+ev.client_email);
-  }catch(e){
-    console.error('Email error:',e);
-    toast('⚠️ No se pudo enviar el email automáticamente');
-  }
-}
-
-// ── EVENTS ───────────────────────────────────────────────────
-async function loadEvents(restrictedId=null){
-  const restricted=restrictedId||sessionStorage.getItem('ew_restricted_event');
-  // Hide create buttons if restricted
-  const createBtn=document.querySelector('.nav-btn[onclick*="new-event"]');
-  if(createBtn) createBtn.style.display=restricted?'none':'';
-  const createPageBtn=document.querySelector('#page-events .btn-pink');
-  if(createPageBtn) createPageBtn.style.display=restricted?'none':'';
-  const grid=document.getElementById('events-list');
-  grid.innerHTML='<div class="empty"><div class="empty-ico">⏳</div><div class="empty-txt">Conectando...</div></div>';
-  const query=restricted?'events?id=eq.'+restricted:'events?order=created_at.desc';
-  const events=await api(query);
-  if(!Array.isArray(events)||!events.length){
-    grid.innerHTML='<div class="empty"><div class="empty-ico">📭</div><div class="empty-txt">No hay eventos. ¡Creá el primero!</div></div>';return;
-  }
-  const counts=await api('posts?select=event_id,approved');
-  const sc=Array.isArray(counts)?counts:[];
-  grid.innerHTML='';
-  events.forEach(ev=>{
-    const posts=sc.filter(p=>p.event_id===ev.id);
-    const approved=posts.length;
-    const card=document.createElement('div');
-    card.className='event-card'+(selectedEvent?.id===ev.id?' selected':'');
-    card.innerHTML=
-      `<div class="event-name">${ev.name}</div><div class="event-date">${ev.date||''}${ev.subtitle?' · '+ev.subtitle:''}</div>
-      <div style="display:inline-block;margin-top:6px;font-family:monospace;font-size:13px;font-weight:800;background:var(--pink-dim);color:var(--pink);padding:2px 10px;border-radius:6px;letter-spacing:3px">${ev.id.toUpperCase()}</div>
-      <div class="event-stats"><div class="estat"><div class="estat-num">${posts.length}</div><div class="estat-lbl">Total</div></div>
-      <div class="estat"><div class="estat-num">${approved}</div><div class="estat-lbl">Aprob.</div></div>
-      </div>`;
-    // Show pin status on card
-    const now=new Date();
-    if(ev.client_email){
-      const emailDiv=document.createElement('div');
-      emailDiv.style.cssText='margin-top:6px;font-size:10px;color:var(--muted)';
-      emailDiv.textContent='📧 '+ev.client_email;
-      card.appendChild(emailDiv);
-    }
-    if(ev.admin_pin){
-      const expired=ev.pin_expires_at&&new Date(ev.pin_expires_at)<now;
-      const expStr=ev.pin_expires_at?
-        (expired?'<span style="color:var(--red);font-size:10px">🔒 PIN vencido</span>':
-        '<span style="color:var(--green);font-size:10px">🔑 PIN: '+ev.admin_pin+' · vence '+formatExpiry(ev.pin_expires_at)+'</span>'):
-        '<span style="color:var(--muted);font-size:10px">🔑 PIN: '+ev.admin_pin+' (sin vencimiento)</span>';
-      const pinDiv=document.createElement('div');
-      pinDiv.style.marginTop='8px';
-      pinDiv.innerHTML=expStr;
-      card.appendChild(pinDiv);
-    }
-    card.onclick=function(e){if(!e.target.closest('.del-btn')) selectEvent(ev,this);};
-    // Auto-select if restricted to this event
-    if(sessionStorage.getItem('ew_restricted_event')===ev.id){
-      setTimeout(()=>card.click(),100);
-    }
-    // Only show delete button to master admin
-    if(!sessionStorage.getItem('ew_restricted_event')){
-      const delBtn=document.createElement('button');
-      delBtn.className='del-btn';
-      delBtn.innerHTML='🗑';
-      delBtn.title='Eliminar evento';
-      delBtn.style.cssText='position:absolute;top:12px;right:12px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;transition:all 0.2s;';
-      delBtn.onmouseenter=()=>delBtn.style.background='rgba(239,68,68,0.35)';
-      delBtn.onmouseleave=()=>delBtn.style.background='rgba(239,68,68,0.15)';
-      delBtn.onclick=()=>deleteEvent(ev);
-      card.appendChild(delBtn);
-    }
-    grid.appendChild(card);
-  });
-}
-
-function selectEvent(ev,cardEl){
-  selectedEvent=ev;
-  document.getElementById('sidebar-event').textContent=ev.name;
-  const mob=document.getElementById('mob-event-badge');
-  if(mob) mob.textContent=ev.name;
-  document.querySelectorAll('.event-card').forEach(c=>c.classList.remove('selected'));
-  cardEl.classList.add('selected');
-
-  toast('✓ "'+ev.name+'" seleccionado');
-}
-
-async function evCreate(){
-  const name=document.getElementById('ev-name').value.trim();
-  if(!name){toast('❌ El nombre es obligatorio');return;}
-  const btn=document.getElementById('create-btn');
-  btn.disabled=true;btn.textContent='Creando...';
-  const body={name};
-  const date=document.getElementById('ev-date').value;
-  const subtitle=document.getElementById('ev-subtitle').value.trim();
-  const evPin=document.getElementById('ev-pin').value.trim();
-  const pinDurationHrs=parseInt(document.getElementById('ev-pin-duration').value)||0;
-  if(date) body.date=date;
-  if(subtitle) body.subtitle=subtitle;
-  const evEmail=document.getElementById('ev-email').value.trim();
-  if(evEmail) body.client_email=evEmail;
-  if(evPin){
-    body.admin_pin=evPin;
-    if(pinDurationHrs>0){
-      body.pin_expires_at=new Date(Date.now()+pinDurationHrs*3600*1000).toISOString();
-    }
-  }
-  const res=await api('events',{method:'POST',body:JSON.stringify(body)});
-  btn.disabled=false;btn.textContent='Crear evento →';
-  if(Array.isArray(res)&&res[0]?.id){
-    toast('🎉 Evento "'+res[0].name+'" creado!');
-    document.getElementById('ev-name').value='';
-    document.getElementById('ev-date').value='';
-    document.getElementById('ev-subtitle').value='';
-    document.getElementById('ev-pin').value='';
-    document.getElementById('ev-pin-duration').value='12';
-    document.getElementById('ev-email').value='';
-    goNav('events');
-  }
-}
-
-// ── MODERATION ───────────────────────────────────────────────
-function showMod(){
-  const notice=document.getElementById('mod-notice');
-  const content=document.getElementById('mod-content');
-  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  notice.classList.remove('show');content.style.display='block';
-  document.getElementById('mod-ev-name').textContent=selectedEvent.name;
-  document.getElementById('mod-ev-sub').textContent=(selectedEvent.date||'')+(selectedEvent.subtitle?' · '+selectedEvent.subtitle:'');
-  loadAutoApproveState();
-  loadPosts();
-}
-async function loadPosts(){
-  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&order=created_at.desc');
-  allPosts=Array.isArray(posts)?posts:[];
-  updateStats();renderPosts();
-  clearInterval(window._poll);
-  window._poll=setInterval(async()=>{
-    const fresh=await api('posts?event_id=eq.'+selectedEvent.id+'&order=created_at.desc');
-    if(Array.isArray(fresh)&&fresh.length!==allPosts.length){allPosts=fresh;updateStats();renderPosts();}
-  },5000);
-}
-function updateStats(){
-  document.getElementById('st-total').textContent=allPosts.length;
-  const pendEl=document.getElementById('st-pending');if(pendEl) pendEl.textContent='0';
-  document.getElementById('st-approved').textContent=allPosts.filter(p=>p.approved).length;
-  document.getElementById('st-photos').textContent=allPosts.filter(p=>p.type==='photo').length;
-  const wishEl=document.getElementById('st-wishes'); if(wishEl) wishEl.textContent=allPosts.filter(p=>p.type==='wish').length;
-}
-function filterPosts(f,btn){
-  currentFilter=f;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');renderPosts();
-}
-function renderPosts(){
-  let posts=[...allPosts];
-  if(currentFilter==='pending') posts=posts.filter(p=>!p.approved);
-  else if(currentFilter==='approved') posts=posts.filter(p=>p.approved);
-  else if(['photo','message','audio'].includes(currentFilter)) posts=posts.filter(p=>p.type===currentFilter);
-  const grid=document.getElementById('posts-grid');
-  if(!posts.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">✨</div><div class="empty-txt">Sin contenido aquí</div></div>';return;}
-  grid.innerHTML='';
-  posts.forEach(p=>{
-    const card=document.createElement('div');
-    card.className='post-card'+(p.approved?' approved':'');
-    card.id='post-'+p.id;
-    const labels={photo:'📷 Foto',message:'💬 Mensaje',audio:'🎤 Audio',wish:'💌 Deseo'};
-    const cls={photo:'type-photo',message:'type-message',audio:'type-audio',wish:'type-wish'};
-    const d=new Date(p.created_at);
-    const t=d.toLocaleDateString('es-AR')+' '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-    let bodyHtml='';
-    if(p.type==='photo'&&p.content&&p.content.startsWith('http')) bodyHtml='<img src="'+p.content+'" class="post-img" onerror="this.style.display=\'none\'"/>';
-    card.innerHTML=bodyHtml+'<div class="post-body"><span class="tbadge '+cls[p.type]+'">'+labels[p.type]+'</span><div class="post-author">'+p.author+'</div>'+(p.type==='message'?'<div class="post-text">'+(p.content||'')+'</div>':'')+(p.type==='audio'?'<div style="font-size:12px;color:var(--muted)">🎤 Mensaje de voz · '+(p.content_text||'')+'</div>':'')+(p.type==='wish'?'<div class="post-text" style="border-left:3px solid #ff6b9d;padding-left:10px;margin-top:4px">'+(p.content||'')+'</div>':'')+
-    '<div class="post-actions"><button class="btn-approve'+(p.approved?' done':'')+'" onclick="moderatePost(\''+p.id+'\',true)">'+(p.approved?'✓ Aprobado':'✓ Aprobar')+'</button><button class="btn-reject" onclick="moderatePost(\''+p.id+'\',false)">✕ Rechazar</button><button class="btn-delete-post" data-id="'+p.id+'" onclick="deletePost(this.dataset.id)" title="Eliminar publicación">🗑</button></div><div class="post-time">'+t+'</div></div>';
-    grid.appendChild(card);
-  });
-}
-
-async function deletePost(id){
-  if(!confirm('¿Eliminar esta publicación? No se puede deshacer.')) return;
-  await api('posts?id=eq.'+id,{method:'DELETE'});
-  allPosts=allPosts.filter(p=>p.id!==id);
-  updateStats();renderPosts();
-  toast('🗑 Publicación eliminada');
-}
-
-
-
-// ── LINKS ────────────────────────────────────────────────────
-function showLinks(){
-  const notice=document.getElementById('links-notice');
-  const content=document.getElementById('links-content');
-  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  notice.classList.remove('show');content.style.display='block';
-  const base=location.origin+'/';
-  const screenUrl=base+'screen.html?event='+selectedEvent.id;
-  const guestUrl=base+'guest.html?event='+selectedEvent.id;
-  document.getElementById('link-screen').textContent=screenUrl;
-  document.getElementById('link-guest').textContent=guestUrl;
-  // Show short code
-  document.getElementById('event-code-display').textContent=selectedEvent.id.toUpperCase();
-  document.getElementById('screen-short-url').textContent=location.hostname+'/screen.html?event='+selectedEvent.id;
-  const qrDiv=document.getElementById('qr-container');
-  qrDiv.innerHTML='';
-  try{new QRCode(qrDiv,{text:guestUrl,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
-}
-function copyLink(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>toast('📋 Copiado'));}
-function copyText(text){navigator.clipboard.writeText(text).then(()=>toast('📋 Copiado'));}
-function downloadQR(){
-  const img=document.querySelector('#qr-container img');
-  if(!img){toast('Generando QR...');return;}
-  const a=document.createElement('a');a.download='qr-evento.png';a.href=img.src;a.click();
-}
-
-// ── DESIGN ───────────────────────────────────────────────────
-const TEMPLATES = {
-  dark:  {bg:'#07070f',header:'#0c0c14',accent:'#f0176f',text:'#ffffff',bubble:'#ffffff',bubbleText:'#1a1a1a',fontTitle:'Syne',fontBody:'DM Sans'},
-  light: {bg:'#f8f4ef',header:'#ede8e0',accent:'#e91e8c',text:'#1a1a1a',bubble:'#1a1a1a',bubbleText:'#ffffff',fontTitle:'Playfair Display',fontBody:'Lato'},
-  neon:  {bg:'#000011',header:'#00001a',accent:'#00f5ff',text:'#ffffff',bubble:'#00f5ff',bubbleText:'#000011',fontTitle:'Bebas Neue',fontBody:'Inter'},
-  floral:{bg:'#1a0a14',header:'#240d1c',accent:'#ff6b9d',text:'#fff0f5',bubble:'#fff0f5',bubbleText:'#1a0a14',fontTitle:'Great Vibes',fontBody:'Nunito'},
-  gold:  {bg:'#0d0900',header:'#1a1200',accent:'#f5a623',text:'#fff8e0',bubble:'#f5a623',bubbleText:'#0d0900',fontTitle:'Playfair Display',fontBody:'Lato'},
-  ocean: {bg:'#021020',header:'#041830',accent:'#0ea5e9',text:'#e0f4ff',bubble:'#e0f4ff',bubbleText:'#021020',fontTitle:'Raleway',fontBody:'Source Sans 3'},
-};
-
-function showDesign(){
-  const notice=document.getElementById('design-notice');
-  const content=document.getElementById('design-content');
-  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  notice.classList.remove('show');content.style.display='block';
-  const saved=JSON.parse(localStorage.getItem('ew_design_'+selectedEvent.id)||'{}');
-  const setVal=(id,val)=>{if(!val) return; const el=document.getElementById(id); if(el) el.value=val;};
-  const setHex=(cid,hid,val)=>{if(!val) return; setVal(cid,val); setVal(hid,val.toUpperCase());};
-  setHex('c-bg','c-bg-hex',saved.bg);
-  setHex('c-accent','c-accent-hex',saved.accent);
-  setHex('c-text','c-text-hex',saved.text);
-  setHex('c-bubble','c-bubble-hex',saved.bubble||'#ffffff');
-  setHex('c-bubble-text','c-bubble-text-hex',saved.bubbleText||'#1a1a1a');
-  setHex('c-header','c-header-hex',saved.header||'#0c0c14');
-  setVal('f-title',saved.fontTitle||'Syne');
-  setVal('f-body',saved.fontBody||'DM Sans');
-  setVal('cfg-interval',saved.interval||6);
-  setVal('cfg-sound',saved.sound||'chime');
-  if(saved.fsTitle){setVal('fs-title',saved.fsTitle);document.getElementById('fs-title-val').textContent=saved.fsTitle+'px';}
-  if(saved.fsBubble){setVal('fs-bubble',saved.fsBubble);document.getElementById('fs-bubble-val').textContent=saved.fsBubble+'px';}
-  if(saved.overlay){setVal('cfg-overlay',saved.overlay);document.getElementById('cfg-overlay-val').textContent=saved.overlay+'%';}
-  if(saved.radius){setVal('cfg-radius',saved.radius);document.getElementById('cfg-radius-val').textContent=saved.radius+'px';}
-  setVal('cfg-transition',saved.transition||'fade');
-  setVal('cfg-fit',saved.fit||'contain');
-  setVal('cfg-shadow',saved.shadow||'heavy');
-  setVal('cfg-bubble-pos',saved.bubblePos||'center');
-  setVal('cfg-bubble-tail',saved.bubbleTail||'yes');
-  setVal('cfg-bubble-icon',saved.bubbleIcon||'random');
-  setVal('cfg-show-header',saved.showHeader||'yes');
-  setVal('cfg-qr-size',saved.qrSize||'120');
-  setVal('cfg-qr-text',saved.qrText||'');
-  setVal('cfg-sidebar-width',saved.sidebarWidth||'180');
-  setVal('cfg-show-counters',saved.showCounters||'yes');
-  setVal('cfg-show-reactions',saved.showReactions||'yes');
-  setVal('cfg-ticker',saved.ticker||'');
-  if(saved.tickerColor){setVal('cfg-ticker-color',saved.tickerColor);setVal('cfg-ticker-color-hex',(saved.tickerColor||'').toUpperCase());}
-  setVal('cfg-bg-image',saved.bgImage||'');
-  if(saved.bgOpacity){setVal('cfg-bg-opacity',saved.bgOpacity);document.getElementById('cfg-bg-opacity-val').textContent=saved.bgOpacity+'%';}
-  if(saved.template){
-    document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
-    const el=document.querySelector('.tpl-'+saved.template);
-    if(el) el.classList.add('active');
-  }
-  previewTheme();
-  loadGoogleFont(saved.fontTitle||'Syne');
-  loadGoogleFont(saved.fontBody||'DM Sans');
-  loadCooldownSettings();
-}
-
-function selectTemplate(name,el){
-  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  const t=TEMPLATES[name];
-  const setC=(id,val)=>{
-    const el=document.getElementById(id); if(el) el.value=val;
-    const hex=document.getElementById(id+'-hex'); if(hex) hex.value=val.toUpperCase();
-  };
-  setC('c-bg',t.bg); setC('c-accent',t.accent); setC('c-text',t.text);
-  setC('c-bubble',t.bubble||'#ffffff');
-  setC('c-bubble-text',t.bubbleText||'#1a1a1a');
-  setC('c-header',t.header||t.bg);
-  if(t.fontTitle){document.getElementById('f-title').value=t.fontTitle;loadGoogleFont(t.fontTitle);}
-  if(t.fontBody){document.getElementById('f-body').value=t.fontBody;loadGoogleFont(t.fontBody);}
-  previewTheme();
-}
-
-function getV(id){return document.getElementById(id)?.value||'';}
-
-function syncColorFromHex(colorId, hexId){
-  const hex=document.getElementById(hexId).value;
-  if(/^#[0-9A-Fa-f]{6}$/.test(hex)) document.getElementById(colorId).value=hex;
-  previewTheme();
-}
-
-function loadGoogleFont(font){
+// ── FONT LOADER ───────────────────────────────────────────────
+function loadScreenFont(font){
   if(!font||font==='Syne'||font==='DM Sans') return;
   const id='gf-'+font.replace(/\s/g,'-');
   if(document.getElementById(id)) return;
@@ -1650,662 +226,533 @@ function loadGoogleFont(font){
   document.head.appendChild(link);
 }
 
-function previewTheme(){
-  const bg=getV('c-bg')||'#07070f';
-  const accent=getV('c-accent')||'#f0176f';
-  const text=getV('c-text')||'#ffffff';
-  const bubble=getV('c-bubble')||'#ffffff';
-  const bubbleText=getV('c-bubble-text')||'#1a1a1a';
-  const header=getV('c-header')||'#0c0c14';
-  const fontTitle=getV('f-title')||'Syne';
-  const fsTitle=parseInt(getV('fs-title'))||22;
-  const radius=parseInt(getV('cfg-radius'))||28;
-  const preview=document.getElementById('design-preview');
-  if(!preview) return;
-  preview.style.background=bg;
-  // Update mini preview elements
-  const prevHeader=document.getElementById('prev-header');
-  if(prevHeader) prevHeader.style.background=header;
-  const prevName=document.getElementById('prev-ev-name');
-  if(prevName){prevName.style.color=text;prevName.style.fontFamily="'"+fontTitle+"',sans-serif";prevName.style.fontSize=Math.max(8,Math.min(14,fsTitle*0.5))+'px';}
-  const prevBubble=document.getElementById('prev-bubble');
-  if(prevBubble){prevBubble.style.background=bubble;prevBubble.style.borderRadius=(radius*0.6)+'px';}
-  const prevBubbleText=document.getElementById('prev-bubble-text');
-  if(prevBubbleText){prevBubbleText.style.color=bubbleText;prevBubbleText.style.fontFamily="'"+fontTitle+"',sans-serif";}
-  const prevLive=document.getElementById('prev-live');
-  if(prevLive){prevLive.style.color=accent;prevLive.style.borderColor=accent+'55';prevLive.style.background=accent+'18';}
-  const prevDot=prevLive?.querySelector('div');
-  if(prevDot) prevDot.style.background=accent;
-  // Update swatches
-  const sb=document.getElementById('swatch-bg');if(sb) sb.style.background=bg;
-  const sa=document.getElementById('swatch-accent');if(sa) sa.style.background=accent;
-  const sbub=document.getElementById('swatch-bubble');if(sbub) sbub.style.background=bubble;
-  const sh=document.getElementById('swatch-header');if(sh) sh.style.background=header;
+// ── THEME ─────────────────────────────────────────────────────
+function applyTheme(design){
+  if(!design) return;
+  const r=document.documentElement;
+  const set=(k,v)=>r.style.setProperty(k,v);
+  set('--bg',          design.bg||'#07070f');
+  set('--accent',      design.accent||'#f0176f');
+  set('--txt',         design.text||'#ffffff');
+  set('--bubble-bg',   design.bubble||'#ffffff');
+  set('--bubble-txt',  design.bubbleText||'#1a1a1a');
+  set('--header-bg',   design.header||design.bg||'#0c0c14');
+  set('--fs-title',    (design.fsTitle||22)+'px');
+  set('--bubble-radius',(design.radius||28)+'px');
+  document.body.style.background=design.bg||'#07070f';
+  const isLight=(design.bg||'').match(/^#[def]/i);
+  document.body.classList.toggle('theme-light',!!isLight);
+  if(design.fontTitle){loadScreenFont(design.fontTitle);set('--font-title',"'"+design.fontTitle+"',sans-serif");}
+  if(design.fontBody){loadScreenFont(design.fontBody);set('--font-body',"'"+design.fontBody+"',sans-serif");}
+  if(design.fsBubble) cfg.fsBubble=parseInt(design.fsBubble);
+  if(design.interval) cfg.interval=parseInt(design.interval)*1000;
+  if(design.sound) cfg.sound=design.sound;
+
+  // Photo fit
+  const img=document.getElementById('featured-img');
+  if(img) img.style.objectFit=design.fit||'contain';
+
+  // Header visibility
+  const header=document.querySelector('.header');
+  if(header) header.style.display=(design.showHeader==='no')?'none':'flex';
+
+  // Counters
+  const counters=document.querySelector('.counter-pills');
+  if(counters) counters.style.display=(design.showCounters==='no')?'none':'flex';
+
+  // Reactions bar
+  const rbar=document.getElementById('reaction-bar');
+  if(rbar) rbar.style.display=(design.showReactions==='no')?'none':'flex';
+
+  // QR size
+  const qrSize=parseInt(design.qrSize)||120;
+  const qrCanvas=document.getElementById('qr-canvas');
+  if(qrCanvas){qrCanvas.width=qrSize;qrCanvas.height=qrSize;qrCanvas.style.width=qrSize+'px';qrCanvas.style.height=qrSize+'px';}
+  const qrSection=document.querySelector('.qr-section');
+  if(qrSection) qrSection.style.display=(qrSize===0)?'none':'block';
+
+  // QR text
+  if(design.qrText){const qt=document.querySelector('.qr-text strong');if(qt) qt.textContent=design.qrText;}
+
+  // Sidebar width
+  const sidebar=document.querySelector('.sidebar');
+  const sidebarW=parseInt(design.sidebarWidth)||180;
+  if(sidebar) sidebar.style.display=sidebarW===0?'none':'flex';
+  const grid=document.querySelector('.grid');
+  if(grid&&sidebarW>0) grid.style.gridTemplateColumns='1fr '+sidebarW+'px';
+  else if(grid&&sidebarW===0) grid.style.gridTemplateColumns='1fr';
+
+  // Bubble position
+  const bubbleOverlay=document.getElementById('msg-bubble-overlay');
+  if(bubbleOverlay){
+    const pos=design.bubblePos||'center';
+    bubbleOverlay.style.alignItems=pos==='bottom'?'flex-end':pos==='top'?'flex-start':'center';
+    bubbleOverlay.style.paddingBottom=pos==='bottom'?'80px':'0';
+    bubbleOverlay.style.paddingTop=pos==='top'?'80px':'0';
+  }
+
+  // Bubble tail
+  const tail=document.getElementById('bubble-tail');
+  if(tail) tail.style.display=(design.bubbleTail==='no')?'none':'block';
+
+  // Bubble shadow
+  const card=document.getElementById('msg-bubble-card');
+  if(card){
+    const shadows={heavy:'0 32px 80px rgba(0,0,0,0.5)',soft:'0 8px 32px rgba(0,0,0,0.2)',none:'none'};
+    card.style.boxShadow=shadows[design.shadow||'heavy'];
+  }
+
+  // Background image
+  applyBgImage(design.bgImage, design.bgOpacity);
+
+  // Ticker
+  applyTicker(design.ticker, design.tickerColor);
 }
 
-function applyTemplate(name, el){
-  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
-  if(el) el.classList.add('active');
-  const templates={
-    dark: {bg:'#07070f',accent:'#f0176f',text:'#ffffff',bubble:'#ffffff',bubbleText:'#1a1a1a',header:'#0c0c14'},
-    light:{bg:'#f5f5f0',accent:'#e91e8c',text:'#1a1a1a',bubble:'#1a1a1a',bubbleText:'#ffffff',header:'#ffffff'},
-    neon: {bg:'#0a0015',accent:'#a855f7',text:'#ffffff',bubble:'#1a0030',bubbleText:'#e0aaff',header:'#0d001a'},
-    floral:{bg:'#1a0a14',accent:'#ff6b9d',text:'#ffe4ef',bubble:'#2d1020',bubbleText:'#ffe4ef',header:'#120008'},
-    gold: {bg:'#0d0900',accent:'#f5a623',text:'#fff8e1',bubble:'#1a1200',bubbleText:'#fff8e1',header:'#080600'},
-    ocean:{bg:'#0a1628',accent:'#60a5fa',text:'#e0f2fe',bubble:'#0c2040',bubbleText:'#e0f2fe',header:'#061020'},
-  };
-  const t=templates[name];
-  if(!t) return;
-  const setC=(id,val)=>{
-    const el=document.getElementById(id);
-    const hex=document.getElementById(id+'-hex');
-    if(el) el.value=val;
-    if(hex) hex.value=val.toUpperCase();
-  };
-  setC('c-bg',t.bg);setC('c-accent',t.accent);setC('c-text',t.text);
-  setC('c-bubble',t.bubble);setC('c-bubble-text',t.bubbleText);setC('c-header',t.header);
-  previewTheme();
+function applyBgImage(url, opacity){
+  let bgEl=document.getElementById('screen-bg-image');
+  if(!url){if(bgEl) bgEl.remove();return;}
+  if(!bgEl){bgEl=document.createElement('div');bgEl.id='screen-bg-image';bgEl.style.cssText='position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center;pointer-events:none';document.body.appendChild(bgEl);}
+  bgEl.style.backgroundImage='url('+url+')';
+  bgEl.style.opacity=(parseInt(opacity)||30)/100;
 }
 
-function switchGDTab(tab, btn){
-  document.querySelectorAll('#page-guest-design .dtab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.dtab-panel[id^="gdtab-"]').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('gdtab-'+tab).classList.add('active');
-}
-
-function applyGDPalette(name){
-  const palettes={
-    dark: {bg:'#0d0d0d',accent:'#f0176f',hero:'#07070f',heroTxt:'#ffffff',textColor:'#e0e0e0',fieldBg:'#1a1a1a'},
-    light:{bg:'#faf8f6',accent:'#e91e8c',hero:'#ffffff',heroTxt:'#1a1a1a',textColor:'#1a1a1a',fieldBg:'#ffffff'},
-    rose: {bg:'#fff0f5',accent:'#e91e8c',hero:'#1a0010',heroTxt:'#ffe0ef',textColor:'#3d0020',fieldBg:'#fff8fb'},
-    gold: {bg:'#fffbf0',accent:'#d97706',hero:'#0d0900',heroTxt:'#fff8e1',textColor:'#3d2800',fieldBg:'#fffef8'},
-    ocean:{bg:'#f0f7ff',accent:'#2563eb',hero:'#0a1628',heroTxt:'#e0f2fe',textColor:'#0a1628',fieldBg:'#f8fbff'},
-    neon: {bg:'#0a0015',accent:'#a855f7',hero:'#0d001a',heroTxt:'#f0d0ff',textColor:'#e0c0ff',fieldBg:'#150025'},
-  };
-  const p=palettes[name];if(!p) return;
-  const setC=(id,val)=>{
-    const el=document.getElementById(id);const hex=document.getElementById(id+'-hex');
-    if(el) el.value=val;if(hex) hex.value=val.toUpperCase();
-  };
-  setC('gd-bg',p.bg);setC('gd-accent',p.accent);setC('gd-hero',p.hero);
-  setC('gd-hero-txt',p.heroTxt);setC('gd-text',p.textColor);setC('gd-field-bg',p.fieldBg);
-  updateGuestPreview();
-}
-
-function resetGuestDesign(){
-  if(!confirm('¿Resetear el diseño del invitado?')) return;
-  localStorage.removeItem('ew_guest_design_'+(selectedEvent?.id||''));
-  showGuestDesign();
-  toast('Diseño reseteado');
-}
-
-function switchDesignTab(tab, btn){
-  document.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.dtab-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('dtab-'+tab).classList.add('active');
-}
-
-function saveDesign(){
-  if(!selectedEvent){toast('Seleccioná un evento primero');return;}
-  const design={
-    bg:getV('c-bg'), accent:getV('c-accent'), text:getV('c-text'),
-    bubble:getV('c-bubble'), bubbleText:getV('c-bubble-text'), header:getV('c-header'),
-    fontTitle:getV('f-title'), fontBody:getV('f-body'),
-    fsTitle:getV('fs-title'), fsBubble:getV('fs-bubble'),
-    interval:getV('cfg-interval'), sound:getV('cfg-sound'),
-    overlay:getV('cfg-overlay'), radius:getV('cfg-radius'),
-    transition:getV('cfg-transition')||'fade',
-    fit:getV('cfg-fit')||'contain',
-    shadow:getV('cfg-shadow')||'heavy',
-    bubblePos:getV('cfg-bubble-pos')||'center',
-    bubbleTail:getV('cfg-bubble-tail')||'yes',
-    bubbleIcon:getV('cfg-bubble-icon')||'random',
-    showHeader:getV('cfg-show-header')||'yes',
-    qrSize:getV('cfg-qr-size')||'120',
-    qrText:getV('cfg-qr-text')||'Escaneá para participar',
-    sidebarWidth:getV('cfg-sidebar-width')||'180',
-    showCounters:getV('cfg-show-counters')||'yes',
-    showReactions:getV('cfg-show-reactions')||'yes',
-    ticker:getV('cfg-ticker')||'',
-    tickerColor:getV('cfg-ticker-color')||'#f0176f',
-    bgImage:getV('cfg-bg-image')||'',
-    bgOpacity:getV('cfg-bg-opacity')||'30',
-    template:document.querySelector('.tpl-card.active')?.className.match(/tpl-(\w+)/)?.[1]||'dark'
-  };
-  localStorage.setItem('ew_design_'+selectedEvent.id,JSON.stringify(design));
-  toast('✅ Diseño guardado — recargá la pantalla del evento para verlo');
-}
-
-function saveCooldowns(){
-  if(!selectedEvent) return;
-  const cd={
-    photo: parseInt(document.getElementById('cd-photo').value)||30,
-    message: parseInt(document.getElementById('cd-message').value)||20,
-    audio: parseInt(document.getElementById('cd-audio').value)||40,
-  };
-  localStorage.setItem('ew_cooldowns_'+selectedEvent.id, JSON.stringify(cd));
-  toast('✅ Límites de spam guardados');
-}
-
-function loadCooldownSettings(){
-  if(!selectedEvent) return;
-  const saved=JSON.parse(localStorage.getItem('ew_cooldowns_'+selectedEvent.id)||'{}');
-  if(saved.photo!==undefined) document.getElementById('cd-photo').value=saved.photo;
-  if(saved.message!==undefined) document.getElementById('cd-message').value=saved.message;
-  if(saved.audio!==undefined) document.getElementById('cd-audio').value=saved.audio;
-}
-
-function resetDesign(){
-  if(!confirm('¿Resetear el diseño al tema oscuro por defecto?')) return;
-  localStorage.removeItem('ew_design_'+selectedEvent?.id);
-  showDesign();
-  toast('↺ Diseño reseteado');
-}
-
-// ── ALBUM ────────────────────────────────────────────────────
-async function showAlbum(){
-  const notice=document.getElementById('album-notice');
-  const content=document.getElementById('album-content');
-  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  notice.classList.remove('show');content.style.display='block';
-  document.getElementById('album-ev-name').textContent=selectedEvent.name;
-  document.getElementById('album-ev-sub').textContent=selectedEvent.date||'';
-  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=eq.photo&approved=eq.true&order=created_at.desc');
-  const photos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
-  document.getElementById('album-count').textContent=photos.length+' foto'+(photos.length!==1?'s':'');
-  const grid=document.getElementById('album-grid');
-  if(!photos.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">📷</div><div class="empty-txt">No hay fotos aprobadas aún</div></div>';return;}
-  grid.innerHTML='';
-  photos.forEach(p=>{
-    const img=document.createElement('img');
-    img.className='album-img';img.src=p.content;img.alt=p.author;
-    img.title=p.author;
-    grid.appendChild(img);
-  });
-}
-
-async function downloadAlbum(){
-  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=eq.photo&approved=eq.true');
-  const photos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
-  if(!photos.length){toast('No hay fotos para descargar');return;}
-  toast('⬇ Descargando '+photos.length+' fotos...',5000);
-  for(let i=0;i<photos.length;i++){
-    try{
-      const res=await fetch(photos[i].content);
-      const blob=await res.blob();
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');
-      a.href=url;a.download='foto_'+(i+1)+'_'+photos[i].author.replace(/\s/g,'_')+'.jpg';
-      a.click();
-      URL.revokeObjectURL(url);
-      await new Promise(r=>setTimeout(r,400));
-    }catch(e){}
+function applyTicker(text, color){
+  let ticker=document.getElementById('screen-ticker');
+  if(!text||!text.trim()){if(ticker) ticker.remove();return;}
+  if(!ticker){
+    ticker=document.createElement('div');
+    ticker.id='screen-ticker';
+    ticker.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:50;height:36px;display:flex;align-items:center;overflow:hidden;';
+    const inner=document.createElement('div');
+    inner.id='screen-ticker-inner';
+    inner.style.cssText='white-space:nowrap;animation:ticker 20s linear infinite;font-size:13px;padding-left:100%;font-weight:600;';
+    ticker.appendChild(inner);
+    document.body.appendChild(ticker);
+  }
+  ticker.style.background=(color||'#f0176f')+'22';
+  ticker.style.borderTop='1px solid '+(color||'#f0176f')+'44';
+  const inner=document.getElementById('screen-ticker-inner');
+  if(inner){inner.textContent=text+' · '+text+' · '+text;inner.style.color=color||'#f0176f';}
+  // Add ticker keyframe if not exists
+  if(!document.getElementById('ticker-style')){
+    const s=document.createElement('style');s.id='ticker-style';
+    s.textContent='@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-33.33%)}}';
+    document.head.appendChild(s);
   }
 }
 
-// ── PRINT MODE ───────────────────────────────────────────────
-function showPrint(){
-  const notice=document.getElementById('print-notice');
-  const content=document.getElementById('print-content');
-  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  notice.classList.remove('show');content.style.display='block';
-  previewPrint();
-}
-
-function getPrintQRUrl(){
-  return location.origin+'/guest.html?event='+selectedEvent.id;
-}
-
-const PRINT_STYLES={
-  dark:{bg:'#0c0c14',accent:'#f0176f',text:'#ffffff',sub:'rgba(255,255,255,0.55)',border:'rgba(255,255,255,0.1)'},
-  light:{bg:'#ffffff',accent:'#e91e8c',text:'#1a1a1a',sub:'#666666',border:'#e0e0e0'},
-  romantic:{bg:'#1a0a14',accent:'#ff6b9d',text:'#fff0f5',sub:'rgba(255,240,245,0.6)',border:'rgba(255,107,157,0.2)'},
-  gold:{bg:'#0d0900',accent:'#f5a623',text:'#fff8e0',sub:'rgba(255,248,224,0.55)',border:'rgba(245,166,35,0.2)'},
-};
-
-function buildPrintCell(evName,msg,sub,qrDataUrl,style,size){
-  const s=PRINT_STYLES[style]||PRINT_STYLES.dark;
-  const big=size==='1';
-  return `
-  <div style="background:${s.bg};border-radius:${big?'16':'12'}px;padding:${big?'40px 32px':'24px 20px'};display:flex;flex-direction:column;align-items:center;gap:${big?'18':'12'}px;text-align:center;border:1px solid ${s.border};font-family:'DM Sans',sans-serif;break-inside:avoid">
-    <div style="font-family:'Syne',sans-serif;font-size:${big?'28':'18'}px;font-weight:800;color:${s.text};line-height:1.2">${evName}</div>
-    <div style="width:${big?'180':'130'}px;height:${big?'180':'130'}px;background:#fff;padding:10px;border-radius:10px">
-      <img src="${qrDataUrl}" style="width:100%;height:100%;display:block"/>
-    </div>
-    <div style="font-size:${big?'18':'14'}px;font-weight:700;color:${s.accent}">${msg}</div>
-    <div style="font-size:${big?'13':'11'}px;color:${s.sub};max-width:260px;line-height:1.6">${sub}</div>
-    <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-      <div style="width:8px;height:8px;border-radius:50%;background:${s.accent};animation:none"></div>
-      <span style="font-size:${big?'11':'9'}px;color:${s.sub};font-weight:600;letter-spacing:1px;text-transform:uppercase">EventWall · En vivo</span>
-    </div>
-  </div>`;
-}
-
-async function getQRDataUrl(){
-  const url=getPrintQRUrl();
-  return new Promise(resolve=>{
-    const div=document.createElement('div');div.style.display='none';document.body.appendChild(div);
-    try{
-      new QRCode(div,{text:url,width:300,height:300,correctLevel:QRCode.CorrectLevel.M});
-      setTimeout(()=>{
-        const img=div.querySelector('img');
-        resolve(img?img.src:'');div.remove();
-      },300);
-    }catch(e){div.remove();resolve('');}
-  });
-}
-
-async function previewPrint(){
-  const area=document.getElementById('print-preview-area');
-  area.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px">Generando vista previa...</div>';
-  const msg=document.getElementById('print-msg').value||'¡Escaneá y participá!';
-  const sub=document.getElementById('print-sub').value||'Subí fotos y mensajes en tiempo real';
-  const style=document.getElementById('print-style').value;
-  const qty=parseInt(document.getElementById('print-qty').value);
-  const qrDataUrl=await getQRDataUrl();
-  if(!qrDataUrl){area.innerHTML='<div style="color:var(--red)">Error generando QR. Asegurate de tener el evento seleccionado.</div>';return;}
-  const size=qty===1?'1':'small';
-  let cells='';
-  for(let i=0;i<qty;i++) cells+=buildPrintCell(selectedEvent.name,msg,sub,qrDataUrl,style,size);
-  const cols=qty===1?1:qty===2?2:2;
-  area.innerHTML=`
-    <div class="print-sheet">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Vista previa · Hoja A4</div>
-      <div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:16px;background:#888;padding:16px;border-radius:8px">
-        ${cells}
-      </div>
-    </div>`;
-}
-
-async function doPrint(){
-  const msg=document.getElementById('print-msg').value||'¡Escaneá y participá!';
-  const sub=document.getElementById('print-sub').value||'Subí fotos y mensajes en tiempo real';
-  const style=document.getElementById('print-style').value;
-  const qty=parseInt(document.getElementById('print-qty').value);
-  const qrDataUrl=await getQRDataUrl();
-  const size=qty===1?'1':'small';
-  let cells='';
-  for(let i=0;i<qty;i++) cells+=buildPrintCell(selectedEvent.name,msg,sub,qrDataUrl,style,size);
-  const cols=qty===1?1:qty===2?2:2;
-  const win=window.open('','_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{width:210mm;min-height:297mm;padding:16mm;background:#f0f0f0;font-family:'DM Sans',sans-serif}
-    .grid{display:grid;grid-template-columns:repeat(${cols},1fr);gap:12mm;height:100%}
-    @media print{body{background:#fff;padding:10mm}@page{size:A4;margin:10mm}}
-  </style></head><body>
-  <div class="grid">${cells}</div>
-  <script>setTimeout(()=>{window.print();},600);<\/script>
-  </body></html>`);
-  win.document.close();
-}
-
-// ── WISH WALL (in screen.html - handled separately) ──────────
-
-
-// ── POLLS ─────────────────────────────────────────────────────
-function showPolls(){
-  const notice=document.getElementById('polls-notice');
-  const content=document.getElementById('polls-content');
-  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  notice.classList.remove('show');content.style.display='block';
-  loadPolls();
-}
-
-function addPollOption(){
-  const list=document.getElementById('poll-options-list');
-  const n=list.children.length+1;
-  const div=document.createElement('div');div.className='poll-opt-row';
-  div.innerHTML='<input type="text" class="field poll-opt-input" placeholder="Opción '+n+'" style="margin-bottom:8px"/>';
-  list.appendChild(div);
-}
-
-async function createPoll(){
-  const question=document.getElementById('poll-question').value.trim();
-  if(!question){toast('❌ Escribí la pregunta');return;}
-  const inputs=[...document.querySelectorAll('.poll-opt-input')];
-  const options=inputs.map(i=>i.value.trim()).filter(Boolean);
-  if(options.length<2){toast('❌ Necesitás al menos 2 opciones');return;}
-  const btn=document.getElementById('create-poll-btn');
-  btn.disabled=true;btn.textContent='Creando...';
-  const duration=parseInt(document.getElementById('poll-duration').value)||0;
-  const ends_at=duration>0 ? new Date(Date.now()+duration*1000).toISOString() : null;
-  const res=await api('polls',{method:'POST',body:JSON.stringify({
-    event_id:selectedEvent.id, question, options, active:true,
-    duration_secs:duration, ends_at
-  })});
-  btn.disabled=false;btn.textContent='Crear votación →';
-  if(Array.isArray(res)&&res[0]?.id){
-    toast('🗳 Votación creada y visible para los invitados!');
-    document.getElementById('poll-question').value='';
-    document.querySelectorAll('.poll-opt-input').forEach((el,i)=>{el.value='';el.placeholder='Opción '+(i+1);});
-    document.getElementById('poll-duration').value='0';
-    while(document.getElementById('poll-options-list').children.length>2){
-      document.getElementById('poll-options-list').removeChild(document.getElementById('poll-options-list').lastChild);
+// ── SOUNDS ────────────────────────────────────────────────────
+function playSound(type){
+  if(type==='none') return;
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(type==='chime'){
+      [523,659,784].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,ctx.currentTime+i*0.15);g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+i*0.15+0.05);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.5);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.5);});
+    } else if(type==='pop'){
+      const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(800,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(400,ctx.currentTime+0.15);g.gain.setValueAtTime(0.4,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.2);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.2);
     }
-    loadPolls();
+  }catch(e){}
+}
+
+// ── REACTIONS ─────────────────────────────────────────────────
+const EMOJI_MAP={'❤️':'rc-heart','😂':'rc-laugh','😍':'rc-love','🔥':'rc-fire','👏':'rc-clap','🥳':'rc-party'};
+
+function spawnEmoji(emoji){
+  const overlay=document.getElementById('reaction-overlay');
+  for(let i=0;i<3;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');el.className='floating-emoji';el.textContent=emoji;
+      el.style.left=Math.random()*80+10+'%';el.style.bottom='80px';
+      el.style.animationDelay=Math.random()*0.3+'s';
+      overlay.appendChild(el);setTimeout(()=>el.remove(),3000);
+    },i*150);
   }
 }
 
-async function loadPolls(){
-  const polls=await api('polls?event_id=eq.'+selectedEvent.id+'&order=created_at.desc');
+async function sendReaction(emoji){
+  if(!currentFeaturedPostId) return;
+  spawnEmoji(emoji);
+  reactionCounts[emoji]=(reactionCounts[emoji]||0)+1;
+  updateReactionUI();
+  const t=document.getElementById('reaction-toast');
+  t.textContent=emoji+' ¡Reacción enviada!';t.style.display='block';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2000);
+  await apiPost('reactions',{post_id:currentFeaturedPostId,event_id:eventId,emoji});
+}
+
+async function loadReactions(){
+  if(!currentFeaturedPostId) return;
+  const data=await api('reactions?post_id=eq.'+currentFeaturedPostId+'&select=emoji');
+  if(!Array.isArray(data)) return;
+  reactionCounts={};
+  data.forEach(r=>{reactionCounts[r.emoji]=(reactionCounts[r.emoji]||0)+1;});
+  updateReactionUI();
+}
+
+function updateReactionUI(){
+  Object.entries(EMOJI_MAP).forEach(([emoji,id])=>{
+    const el=document.getElementById(id);if(el) el.textContent=reactionCounts[emoji]||0;
+  });
+}
+
+// ── MESSAGE BUBBLES ───────────────────────────────────────────
+let msgBubbleQueue=[],msgBubbleShowing=false;
+const MSG_ICONS=['💬','😂','❤️','🔥','😍','🎉','👏','💕','😎','🥳','💯','✨'];
+
+function getShownKey(prefix){
+  // Key includes today's date so it auto-clears next day
+  const today=new Date().toISOString().slice(0,10);
+  return prefix+'_'+eventId+'_'+today;
+}
+function getShownMsgIds(){
+  try{return new Set(JSON.parse(localStorage.getItem(getShownKey('ew_msgs'))||'[]'));}
+  catch(e){return new Set();}
+}
+function markMsgShown(id){
+  const ids=getShownMsgIds();ids.add(id);
+  localStorage.setItem(getShownKey('ew_msgs'),JSON.stringify([...ids]));
+}
+
+async function pollMessages(){
+  const msgs=await api('posts?event_id=eq.'+eventId+'&type=eq.message&approved=eq.true&order=created_at.asc');
+  if(!Array.isArray(msgs)) return;
+  const shown=getShownMsgIds();
+  const newMsgs=msgs.filter(m=>m.id&&!shown.has(m.id)&&!msgBubbleQueue.find(q=>q.id===m.id));
+  if(newMsgs.length){
+    msgBubbleQueue.push(...newMsgs);
+    if(!msgBubbleShowing) showNextBubble();
+  }
+}
+
+function showNextBubble(){
+  if(!msgBubbleQueue.length){msgBubbleShowing=false;return;}
+  msgBubbleShowing=true;
+  const msg=msgBubbleQueue.shift();
+  markMsgShown(msg.id);
+  // Parse custom styling from frame field
+  let custom={};
+  try{if(msg.frame) custom=JSON.parse(msg.frame);}catch(e){}
+  const icon=custom.emoji||(cfg.bubbleIcon==='none'?'':cfg.bubbleIcon==='fixed'?'💬':MSG_ICONS[Math.floor(Math.random()*MSG_ICONS.length)]);
+  const iconEl=document.getElementById('msg-bubble-icon');
+  iconEl.textContent=icon;
+  iconEl.style.display=icon?'block':'none';
+  const textEl=document.getElementById('msg-bubble-text');
+  textEl.textContent=msg.content;
+  const fontSize=custom.fontSize||cfg.fsBubble||32;
+  textEl.style.fontSize='clamp(16px,3.5vw,'+fontSize+'px)';
+  document.getElementById('msg-bubble-author').textContent='— '+msg.author;
+  // Apply custom style
+  const card=document.getElementById('msg-bubble-card');
+  const tail=document.getElementById('bubble-tail');
+  const bgColor=custom.bgColor||'var(--bubble-bg)';
+  const txtColor=custom.textColor||'var(--bubble-txt)';
+  const bubbleStyle=custom.bubbleStyle||'bubble';
+  // Apply background
+  const styleMap={
+    bubble:{borderRadius:'var(--bubble-radius)',background:bgColor,boxShadow:'0 32px 80px rgba(0,0,0,0.5)',border:'none',padding:'36px 44px'},
+    card:{borderRadius:'12px',background:bgColor,boxShadow:'0 8px 32px rgba(0,0,0,0.3)',border:'4px solid '+bgColor,padding:'32px 40px'},
+    banner:{borderRadius:'6px',background:bgColor,boxShadow:'0 4px 24px rgba(0,0,0,0.4)',border:'none',padding:'28px 60px',maxWidth:'90vw'},
+    minimal:{borderRadius:'0',background:'transparent',boxShadow:'none',border:'none',borderBottom:'4px solid '+bgColor,padding:'24px 40px'},
+  };
+  const st=styleMap[bubbleStyle]||styleMap.bubble;
+  Object.assign(card.style,st);
+  if(tail) tail.style.display=(bubbleStyle==='bubble')?'block':'none';
+  if(tail) tail.style.borderTopColor=bgColor;
+  textEl.style.color=bubbleStyle==='minimal'?bgColor:txtColor;
+  document.getElementById('msg-bubble-author').style.color=bubbleStyle==='minimal'?bgColor:txtColor;
+  document.getElementById('msg-bubble-author').style.opacity='0.6';
+  const overlay=document.getElementById('msg-bubble-overlay');
+  card.style.animation='none';void card.offsetWidth;
+  card.style.animation='bubbleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards';
+  overlay.style.display='flex';
+  const readTime=Math.max(4000,3000+msg.content.length*60);
+  setTimeout(()=>{
+    card.style.animation='bubbleOut 0.4s ease forwards';
+    setTimeout(()=>{overlay.style.display='none';setTimeout(showNextBubble,800);},400);
+  },readTime);
+}
+
+// ── WISH WALL ─────────────────────────────────────────────────
+let wishQueue=[],wishShowing=false;
+
+function getShownWishIds(){
+  try{return new Set(JSON.parse(localStorage.getItem(getShownKey('ew_wishes'))||'[]'));}
+  catch(e){return new Set();}
+}
+function markWishShown(id){
+  const ids=getShownWishIds();ids.add(id);
+  localStorage.setItem(getShownKey('ew_wishes'),JSON.stringify([...ids]));
+}
+
+async function pollWishes(){
+  const wishes=await api('posts?event_id=eq.'+eventId+'&type=eq.wish&approved=eq.true&order=created_at.asc');
+  if(!Array.isArray(wishes)) return;
+  const shown=getShownWishIds();
+  const newWishes=wishes.filter(w=>w.id&&!shown.has(w.id)&&!wishQueue.find(q=>q.id===w.id));
+  if(newWishes.length){wishQueue.push(...newWishes);if(!wishShowing) showNextWish();}
+}
+
+function spawnParticles(){
+  const container=document.getElementById('wish-particles');container.innerHTML='';
+  const emojis=['💕','✨','🌸','💖','⭐','🎀','💫','🌺'];
+  for(let i=0;i<20;i++){
+    const el=document.createElement('div');
+    el.style.cssText='position:absolute;font-size:'+(Math.random()*20+16)+'px;left:'+Math.random()*100+'%;animation:particleFly '+(Math.random()*4+4)+'s linear '+(Math.random()*3)+'s infinite;';
+    el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    container.appendChild(el);
+  }
+}
+
+function showNextWish(){
+  if(!wishQueue.length){wishShowing=false;return;}
+  wishShowing=true;
+  const wish=wishQueue.shift();markWishShown(wish.id);
+  document.getElementById('wish-author').textContent=wish.author+' dice:';
+  const textEl=document.getElementById('wish-text');
+  textEl.textContent=wish.content;
+  textEl.style.animation='none';void textEl.offsetWidth;
+  textEl.style.animation='wishTextIn 0.8s ease 0.3s both';
+  spawnParticles();
+  const overlay=document.getElementById('wish-overlay');
+  overlay.style.display='flex';overlay.style.opacity='1';overlay.style.transition='';
+  const readTime=Math.max(6000,6000+wish.content.length*80);
+  setTimeout(()=>{
+    overlay.style.transition='opacity 0.8s';overlay.style.opacity='0';
+    setTimeout(()=>{overlay.style.display='none';overlay.style.opacity='1';overlay.style.transition='';setTimeout(showNextWish,1500);},800);
+  },readTime);
+}
+
+// ── POLL SCREEN ───────────────────────────────────────────────
+let pollScreenVisible=false;
+let pollTimerInterval=null;
+let currentPollData=null;
+
+async function pollForPolls(){
+  const polls=await api('polls?event_id=eq.'+eventId+'&active=eq.true&order=created_at.desc&limit=1');
   if(!Array.isArray(polls)||!polls.length){
-    document.getElementById('polls-list').innerHTML='<div class="empty"><div class="empty-ico">🗳</div><div class="empty-txt">No hay votaciones aún. ¡Creá la primera!</div></div>';
+    if(pollScreenVisible){
+      document.getElementById('poll-overlay').style.display='none';
+      pollScreenVisible=false;
+      clearInterval(pollTimerInterval);
+      const rbar=document.getElementById('reaction-bar');
+      if(rbar) rbar.style.display='flex';
+    }
     return;
   }
-  // Load all votes for this event
-  const votes=await api('poll_votes?event_id=eq.'+selectedEvent.id+'&select=poll_id,option_idx');
-  const safeVotes=Array.isArray(votes)?votes:[];
-  const list=document.getElementById('polls-list');
-  list.innerHTML='';
-  polls.forEach(poll=>{
-    const pollVotes=safeVotes.filter(v=>v.poll_id===poll.id);
-    const total=pollVotes.length;
-    const opts=Array.isArray(poll.options)?poll.options:[];
-    const counts=opts.map((_,i)=>pollVotes.filter(v=>v.option_idx===i).length);
-    const maxVotes=Math.max(...counts,1);
-    const card=document.createElement('div');card.className='poll-card';
-    const barsHtml=opts.map((opt,i)=>{
-      const pct=total>0?Math.round((counts[i]/total)*100):0;
-      const isWinner=counts[i]===maxVotes&&total>0;
-      return `<div class="poll-option-bar">
-        <div class="poll-option-label"><span>${opt}</span><span class="pvotes">${counts[i]} voto${counts[i]!==1?'s':''} · ${pct}%</span></div>
-        <div class="poll-bar-bg"><div class="poll-bar-fill${isWinner?' winner':''}" style="width:${pct}%"></div></div>
-      </div>`;
-    }).join('');
-    // Calculate remaining time
-    let timeLabel='';
-    if(poll.active&&poll.ends_at){
-      const remaining=Math.max(0,Math.round((new Date(poll.ends_at)-Date.now())/1000));
-      timeLabel=remaining>0?`⏱ ${remaining}s restantes`:'⏱ Tiempo agotado';
-    } else if(poll.active&&poll.duration_secs>0){
-      timeLabel='⏱ Sin tiempo registrado';
+  const poll=polls[0];
+  // Auto-close if time is up
+  if(poll.ends_at&&new Date(poll.ends_at)<=new Date()){
+    await api('polls?id=eq.'+poll.id,{method:'PATCH',body:'{"active":false}'});
+    if(pollScreenVisible){
+      document.getElementById('poll-overlay').style.display='none';
+      pollScreenVisible=false;clearInterval(pollTimerInterval);
     }
-    card.innerHTML=`<div class="poll-question">${poll.question}</div>${barsHtml}
-      ${timeLabel?`<div style="font-size:12px;color:var(--gold);margin-bottom:8px">${timeLabel}</div>`:''}
-      <div class="poll-meta">
-        <span class="poll-total">📊 ${total} voto${total!==1?'s':''} en total</span>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span class="poll-status ${poll.active?'active':'closed'}">${poll.active?'● Activa':'Cerrada'}</span>
-          <button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="togglePoll('${poll.id}',${poll.active})">${poll.active?'Cerrar':'Reabrir'}</button>
-          <button class="btn-reject" style="font-size:12px;padding:5px 12px;flex:none" onclick="deletePoll('${poll.id}')">✕</button>
-        </div>
-      </div>`;
-    list.appendChild(card);
+    return;
+  }
+  const votes=await api('poll_votes?poll_id=eq.'+poll.id+'&select=option_idx');
+  currentPollData=poll;
+  renderPollScreen(poll,Array.isArray(votes)?votes:[]);
+}
+
+function renderPollScreen(poll,votes){
+  const opts=Array.isArray(poll.options)?poll.options:[];
+  const total=votes.length;
+  const counts=opts.map((_,i)=>votes.filter(v=>v.option_idx===i).length);
+  const maxVotes=Math.max(...counts,1);
+  document.getElementById('poll-screen-question').textContent=poll.question;
+  document.getElementById('poll-screen-total').textContent=total+' voto'+(total!==1?'s':'')+' en tiempo real';
+  const barsDiv=document.getElementById('poll-screen-bars');barsDiv.innerHTML='';
+  opts.forEach((opt,i)=>{
+    const pct=total>0?Math.round((counts[i]/total)*100):0;
+    const isWinner=counts[i]===maxVotes&&total>0;
+    const bar=document.createElement('div');bar.className='sbar-wrap';
+    bar.innerHTML='<div class="sbar-top"><span class="sbar-label">'+opt+'</span><span class="sbar-count">'+counts[i]+' · '+pct+'%</span></div><div class="sbar-bg"><div class="sbar-fill'+(isWinner?' winner':'')+'" style="width:'+pct+'%"></div></div>';
+    barsDiv.appendChild(bar);
   });
-  // Auto-refresh while on this page
-  clearInterval(window._pollsInterval);
-  window._pollsInterval=setInterval(()=>{
-    if(document.getElementById('page-polls').classList.contains('active')) loadPolls();
-  },5000);
+  document.getElementById('poll-overlay').style.display='flex';
+  pollScreenVisible=true;
+  startPollTimer(poll);
+  // Hide reactions while poll is active
+  const rbar=document.getElementById('reaction-bar');
+  if(rbar) rbar.style.display='none';
 }
 
-async function togglePoll(id,isActive){
-  await api('polls?id=eq.'+id,{method:'PATCH',body:JSON.stringify({active:!isActive})});
-  toast(isActive?'Votación cerrada':'Votación reabierta');
-  loadPolls();
+function startPollTimer(poll){
+  clearInterval(pollTimerInterval);
+  const timerEl=document.getElementById('poll-screen-timer');
+  if(!timerEl) return;
+  // No ends_at = no timer
+  if(!poll.ends_at){
+    timerEl.style.display='none';
+    return;
+  }
+  timerEl.style.display='block';
+  function updateTimer(){
+    const remaining=Math.max(0,Math.round((new Date(poll.ends_at)-Date.now())/1000));
+    const m=Math.floor(remaining/60);
+    const s=remaining%60;
+    timerEl.textContent=m>0?m+':'+String(s).padStart(2,'0'):s+'s';
+    if(remaining<=10){timerEl.style.color='#ef4444';timerEl.style.animation='recPulse 0.5s infinite';}
+    else if(remaining<=30){timerEl.style.color='var(--gold)';timerEl.style.animation='none';}
+    else{timerEl.style.color='var(--accent)';timerEl.style.animation='none';}
+    if(remaining<=0){
+      clearInterval(pollTimerInterval);
+      timerEl.textContent='⏰';
+      timerEl.style.color='#ef4444';
+    }
+  }
+  updateTimer();
+  pollTimerInterval=setInterval(updateTimer,1000);
 }
 
-async function deletePoll(id){
-  if(!confirm('¿Eliminar esta votación y todos sus votos?')) return;
-  await api('poll_votes?poll_id=eq.'+id,{method:'DELETE'});
-  await api('polls?id=eq.'+id,{method:'DELETE'});
-  toast('🗑 Votación eliminada');
-  loadPolls();
+// ── PHOTOS ────────────────────────────────────────────────────
+function getPlayedAudioIds(){
+  try{return new Set(JSON.parse(localStorage.getItem(getShownKey('ew_audios'))||'[]'));}
+  catch(e){return new Set();}
+}
+function markAudioPlayed(id){
+  const ids=getPlayedAudioIds();ids.add(id);
+  localStorage.setItem(getShownKey('ew_audios'),JSON.stringify([...ids]));
 }
 
-// ── GUEST DESIGN ─────────────────────────────────────────────
-const GD_DEFAULTS = {
-  title:'', subtitle:'', welcome:'Compartí tu momento con todos 📷',
-  btnText:'Enviar a la pantalla ✨',
-  bg:'#faf8f6', accent:'#f0176f', hero:'#0c0c0f', heroTxt:'#ffffff',
-  showPhoto:true, showMessage:true, showAudio:true, showWish:true, showVote:true
-};
-
-function getGDKey(){ return 'ew_guest_design_'+(selectedEvent?.id||''); }
-
-async function showGuestDesign(){
-  const notice=document.getElementById('gd-notice');
-  const content=document.getElementById('gd-content');
-  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  notice.classList.remove('show');content.style.display='block';
-  // Load from Supabase
-  const rows=await api('event_settings?event_id=eq.'+selectedEvent.id);
-  const saved=(Array.isArray(rows)&&rows[0]?.guest_design)||{};
-  const d={...GD_DEFAULTS,...saved};
-  document.getElementById('gd-title').value=d.title;
-  document.getElementById('gd-subtitle').value=d.subtitle;
-  document.getElementById('gd-welcome').value=d.welcome;
-  document.getElementById('gd-btn-text').value=d.btnText;
-  const setC=(id,val)=>{document.getElementById(id).value=val;document.getElementById(id+'-hex').value=val.toUpperCase();};
-  setC('gd-bg',d.bg);setC('gd-accent',d.accent);setC('gd-hero',d.hero);setC('gd-hero-txt',d.heroTxt);
-  if(d.textColor){const el=document.getElementById('gd-text');if(el){el.value=d.textColor;const h=document.getElementById('gd-text-hex');if(h)h.value=d.textColor.toUpperCase();}}
-  if(d.fieldBg){const el=document.getElementById('gd-field-bg');if(el){el.value=d.fieldBg;const h=document.getElementById('gd-field-bg-hex');if(h)h.value=d.fieldBg.toUpperCase();}}
-  const setV2=(id,val)=>{const el=document.getElementById(id);if(el&&val!==undefined) el.value=val;};
-  setV2('gd-font',d.font||'DM Sans');
-  setV2('gd-font-title',d.fontTitle||'Syne');
-  setV2('gd-btn-radius',d.btnRadius||'14');
-  setV2('gd-field-radius',d.fieldRadius||'12');
-  setV2('gd-show-logo',d.showLogo||'yes');
-  if(d.fontSize){setV2('gd-font-size',d.fontSize);const fv=document.getElementById('gd-font-size-val');if(fv)fv.textContent=d.fontSize+'px';}
-  // toggles
-  ['photo','message','audio','wish','vote'].forEach(k=>{
-    const on=d['show'+k.charAt(0).toUpperCase()+k.slice(1)];
-    const tog=document.getElementById('tog-show-'+k);
-    if(tog) tog.classList.toggle('on',on);
-  });
-  updateGuestPreview();
+function showFeatured(post,idx){
+  featuredIdx=idx;currentFeaturedPostId=post.id;
+  const img=document.getElementById('featured-img');
+  img.style.opacity='0';
+  setTimeout(()=>{
+    img.src=post.content;img.style.display='block';img.style.opacity='1';
+    document.getElementById('no-content').style.display='none';
+    const hasCaption=post.content_text&&post.content_text.trim();
+    const overlay=document.getElementById('featured-overlay');
+    overlay.style.display=hasCaption?'block':'none';
+    if(hasCaption){
+      document.getElementById('featured-caption').textContent='"'+post.content_text+'"';
+      document.getElementById('featured-author').textContent='— '+post.author;
+    }
+  },300);
+  reactionCounts={};updateReactionUI();loadReactions();
 }
 
-function syncGDHex(colorId, hexId){
-  const val=document.getElementById(colorId).value;
-  document.getElementById(hexId).value=val.toUpperCase();
+function rotateFeatured(){
+  if(!photoPosts.length) return;
+  featuredIdx=(featuredIdx+1)%photoPosts.length;
+  showFeatured(photoPosts[featuredIdx],featuredIdx);
 }
 
-function toggleGDOption(key){
-  const tog=document.getElementById('tog-show-'+key);
-  tog.classList.toggle('on');
-  updateGuestPreview();
+function addToStrip(post){
+  const strip=document.getElementById('photo-strip');
+  const img=document.createElement('img');img.src=post.content;
+  strip.insertBefore(img,strip.firstChild);
+  if(strip.children.length>6) strip.removeChild(strip.lastChild);
 }
 
-function getGDToggle(key){
-  return document.getElementById('tog-show-'+key)?.classList.contains('on')!==false;
+function buildStrip(){
+  const strip=document.getElementById('photo-strip');strip.innerHTML='';
+  photoPosts.slice(0,6).forEach(p=>addToStrip(p));
 }
 
-function updateGuestPreview(){
-  const title      = document.getElementById('gd-title').value||selectedEvent?.name||'Nombre del evento';
-  const sub        = document.getElementById('gd-subtitle').value||(selectedEvent?.date||'')+(selectedEvent?.subtitle?' · '+selectedEvent.subtitle:'');
-  const welcome    = document.getElementById('gd-welcome').value||'Compartí tu momento con todos 📷';
-  const btnText    = document.getElementById('gd-btn-text').value||'Enviar a la pantalla ✨';
-  const bg         = document.getElementById('gd-bg').value||'#faf8f6';
-  const accent     = document.getElementById('gd-accent').value||'#f0176f';
-  const hero       = document.getElementById('gd-hero').value||'#0c0c0f';
-  const heroTxt    = document.getElementById('gd-hero-txt').value||'#ffffff';
-  const textColor  = document.getElementById('gd-text')?.value||'#1a1a1a';
-  const fieldBg    = document.getElementById('gd-field-bg')?.value||'#ffffff';
-  const font       = document.getElementById('gd-font')?.value||'DM Sans';
-  const fontTitle  = document.getElementById('gd-font-title')?.value||'Syne';
-  const btnRadius  = document.getElementById('gd-btn-radius')?.value||'14';
-  const fieldRadius= document.getElementById('gd-field-radius')?.value||'12';
-  const fontSize   = document.getElementById('gd-font-size')?.value||'15';
-  const showLogo   = document.getElementById('gd-show-logo')?.value!=='no';
+function updateCounters(){
+  document.getElementById('cnt-p').textContent=posts.filter(p=>p.type==='photo').length;
+  document.getElementById('cnt-m').textContent=posts.filter(p=>p.type==='message').length;
+  document.getElementById('cnt-a').textContent=posts.filter(p=>p.type==='audio').length;
+}
 
-  // Load Google Font for preview
-  [font, fontTitle].forEach(f=>{
-    if(f&&f!=='DM Sans'&&f!=='Syne'){
-      const id='gf-prev-'+f.replace(/\s/g,'-');
-      if(!document.getElementById(id)){
-        const link=document.createElement('link');link.id=id;link.rel='stylesheet';
-        link.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(f)+':wght@400;700;800&display=swap';
-        document.head.appendChild(link);
+function showNewBadge(){
+  const b=document.getElementById('new-badge');b.style.display='block';
+  clearTimeout(b._t);b._t=setTimeout(()=>b.style.display='none',3000);
+}
+
+// ── POLLING ───────────────────────────────────────────────────
+async function loadPosts(){
+  posts=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
+  if(!Array.isArray(posts)) posts=[];
+  lastPostCount=posts.length;
+  updateCounters();
+  photoPosts=posts.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
+  buildStrip();
+  if(photoPosts.length) showFeatured(photoPosts[0],0);
+}
+
+async function pollPosts(){
+  const fresh=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
+  if(!Array.isArray(fresh)) return;
+
+  const freshIds=new Set(fresh.map(p=>p.id));
+  const knownIds=new Set(posts.map(p=>p.id));
+
+  // Handle deleted posts
+  const removedIds=posts.filter(p=>!freshIds.has(p.id)).map(p=>p.id);
+  removedIds.forEach(id=>{
+    if(currentFeaturedPostId===id){
+      photoPosts=photoPosts.filter(p=>p.id!==id);
+      if(photoPosts.length) showFeatured(photoPosts[0],0);
+      else{
+        document.getElementById('featured-img').style.display='none';
+        document.getElementById('featured-overlay').style.display='none';
+        document.getElementById('no-content').style.display='flex';
+        currentFeaturedPostId=null;
       }
     }
+    photoPosts=photoPosts.filter(p=>p.id!==id);
+    msgBubbleQueue=msgBubbleQueue.filter(m=>m.id!==id);
   });
 
-  // Hero
-  document.getElementById('gd-prev-hero').style.background=hero;
-  document.getElementById('gd-prev-logo').style.color=accent;
-  document.getElementById('gd-prev-logo').style.display=showLogo?'block':'none';
-  document.getElementById('gd-prev-title').style.cssText='font-size:18px;font-weight:800;color:'+heroTxt+';margin-bottom:4px;font-family:'+fontTitle+',sans-serif';
-  document.getElementById('gd-prev-title').textContent=title;
-  document.getElementById('gd-prev-sub').style.cssText='font-size:11px;color:'+heroTxt+'99;margin-bottom:14px;font-family:'+font+',sans-serif';
-  document.getElementById('gd-prev-sub').textContent=sub||'Fecha · Lugar';
-  document.getElementById('gd-prev-welcome').textContent='📷 '+welcome.replace(/📷\s*/,'');
-  document.getElementById('gd-prev-welcome').style.cssText='display:inline-flex;align-items:center;gap:6px;background:'+accent+'22;border:1px solid '+accent+'55;padding:6px 12px;border-radius:20px;font-size:11px;color:'+heroTxt+'cc';
-
-  // Stats
-  ['gd-prev-accent1','gd-prev-accent2','gd-prev-accent3'].forEach(id=>{
-    document.getElementById(id).style.color=accent;
-  });
-
-  // Body
-  const body=document.getElementById('gd-prev-body');
-  body.style.background=bg;
-  body.style.color=textColor;
-  body.style.fontFamily=font+',sans-serif';
-
-  // Name field preview
-  const nameField=body.querySelector('.prev-name-field');
-  if(nameField){
-    nameField.style.background=fieldBg;
-    nameField.style.borderRadius=fieldRadius+'px';
-    nameField.style.color=textColor+'99';
-    nameField.style.fontFamily=font+',sans-serif';
-    nameField.style.fontSize=fontSize+'px';
-  }
-
-  // Send button
-  const sendBtn=document.getElementById('gd-prev-send-btn');
-  sendBtn.style.background=accent;
-  sendBtn.style.borderRadius=btnRadius+'px';
-  sendBtn.style.fontFamily=font+',sans-serif';
-  sendBtn.style.fontSize=(parseInt(fontSize)+1)+'px';
-  sendBtn.textContent=btnText;
-
-  // Buttons in preview
-  const showPhoto=getGDToggle('photo');
-  const showMsg=getGDToggle('message');
-  const showAudio=getGDToggle('audio');
-  const showWish=getGDToggle('wish');
-  const showVote=getGDToggle('vote');
-  const btns=document.getElementById('gd-prev-btns');
-  const btnStyle=`border:1.5px solid #ece8e3;border-radius:${btnRadius}px;padding:8px 4px;text-align:center;font-size:9px;color:${textColor}99;background:${fieldBg};font-family:${font},sans-serif`;
-  btns.innerHTML='';
-  if(showPhoto) btns.innerHTML+=`<div style="${btnStyle}">📷<br>Foto</div>`;
-  if(showMsg)   btns.innerHTML+=`<div style="${btnStyle}">💬<br>Mensaje</div>`;
-  if(showAudio) btns.innerHTML+=`<div style="${btnStyle}">🎤<br>Audio</div>`;
-  if(btns.children.length===0) btns.innerHTML=`<div style="font-size:10px;color:#aaa;padding:8px;text-align:center;grid-column:1/-1">Sin opciones</div>`;
-
-  // Update swatches
-  const sb=document.getElementById('gd-swatch-bg');if(sb) sb.style.background=bg;
-  const sa=document.getElementById('gd-swatch-accent');if(sa) sa.style.background=accent;
-  const sh=document.getElementById('gd-swatch-hero');if(sh) sh.style.background=hero;
-  const st=document.getElementById('gd-swatch-text');if(st) st.style.background=textColor;
-
-  // Extra buttons
-  const extraBtns=document.getElementById('gd-prev-extra-btns');
-  if(extraBtns){
-    extraBtns.innerHTML='';
-    if(showWish) extraBtns.innerHTML+=`<div style="width:100%;${btnStyle};margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px">💌 Mensaje especial</div>`;
-    if(showVote) extraBtns.innerHTML+=`<div style="width:100%;${btnStyle};margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px">🗳 Votaciones</div>`;
-  }
-}
-
-
-async function saveGuestDesign(){
-  if(!selectedEvent){toast('Seleccioná un evento primero');return;}
-  const design={
-    title:document.getElementById('gd-title').value,
-    subtitle:document.getElementById('gd-subtitle').value,
-    welcome:document.getElementById('gd-welcome').value,
-    btnText:document.getElementById('gd-btn-text').value,
-    bg:document.getElementById('gd-bg').value,
-    accent:document.getElementById('gd-accent').value,
-    hero:document.getElementById('gd-hero').value,
-    heroTxt:document.getElementById('gd-hero-txt').value,
-    textColor:getV('gd-text')||'#1a1a1a',
-    fieldBg:getV('gd-field-bg')||'#ffffff',
-    font:getV('gd-font')||'DM Sans',
-    fontTitle:getV('gd-font-title')||'Syne',
-    btnRadius:getV('gd-btn-radius')||'14',
-    fieldRadius:getV('gd-field-radius')||'12',
-    fontSize:getV('gd-font-size')||'15',
-    showLogo:getV('gd-show-logo')||'yes',
-    showPhoto:getGDToggle('photo'),
-    showMessage:getGDToggle('message'),
-    showAudio:getGDToggle('audio'),
-    showWish:getGDToggle('wish'),
-    showVote:getGDToggle('vote'),
-  };
-  // Upsert to Supabase
-  try {
-    const res = await fetch(SUPABASE_URL+'/rest/v1/event_settings', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer '+SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates,return=representation'
-      },
-      body: JSON.stringify({
-        event_id: selectedEvent.id,
-        guest_design: design,
-        updated_at: new Date().toISOString()
-      })
+  // Handle new posts — compare by ID not by count
+  const newItems=fresh.filter(f=>!knownIds.has(f.id));
+  if(newItems.length){
+    newItems.forEach(p=>{
+      if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
+        photoPosts.unshift(p);addToStrip(p);showFeatured(p,0);
+      }
+      if(p.type==='audio'&&p.content&&!getPlayedAudioIds().has(p.id)){
+        markAudioPlayed(p.id);
+        setTimeout(()=>{try{new Audio(p.content).play();}catch(e){}},800);
+      }
     });
-    const text = await res.text();
-    if (!res.ok) {
-      console.error('Save error:', res.status, text);
-      toast('❌ Error al guardar: ' + text.slice(0,80));
-      return;
-    }
-    toast('✅ Configuración guardada — se aplica en los celulares al instante');
-  } catch(e) {
-    toast('❌ Error de red: ' + e.message);
+    playSound(cfg.sound);showNewBadge();
   }
+
+  // Always sync state
+  posts=fresh;lastPostCount=fresh.length;updateCounters();
 }
 
-// ── MOBILE SIDEBAR ───────────────────────────────────────────
-function toggleSidebar(){
-  const sidebar=document.querySelector('.sidebar');
-  const overlay=document.getElementById('sidebar-overlay');
-  sidebar.classList.toggle('open');
-  overlay.classList.toggle('show');
-}
-function closeSidebar(){
-  document.querySelector('.sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('show');
+// ── INIT ──────────────────────────────────────────────────────
+async function init(){
+  if(!eventId){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Error: falta ?event= en la URL</p>';return;}
+  const events=await api('events?id=eq.'+eventId);
+  if(!Array.isArray(events)||!events[0]){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Evento no encontrado. Verificá el ID en la URL.</p>';return;}
+  const ev=events[0];
+  document.title=ev.name+' · EventWall';
+  document.getElementById('ev-name').textContent=ev.name;
+  document.getElementById('ev-sub').textContent=[ev.date,ev.subtitle].filter(Boolean).join(' · ');
+  const saved=localStorage.getItem('ew_design_'+eventId);
+  // QR
+  const guestUrl=location.origin+'/guest.html?event='+eventId;
+  const tmp=document.createElement('div');tmp.style.display='none';document.body.appendChild(tmp);
+  try{
+    new QRCode(tmp,{text:guestUrl,width:120,height:120,correctLevel:QRCode.CorrectLevel.M});
+    setTimeout(()=>{
+      const img=tmp.querySelector('img');
+      if(img){const i=new Image();i.onload=()=>{const ctx=document.getElementById('qr-canvas').getContext('2d');ctx.drawImage(i,0,0,120,120);};i.src=img.src;}
+      tmp.remove();
+    },200);
+  }catch(e){tmp.remove();}
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='block';
+  // Apply theme AFTER app is visible so DOM queries work
+  if(saved) try{applyTheme(JSON.parse(saved));}catch(e){console.error('applyTheme:',e);}
+  await loadPosts();
+  clearInterval(rotateTimer);
+  rotateTimer=setInterval(rotateFeatured,cfg.interval);
+  setInterval(pollPosts,3000);
+  setInterval(()=>{if(currentFeaturedPostId) loadReactions();},4000);
+  setInterval(pollWishes,5000);
+  setInterval(pollMessages,3500);
+  setInterval(pollForPolls,4000);
 }
 
-// Auto-load if already unlocked this session
-if(sessionStorage.getItem('ew_unlocked')==='1'){
-  document.getElementById('pin-lock').style.display='none';
-  document.getElementById('main-app').style.display='grid';
-  loadEvents();
-  startGlobalPoller();
-  // Check restricted event PIN expiry periodically
-  setInterval(async()=>{
-    const rid=sessionStorage.getItem('ew_restricted_event');
-    if(!rid) return;
-    try{
-      const res=await fetch(SUPABASE_URL+'/rest/v1/events?id=eq.'+rid+'&select=pin_expires_at',{
-        headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
-      });
-      const data=await res.json();
-      if(data[0]?.pin_expires_at&&new Date(data[0].pin_expires_at)<new Date()){
-        sessionStorage.clear();
-        alert('Tu acceso a este evento ha vencido.');
-        location.reload();
-      }
-    }catch(e){}
-  },60000); // Check every minute
-}
-// Save session on unlock
-
+init();
 </script>
 </body>
 </html>
