@@ -755,6 +755,113 @@ input[type=range]{accent-color:var(--pink)}
 </div>
 
 
+
+    <!-- ALBUM -->
+    <div class="page" id="page-album">
+      <div class="page-title">Álbum de fotos</div>
+      <div class="page-sub">Todas las fotos aprobadas del evento</div>
+      <div class="notice" id="album-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="album-content" style="display:none">
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div>
+              <div id="album-ev-name" style="font-size:18px;font-weight:700;color:var(--text)">—</div>
+              <div id="album-ev-sub" style="font-size:13px;color:var(--muted)">—</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <span id="album-count" style="font-size:13px;color:var(--muted)">0 fotos</span>
+              <button class="btn-pink" onclick="downloadAllPhotos()">⬇ Descargar todas</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div id="album-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRINT -->
+    <div class="page" id="page-print">
+      <div class="page-title">Modo impresión</div>
+      <div class="page-sub">Generá hojas para imprimir con el QR del evento</div>
+      <div class="notice" id="print-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="print-content" style="display:none">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title">⚙️ Opciones de impresión</div>
+          <div class="fg">
+            <div>
+              <label>Estilo</label>
+              <select id="print-style">
+                <option value="qr-only">Solo QR</option>
+                <option value="with-title">QR + título del evento</option>
+                <option value="full" selected>QR + título + instrucciones</option>
+                <option value="table">Para mesa (compacto)</option>
+              </select>
+            </div>
+            <div>
+              <label>Cantidad por hoja</label>
+              <select id="print-qty">
+                <option value="1">1 por hoja</option>
+                <option value="2" selected>2 por hoja</option>
+                <option value="4">4 por hoja</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <label>Mensaje personalizado (opcional)</label>
+            <input type="text" id="print-msg" placeholder="Ej: Escaneá y subí tu foto al mural 📸"/>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px">
+            <button class="btn-pink" onclick="printCards()">🖨 Imprimir</button>
+            <button class="btn-ghost" onclick="previewPrint()">👁 Vista previa</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Vista previa</div>
+          <div id="print-preview-area" style="background:#f5f5f0;border-radius:10px;padding:20px;min-height:200px;display:flex;align-items:center;justify-content:center;color:#aaa">
+            <div style="text-align:center"><div style="font-size:32px;margin-bottom:8px">🖨</div>Hacé click en "Vista previa" para ver el resultado</div>
+          </div>
+          <div id="print-sub" style="font-size:12px;color:var(--muted);margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POLLS -->
+    <div class="page" id="page-polls">
+      <div class="page-title">Votaciones</div>
+      <div class="page-sub">Creá y gestioná votaciones en tiempo real</div>
+      <div class="notice" id="polls-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="polls-content" style="display:none">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title">Nueva votación</div>
+          <div class="fg" style="margin-bottom:12px">
+            <div><label>Pregunta</label><input type="text" id="poll-question" placeholder="Ej: ¿Cuál es tu canción favorita de la noche?"/></div>
+            <div><label>Duración</label>
+              <select id="poll-duration">
+                <option value="0">Sin límite de tiempo</option>
+                <option value="30">30 segundos</option>
+                <option value="60">1 minuto</option>
+                <option value="120">2 minutos</option>
+                <option value="180">3 minutos</option>
+                <option value="300">5 minutos</option>
+                <option value="600">10 minutos</option>
+              </select>
+            </div>
+          </div>
+          <label style="margin-bottom:8px;display:block">Opciones (mínimo 2)</label>
+          <div id="poll-options-list">
+            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="Opción 1"/></div>
+            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="Opción 2"/></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+            <button class="btn-ghost" onclick="addPollOption()">+ Opción</button>
+            <button class="btn-pink" onclick="createPoll()">🗳 Crear votación</button>
+          </div>
+        </div>
+        <div id="polls-list"></div>
+      </div>
+    </div>
+
     <!-- GUEST DESIGN -->
     <div class="page" id="page-guest-design">
       <div class="page-title">Vista del invitado</div>
@@ -1500,6 +1607,30 @@ function previewTheme(){
   const sa=document.getElementById('swatch-accent');if(sa) sa.style.background=accent;
   const sbub=document.getElementById('swatch-bubble');if(sbub) sbub.style.background=bubble;
   const sh=document.getElementById('swatch-header');if(sh) sh.style.background=header;
+}
+
+function applyTemplate(name, el){
+  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const templates={
+    dark: {bg:'#07070f',accent:'#f0176f',text:'#ffffff',bubble:'#ffffff',bubbleText:'#1a1a1a',header:'#0c0c14'},
+    light:{bg:'#f5f5f0',accent:'#e91e8c',text:'#1a1a1a',bubble:'#1a1a1a',bubbleText:'#ffffff',header:'#ffffff'},
+    neon: {bg:'#0a0015',accent:'#a855f7',text:'#ffffff',bubble:'#1a0030',bubbleText:'#e0aaff',header:'#0d001a'},
+    floral:{bg:'#1a0a14',accent:'#ff6b9d',text:'#ffe4ef',bubble:'#2d1020',bubbleText:'#ffe4ef',header:'#120008'},
+    gold: {bg:'#0d0900',accent:'#f5a623',text:'#fff8e1',bubble:'#1a1200',bubbleText:'#fff8e1',header:'#080600'},
+    ocean:{bg:'#0a1628',accent:'#60a5fa',text:'#e0f2fe',bubble:'#0c2040',bubbleText:'#e0f2fe',header:'#061020'},
+  };
+  const t=templates[name];
+  if(!t) return;
+  const setC=(id,val)=>{
+    const el=document.getElementById(id);
+    const hex=document.getElementById(id+'-hex');
+    if(el) el.value=val;
+    if(hex) hex.value=val.toUpperCase();
+  };
+  setC('c-bg',t.bg);setC('c-accent',t.accent);setC('c-text',t.text);
+  setC('c-bubble',t.bubble);setC('c-bubble-text',t.bubbleText);setC('c-header',t.header);
+  previewTheme();
 }
 
 function switchDesignTab(tab, btn){
