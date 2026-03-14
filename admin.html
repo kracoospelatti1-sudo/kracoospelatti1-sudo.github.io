@@ -1289,16 +1289,15 @@ async function loadEvents(restrictedId=null){
   grid.innerHTML='';
   events.forEach(ev=>{
     const posts=sc.filter(p=>p.event_id===ev.id);
-    const pending=posts.filter(p=>!p.approved).length;
-    const approved=posts.filter(p=>p.approved).length;
+    const approved=posts.length;
     const card=document.createElement('div');
     card.className='event-card'+(selectedEvent?.id===ev.id?' selected':'');
-    card.innerHTML=(pending>0?`<div class="badge-pending">${pending} pend.</div>`:'')+
+    card.innerHTML=
       `<div class="event-name">${ev.name}</div><div class="event-date">${ev.date||''}${ev.subtitle?' · '+ev.subtitle:''}</div>
       <div style="display:inline-block;margin-top:6px;font-family:monospace;font-size:13px;font-weight:800;background:var(--pink-dim);color:var(--pink);padding:2px 10px;border-radius:6px;letter-spacing:3px">${ev.id.toUpperCase()}</div>
       <div class="event-stats"><div class="estat"><div class="estat-num">${posts.length}</div><div class="estat-lbl">Total</div></div>
       <div class="estat"><div class="estat-num">${approved}</div><div class="estat-lbl">Aprob.</div></div>
-      <div class="estat"><div class="estat-num">${pending}</div><div class="estat-lbl">Pend.</div></div></div>`;
+      </div>`;
     // Show pin status on card
     const now=new Date();
     if(ev.admin_pin){
@@ -1398,7 +1397,7 @@ async function loadPosts(){
 }
 function updateStats(){
   document.getElementById('st-total').textContent=allPosts.length;
-  document.getElementById('st-pending').textContent=allPosts.filter(p=>!p.approved).length;
+  const pendEl=document.getElementById('st-pending');if(pendEl) pendEl.textContent='0';
   document.getElementById('st-approved').textContent=allPosts.filter(p=>p.approved).length;
   document.getElementById('st-photos').textContent=allPosts.filter(p=>p.type==='photo').length;
   const wishEl=document.getElementById('st-wishes'); if(wishEl) wishEl.textContent=allPosts.filter(p=>p.type==='wish').length;
