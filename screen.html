@@ -678,39 +678,29 @@ async function pollPosts(){
   const fresh=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
   if(!Array.isArray(fresh)) return;
 
-  // Detect deleted/rejected posts
   const freshIds=new Set(fresh.map(p=>p.id));
-  const removedIds=posts.filter(p=>!freshIds.has(p.id)).map(p=>p.id);
-  if(removedIds.length){
-    removedIds.forEach(id=>{
-      // If deleted post was the featured photo, rotate to next
-      if(currentFeaturedPostId===id){
-        photoPosts=photoPosts.filter(p=>p.id!==id);
-        if(photoPosts.length) showFeatured(photoPosts[0],0);
-        else {
-          // No more photos - show empty state
-          document.getElementById('featured-img').style.display='none';
-          document.getElementById('featured-overlay').style.display='none';
-          document.getElementById('no-content').style.display='flex';
-          currentFeaturedPostId=null;
-        }
-      }
-      // Remove from photoPosts
-      photoPosts=photoPosts.filter(p=>p.id!==id);
-      // If showing as bubble message, hide it
-      const bubbleOverlay=document.getElementById('msg-bubble-overlay');
-      if(bubbleOverlay&&bubbleOverlay.style.display==='flex'){
-        // Remove from queue too
-        msgBubbleQueue=msgBubbleQueue.filter(m=>m.id!==id);
-      }
-    });
-    posts=fresh;lastPostCount=fresh.length;updateCounters();
-    return;
-  }
+  const knownIds=new Set(posts.map(p=>p.id));
 
-  if(fresh.length>lastPostCount){
-    const newItems=fresh.filter(f=>!posts.find(p=>p.id===f.id));
-    posts=fresh;lastPostCount=fresh.length;updateCounters();
+  // Handle deleted posts
+  const removedIds=posts.filter(p=>!freshIds.has(p.id)).map(p=>p.id);
+  removedIds.forEach(id=>{
+    if(currentFeaturedPostId===id){
+      photoPosts=photoPosts.filter(p=>p.id!==id);
+      if(photoPosts.length) showFeatured(photoPosts[0],0);
+      else{
+        document.getElementById('featured-img').style.display='none';
+        document.getElementById('featured-overlay').style.display='none';
+        document.getElementById('no-content').style.display='flex';
+        currentFeaturedPostId=null;
+      }
+    }
+    photoPosts=photoPosts.filter(p=>p.id!==id);
+    msgBubbleQueue=msgBubbleQueue.filter(m=>m.id!==id);
+  });
+
+  // Handle new posts — compare by ID not by count
+  const newItems=fresh.filter(f=>!knownIds.has(f.id));
+  if(newItems.length){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
         photoPosts.unshift(p);addToStrip(p);showFeatured(p,0);
@@ -722,7 +712,9 @@ async function pollPosts(){
     });
     playSound(cfg.sound);showNewBadge();
   }
-  posts=fresh;lastPostCount=fresh.length;
+
+  // Always sync state
+  posts=fresh;lastPostCount=fresh.length;updateCounters();
 }
 
 // ── INIT ──────────────────────────────────────────────────────
