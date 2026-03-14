@@ -122,6 +122,16 @@ input[type=range]{accent-color:var(--pink)}
 /* GUEST DESIGN */
 .toggle-label{display:flex;align-items:center;gap:12px;cursor:pointer;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);transition:all 0.2s}
 .toggle-label:hover{border-color:var(--muted)}
+/* ALBUM */
+.album-card{position:relative;border-radius:10px;overflow:hidden;background:#000;aspect-ratio:16/9;cursor:pointer;group}
+.album-card img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity 0.2s}
+.album-card:hover img{opacity:0.75}
+.album-card-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:8px;opacity:0;transition:opacity 0.2s;background:linear-gradient(transparent 40%,rgba(0,0,0,0.75))}
+.album-card:hover .album-card-overlay{opacity:1}
+.album-card-author{font-size:11px;font-weight:600;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,0.5)}
+.album-card-actions{display:flex;gap:6px;justify-content:flex-end}
+.album-del-btn{background:rgba(239,68,68,0.85);border:none;color:#fff;border-radius:6px;padding:5px 8px;font-size:12px;cursor:pointer;backdrop-filter:blur(4px)}
+.album-dl-btn{background:rgba(255,255,255,0.85);border:none;color:#1a1a1a;border-radius:6px;padding:5px 8px;font-size:12px;cursor:pointer;backdrop-filter:blur(4px)}
 /* DESIGN TABS */
 .dtab{flex:1;padding:8px 10px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .dtab.active{background:var(--surface2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.2)}
@@ -747,7 +757,7 @@ input[type=range]{accent-color:var(--pink)}
           </div>
         </div>
         <div class="card">
-          <div id="album-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px"></div>
+          <div id="album-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px"></div>
         </div>
       </div>
     </div>
@@ -1738,11 +1748,66 @@ async function showAlbum(){
   if(!photos.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">📷</div><div class="empty-txt">No hay fotos aprobadas aún</div></div>';return;}
   grid.innerHTML='';
   photos.forEach(p=>{
-    const img=document.createElement('img');
-    img.className='album-img';img.src=p.content;img.alt=p.author;
-    img.title=p.author;
-    grid.appendChild(img);
+    const card=document.createElement('div');
+    card.className='album-card';
+    card.innerHTML=`
+      <img src="${p.content}" alt="${p.author}" loading="lazy"/>
+      <div class="album-card-overlay">
+        <div class="album-card-author">📷 ${p.author}</div>
+        <div class="album-card-actions">
+          <button class="album-dl-btn" onclick="downloadSinglePhoto('${p.content}','${p.author}')" title="Descargar">⬇</button>
+          <button class="album-del-btn" onclick="deleteAlbumPhoto('${p.id}')" title="Eliminar">🗑</button>
+        </div>
+      </div>`;
+    // Click to fullscreen
+    card.querySelector('img').onclick=()=>openPhotoModal(p);
+    grid.appendChild(card);
   });
+}
+
+function openPhotoModal(p){
+  let modal=document.getElementById('photo-modal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='photo-modal';
+    modal.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:20px';
+    modal.innerHTML=`
+      <div style="position:relative;max-width:90vw;max-height:85vh">
+        <img id="photo-modal-img" style="max-width:100%;max-height:85vh;border-radius:8px;object-fit:contain" src=""/>
+        <div id="photo-modal-info" style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.7);font-size:13px"></div>
+      </div>
+      <div style="position:absolute;top:16px;right:16px;display:flex;gap:10px">
+        <button id="photo-modal-dl" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">⬇ Descargar</button>
+        <button id="photo-modal-del" style="background:rgba(239,68,68,0.3);border:1px solid rgba(239,68,68,0.5);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">🗑 Eliminar</button>
+        <button onclick="document.getElementById('photo-modal').style.display='none'" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">✕ Cerrar</button>
+      </div>`;
+    modal.onclick=e=>{if(e.target===modal) modal.style.display='none';};
+    document.body.appendChild(modal);
+  }
+  document.getElementById('photo-modal-img').src=p.content;
+  document.getElementById('photo-modal-info').textContent='📷 '+p.author+(p.content_text?' · "'+p.content_text+'"':'');
+  document.getElementById('photo-modal-dl').onclick=()=>downloadSinglePhoto(p.content,p.author);
+  document.getElementById('photo-modal-del').onclick=()=>{deleteAlbumPhoto(p.id);modal.style.display='none';};
+  modal.style.display='flex';
+}
+
+async function deleteAlbumPhoto(id){
+  if(!confirm('¿Eliminar esta foto?')) return;
+  await api('posts?id=eq.'+id,{method:'DELETE'});
+  toast('🗑 Foto eliminada');
+  showAlbum();
+}
+
+async function downloadSinglePhoto(url,author){
+  try{
+    const res=await fetch(url);
+    const blob=await res.blob();
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='foto_'+author.replace(/\s/g,'_')+'.jpg';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }catch(e){toast('Error al descargar');}
 }
 
 async function downloadAlbum(){
