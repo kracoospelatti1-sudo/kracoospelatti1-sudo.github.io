@@ -1425,7 +1425,12 @@ function getGuestName(){
   if(!n){document.getElementById('guest-name').focus();document.getElementById('guest-name').style.borderColor='var(--pink)';setTimeout(()=>document.getElementById('guest-name').style.borderColor='',2000);return null;}
   return n;
 }
-function setProgress(pct,label){document.getElementById('sending-progress').style.width=pct+'%';document.getElementById('sending-label').textContent=label;}
+function setProgress(pct,label){
+  const circle=document.getElementById('progress-circle');
+  if(circle){const offset=150-(pct/100)*150;circle.style.strokeDashoffset=offset;}
+  const msg=document.getElementById('sending-msg');
+  if(msg&&label) msg.textContent=label;
+}
 function showSending(){setProgress(10,'Preparando...');document.getElementById('sending-overlay').classList.add('show');}
 function hideSending(){document.getElementById('sending-overlay').classList.remove('show');setProgress(0,'');}
 function showSuccess(){document.getElementById('success-screen').classList.add('show');loadStats();}
