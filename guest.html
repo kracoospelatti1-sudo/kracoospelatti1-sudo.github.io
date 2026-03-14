@@ -7,6 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+#app *{max-width:100%;}
+#app img, #app canvas{max-width:100%;height:auto;}
+#app input, #app textarea, #app select{width:100%;max-width:100%;}
 html,body{overflow-x:hidden;width:100%;margin:0;padding:0}
 :root{--pink:#f0176f;--pink-light:#fde8f2;--pink-border:#fbc4dd;--bg:#faf8f6;--surface:#fff;--border:#ece8e3;--text:#1a1a1a;--muted:#8a8a95;--dark:#0c0c0f}
 html{background:var(--bg);-webkit-tap-highlight-color:transparent}
@@ -26,8 +29,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;backgro
 .name-wrap{margin-bottom:18px}
 .field{width:100%;padding:13px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;-webkit-appearance:none}
 .field:focus{border-color:var(--pink)}
-.type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;width:100%}
-.type-btn{padding:14px 8px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px;-webkit-appearance:none}
+.type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:16px;width:100%;max-width:100%}
+.type-btn{padding:12px 4px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:11px;font-weight:600;min-width:0;overflow:hidden;color:var(--muted);transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px;-webkit-appearance:none}
 .type-btn .ico{font-size:24px;line-height:1}
 .type-btn.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
 .wish-btn{border-color:var(--border);color:var(--muted)}
@@ -192,7 +195,7 @@ textarea.field{height:110px;resize:none;line-height:1.55;padding-top:14px}
       <button class="type-btn" onclick="selectType('message',this)"><span class="ico">💬</span>Mensaje</button>
       <button class="type-btn" onclick="selectType('audio',this)"><span class="ico">🎤</span>Audio</button>
     </div>
-    <div style="margin-bottom:20px;width:100%;box-sizing:border-box">
+    <div style="margin-bottom:16px;width:100%;box-sizing:border-box;overflow:hidden">
       <button class="type-btn wish-btn" onclick="selectType('wish',this)" style="width:100%;flex-direction:row;gap:10px;padding:14px 20px;justify-content:center"><span class="ico" style="font-size:20px">💌</span><span class="wish-btn-label" style="font-size:14px">Mensaje especial para el festejado</span></button>
       <button class="type-btn vote-btn" onclick="selectType('vote',this);loadVotePolls()" style="width:100%;flex-direction:row;gap:10px;padding:14px 20px;justify-content:center"><span class="ico" style="font-size:20px">🗳</span><span class="vote-btn-label" style="font-size:14px;font-weight:600">Votaciones activas</span></button>
     <!-- PHOTO -->
@@ -746,7 +749,7 @@ async function applyGuestDesign(ev){
   if(!styleEl){ styleEl=document.createElement('style'); styleEl.id='gd-dynamic-style'; document.head.appendChild(styleEl); }
   styleEl.textContent = `
     :root { --pink: ${accent}; --pink-light: ${accent}22; --pink-border: ${accent}66; --bg: ${bg}; }
-    html body { background: ${bg} !important; color: ${textColor} !important; font-family: '${font}', sans-serif !important; font-size: ${fontSize}px !important; }
+    html, body { background: ${bg} !important; color: ${textColor} !important; font-family: '${font}', sans-serif !important; font-size: ${fontSize}px !important; overflow-x: hidden !important; width: 100% !important; max-width: 100% !important; }
     .hero { background: ${hero} !important; }
     .hero-title { color: ${heroTxt} !important; font-family: '${fontTitle}', sans-serif !important; }
     .hero-sub { color: ${heroTxt}99 !important; }
