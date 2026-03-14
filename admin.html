@@ -941,15 +941,16 @@ input[type=range]{accent-color:var(--pink)}
               </div>
               <!-- body -->
               <div style="background:#faf8f6;padding:16px" id="gd-prev-body">
-                <div style="font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">Tu nombre</div>
-                <div style="background:#fff;border:1.5px solid #ece8e3;border-radius:10px;padding:10px 12px;font-size:12px;color:#aaa;margin-bottom:14px">Ej: Valentina García</div>
-                <div style="font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">¿Qué querés compartir?</div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px" id="gd-prev-btns">
+                <div style="font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">Tu nombre</div>
+                <div class="prev-name-field" style="background:#fff;border:1.5px solid #ece8e3;border-radius:10px;padding:9px 12px;font-size:11px;color:#aaa;margin-bottom:12px">Ej: Valentina García</div>
+                <div style="font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">¿Qué querés compartir?</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px" id="gd-prev-btns">
                   <div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">📷<br>Foto</div>
                   <div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">💬<br>Mensaje</div>
                   <div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">🎤<br>Audio</div>
                 </div>
-                <div id="gd-prev-send-btn" style="background:#f0176f;color:#fff;border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:700">Enviar a la pantalla ✨</div>
+                <div id="gd-prev-extra-btns"></div>
+                <div id="gd-prev-send-btn" style="background:#f0176f;color:#fff;border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:700;margin-top:10px">Enviar a la pantalla ✨</div>
               </div>
             </div>
           </div>
@@ -1780,42 +1781,98 @@ function getGDToggle(key){
 }
 
 function updateGuestPreview(){
-  const title=document.getElementById('gd-title').value||selectedEvent?.name||'Nombre del evento';
-  const sub=document.getElementById('gd-subtitle').value||(selectedEvent?.date||'')+(selectedEvent?.subtitle?' · '+selectedEvent.subtitle:'');
-  const welcome=document.getElementById('gd-welcome').value||'Compartí tu momento con todos 📷';
-  const btnText=document.getElementById('gd-btn-text').value||'Enviar a la pantalla ✨';
-  const bg=document.getElementById('gd-bg').value||'#faf8f6';
-  const accent=document.getElementById('gd-accent').value||'#f0176f';
-  const hero=document.getElementById('gd-hero').value||'#0c0c0f';
-  const heroTxt=document.getElementById('gd-hero-txt').value||'#ffffff';
+  const title      = document.getElementById('gd-title').value||selectedEvent?.name||'Nombre del evento';
+  const sub        = document.getElementById('gd-subtitle').value||(selectedEvent?.date||'')+(selectedEvent?.subtitle?' · '+selectedEvent.subtitle:'');
+  const welcome    = document.getElementById('gd-welcome').value||'Compartí tu momento con todos 📷';
+  const btnText    = document.getElementById('gd-btn-text').value||'Enviar a la pantalla ✨';
+  const bg         = document.getElementById('gd-bg').value||'#faf8f6';
+  const accent     = document.getElementById('gd-accent').value||'#f0176f';
+  const hero       = document.getElementById('gd-hero').value||'#0c0c0f';
+  const heroTxt    = document.getElementById('gd-hero-txt').value||'#ffffff';
+  const textColor  = document.getElementById('gd-text')?.value||'#1a1a1a';
+  const fieldBg    = document.getElementById('gd-field-bg')?.value||'#ffffff';
+  const font       = document.getElementById('gd-font')?.value||'DM Sans';
+  const fontTitle  = document.getElementById('gd-font-title')?.value||'Syne';
+  const btnRadius  = document.getElementById('gd-btn-radius')?.value||'14';
+  const fieldRadius= document.getElementById('gd-field-radius')?.value||'12';
+  const fontSize   = document.getElementById('gd-font-size')?.value||'15';
+  const showLogo   = document.getElementById('gd-show-logo')?.value!=='no';
 
-  // Update preview
+  // Load Google Font for preview
+  [font, fontTitle].forEach(f=>{
+    if(f&&f!=='DM Sans'&&f!=='Syne'){
+      const id='gf-prev-'+f.replace(/\s/g,'-');
+      if(!document.getElementById(id)){
+        const link=document.createElement('link');link.id=id;link.rel='stylesheet';
+        link.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(f)+':wght@400;700;800&display=swap';
+        document.head.appendChild(link);
+      }
+    }
+  });
+
+  // Hero
   document.getElementById('gd-prev-hero').style.background=hero;
-  document.getElementById('gd-prev-title').style.color=heroTxt;
+  document.getElementById('gd-prev-logo').style.color=accent;
+  document.getElementById('gd-prev-logo').style.display=showLogo?'block':'none';
+  document.getElementById('gd-prev-title').style.cssText='font-size:18px;font-weight:800;color:'+heroTxt+';margin-bottom:4px;font-family:'+fontTitle+',sans-serif';
   document.getElementById('gd-prev-title').textContent=title;
-  document.getElementById('gd-prev-sub').style.color=heroTxt+'99';
+  document.getElementById('gd-prev-sub').style.cssText='font-size:11px;color:'+heroTxt+'99;margin-bottom:14px;font-family:'+font+',sans-serif';
   document.getElementById('gd-prev-sub').textContent=sub||'Fecha · Lugar';
   document.getElementById('gd-prev-welcome').textContent='📷 '+welcome.replace(/📷\s*/,'');
-  document.getElementById('gd-prev-body').style.background=bg;
-  document.getElementById('gd-prev-send-btn').style.background=accent;
-  document.getElementById('gd-prev-send-btn').textContent=btnText;
+  document.getElementById('gd-prev-welcome').style.cssText='display:inline-flex;align-items:center;gap:6px;background:'+accent+'22;border:1px solid '+accent+'55;padding:6px 12px;border-radius:20px;font-size:11px;color:'+heroTxt+'cc';
+
+  // Stats
   ['gd-prev-accent1','gd-prev-accent2','gd-prev-accent3'].forEach(id=>{
     document.getElementById(id).style.color=accent;
   });
 
-  // Show/hide buttons in preview
+  // Body
+  const body=document.getElementById('gd-prev-body');
+  body.style.background=bg;
+  body.style.color=textColor;
+  body.style.fontFamily=font+',sans-serif';
+
+  // Name field preview
+  const nameField=body.querySelector('.prev-name-field');
+  if(nameField){
+    nameField.style.background=fieldBg;
+    nameField.style.borderRadius=fieldRadius+'px';
+    nameField.style.color=textColor+'99';
+    nameField.style.fontFamily=font+',sans-serif';
+    nameField.style.fontSize=fontSize+'px';
+  }
+
+  // Send button
+  const sendBtn=document.getElementById('gd-prev-send-btn');
+  sendBtn.style.background=accent;
+  sendBtn.style.borderRadius=btnRadius+'px';
+  sendBtn.style.fontFamily=font+',sans-serif';
+  sendBtn.style.fontSize=(parseInt(fontSize)+1)+'px';
+  sendBtn.textContent=btnText;
+
+  // Buttons in preview
   const showPhoto=getGDToggle('photo');
   const showMsg=getGDToggle('message');
   const showAudio=getGDToggle('audio');
   const showWish=getGDToggle('wish');
   const showVote=getGDToggle('vote');
   const btns=document.getElementById('gd-prev-btns');
+  const btnStyle=`border:1.5px solid #ece8e3;border-radius:${btnRadius}px;padding:8px 4px;text-align:center;font-size:9px;color:${textColor}99;background:${fieldBg};font-family:${font},sans-serif`;
   btns.innerHTML='';
-  if(showPhoto) btns.innerHTML+=`<div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">📷<br>Foto</div>`;
-  if(showMsg)   btns.innerHTML+=`<div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">💬<br>Mensaje</div>`;
-  if(showAudio) btns.innerHTML+=`<div style="border:1.5px solid #ece8e3;border-radius:10px;padding:8px 4px;text-align:center;font-size:9px;color:#aaa;background:#fff">🎤<br>Audio</div>`;
-  if(btns.children.length===0) btns.innerHTML='<div style="font-size:10px;color:#aaa;padding:8px;text-align:center;grid-column:1/-1">Sin opciones habilitadas</div>';
+  if(showPhoto) btns.innerHTML+=`<div style="${btnStyle}">📷<br>Foto</div>`;
+  if(showMsg)   btns.innerHTML+=`<div style="${btnStyle}">💬<br>Mensaje</div>`;
+  if(showAudio) btns.innerHTML+=`<div style="${btnStyle}">🎤<br>Audio</div>`;
+  if(btns.children.length===0) btns.innerHTML=`<div style="font-size:10px;color:#aaa;padding:8px;text-align:center;grid-column:1/-1">Sin opciones</div>`;
+
+  // Extra buttons
+  const extraBtns=document.getElementById('gd-prev-extra-btns');
+  if(extraBtns){
+    extraBtns.innerHTML='';
+    if(showWish) extraBtns.innerHTML+=`<div style="width:100%;${btnStyle};margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px">💌 Mensaje especial</div>`;
+    if(showVote) extraBtns.innerHTML+=`<div style="width:100%;${btnStyle};margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px">🗳 Votaciones</div>`;
+  }
 }
+
 
 async function saveGuestDesign(){
   if(!selectedEvent){toast('Seleccioná un evento primero');return;}
