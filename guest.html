@@ -1866,7 +1866,8 @@ async function loadMyPhotos(){
     posts.forEach(p=>{
       const card=document.createElement('div');
       card.className='my-photo-card';
-      card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/><div class="my-photo-overlay"><button class="my-photo-del" onclick="deleteMyPhoto(''+p.id+'',this.closest('.my-photo-card'))">🗑 Eliminar</button></div>';
+      const delBtn='<button class="my-photo-del" onclick="deleteMyPhoto(\''+p.id+'\',this.closest(\'.my-photo-card\'))">🗑 Eliminar</button>';
+      card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/><div class="my-photo-overlay">'+delBtn+'</div>';
       card.addEventListener('touchstart',()=>card.querySelector('.my-photo-overlay').style.opacity='1');
       card.addEventListener('touchend',()=>setTimeout(()=>card.querySelector('.my-photo-overlay').style.opacity='0',2000));
       grid.appendChild(card);
