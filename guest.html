@@ -838,9 +838,10 @@ const FRAMES=[
     ctx.fillStyle=vg;ctx.fillRect(0,0,w,h);
     // Corner roses
     const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
-    ['🌹','🌹','🌹','🌹'].forEach((e,[x,y])=>{
-      ctx.fillText(e,x,y);
-    },[...[[0.01,0.12],[0.86,0.09],[0.01,0.92],[0.86,0.92]]].map(([x,y])=>[x*w,y*h]));
+    const rosePos=[[0.01,0.12],[0.86,0.09],[0.01,0.92],[0.86,0.92]];
+    ['🌹','🌹','🌹','🌹'].forEach((e,i)=>{
+      ctx.fillText(e,rosePos[i][0]*w,rosePos[i][1]*h);
+    });
   }},
 
   // ── TEMPORADA ─────────────────────────────────────────────
