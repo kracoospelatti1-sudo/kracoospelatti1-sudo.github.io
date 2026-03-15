@@ -1242,6 +1242,54 @@ input[type=range]{accent-color:var(--pink)}
 </div><!-- end main-app -->
 
 <div class="toast" id="toast"></div>
+
+<!-- EDIT EVENT MODAL -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface);border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.4)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-size:18px;font-weight:800;color:var(--text)">✏️ Editar evento</div>
+      <button onclick="closeEditModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);padding:4px">✕</button>
+    </div>
+    <div class="fg">
+      <div>
+        <label>Nombre del evento</label>
+        <input type="text" id="edit-ev-name" placeholder="Nombre del evento" class="field"/>
+      </div>
+      <div>
+        <label>Fecha</label>
+        <input type="text" id="edit-ev-date" placeholder="ej: 2024-12-31" class="field"/>
+      </div>
+      <div>
+        <label>Subtítulo</label>
+        <input type="text" id="edit-ev-subtitle" placeholder="ej: Salón Crystal · Buenos Aires" class="field"/>
+      </div>
+      <div>
+        <label>Email del cliente</label>
+        <input type="email" id="edit-ev-email" placeholder="cliente@email.com" class="field"/>
+      </div>
+      <div>
+        <label>PIN de cliente</label>
+        <input type="text" id="edit-ev-pin" placeholder="PIN actual o nuevo" class="field"/>
+      </div>
+      <div>
+        <label>Duración del PIN</label>
+        <select id="edit-ev-pin-duration" class="field">
+          <option value="0">Sin vencimiento</option>
+          <option value="4">4 horas</option>
+          <option value="8">8 horas</option>
+          <option value="12" selected>12 horas</option>
+          <option value="24">24 horas</option>
+          <option value="48">48 horas</option>
+          <option value="72">72 horas</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="btn-pink" onclick="saveEditEvent()" style="flex:1">💾 Guardar cambios</button>
+      <button class="btn-ghost" onclick="closeEditModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const SUPABASE_URL = 'https://jxqwrbmnfmnzddkcimrm.supabase.co';
@@ -1389,6 +1437,69 @@ let autoApprove=false;
 
 
 
+// ── EDIT EVENT ───────────────────────────────────────────────
+let editingEventId = null;
+
+function openEditEvent(ev){
+  editingEventId = ev.id;
+  document.getElementById('edit-ev-name').value = ev.name || '';
+  document.getElementById('edit-ev-date').value = ev.date || '';
+  document.getElementById('edit-ev-subtitle').value = ev.subtitle || '';
+  document.getElementById('edit-ev-email').value = ev.client_email || '';
+  document.getElementById('edit-ev-pin').value = ev.admin_pin || '';
+  document.getElementById('edit-ev-pin-duration').value = '0';
+  const modal = document.getElementById('edit-modal');
+  modal.style.display = 'flex';
+}
+
+function closeEditModal(){
+  document.getElementById('edit-modal').style.display = 'none';
+  editingEventId = null;
+}
+
+async function saveEditEvent(){
+  if(!editingEventId) return;
+  const name = document.getElementById('edit-ev-name').value.trim();
+  if(!name){toast('❌ El nombre es obligatorio');return;}
+
+  const body = {
+    name,
+    date: document.getElementById('edit-ev-date').value.trim() || null,
+    subtitle: document.getElementById('edit-ev-subtitle').value.trim() || null,
+    client_email: document.getElementById('edit-ev-email').value.trim() || null,
+  };
+
+  const pin = document.getElementById('edit-ev-pin').value.trim();
+  if(pin){
+    body.admin_pin = pin;
+    const dur = parseInt(document.getElementById('edit-ev-pin-duration').value) || 0;
+    body.pin_expires_at = dur > 0
+      ? new Date(Date.now() + dur * 3600000).toISOString()
+      : null;
+  }
+
+  const res = await api('events?id=eq.'+editingEventId, {
+    method: 'PATCH',
+    body: JSON.stringify(body)
+  });
+
+  if(res !== null){
+    toast('✅ Evento actualizado');
+    closeEditModal();
+    loadEvents();
+    // Update selectedEvent if it's the one being edited
+    if(selectedEvent?.id === editingEventId){
+      selectedEvent = {...selectedEvent, ...body};
+      document.getElementById('sidebar-event').textContent = body.name;
+    }
+  }
+}
+
+// Close modal on backdrop click
+document.getElementById('edit-modal')?.addEventListener('click', function(e){
+  if(e.target === this) closeEditModal();
+});
+
 // ── MOMENTS ──────────────────────────────────────────────────
 function showMoments(){
   const notice=document.getElementById('moments-notice');
@@ -1474,6 +1585,7 @@ async function sendAlbumEmail(ev, posts){
         headers:{
           'Content-Type':'application/json',
           'Authorization':'Bearer '+SUPABASE_KEY,
+          'apikey':SUPABASE_KEY,
         },
         body:JSON.stringify({
           eventName: ev.name,
@@ -1551,7 +1663,18 @@ async function loadEvents(restrictedId=null){
     if(sessionStorage.getItem('ew_restricted_event')===ev.id){
       setTimeout(()=>card.click(),100);
     }
-    // Only show delete button to master admin
+    // Show edit button for all admins, delete only for master
+    const editBtn=document.createElement('button');
+    editBtn.className='del-btn';
+    editBtn.innerHTML='✏️';
+    editBtn.title='Editar evento';
+    const isRestricted=!!sessionStorage.getItem('ew_restricted_event');
+    editBtn.style.cssText='position:absolute;top:12px;right:'+(isRestricted?'12px':'52px')+';background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#6366f1;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;transition:all 0.2s;';
+    editBtn.onmouseenter=()=>editBtn.style.background='rgba(99,102,241,0.35)';
+    editBtn.onmouseleave=()=>editBtn.style.background='rgba(99,102,241,0.15)';
+    editBtn.onclick=(e)=>{e.stopPropagation();openEditEvent(ev);};
+    card.appendChild(editBtn);
+
     if(!sessionStorage.getItem('ew_restricted_event')){
       const delBtn=document.createElement('button');
       delBtn.className='del-btn';
