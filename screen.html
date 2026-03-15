@@ -87,6 +87,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .ken-burns-c{animation:kenBurnsC var(--kb-dur,7s) ease-in-out forwards}
 .ken-burns-d{animation:kenBurnsD var(--kb-dur,7s) ease-in-out forwards}
 
+/* WAITING SCREEN */
+#waiting-screen{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;background:var(--bg,#07070f);transition:opacity 0.8s ease}
+#waiting-screen.hide{opacity:0;pointer-events:none}
+.ws-inner{display:flex;flex-direction:column;align-items:center;gap:28px;text-align:center;padding:40px 24px}
+.ws-title{font-family:var(--font-title);font-size:clamp(32px,5vw,72px);font-weight:800;color:var(--txt,#fff);line-height:1.15}
+.ws-subtitle{font-size:clamp(14px,2vw,22px);color:rgba(255,255,255,0.55);max-width:600px;line-height:1.6}
+.ws-qr-box{background:#fff;padding:18px;border-radius:20px;box-shadow:0 0 60px rgba(240,23,111,0.3)}
+.ws-qr-label{font-size:clamp(13px,1.8vw,18px);color:rgba(255,255,255,0.5);margin-top:4px}
+.ws-countdown{font-family:var(--font-title);font-size:clamp(18px,3vw,42px);font-weight:700;color:var(--accent,#f0176f);letter-spacing:2px;min-height:54px}
+.ws-live-dot{width:10px;height:10px;background:var(--accent,#f0176f);border-radius:50%;animation:blink 1.4s infinite;display:inline-block;margin-right:8px;vertical-align:middle}
+
 /* LOADING */
 .screen-loading{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;color:rgba(255,255,255,0.4)}
 .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
@@ -194,6 +205,17 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
   <div id="mosaic-grid" style="position:absolute;inset:0;top:52px;overflow:hidden;padding:4px"></div>
 </div>
 
+  <!-- WAITING SCREEN -->
+  <div id="waiting-screen" style="display:none">
+    <div class="ws-inner">
+      <div class="ws-title" id="ws-title">Bienvenidos</div>
+      <div class="ws-subtitle" id="ws-subtitle">Escaneá el código y participá en tiempo real</div>
+      <div class="ws-qr-box"><canvas id="ws-qr-canvas" width="220" height="220"></canvas></div>
+      <div class="ws-qr-label">📸 Subí fotos · 💬 Enviá mensajes · 🥂 Dejá un deseo</div>
+      <div class="ws-countdown" id="ws-countdown"></div>
+    </div>
+  </div>
+
   <div class="header">
     <div>
       <div class="ev-name" id="ev-name">—</div>
@@ -271,7 +293,8 @@ const mosaicParam=params.get('mosaic');
 let eventName='';
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
 let currentFeaturedPostId=null,reactionCounts={};
-let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5,transition:'fade',kenBurns:'no'};
+let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5,transition:'fade',kenBurns:'no',waitTitle:'',waitSubtitle:'',waitStart:'',waitCountdown:'yes'};
+let waitCountdownTimer=null;
 let sharedAudioCtx=null;
 function getAudioCtx(){
   if(!sharedAudioCtx){
@@ -330,6 +353,10 @@ function applyTheme(design){
   if(design.interval) cfg.interval=parseInt(design.interval)*1000;
   if(design.sound) cfg.sound=design.sound;
   if(design.kenBurns) cfg.kenBurns=design.kenBurns;
+  if(design.waitTitle) cfg.waitTitle=design.waitTitle;
+  if(design.waitSubtitle) cfg.waitSubtitle=design.waitSubtitle;
+  if(design.waitStart) cfg.waitStart=design.waitStart;
+  if(design.waitCountdown) cfg.waitCountdown=design.waitCountdown;
 
   // Photo fit
   const img=document.getElementById('featured-img');
@@ -913,7 +940,8 @@ async function pollPosts(){
         if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
         buildStrip();
         if(!currentFeaturedPostId){
-          // No photo showing — show it now
+          // No photo showing — show it now (also hide waiting screen)
+          hideWaitingScreen();
           featuredIdx=0;
           showFeatured(photoPosts[0],0);
           // Reset rotation timer so it gets full time
@@ -981,6 +1009,8 @@ async function init(){
   // Apply theme AFTER app is visible so DOM queries work
   if(saved) try{applyTheme(JSON.parse(saved));}catch(e){console.error('applyTheme:',e);}
   await loadPosts();
+  // Show waiting screen if no photos yet
+  if(!photoPosts.length) showWaitingScreen(eventId, ev);
   // Auto-start mosaic mode if ?mosaic=1
   if(mosaicParam==='1') startMosaic();
   clearInterval(rotateTimer);
@@ -993,6 +1023,64 @@ async function init(){
 setInterval(pollMoments,3000);
 }
 
+
+// ── WAITING SCREEN ───────────────────────────────────────────
+function showWaitingScreen(eventId, ev){
+  const ws=document.getElementById('waiting-screen');
+  ws.style.display='flex';
+  // Texts
+  const title=cfg.waitTitle||ev.name||'Bienvenidos';
+  const subtitle=cfg.waitSubtitle||'Escaneá el código y participá en tiempo real';
+  document.getElementById('ws-title').textContent=title;
+  document.getElementById('ws-subtitle').textContent=subtitle;
+  // Big QR
+  const guestUrl=location.origin+'/guest.html?event='+(ev.custom_code||eventId);
+  const tmp=document.createElement('div');tmp.style.display='none';document.body.appendChild(tmp);
+  try{
+    new QRCode(tmp,{text:guestUrl,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
+    setTimeout(()=>{
+      const img=tmp.querySelector('img');
+      if(img){const i=new Image();i.onload=()=>{const ctx=document.getElementById('ws-qr-canvas').getContext('2d');ctx.drawImage(i,0,0,220,220);};i.src=img.src;}
+      tmp.remove();
+    },200);
+  }catch(e){tmp.remove();}
+  // Countdown
+  startWaitCountdown();
+}
+
+function startWaitCountdown(){
+  clearInterval(waitCountdownTimer);
+  const el=document.getElementById('ws-countdown');
+  if(!el) return;
+  if(!cfg.waitStart||cfg.waitCountdown==='no'){el.textContent='';return;}
+  function tick(){
+    const now=new Date();
+    const target=new Date(cfg.waitStart);
+    const diff=target-now;
+    if(diff<=0){
+      el.innerHTML='<span class="ws-live-dot"></span>¡Ya comenzamos!';
+      clearInterval(waitCountdownTimer);
+      return;
+    }
+    const h=Math.floor(diff/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    const parts=[];
+    if(h>0) parts.push(h+'h');
+    parts.push(String(m).padStart(2,'0')+'m');
+    parts.push(String(s).padStart(2,'0')+'s');
+    el.textContent='⏳ Comienza en '+parts.join(' ');
+  }
+  tick();
+  waitCountdownTimer=setInterval(tick,1000);
+}
+
+function hideWaitingScreen(){
+  clearInterval(waitCountdownTimer);
+  const ws=document.getElementById('waiting-screen');
+  ws.classList.add('hide');
+  setTimeout(()=>{ws.style.display='none';ws.classList.remove('hide');},900);
+}
 
 // ── BACKGROUND CANVAS EFFECTS ────────────────────────────────
 let bgAnimFrame=null;
