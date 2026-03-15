@@ -473,6 +473,13 @@ body{
   <p>Cargando evento...</p>
 </div>
 
+<!-- EXPIRED ACCESS -->
+<div id="expired-overlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);color:#fff;align-items:center;justify-content:center;flex-direction:column;padding:24px;text-align:center">
+  <div style="font-size:44px;margin-bottom:16px">⏳</div>
+  <div style="font-size:22px;font-weight:800;margin-bottom:12px">Acceso expirado</div>
+  <div style="font-size:16px;max-width:420px;line-height:1.4;opacity:0.9">El PIN de este evento ya venció. Para volver a participar, pedí al organizador que genere un nuevo código o extienda el acceso.</div>
+</div>
+
 <!-- POLL LOCK -->
 <div class="poll-lock" id="poll-lock-overlay">
   <div class="poll-lock-ico">🗳</div>
@@ -826,6 +833,39 @@ const eventId=params.get('event');
 let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
 let audioChunks=[],recTimer=null,recSecs=0,audioUrl=null;
 let selectedFrame='none';
+
+let eventPinExpiry=null;
+let expiryCheckInterval=null;
+
+function isPinExpired(){
+  if(!eventPinExpiry) return false;
+  return new Date(eventPinExpiry) < new Date();
+}
+
+function showExpiredOverlay(){
+  const o=document.getElementById('expired-overlay');
+  if(o) o.style.display='flex';
+  // Disable UI interactions
+  document.querySelectorAll('button, input, textarea, select').forEach(el=>el.disabled=true);
+}
+
+function checkPinExpiry(){
+  if(isPinExpired()){
+    showExpiredOverlay();
+    if(expiryCheckInterval){clearInterval(expiryCheckInterval);expiryCheckInterval=null;}
+    return true;
+  }
+  return false;
+}
+
+function ensureNotExpired(errorId){
+  if(checkPinExpiry()){
+    if(errorId) showFormError(errorId,'⏳ El acceso expiró.');
+    return false;
+  }
+  return true;
+}
+
 
 // ── FRAMES ───────────────────────────────────────────────────
 const FRAMES=[
@@ -1471,15 +1511,9 @@ async function init(){
     if(!evs[0]) throw new Error('Evento no encontrado');
     const ev=evs[0];
 
-    // Block guests if the event PIN has expired
-    if(ev.pin_expires_at && new Date(ev.pin_expires_at) < new Date()){
-      document.getElementById('page-loading').innerHTML =
-        '<div style="text-align:center;padding:32px">' +
-        '<div style="font-size:40px">⏳</div>' +
-        '<p style="color:var(--pink);margin-top:12px">El acceso a este evento expiró.<br>Contactá al organizador para obtener un nuevo código.</p>' +
-        '</div>';
-      return;
-    }
+    // Pin expiry
+    eventPinExpiry = ev.pin_expires_at || null;
+    if(checkPinExpiry()) return;
 
     document.title=ev.name+' · EventWall';
     document.getElementById('ev-name').textContent=ev.name;
@@ -1488,6 +1522,10 @@ async function init(){
     document.getElementById('app').style.display='block';
     buildFramePicker();
     await applyGuestDesign(ev);
+    // Start expiry polling so open pages also lock when PIN expires
+    if(!expiryCheckInterval){
+      expiryCheckInterval=setInterval(checkPinExpiry,5000);
+    }
     // Live orientation warning while camera is not open
     if(window.DeviceOrientationEvent){
       window.addEventListener('orientationchange',()=>{
@@ -1593,6 +1631,7 @@ function removePhoto(){
 
 async function sendPhoto(){
   const name=getGuestName();if(!name) return;
+  if(!ensureNotExpired('photo-error')) return;
   if(!originalImage){showFormError('photo-error','Seleccioná una foto primero');return;}
   if(!checkCooldown('photo')) return;
   showSending();
@@ -1786,6 +1825,7 @@ function updateWishCount(el){document.getElementById('wish-count').textContent=e
 
 async function sendWish(){
   const name=getGuestName();if(!name) return;
+  if(!ensureNotExpired('wish-error')) return;
   const text=document.getElementById('wish-text').value.trim();
   if(!text){showFormError('wish-error','Escribí tu mensaje primero');return;}
   showSending();setProgress(50,'Enviando deseo...');
@@ -1799,6 +1839,7 @@ async function sendWish(){
 
 async function sendMessage(){
   const name=getGuestName();if(!name) return;
+  if(!ensureNotExpired('msg-error')) return;
   const text=document.getElementById('msg-text').value.trim();
   if(!text){showFormError('msg-error','Escribí un mensaje primero');return;}
   if(!checkCooldown('message')) return;
@@ -2037,6 +2078,7 @@ let pollLockTimer=null;
 let guestVotedPolls={};
 
 async function checkActivePoll(){
+  if(checkPinExpiry()) return;
   try{
     let polls=await apiRest('polls?event_id=eq.'+eventId+'&active=eq.true&order=created_at.desc&limit=1');
     polls=polls.filter(p=>!p.ends_at||new Date(p.ends_at)>new Date());
@@ -2080,6 +2122,7 @@ async function loadPollLockVotes(pollId){
 }
 
 async function castPollLockVote(poll,optionIdx){
+  if(!ensureNotExpired('photo-error')) return;
   const name=document.getElementById('guest-name').value.trim()||'Invitado';
   guestVotedPolls[poll.id]=optionIdx;
   // Update UI immediately
