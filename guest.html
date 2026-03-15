@@ -519,6 +519,10 @@ body{
         <span class="ico">🗳</span>
         <div class="info"><strong id="vote-label">Votaciones activas</strong><span>Participá en encuestas del evento</span></div>
       </button>
+      <button class="extra-btn" id="my-photos-btn" onclick="selectType('my-photos',this);loadMyPhotos()">
+        <span class="ico">🖼</span>
+        <div class="info"><strong>Mis fotos</strong><span>Ver y borrar las fotos que subiste</span></div>
+      </button>
     </div>
 
     <!-- ── PHOTO SECTION ── -->
@@ -706,6 +710,20 @@ body{
         <p style="font-size:14px">No hay votaciones activas</p>
         <p style="font-size:12px;margin-top:4px;opacity:0.6">El organizador creará una en breve</p>
       </div>
+    </div>
+
+    <!-- ── MY PHOTOS SECTION ── -->
+    <div class="section" id="section-my-photos">
+      <div id="my-photos-loading" style="text-align:center;padding:40px 0;color:var(--muted)">
+        <div style="font-size:36px;margin-bottom:10px">🖼</div>
+        <p>Cargando tus fotos...</p>
+      </div>
+      <div id="my-photos-empty" style="display:none;text-align:center;padding:40px 0;color:var(--muted)">
+        <div style="font-size:36px;margin-bottom:10px">📷</div>
+        <p style="font-size:15px;font-weight:600">Todavía no subiste fotos</p>
+        <p style="font-size:13px;margin-top:6px">¡Sacá una y aparecerá acá!</p>
+      </div>
+      <div id="my-photos-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px"></div>
     </div>
 
   </div><!-- end content -->
@@ -1262,16 +1280,30 @@ async function sendPhoto(){
   if(!checkCooldown('photo')) return;
   showSending();
   try{
-    // render final canvas with frame
+    // Upload original photo (no frame/filter/stickers) for clean download
+    const origCanvas=document.createElement('canvas');
+    origCanvas.width=originalImage.naturalWidth||originalImage.width;
+    origCanvas.height=originalImage.naturalHeight||originalImage.height;
+    const origCtx=origCanvas.getContext('2d');
+    origCtx.drawImage(originalImage,0,0);
+    const origBlob=await new Promise(resolve=>origCanvas.toBlob(resolve,'image/jpeg',0.95));
+    const origFile=new File([origBlob],'original.jpg',{type:'image/jpeg'});
+    setProgress(20,'Subiendo original...');
+    const originalUrl=await uploadFile(origFile,'originals');
+
+    // Upload with frame/filter/stickers for display
     const canvas=document.getElementById('preview-canvas');
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.92));
     const file=new File([blob],'photo.jpg',{type:'image/jpeg'});
+    setProgress(50,'Subiendo foto...');
     const url=await uploadFile(file,'photos');
     const caption=document.getElementById('photo-caption').value.trim();
     await apiRest('posts',{method:'POST',body:JSON.stringify({
       event_id:eventId,type:'photo',author:name,
       content:url,content_text:caption||null,
-      frame:selectedFrame,approved:true
+      frame:selectedFrame,
+      original_url:originalUrl,
+      approved:true
     })});
     setProgress(100,'¡Listo!');
     setLastSent('photo');
