@@ -826,6 +826,7 @@ input[type=range]{accent-color:var(--pink)}
             <div style="display:flex;align-items:center;gap:12px">
               <span id="album-count" style="font-size:13px;color:var(--muted)">0 fotos</span>
               <button class="btn-pink" onclick="downloadAlbum()">⬇ Descargar todas</button>
+              <button class="btn-ghost" onclick="sendAlbumManual()" id="btn-send-email" style="display:none">📧 Enviar por email</button>
             </div>
           </div>
         </div>
@@ -1459,62 +1460,38 @@ async function deleteEvent(ev){
 
 async function sendAlbumEmail(ev, posts){
   try{
-    const photos  = posts.filter(p=>p.type==='photo'&&p.content);
-    const messages= posts.filter(p=>p.type==='message');
-    const audios  = posts.filter(p=>p.type==='audio');
-    const wishes  = posts.filter(p=>p.type==='wish');
+    const photos   = posts.filter(p=>p.type==='photo'&&p.content);
+    const messages = posts.filter(p=>p.type==='message');
+    const audios   = posts.filter(p=>p.type==='audio');
+    const wishes   = posts.filter(p=>p.type==='wish');
 
-    // Build HTML email via Anthropic API (Claude generates it)
-    const prompt=`Genera un email HTML bonito y profesional en español para enviar el resumen de un evento social llamado "${ev.name}".
-El evento tuvo:
-- ${photos.length} fotos
-- ${messages.length} mensajes
-- ${audios.length} audios
-- ${wishes.length} mensajes especiales
+    toast('📧 Enviando álbum a '+ev.client_email+'...',8000);
 
-Los mensajes fueron:
-${messages.slice(0,10).map(m=>'• '+m.author+': "'+m.content+'"').join('\n')}
+    const res=await fetch(
+      'https://jxqwrbmnfmnzddkcimrm.supabase.co/functions/v1/send-album-email',
+      {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':'Bearer '+SUPABASE_KEY,
+        },
+        body:JSON.stringify({
+          eventName: ev.name,
+          clientEmail: ev.client_email,
+          photos, messages, wishes, audios
+        })
+      }
+    );
 
-${wishes.length?'Mensajes especiales:\n'+wishes.slice(0,5).map(w=>'• '+w.author+': "'+w.content+'"').join('\n'):''}
-
-Fotos URLs (primeras 5): ${photos.slice(0,5).map(p=>p.content).join(', ')}
-
-Genera SOLO el HTML del email, sin markdown, con estilos inline. Debe ser elegante, con fondo oscuro #07070f, acento rosa #f0176f, tipografía moderna. Incluí las fotos como imágenes. Firmá como "EventWall".`;
-
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
-      body:JSON.stringify({
-        model:'claude-haiku-4-5-20251001',
-        max_tokens:4000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
     const data=await res.json();
-    const html=data.content?.[0]?.text||'';
-
-    // Use mailto as fallback (real email requires backend)
-    if(html){
-      // Open email client with the album summary
-      const subject=encodeURIComponent('Álbum de '+ev.name+' · EventWall');
-      const body=encodeURIComponent(
-        'Hola! Aquí está el resumen de tu evento "'+ev.name+'":\n\n'+
-        '📷 Fotos: '+photos.length+'\n'+
-        '💬 Mensajes: '+messages.length+'\n'+
-        '🎤 Audios: '+audios.length+'\n'+
-        '💌 Mensajes especiales: '+wishes.length+'\n\n'+
-        'Mensajes destacados:\n'+
-        messages.slice(0,5).map(m=>'• '+m.author+': "'+m.content+'"').join('\n')+
-        '\n\nLinks de fotos:\n'+
-        photos.slice(0,20).map(p=>p.content).join('\n')+
-        '\n\n— EventWall'
-      );
-      window.open('mailto:'+ev.client_email+'?subject='+subject+'&body='+body);
+    if(data.success){
+      toast('✅ Álbum enviado a '+ev.client_email+' 📧');
+    } else {
+      throw new Error(data.error||'Error desconocido');
     }
-    toast('✅ Email preparado para '+ev.client_email);
   }catch(e){
     console.error('Email error:',e);
-    toast('⚠️ No se pudo enviar el email automáticamente');
+    toast('⚠️ Error al enviar email: '+e.message);
   }
 }
 
@@ -2015,6 +1992,14 @@ function resetDesign(){
 }
 
 // ── ALBUM ────────────────────────────────────────────────────
+async function sendAlbumManual(){
+  if(!selectedEvent||!selectedEvent.client_email){toast('⚠️ Este evento no tiene email del cliente');return;}
+  if(!confirm('¿Enviar el álbum completo a '+selectedEvent.client_email+'?')) return;
+  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.true&order=created_at.asc');
+  if(!Array.isArray(posts)||!posts.length){toast('No hay contenido para enviar');return;}
+  await sendAlbumEmail(selectedEvent, posts);
+}
+
 async function showAlbum(){
   const notice=document.getElementById('album-notice');
   const content=document.getElementById('album-content');
@@ -2022,6 +2007,8 @@ async function showAlbum(){
   notice.classList.remove('show');content.style.display='block';
   document.getElementById('album-ev-name').textContent=selectedEvent.name;
   document.getElementById('album-ev-sub').textContent=selectedEvent.date||'';
+  const emailBtn=document.getElementById('btn-send-email');
+  if(emailBtn) emailBtn.style.display=selectedEvent.client_email?'':'none';
   const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=eq.photo&approved=eq.true&order=created_at.desc');
   const photos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
   document.getElementById('album-count').textContent=photos.length+' foto'+(photos.length!==1?'s':'');
