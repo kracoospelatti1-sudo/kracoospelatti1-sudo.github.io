@@ -828,7 +828,7 @@ const SUPABASE_URL='https://jxqwrbmnfmnzddkcimrm.supabase.co';
 const SUPABASE_KEY='sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 const BUCKET='eventwall';
 const params=new URLSearchParams(location.search);
-const eventId=params.get('event');
+let eventId=params.get('event');
 
 let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
 let audioChunks=[],recTimer=null,recSecs=0,audioUrl=null;
@@ -1512,6 +1512,7 @@ async function init(){
     if(!evs[0]) evs=await apiRest('events?custom_code=eq.'+eventId);
     if(!evs[0]) throw new Error('Evento no encontrado');
     const ev=evs[0];
+    eventId=ev.id; // asegura que siempre usamos el UUID real
 
     // Pin expiry
     eventPinExpiry = ev.pin_expires_at || null;

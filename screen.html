@@ -256,7 +256,7 @@ async function apiPost(path,body){
 }
 
 const params=new URLSearchParams(location.search);
-const eventId=params.get('event');
+let eventId=params.get('event');
 const mosaicParam=params.get('mosaic');
 let eventName='';
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
@@ -930,6 +930,7 @@ async function init(){
   if(!Array.isArray(events)||!events[0]) events=await api('events?custom_code=eq.'+eventId);
   if(!Array.isArray(events)||!events[0]){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Evento no encontrado. Verificá el ID en la URL.</p>';return;}
   const ev=events[0];
+  eventId=ev.id; // asegura que siempre usamos el UUID real
   eventName=ev.name;
   document.title=ev.name+' · EventWall';
   document.getElementById('ev-name').textContent=ev.name;
