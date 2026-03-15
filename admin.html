@@ -1572,6 +1572,7 @@ async function launchMoment(){
 
 // ── DELETE EVENT ─────────────────────────────────────────────
 async function deleteEvent(ev){
+  if(sessionStorage.getItem('ew_restricted_event')) return;
   const hasEmail=ev.client_email&&ev.client_email.trim();
   const confirmMsg='¿Seguro que querés eliminar "'+ev.name+'"?\n'+(hasEmail?'Se enviará el álbum al mail del cliente antes de borrar.\n':'')+'Esta acción no se puede deshacer.';
   if(!confirm(confirmMsg)) return;
