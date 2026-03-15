@@ -320,9 +320,12 @@ input[type=range]{accent-color:var(--pink)}
         <div class="fg full"><div><label>Subtítulo</label><input type="text" id="ev-subtitle" placeholder="Salón La Armonía · 20hs"/></div></div>
         <div class="fg full" style="margin-bottom:0">
           <div>
-            <label>Email del cliente</label>
+            <label>📧 Email del cliente</label>
             <input type="email" id="ev-email" placeholder="cliente@email.com"/>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">Al eliminar el evento se enviará el álbum completo a este email</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;background:var(--pink-dim);border:1px solid var(--pink-border);border-radius:8px;padding:8px 12px">
+              <span style="font-size:16px">📬</span>
+              <span style="font-size:12px;color:var(--pink)">Al eliminar el evento se enviará automáticamente el álbum completo con fotos, mensajes y deseos a este email.</span>
+            </div>
           </div>
         </div>
         <div class="fg">
