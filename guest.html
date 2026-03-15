@@ -1470,6 +1470,17 @@ async function init(){
     const evs=await apiRest('events?id=eq.'+eventId);
     if(!evs[0]) throw new Error('Evento no encontrado');
     const ev=evs[0];
+
+    // Block guests if the event PIN has expired
+    if(ev.pin_expires_at && new Date(ev.pin_expires_at) < new Date()){
+      document.getElementById('page-loading').innerHTML =
+        '<div style="text-align:center;padding:32px">' +
+        '<div style="font-size:40px">⏳</div>' +
+        '<p style="color:var(--pink);margin-top:12px">El acceso a este evento expiró.<br>Contactá al organizador para obtener un nuevo código.</p>' +
+        '</div>';
+      return;
+    }
+
     document.title=ev.name+' · EventWall';
     document.getElementById('ev-name').textContent=ev.name;
     document.getElementById('ev-sub').textContent=[ev.date,ev.subtitle].filter(Boolean).join(' · ');
