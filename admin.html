@@ -1570,11 +1570,13 @@ async function deleteEvent(ev){
   const posts=await api('posts?event_id=eq.'+ev.id+'&order=created_at.asc');
   const approvedPosts=Array.isArray(posts)?posts:[];
 
-  // Send email if client has email
-  if(hasEmail && approvedPosts.length>0){
+  // Send email if client has email and not already sent on PIN expiry
+  const alreadySent=localStorage.getItem('ew_album_sent_'+ev.id);
+  if(hasEmail && approvedPosts.length>0 && !alreadySent){
     toast('📧 Enviando álbum por email...');
     await sendAlbumEmail(ev, approvedPosts);
   }
+  localStorage.removeItem('ew_album_sent_'+ev.id);
 
   // Delete all related data first (order matters for foreign keys)
   await api('poll_votes?event_id=eq.'+ev.id,{method:'DELETE'});
