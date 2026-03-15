@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EventWall — El muro digital para tus eventos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#09090f;color:#fff;overflow-x:hidden}
+
+:root{
+  --pink:#f0176f;
+  --pink2:#f0176f22;
+  --pink3:#f0176f44;
+  --dark:#09090f;
+  --dark2:#0f0f1a;
+  --dark3:#16161f;
+  --border:#ffffff12;
+  --muted:#888;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 40px;
+  background:rgba(9,9,15,0.85);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Syne',sans-serif;font-size:22px;font-weight:800;
+  color:#fff;letter-spacing:-0.5px;
+}
+.nav-logo span{color:var(--pink)}
+.nav-cta{
+  background:var(--pink);color:#fff;border:none;
+  padding:10px 22px;border-radius:10px;font-size:14px;
+  font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;
+  text-decoration:none;transition:opacity 0.2s;
+}
+.nav-cta:hover{opacity:0.85}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:120px 24px 80px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);
+  width:800px;height:800px;
+  background:radial-gradient(circle,rgba(240,23,111,0.18),transparent 65%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--pink2);border:1px solid var(--pink3);
+  padding:8px 18px;border-radius:40px;
+  font-size:13px;font-weight:600;color:var(--pink);
+  margin-bottom:28px;
+}
+.hero h1{
+  font-family:'Syne',sans-serif;font-size:clamp(42px,7vw,86px);
+  font-weight:800;line-height:1.05;letter-spacing:-2px;
+  margin-bottom:24px;max-width:900px;
+}
+.hero h1 span{color:var(--pink)}
+.hero p{
+  font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,0.55);
+  max-width:560px;line-height:1.7;margin-bottom:44px;
+}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.btn-primary{
+  background:var(--pink);color:#fff;border:none;
+  padding:16px 36px;border-radius:12px;font-size:16px;
+  font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;
+  text-decoration:none;transition:all 0.2s;
+  box-shadow:0 0 40px rgba(240,23,111,0.4);
+}
+.btn-primary:hover{opacity:0.88;transform:translateY(-1px)}
+.btn-secondary{
+  background:transparent;color:#fff;
+  border:1px solid var(--border);
+  padding:16px 36px;border-radius:12px;font-size:16px;
+  font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;
+  text-decoration:none;transition:all 0.2s;
+}
+.btn-secondary:hover{background:rgba(255,255,255,0.06)}
+
+.hero-preview{
+  margin-top:72px;position:relative;width:100%;max-width:1000px;
+}
+.hero-preview-inner{
+  background:var(--dark3);border:1px solid var(--border);
+  border-radius:20px;overflow:hidden;padding:0;
+  box-shadow:0 40px 100px rgba(0,0,0,0.6),0 0 0 1px rgba(240,23,111,0.15);
+}
+.preview-bar{
+  background:var(--dark2);padding:14px 20px;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);
+}
+.preview-dot{width:12px;height:12px;border-radius:50%}
+.preview-screen{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:2px;padding:20px;background:var(--dark3);min-height:280px;
+}
+.preview-card{
+  background:var(--dark2);border-radius:12px;padding:16px;
+  border:1px solid var(--border);display:flex;flex-direction:column;gap:8px;
+}
+.preview-card-img{
+  width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,#1a1a2e,#16213e);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:32px;
+}
+.preview-card-name{font-size:12px;font-weight:600;color:rgba(255,255,255,0.7)}
+.preview-card-time{font-size:10px;color:var(--muted)}
+.preview-live{
+  position:absolute;top:20px;right:20px;
+  background:rgba(240,23,111,0.15);border:1px solid var(--pink3);
+  color:var(--pink);padding:6px 14px;border-radius:40px;
+  font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;
+}
+.preview-live::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:var(--pink);animation:pulse 1.4s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ── LOGOS / SOCIAL PROOF ── */
+.proof{
+  padding:40px 24px;text-align:center;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.proof p{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:1px;text-transform:uppercase;margin-bottom:28px}
+.proof-items{
+  display:flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:32px;
+}
+.proof-item{
+  font-family:'Syne',sans-serif;font-size:20px;font-weight:800;
+  color:rgba(255,255,255,0.2);letter-spacing:-0.5px;
+}
+
+/* ── HOW IT WORKS ── */
+.section{padding:100px 24px;max-width:1100px;margin:0 auto}
+.section-label{
+  font-size:12px;font-weight:700;color:var(--pink);
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-label::before{content:'';width:20px;height:2px;background:var(--pink)}
+.section h2{
+  font-family:'Syne',sans-serif;font-size:clamp(30px,4vw,52px);
+  font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:16px;
+}
+.section h2 span{color:var(--pink)}
+.section-sub{
+  font-size:17px;color:rgba(255,255,255,0.5);
+  max-width:500px;line-height:1.7;margin-bottom:60px;
+}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.step{
+  background:var(--dark3);border:1px solid var(--border);
+  border-radius:16px;padding:32px 28px;position:relative;
+  transition:border-color 0.2s;
+}
+.step:hover{border-color:var(--pink3)}
+.step-num{
+  font-family:'Syne',sans-serif;font-size:64px;font-weight:800;
+  color:rgba(240,23,111,0.12);line-height:1;position:absolute;
+  top:16px;right:20px;
+}
+.step-ico{font-size:36px;margin-bottom:20px}
+.step h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:10px}
+.step p{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+
+/* ── FEATURES ── */
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.feature{
+  background:var(--dark3);border:1px solid var(--border);
+  border-radius:16px;padding:28px;transition:all 0.2s;
+}
+.feature:hover{border-color:var(--pink3);background:#13131e}
+.feature-ico{font-size:28px;margin-bottom:14px}
+.feature h3{font-size:17px;font-weight:700;margin-bottom:8px}
+.feature p{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6}
+.feature.highlight{
+  background:linear-gradient(135deg,rgba(240,23,111,0.12),rgba(240,23,111,0.04));
+  border-color:rgba(240,23,111,0.3);
+}
+
+/* ── STATS ── */
+.stats-section{
+  padding:80px 24px;
+  background:linear-gradient(180deg,var(--dark2) 0%,var(--dark) 100%);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:2px;max-width:900px;margin:0 auto;
+}
+.stat{text-align:center;padding:32px 16px}
+.stat-num{
+  font-family:'Syne',sans-serif;font-size:52px;font-weight:800;
+  color:var(--pink);line-height:1;margin-bottom:8px;
+}
+.stat-lbl{font-size:14px;color:var(--muted);font-weight:500}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.plan{
+  background:var(--dark3);border:1px solid var(--border);
+  border-radius:20px;padding:36px 28px;
+  display:flex;flex-direction:column;gap:0;
+}
+.plan.featured{
+  background:linear-gradient(135deg,rgba(240,23,111,0.14),rgba(240,23,111,0.04));
+  border-color:rgba(240,23,111,0.4);position:relative;
+}
+.plan-badge{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  background:var(--pink);color:#fff;padding:5px 18px;border-radius:40px;
+  font-size:12px;font-weight:700;white-space:nowrap;
+}
+.plan-name{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.plan-price{
+  font-family:'Syne',sans-serif;font-size:48px;font-weight:800;
+  line-height:1;margin-bottom:4px;
+}
+.plan-price sup{font-size:24px;vertical-align:top;margin-top:8px}
+.plan-period{font-size:14px;color:var(--muted);margin-bottom:28px}
+.plan-divider{height:1px;background:var(--border);margin-bottom:24px}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:32px;flex:1}
+.plan-features li{
+  font-size:14px;color:rgba(255,255,255,0.7);
+  display:flex;align-items:flex-start;gap:10px;
+}
+.plan-features li::before{content:'✓';color:var(--pink);font-weight:700;flex-shrink:0}
+.plan-features li.no{color:var(--muted)}
+.plan-features li.no::before{content:'·';color:var(--muted)}
+.plan-btn{
+  display:block;text-align:center;padding:14px;border-radius:10px;
+  font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;
+  cursor:pointer;text-decoration:none;transition:all 0.2s;border:none;
+}
+.plan-btn-outline{background:transparent;color:#fff;border:1px solid var(--border)}
+.plan-btn-outline:hover{background:rgba(255,255,255,0.06)}
+.plan-btn-pink{background:var(--pink);color:#fff;box-shadow:0 0 30px rgba(240,23,111,0.35)}
+.plan-btn-pink:hover{opacity:0.88}
+
+/* ── TESTIMONIALS ── */
+.testimonials{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.testimonial{
+  background:var(--dark3);border:1px solid var(--border);
+  border-radius:16px;padding:28px;
+}
+.testimonial-text{
+  font-size:15px;color:rgba(255,255,255,0.75);
+  line-height:1.7;margin-bottom:20px;
+  font-style:italic;
+}
+.testimonial-text::before{content:'"';font-size:40px;color:var(--pink);line-height:0;vertical-align:-12px;margin-right:4px}
+.testimonial-author{display:flex;align-items:center;gap:12px}
+.testimonial-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--pink),#7c3aed);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.testimonial-name{font-size:14px;font-weight:700}
+.testimonial-role{font-size:12px;color:var(--muted)}
+
+/* ── CTA FINAL ── */
+.cta-section{
+  padding:120px 24px;text-align:center;
+  background:radial-gradient(ellipse at center top,rgba(240,23,111,0.15),transparent 60%);
+  border-top:1px solid var(--border);
+}
+.cta-section h2{
+  font-family:'Syne',sans-serif;font-size:clamp(36px,5vw,64px);
+  font-weight:800;letter-spacing:-1.5px;line-height:1.1;
+  margin-bottom:20px;max-width:700px;margin-left:auto;margin-right:auto;
+}
+.cta-section p{
+  font-size:17px;color:rgba(255,255,255,0.5);
+  margin-bottom:40px;max-width:440px;margin-left:auto;margin-right:auto;
+}
+
+/* ── FOOTER ── */
+footer{
+  padding:40px 24px;text-align:center;
+  border-top:1px solid var(--border);
+  color:var(--muted);font-size:13px;
+}
+footer .footer-logo{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
+  color:#fff;margin-bottom:12px;
+}
+footer .footer-logo span{color:var(--pink)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:14px 20px}
+  .steps{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .testimonials{grid-template-columns:1fr}
+  .hero-preview-inner .preview-screen{grid-template-columns:1fr 1fr}
+  .hero-preview-inner .preview-card:last-child{display:none}
+  .section{padding:70px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Event<span>Wall</span></div>
+  <a href="#contacto" class="nav-cta">Quiero saber más →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">✨ El muro digital para eventos</div>
+  <h1>Tus invitados en<br><span>pantalla grande</span></h1>
+  <p>Fotos, mensajes y momentos de todos tus invitados, en tiempo real, en la pantalla del evento.</p>
+  <div class="hero-btns">
+    <a href="#contacto" class="btn-primary">Contratar para mi evento →</a>
+    <a href="#como-funciona" class="btn-secondary">Ver cómo funciona</a>
+  </div>
+
+  <div class="hero-preview">
+    <div class="preview-live">En vivo</div>
+    <div class="hero-preview-inner">
+      <div class="preview-bar">
+        <div class="preview-dot" style="background:#ff5f57"></div>
+        <div class="preview-dot" style="background:#febc2e"></div>
+        <div class="preview-dot" style="background:#28c840"></div>
+        <span style="margin-left:10px;font-size:12px;color:#444;font-family:monospace">screen.html?event=boda-martin-juli</span>
+      </div>
+      <div class="preview-screen">
+        <div class="preview-card">
+          <div class="preview-card-img">🥂</div>
+          <div class="preview-card-name">Sofía M.</div>
+          <div class="preview-card-time">hace 1 min</div>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-img">💃</div>
+          <div class="preview-card-name">Rodrigo G.</div>
+          <div class="preview-card-time">hace 3 min</div>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-img">🎂</div>
+          <div class="preview-card-name">Valentina P.</div>
+          <div class="preview-card-time">hace 5 min</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<div class="proof">
+  <p>Ideal para</p>
+  <div class="proof-items">
+    <div class="proof-item">💍 Bodas</div>
+    <div class="proof-item">🎂 Cumpleaños</div>
+    <div class="proof-item">🎓 Graduaciones</div>
+    <div class="proof-item">🏢 Corporativos</div>
+    <div class="proof-item">🎉 Fiestas de 15</div>
+    <div class="proof-item">🎤 Shows</div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-section">
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-lbl">Fotos por evento</div></div>
+    <div class="stat"><div class="stat-num">5s</div><div class="stat-lbl">Aparece en pantalla</div></div>
+    <div class="stat"><div class="stat-num">QR</div><div class="stat-lbl">Sin app, sin registro</div></div>
+    <div class="stat"><div class="stat-num">100%</div><div class="stat-lbl">Personalizable</div></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div id="como-funciona" style="background:var(--dark2);border-top:1px solid var(--border)">
+<div class="section">
+  <div class="section-label">Cómo funciona</div>
+  <h2>Tres pasos y <span>listo</span></h2>
+  <p class="section-sub">Sin instalaciones, sin apps. Todo desde el navegador.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-ico">📺</div>
+      <h3>Ponés la pantalla</h3>
+      <p>Abrís el link en el televisor o proyector del salón. La pantalla se actualiza sola en tiempo real.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-ico">📱</div>
+      <h3>Los invitados escanean</h3>
+      <p>Cada mesa tiene un QR. Los invitados lo escanean con su celular y en segundos están participando.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-ico">🎉</div>
+      <h3>La magia pasa sola</h3>
+      <p>Fotos, mensajes y deseos aparecen en pantalla. Al final, el álbum completo llega por email.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- FEATURES -->
+<div class="section">
+  <div class="section-label">Funcionalidades</div>
+  <h2>Todo lo que tu evento <span>necesita</span></h2>
+  <p class="section-sub">Cada detalle pensado para que el momento sea memorable.</p>
+  <div class="features-grid">
+    <div class="feature highlight">
+      <div class="feature-ico">📸</div>
+      <h3>Fotos con estilo</h3>
+      <p>Los invitados suben fotos con marcos decorativos, filtros y stickers personalizados al evento.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-ico">💬</div>
+      <h3>Mensajes en tiempo real</h3>
+      <p>Aparecen en la pantalla al instante. También se pueden enviar mensajes de voz.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-ico">💌</div>
+      <h3>Deseos especiales</h3>
+      <p>Mensajes que aparecen en pantalla completa con animación. Perfectos para los momentos emotivos.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-ico">🗳</div>
+      <h3>Votaciones interactivas</h3>
+      <p>Encuestas en vivo para los invitados. ¿Cuál es la mejor foto? ¿Qué canción piden?</p>
+    </div>
+    <div class="feature">
+      <div class="feature-ico">📧</div>
+      <h3>Álbum automático</h3>
+      <p>Al terminar el evento, todas las fotos y mensajes se envían automáticamente por email.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-ico">🎨</div>
+      <h3>Diseño personalizado</h3>
+      <p>Colores, tipografías y logo del evento. La pantalla y la vista del invitado totalmente a tu marca.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div style="background:var(--dark2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+<div class="section">
+  <div class="section-label">Testimonios</div>
+  <h2>Lo que dicen <span>nuestros clientes</span></h2>
+  <p class="section-sub">Eventos que ya vivieron la experiencia EventWall.</p>
+  <div class="testimonials">
+    <div class="testimonial">
+      <div class="testimonial-text">Los invitados estuvieron toda la noche sacando fotos para verlas en la pantalla. Fue el hit de la boda.</div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">👰</div>
+        <div>
+          <div class="testimonial-name">Carolina & Martín</div>
+          <div class="testimonial-role">Boda · Salón Crystal, Buenos Aires</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="testimonial-text">Lo usamos en el evento de fin de año de la empresa. Los empleados amaron poder participar desde el celular.</div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">🏢</div>
+        <div>
+          <div class="testimonial-name">Luciana R.</div>
+          <div class="testimonial-role">Evento corporativo · 200 personas</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="testimonial-text">Mi hija se emocionó cuando vio todos los mensajes de sus amigos y familia apareciendo en la pantalla en su fiesta de 15.</div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">🎂</div>
+        <div>
+          <div class="testimonial-name">Marcela V.</div>
+          <div class="testimonial-role">Fiesta de 15 · Córdoba</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PRICING -->
+<div class="section">
+  <div class="section-label">Planes</div>
+  <h2>Simple y <span>transparente</span></h2>
+  <p class="section-sub">Sin sorpresas. Elegís el plan que se adapta a tu evento.</p>
+  <div class="pricing-grid">
+    <div class="plan">
+      <div class="plan-name">Básico</div>
+      <div class="plan-price"><sup>$</sup>XX</div>
+      <div class="plan-period">por evento</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>Hasta 100 invitados</li>
+        <li>Fotos y mensajes</li>
+        <li>QR personalizado</li>
+        <li>Álbum por email</li>
+        <li class="no">Diseño personalizado</li>
+        <li class="no">Votaciones</li>
+        <li class="no">Soporte prioritario</li>
+      </ul>
+      <a href="#contacto" class="plan-btn plan-btn-outline">Consultar</a>
+    </div>
+    <div class="plan featured">
+      <div class="plan-badge">⭐ Más popular</div>
+      <div class="plan-name">Premium</div>
+      <div class="plan-price"><sup>$</sup>XX</div>
+      <div class="plan-period">por evento</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>Invitados ilimitados</li>
+        <li>Fotos, mensajes y audio</li>
+        <li>QR personalizado</li>
+        <li>Álbum por email</li>
+        <li>Diseño personalizado</li>
+        <li>Votaciones interactivas</li>
+        <li class="no">Soporte prioritario</li>
+      </ul>
+      <a href="#contacto" class="plan-btn plan-btn-pink">Consultar</a>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Full</div>
+      <div class="plan-price"><sup>$</sup>XX</div>
+      <div class="plan-period">por evento</div>
+      <div class="plan-divider"></div>
+      <ul class="plan-features">
+        <li>Invitados ilimitados</li>
+        <li>Fotos, mensajes y audio</li>
+        <li>QR personalizado</li>
+        <li>Álbum por email</li>
+        <li>Diseño personalizado</li>
+        <li>Votaciones interactivas</li>
+        <li>Soporte prioritario</li>
+      </ul>
+      <a href="#contacto" class="plan-btn plan-btn-outline">Consultar</a>
+    </div>
+  </div>
+</div>
+
+<!-- CTA FINAL -->
+<section id="contacto" class="cta-section">
+  <h2>¿Listo para sorprender a tus invitados?</h2>
+  <p>Escribinos y te contamos todo. Respondemos en menos de 24hs.</p>
+  <a href="mailto:tu@email.com" class="btn-primary" style="display:inline-block">Escribinos ahora →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Event<span>Wall</span></div>
+  <p>© 2025 EventWall · Todos los derechos reservados</p>
+</footer>
+
+</body>
+</html>
