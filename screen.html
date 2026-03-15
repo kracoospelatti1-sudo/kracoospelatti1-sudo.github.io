@@ -569,10 +569,11 @@ async function pollMessages(){
     const ws=document.getElementById('waiting-screen');
     const waitingActive=ws&&ws.style.display!=='none';
     if(waitingActive){
-      newMsgs.forEach(m=>addMsgToWaiting(m));
+      newMsgs.forEach(m=>{addMsgToWaiting(m);markMsgShown(m.id);});
+    } else {
+      msgBubbleQueue.push(...newMsgs);
+      if(!msgBubbleShowing) showNextBubble();
     }
-    msgBubbleQueue.push(...newMsgs);
-    if(!msgBubbleShowing&&!waitingActive) showNextBubble();
   }
 }
 
@@ -1108,8 +1109,8 @@ function hideWaitingScreen(){
   setTimeout(()=>{
     ws.style.display='none';
     ws.classList.remove('hide');
-    // Mostrar burbujas de mensajes acumulados durante la espera
-    if(msgBubbleQueue.length&&!msgBubbleShowing) showNextBubble();
+    // Limpiar cola — los mensajes de espera ya fueron marcados como vistos
+    msgBubbleQueue=[];
   },900);
 }
 
