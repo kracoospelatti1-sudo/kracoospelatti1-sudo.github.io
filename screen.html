@@ -925,7 +925,8 @@ async function pollPosts(){
 // ── INIT ──────────────────────────────────────────────────────
 async function init(){
   if(!eventId){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Error: falta ?event= en la URL</p>';return;}
-  let events=await api('events?id=eq.'+eventId);
+  let events=[];
+  try{ events=await api('events?id=eq.'+eventId); }catch(e){}
   if(!Array.isArray(events)||!events[0]) events=await api('events?custom_code=eq.'+eventId);
   if(!Array.isArray(events)||!events[0]){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Evento no encontrado. Verificá el ID en la URL.</p>';return;}
   const ev=events[0];
