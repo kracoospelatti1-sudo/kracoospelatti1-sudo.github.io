@@ -1493,7 +1493,7 @@ async function saveEditEvent(){
   const pin = document.getElementById('edit-ev-pin').value.trim();
   if(pin){
     body.admin_pin = pin;
-    const dur = parseInt(document.getElementById('edit-ev-pin-duration').value) || 0;
+    const dur = parseFloat(document.getElementById('edit-ev-pin-duration').value) || 0;
     body.pin_expires_at = dur > 0
       ? new Date(Date.now() + dur * 3600000).toISOString()
       : null;
@@ -1714,6 +1714,7 @@ async function loadEvents(restrictedId=null){
     }
     grid.appendChild(card);
   });
+  startCountdown();
 }
 
 // Live countdown for short expiry events
