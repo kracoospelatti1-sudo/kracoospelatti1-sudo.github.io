@@ -666,7 +666,8 @@ function showNextBubble(){
 }
 
 // ── WISH WALL ─────────────────────────────────────────────────
-let wishQueue=[],wishShowing=false;
+let wishQueue=[],wishShowing=false,lastWishDisplayTime=0;
+const WISH_SCREEN_COOLDOWN=30*60*1000; // 30 min entre deseos en pantalla
 
 function getShownWishIds(){
   try{return new Set(JSON.parse(localStorage.getItem(getShownKey('ew_wishes'))||'[]'));}
@@ -678,6 +679,7 @@ function markWishShown(id){
 }
 
 async function pollWishes(){
+  if(waitingScreenActive) return; // no mostrar deseos durante pantalla de espera
   const wishes=await api('posts?event_id=eq.'+eventId+'&type=eq.wish&approved=eq.true&order=created_at.asc');
   if(!Array.isArray(wishes)) return;
   const shown=getShownWishIds();
@@ -698,7 +700,14 @@ function spawnParticles(){
 
 function showNextWish(){
   if(!wishQueue.length){wishShowing=false;return;}
+  const cooldownRemaining=WISH_SCREEN_COOLDOWN-(Date.now()-lastWishDisplayTime);
+  if(cooldownRemaining>0){
+    wishShowing=false;
+    setTimeout(showNextWish, cooldownRemaining);
+    return;
+  }
   wishShowing=true;
+  lastWishDisplayTime=Date.now();
   const wish=wishQueue.shift();markWishShown(wish.id);
   document.getElementById('wish-author').textContent=wish.author+' dice:';
   const textEl=document.getElementById('wish-text');

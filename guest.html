@@ -314,6 +314,7 @@ body{
 .audio-info span{font-size:14px;color:var(--muted)}
 
 /* WISH */
+#wish-btn:disabled{opacity:0.45;cursor:not-allowed;pointer-events:none}
 .wish-banner{
   background:linear-gradient(135deg,#1a0a14,#2d1020);
   border-radius:var(--radius);padding:24px 20px;
@@ -543,9 +544,9 @@ body{
 
     <!-- EXTRA BUTTONS -->
     <div class="extra-btns" id="extra-btns">
-      <button class="extra-btn wish-btn" id="wish-btn" onclick="selectType('wish',this)">
+      <button class="extra-btn wish-btn" id="wish-btn" onclick="selectType('wish',this)" disabled>
         <span class="ico">💌</span>
-        <div class="info"><strong>Mensaje especial</strong><span>Aparece en pantalla completa con animación</span></div>
+        <div class="info"><strong>Mensaje especial</strong><span id="wish-btn-sub">Se habilita cuando empiece el evento</span></div>
       </button>
       <button class="extra-btn vote-btn" id="vote-btn" onclick="selectType('vote',this);loadVotePolls()">
         <span class="ico">🗳</span>
@@ -1547,6 +1548,10 @@ async function init(){
     });
     loadStats();
     setInterval(loadStats,20000);
+    checkEventStarted();
+    setInterval(checkEventStarted,15000);
+    // Actualizar countdown del cooldown cada minuto
+    setInterval(()=>updateWishBtn(true),60000);
     // Check for active polls every 4s and lock screen if one is running
     setInterval(checkActivePoll,4000);
     // Re-apply design every 15s so admin changes reflect live
@@ -1559,6 +1564,42 @@ async function init(){
       }catch(e){}
     },15000);
   }catch(e){document.getElementById('page-loading').innerHTML='<p style="color:red;padding:20px">'+e.message+'</p>';}
+}
+
+const WISH_COOLDOWN_MS=30*60*1000; // 30 minutos
+
+function getWishCooldownKey(){return 'ew_wish_cd_'+eventId;}
+
+function wishCooldownRemaining(){
+  const last=parseInt(localStorage.getItem(getWishCooldownKey())||'0');
+  return Math.max(0, last+WISH_COOLDOWN_MS-Date.now());
+}
+
+function updateWishBtn(eventStarted){
+  const btn=document.getElementById('wish-btn');
+  const sub=document.getElementById('wish-btn-sub');
+  if(!btn||!sub) return;
+  const remaining=wishCooldownRemaining();
+  if(!eventStarted){
+    btn.disabled=true;
+    sub.textContent='Se habilita cuando empiece el evento';
+  } else if(remaining>0){
+    btn.disabled=true;
+    const mins=Math.ceil(remaining/60000);
+    sub.textContent='Disponible en '+mins+' min';
+  } else {
+    btn.disabled=false;
+    sub.textContent='Aparece en pantalla completa con animación';
+  }
+}
+
+async function checkEventStarted(){
+  try{
+    const photos=await apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&approved=eq.true&select=id&limit=1');
+    const started=Array.isArray(photos)&&photos.length>0;
+    updateWishBtn(started);
+    return started;
+  }catch(e){return false;}
 }
 
 async function loadStats(){
@@ -1836,6 +1877,8 @@ async function sendWish(){
     await apiRest('posts',{method:'POST',body:JSON.stringify({
       event_id:eventId,type:'wish',author:name,content:text,approved:true
     })});
+    localStorage.setItem(getWishCooldownKey(), Date.now().toString());
+    updateWishBtn(true);
     setProgress(100,'¡Enviado!');setTimeout(()=>{hideSending();showSuccess();},300);
   }catch(e){hideSending();showFormError('wish-error','Error: '+e.message);}
 }
