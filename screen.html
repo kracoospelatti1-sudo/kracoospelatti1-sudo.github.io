@@ -77,6 +77,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .sbar-fill{height:100%;border-radius:8px;background:var(--accent);transition:width 0.8s cubic-bezier(0.34,1.56,0.64,1)}
 .sbar-fill.winner{background:var(--gold)}
 
+/* KEN BURNS */
+@keyframes kenBurnsA{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.18) translate(-3%,-2%)}}
+@keyframes kenBurnsB{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.18) translate(3%,-2%)}}
+@keyframes kenBurnsC{0%{transform:scale(1.1) translate(2%,2%)}100%{transform:scale(1.2) translate(-2%,-1%)}}
+@keyframes kenBurnsD{0%{transform:scale(1.05) translate(-2%,1%)}100%{transform:scale(1.18) translate(2%,-2%)}}
+.ken-burns-a{animation:kenBurnsA var(--kb-dur,7s) ease-in-out forwards}
+.ken-burns-b{animation:kenBurnsB var(--kb-dur,7s) ease-in-out forwards}
+.ken-burns-c{animation:kenBurnsC var(--kb-dur,7s) ease-in-out forwards}
+.ken-burns-d{animation:kenBurnsD var(--kb-dur,7s) ease-in-out forwards}
+
 /* LOADING */
 .screen-loading{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;color:rgba(255,255,255,0.4)}
 .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
@@ -261,7 +271,7 @@ const mosaicParam=params.get('mosaic');
 let eventName='';
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
 let currentFeaturedPostId=null,reactionCounts={};
-let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5,transition:'fade'};
+let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5,transition:'fade',kenBurns:'no'};
 let sharedAudioCtx=null;
 function getAudioCtx(){
   if(!sharedAudioCtx){
@@ -319,6 +329,7 @@ function applyTheme(design){
   if(design.fsBubble) cfg.fsBubble=parseInt(design.fsBubble);
   if(design.interval) cfg.interval=parseInt(design.interval)*1000;
   if(design.sound) cfg.sound=design.sound;
+  if(design.kenBurns) cfg.kenBurns=design.kenBurns;
 
   // Photo fit
   const img=document.getElementById('featured-img');
@@ -764,6 +775,10 @@ function showFeatured(post,idx){
   // Preload image first, then apply transition
   const preloader=new Image();
   preloader.onload=()=>{
+    // Reset Ken Burns classes
+    img.classList.remove('ken-burns-a','ken-burns-b','ken-burns-c','ken-burns-d');
+    void img.offsetWidth; // force reflow before re-adding
+
     if(t==='none'){
       applyContent();img.style.opacity='1';img.style.transform='';
     } else if(t==='fade'){
@@ -787,6 +802,20 @@ function showFeatured(post,idx){
         applyContent();
         img.style.opacity='1';img.style.transform='scale(1)';
       },200);
+    }
+
+    // Ken Burns: apply after transition settles
+    if(cfg.kenBurns==='yes'){
+      img.style.objectFit='cover';
+      const variants=['a','b','c','d'];
+      const v=variants[Math.floor(Math.random()*variants.length)];
+      const dur=Math.round((cfg.interval+500)/1000);
+      img.style.setProperty('--kb-dur',dur+'s');
+      setTimeout(()=>{
+        img.classList.remove('ken-burns-a','ken-burns-b','ken-burns-c','ken-burns-d');
+        void img.offsetWidth;
+        img.classList.add('ken-burns-'+v);
+      }, t==='none'?0:350);
     }
   };
   preloader.onerror=()=>{applyContent();img.style.opacity='1';}; // fallback

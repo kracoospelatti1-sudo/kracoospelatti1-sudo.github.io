@@ -658,6 +658,13 @@ input[type=range]{accent-color:var(--pink)}
                 </select>
               </div>
               <div class="design-field">
+                <label>Efecto Ken Burns 🎬</label>
+                <select id="cfg-ken-burns">
+                  <option value="no">Desactivado</option>
+                  <option value="yes">Activado (zoom + paneo)</option>
+                </select>
+              </div>
+              <div class="design-field">
                 <label>Sonido al recibir contenido</label>
                 <select id="cfg-sound">
                   <option value="chime">Campanita 🔔</option>
@@ -1907,6 +1914,7 @@ function showDesign(){
   if(saved.radius){setVal('cfg-radius',saved.radius);document.getElementById('cfg-radius-val').textContent=saved.radius+'px';}
   setVal('cfg-carousel-limit',saved.carouselLimit||'5');
   setVal('cfg-transition',saved.transition||'fade');
+  setVal('cfg-ken-burns',saved.kenBurns||'no');
   setVal('cfg-fit',saved.fit||'contain');
   setVal('cfg-shadow',saved.shadow||'heavy');
   setVal('cfg-bubble-pos',saved.bubblePos||'center');
@@ -2152,6 +2160,7 @@ function saveDesign(){
     overlay:getV('cfg-overlay'), radius:getV('cfg-radius'),
     carouselLimit:getV('cfg-carousel-limit')||'5',
     transition:getV('cfg-transition')||'fade',
+    kenBurns:getV('cfg-ken-burns')||'no',
     fit:getV('cfg-fit')||'contain',
     shadow:getV('cfg-shadow')||'heavy',
     bubblePos:getV('cfg-bubble-pos')||'center',
