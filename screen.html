@@ -412,15 +412,20 @@ function markMsgShown(id){
 function addMsgToStrip(msg){
   const strip=document.getElementById('msg-strip');
   if(!strip) return;
-  // Only show message and audio types
-  if(msg.type!=='message') return;
+  if(msg.type!=='message'&&msg.type!=='audio') return;
   const card=document.createElement('div');
   card.className='msg-card';
-  const icon=msg.frame?JSON.parse(msg.frame||'{}').emoji||'💬':'💬';
-  card.innerHTML=`<div class="msg-card-icon">${icon==='none'?'💬':icon}</div><div class="msg-card-text">${msg.content}</div><div class="msg-card-author">— ${msg.author}</div>`;
+  if(msg.type==='audio'){
+    card.innerHTML=`<div class="msg-card-icon">🎤</div><div class="msg-card-text" style="font-style:italic">Mensaje de voz</div><div class="msg-card-author">— ${msg.author}</div>`;
+    // Auto-play button style indicator
+    card.style.borderLeft='3px solid var(--accent)';
+  } else {
+    let icon='💬';
+    try{const f=JSON.parse(msg.frame||'{}');icon=(f.emoji&&f.emoji!=='none')?f.emoji:'💬';}catch(e){}
+    card.innerHTML=`<div class="msg-card-icon">${icon}</div><div class="msg-card-text">${msg.content}</div><div class="msg-card-author">— ${msg.author}</div>`;
+  }
   strip.insertBefore(card, strip.firstChild);
-  // Keep max 4 cards
-  while(strip.children.length>4) strip.removeChild(strip.lastChild);
+  while(strip.children.length>5) strip.removeChild(strip.lastChild);
 }
 
 async function pollMessages(){
@@ -681,9 +686,9 @@ async function loadPosts(){
   photoPosts=posts.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
   buildStrip();
   if(photoPosts.length) showFeatured(photoPosts[0],0);
-  // Load last 4 messages into sidebar strip
-  const msgs=posts.filter(p=>p.type==='message').slice(0,4).reverse();
-  msgs.forEach(m=>addMsgToStrip(m));
+  // Load last 5 messages+audios into sidebar strip
+  const sidebarPosts=posts.filter(p=>p.type==='message'||p.type==='audio').slice(0,5).reverse();
+  sidebarPosts.forEach(m=>addMsgToStrip(m));
 }
 
 async function pollPosts(){
@@ -719,6 +724,7 @@ async function pollPosts(){
       }
       if(p.type==='audio'&&p.content&&!getPlayedAudioIds().has(p.id)){
         markAudioPlayed(p.id);
+        addMsgToStrip(p);
         setTimeout(()=>{try{new Audio(p.content).play();}catch(e){}},800);
       }
     });
