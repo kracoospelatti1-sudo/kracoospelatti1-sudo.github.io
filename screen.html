@@ -82,6 +82,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* MESSAGE STRIP */
+.msg-strip{display:flex;flex-direction:column;gap:8px;padding:10px 8px;overflow:hidden;flex:1;min-height:0}
+.msg-card{background:var(--bubble-bg);border-radius:12px;padding:10px 12px;opacity:0;transform:translateY(-8px);transition:all 0.4s ease;animation:msgSlideIn 0.4s ease forwards}
+@keyframes msgSlideIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+.msg-card-icon{font-size:14px;margin-bottom:4px}
+.msg-card-text{font-size:12px;font-weight:700;color:var(--bubble-txt);line-height:1.3;word-break:break-word}
+.msg-card-author{font-size:10px;color:var(--bubble-txt);opacity:0.5;margin-top:4px}
+
 /* LIGHT THEME */
 body.theme-light .sidebar{background:rgba(0,0,0,0.06);border-left-color:rgba(0,0,0,0.1)}
 body.theme-light .cpill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.7)}
@@ -139,11 +147,6 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
       <div class="ev-sub" id="ev-sub">—</div>
     </div>
     <div style="display:flex;align-items:center;gap:12px">
-      <div class="counter-pills">
-        <div class="cpill">📷 <span id="cnt-p">0</span></div>
-        <div class="cpill">💬 <span id="cnt-m">0</span></div>
-        <div class="cpill">🎤 <span id="cnt-a">0</span></div>
-      </div>
       <div class="live-pill"><div class="live-dot"></div>EN VIVO</div>
     </div>
   </div>
@@ -163,18 +166,10 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
         <div class="featured-author" id="featured-author"></div>
       </div>
       <div class="reaction-overlay" id="reaction-overlay"></div>
-      <div class="reaction-bar" id="reaction-bar">
-        <button class="react-btn" onclick="sendReaction('❤️')">❤️ <span class="cnt" id="rc-heart">0</span></button>
-        <button class="react-btn" onclick="sendReaction('😂')">😂 <span class="cnt" id="rc-laugh">0</span></button>
-        <button class="react-btn" onclick="sendReaction('😍')">😍 <span class="cnt" id="rc-love">0</span></button>
-        <button class="react-btn" onclick="sendReaction('🔥')">🔥 <span class="cnt" id="rc-fire">0</span></button>
-        <button class="react-btn" onclick="sendReaction('👏')">👏 <span class="cnt" id="rc-clap">0</span></button>
-        <button class="react-btn" onclick="sendReaction('🥳')">🥳 <span class="cnt" id="rc-party">0</span></button>
-      </div>
     </div>
 
     <div class="sidebar">
-      <div style="flex:1"></div>
+      <div class="msg-strip" id="msg-strip"></div>
       <div class="qr-section">
         <div class="qr-inner">
           <div class="qr-box"><canvas id="qr-canvas" width="120" height="120"></canvas></div>
@@ -414,12 +409,27 @@ function markMsgShown(id){
   localStorage.setItem(getShownKey('ew_msgs'),JSON.stringify([...ids]));
 }
 
+function addMsgToStrip(msg){
+  const strip=document.getElementById('msg-strip');
+  if(!strip) return;
+  // Only show message and audio types
+  if(msg.type!=='message') return;
+  const card=document.createElement('div');
+  card.className='msg-card';
+  const icon=msg.frame?JSON.parse(msg.frame||'{}').emoji||'💬':'💬';
+  card.innerHTML=`<div class="msg-card-icon">${icon==='none'?'💬':icon}</div><div class="msg-card-text">${msg.content}</div><div class="msg-card-author">— ${msg.author}</div>`;
+  strip.insertBefore(card, strip.firstChild);
+  // Keep max 4 cards
+  while(strip.children.length>4) strip.removeChild(strip.lastChild);
+}
+
 async function pollMessages(){
   const msgs=await api('posts?event_id=eq.'+eventId+'&type=eq.message&approved=eq.true&order=created_at.asc');
   if(!Array.isArray(msgs)) return;
   const shown=getShownMsgIds();
   const newMsgs=msgs.filter(m=>m.id&&!shown.has(m.id)&&!msgBubbleQueue.find(q=>q.id===m.id));
   if(newMsgs.length){
+    newMsgs.forEach(m=>addMsgToStrip(m));
     msgBubbleQueue.push(...newMsgs);
     if(!msgBubbleShowing) showNextBubble();
   }
@@ -655,11 +665,7 @@ function buildStrip(){
   photoPosts.slice(0,6).forEach(p=>addToStrip(p));
 }
 
-function updateCounters(){
-  document.getElementById('cnt-p').textContent=posts.filter(p=>p.type==='photo').length;
-  document.getElementById('cnt-m').textContent=posts.filter(p=>p.type==='message').length;
-  document.getElementById('cnt-a').textContent=posts.filter(p=>p.type==='audio').length;
-}
+function updateCounters(){}
 
 function showNewBadge(){
   const b=document.getElementById('new-badge');b.style.display='block';
@@ -675,6 +681,9 @@ async function loadPosts(){
   photoPosts=posts.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
   buildStrip();
   if(photoPosts.length) showFeatured(photoPosts[0],0);
+  // Load last 4 messages into sidebar strip
+  const msgs=posts.filter(p=>p.type==='message').slice(0,4).reverse();
+  msgs.forEach(m=>addMsgToStrip(m));
 }
 
 async function pollPosts(){
