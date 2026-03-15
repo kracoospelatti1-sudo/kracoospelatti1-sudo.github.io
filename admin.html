@@ -292,6 +292,7 @@ input[type=range]{accent-color:var(--pink)}
     <button class="nav-btn" onclick="goNav('print')">🖨 Modo impresión</button>
     <button class="nav-btn" onclick="goNav('polls')">🗳 Votaciones</button>
     <button class="nav-btn" onclick="goNav('guest-design')">📱 Vista invitado</button>
+    <button class="nav-btn" onclick="goNav('moments')">🎬 Momentos</button>
     <button class="nav-btn" onclick="goNav('settings')">⚙️ Configuración</button>
     <div style="margin-top:auto;font-size:11px;color:var(--muted);padding:10px 14px">
       Evento activo:<br>
@@ -376,7 +377,7 @@ input[type=range]{accent-color:var(--pink)}
         </div>
         <div class="card">
           <div class="card-title">URLs del evento</div>
-          <div class="link-row"><span class="link-label">📺 Pantalla</span><div class="link-box" id="link-screen">—</div><button class="copy-btn" onclick="copyLink('link-screen')">Copiar</button></div>
+          <div class="link-row"><span class="link-label">📺 Pantalla</span><div class="link-box" id="link-screen">—</div><button class="copy-btn" onclick="copyLink('link-screen')">Copiar</button><button class="copy-btn" onclick="openMosaicMode()" style="background:var(--pink-dim);color:var(--pink);margin-left:4px">🧩 Mosaico</button></div>
           <div class="link-row"><span class="link-label">📱 Invitados</span><div class="link-box" id="link-guest">—</div><button class="copy-btn" onclick="copyLink('link-guest')">Copiar</button></div>
         </div>
         <div class="card">
@@ -1162,6 +1163,66 @@ input[type=range]{accent-color:var(--pink)}
 
 
     <!-- SETTINGS -->
+    <div class="page" id="page-moments">
+      <div class="page-title">🎬 Momentos especiales</div>
+      <div class="page-sub">Lanzá un efecto en pantalla completa en tiempo real</div>
+      <div class="notice" id="moments-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="moments-content" style="display:none">
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title">✨ Lanzar momento</div>
+          <div class="fg">
+            <div>
+              <label>Texto principal</label>
+              <input type="text" id="moment-text" placeholder="ej: ¡Feliz Cumpleaños! 🎂" maxlength="60"/>
+            </div>
+            <div>
+              <label>Subtexto (opcional)</label>
+              <input type="text" id="moment-subtext" placeholder="ej: ¡Brindemos todos!" maxlength="80"/>
+            </div>
+          </div>
+          <div class="fg" style="margin-top:12px">
+            <div>
+              <label>Efecto visual</label>
+              <select id="moment-effect">
+                <option value="confetti">🎉 Confetti</option>
+                <option value="fireworks">🎆 Fuegos artificiales</option>
+                <option value="petals">🌸 Pétalos</option>
+                <option value="flash">✨ Destello de luz</option>
+                <option value="all">🎊 Todo a la vez</option>
+              </select>
+            </div>
+            <div>
+              <label>Duración</label>
+              <select id="moment-duration">
+                <option value="8">8 segundos</option>
+                <option value="10" selected>10 segundos</option>
+                <option value="15">15 segundos</option>
+                <option value="20">20 segundos</option>
+                <option value="30">30 segundos</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn-pink" onclick="launchMoment()" id="launch-btn" style="font-size:16px;padding:14px 28px">🚀 ¡Lanzar ahora!</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📋 Momentos rápidos</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:8px" id="quick-moments">
+            <button class="btn-ghost" onclick="quickMoment('🥂 ¡Brindis!','¡Salud a todos!','confetti')">🥂 Brindis</button>
+            <button class="btn-ghost" onclick="quickMoment('🎂 ¡Feliz Cumpleaños!','','fireworks')">🎂 Cumpleaños</button>
+            <button class="btn-ghost" onclick="quickMoment('💒 ¡Felicidades!','A los novios 💕','petals')">💒 Boda</button>
+            <button class="btn-ghost" onclick="quickMoment('🎓 ¡Felicitaciones!','Lo lograste 🎉','confetti')">🎓 Graduación</button>
+            <button class="btn-ghost" onclick="quickMoment('🎉 ¡Sorpresa!','','all')">🎉 Sorpresa</button>
+            <button class="btn-ghost" onclick="quickMoment('🏆 ¡Ganador!','','flash')">🏆 Premio</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <div class="page" id="page-settings">
       <div class="page-title">Configuración</div>
       <div class="page-sub">Ajustes generales del panel</div>
@@ -1295,7 +1356,7 @@ function goNav(page){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   closeSidebar(); // close on mobile after nav
-  const map={events:0,'new-event':1,links:2,design:3,album:4,print:5,polls:6,'guest-design':7,settings:8};
+  const map={events:0,'new-event':1,links:2,design:3,album:4,print:5,polls:6,'guest-design':7,moments:8,settings:9};
   const btns=document.querySelectorAll('.nav-btn');
   if(map[page]!==undefined) btns[map[page]].classList.add('active');
   if(page==='events') loadEvents();
@@ -1306,6 +1367,7 @@ function goNav(page){
   if(page==='print') showPrint();
   if(page==='polls') showPolls();
   if(page==='guest-design') showGuestDesign();
+  if(page==='moments') showMoments();
   if(page==='settings'&&sessionStorage.getItem('ew_restricted_event')){
     // Restricted users can't access settings
     goNav('events');
@@ -1325,6 +1387,45 @@ let autoApprove=false;
 
 
 
+
+// ── MOMENTS ──────────────────────────────────────────────────
+function showMoments(){
+  const notice=document.getElementById('moments-notice');
+  const content=document.getElementById('moments-content');
+  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
+  notice.classList.remove('show');content.style.display='block';
+}
+
+function quickMoment(text, subtext, effect){
+  document.getElementById('moment-text').value=text;
+  document.getElementById('moment-subtext').value=subtext;
+  document.getElementById('moment-effect').value=effect;
+  launchMoment();
+}
+
+async function launchMoment(){
+  if(!selectedEvent){toast('⚠️ Seleccioná un evento primero');return;}
+  const text=document.getElementById('moment-text').value.trim();
+  if(!text){toast('❌ Escribí un texto para el momento');return;}
+  const effect=document.getElementById('moment-effect').value;
+  const duration=parseInt(document.getElementById('moment-duration').value)||10;
+  const subtext=document.getElementById('moment-subtext').value.trim();
+  const btn=document.getElementById('launch-btn');
+  btn.disabled=true;btn.textContent='🚀 Lanzando...';
+  try{
+    await api('moments',{method:'POST',body:JSON.stringify({
+      event_id:selectedEvent.id,
+      text,
+      effect:JSON.stringify({type:effect,duration,subtext})
+    })});
+    toast('🎬 ¡Momento lanzado en pantalla!');
+    btn.textContent='✅ ¡Lanzado!';
+    setTimeout(()=>{btn.disabled=false;btn.textContent='🚀 ¡Lanzar ahora!';},duration*1000);
+  }catch(e){
+    toast('❌ Error al lanzar: '+e.message);
+    btn.disabled=false;btn.textContent='🚀 ¡Lanzar ahora!';
+  }
+}
 
 // ── DELETE EVENT ─────────────────────────────────────────────
 async function deleteEvent(ev){
@@ -1565,6 +1666,12 @@ async function deletePost(id){
 
 
 // ── LINKS ────────────────────────────────────────────────────
+function openMosaicMode(){
+  if(!selectedEvent){toast('⚠️ Seleccioná un evento primero');return;}
+  const url=location.origin+'/screen.html?event='+selectedEvent.id+'&mosaic=1';
+  window.open(url,'_blank');
+}
+
 function showLinks(){
   const notice=document.getElementById('links-notice');
   const content=document.getElementById('links-content');

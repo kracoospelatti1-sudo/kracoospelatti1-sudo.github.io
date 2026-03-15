@@ -90,6 +90,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .msg-card-text{font-size:12px;font-weight:700;color:var(--bubble-txt);line-height:1.3;word-break:break-word}
 .msg-card-author{font-size:10px;color:var(--bubble-txt);opacity:0.5;margin-top:4px}
 
+/* MOSAIC */
+.mosaic-cell{position:absolute;overflow:hidden;border-radius:4px;border:2px solid rgba(0,0,0,0.3);transition:all 0.6s cubic-bezier(0.34,1.56,0.64,1);background:#111}
+.mosaic-cell img{width:100%;height:100%;object-fit:cover;display:block}
+.mosaic-cell .mcell-author{position:absolute;bottom:0;left:0;right:0;padding:4px 8px;background:linear-gradient(transparent,rgba(0,0,0,0.7));font-size:10px;color:rgba(255,255,255,0.8);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mosaic-cell.new-cell{animation:mosaicPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards}
+@keyframes mosaicPop{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+.mosaic-cell.featured{border-color:var(--accent);box-shadow:0 0 20px rgba(240,23,111,0.4)}
+
 /* LIGHT THEME */
 body.theme-light .sidebar{background:rgba(0,0,0,0.06);border-left-color:rgba(0,0,0,0.1)}
 body.theme-light .cpill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.7)}
@@ -98,6 +106,16 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 </style>
 </head>
 <body>
+
+<!-- MOMENT OVERLAY -->
+<div id="moment-overlay" style="position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;pointer-events:none">
+  <canvas id="moment-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+  <div id="moment-flash" style="position:absolute;inset:0;background:#fff;opacity:0;transition:opacity 0.1s;pointer-events:none"></div>
+  <div id="moment-text-wrap" style="position:relative;z-index:2;text-align:center;padding:0 40px">
+    <div id="moment-main-text" style="font-family:'Syne',sans-serif;font-size:clamp(48px,8vw,96px);font-weight:800;color:#fff;text-shadow:0 4px 32px rgba(0,0,0,0.5);line-height:1.1;opacity:0;transform:scale(0.5);transition:all 0.6s cubic-bezier(0.175,0.885,0.32,1.275)"></div>
+    <div id="moment-sub-text" style="font-family:'DM Sans',sans-serif;font-size:clamp(20px,3vw,36px);font-weight:500;color:rgba(255,255,255,0.85);margin-top:12px;opacity:0;transform:translateY(20px);transition:all 0.5s ease 0.3s"></div>
+  </div>
+</div>
 
 <!-- BACKGROUND CANVAS -->
 <canvas id="bg-canvas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.7"></canvas>
@@ -144,6 +162,26 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 </div>
 
 <div id="app" style="display:none">
+
+<!-- MOSAIC MODE OVERLAY -->
+<div id="mosaic-overlay" style="display:none;position:fixed;inset:0;z-index:80;background:#000;flex-direction:column">
+  <div id="mosaic-header" style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(0,0,0,0.8);border-bottom:1px solid rgba(255,255,255,0.1);position:absolute;top:0;left:0;right:0;z-index:2">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span id="mosaic-ev-name" style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff"></span>
+      <span class="live-pill" style="display:flex;align-items:center;gap:4px"><div class="live-dot"></div>MOSAICO</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="mosaic-count" style="font-size:13px;color:rgba(255,255,255,0.5)">0 fotos</span>
+      <select id="mosaic-style-select" onchange="setMosaicStyle(this.value)" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:4px 10px;border-radius:8px;font-size:12px;font-family:inherit">
+        <option value="grid">Grilla</option>
+        <option value="dynamic">Dinámico</option>
+        <option value="masonry">Masonry</option>
+      </select>
+    </div>
+  </div>
+  <div id="mosaic-grid" style="position:absolute;inset:0;top:52px;overflow:hidden;padding:4px"></div>
+</div>
+
   <div class="header">
     <div>
       <div class="ev-name" id="ev-name">—</div>
@@ -209,6 +247,8 @@ async function apiPost(path,body){
 
 const params=new URLSearchParams(location.search);
 const eventId=params.get('event');
+const mosaicParam=params.get('mosaic');
+let eventName='';
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
 let currentFeaturedPostId=null,reactionCounts={};
 let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5,transition:'fade'};
@@ -839,6 +879,7 @@ async function init(){
   const events=await api('events?id=eq.'+eventId);
   if(!Array.isArray(events)||!events[0]){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Evento no encontrado. Verificá el ID en la URL.</p>';return;}
   const ev=events[0];
+  eventName=ev.name;
   document.title=ev.name+' · EventWall';
   document.getElementById('ev-name').textContent=ev.name;
   document.getElementById('ev-sub').textContent=[ev.date,ev.subtitle].filter(Boolean).join(' · ');
@@ -859,6 +900,8 @@ async function init(){
   // Apply theme AFTER app is visible so DOM queries work
   if(saved) try{applyTheme(JSON.parse(saved));}catch(e){console.error('applyTheme:',e);}
   await loadPosts();
+  // Auto-start mosaic mode if ?mosaic=1
+  if(mosaicParam==='1') startMosaic();
   clearInterval(rotateTimer);
   rotateTimer=setInterval(rotateFeatured,cfg.interval);
   setInterval(pollPosts,3000);
@@ -866,6 +909,7 @@ async function init(){
   setInterval(pollWishes,5000);
   setInterval(pollMessages,3500);
   setInterval(pollForPolls,4000);
+setInterval(pollMoments,3000);
 }
 
 
@@ -1094,6 +1138,327 @@ function initBubbles(canvas,ctx){
     bgAnimFrame=requestAnimationFrame(draw);
   }
   draw();
+}
+
+
+// ── MOSAIC MODE ───────────────────────────────────────────────
+let mosaicActive=false;
+let mosaicStyle='grid'; // grid | dynamic | masonry
+let mosaicPhotos=[];
+let mosaicPollInterval=null;
+const MOSAIC_MAX=50;
+
+function setMosaicStyle(style){
+  mosaicStyle=style;
+  renderMosaic();
+}
+
+async function startMosaic(){
+  mosaicActive=true;
+  document.getElementById('mosaic-overlay').style.display='flex';
+  document.getElementById('mosaic-ev-name').textContent=eventName||'';
+  // Load photos
+  const posts=await api('posts?event_id=eq.'+eventId+'&type=eq.photo&approved=eq.true&order=created_at.desc&limit='+MOSAIC_MAX);
+  mosaicPhotos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
+  renderMosaic();
+  // Poll for new photos
+  mosaicPollInterval=setInterval(async()=>{
+    const fresh=await api('posts?event_id=eq.'+eventId+'&type=eq.photo&approved=eq.true&order=created_at.desc&limit='+MOSAIC_MAX);
+    if(!Array.isArray(fresh)) return;
+    const freshPhotos=fresh.filter(p=>p.content&&p.content.startsWith('http'));
+    const knownIds=new Set(mosaicPhotos.map(p=>p.id));
+    const newPhotos=freshPhotos.filter(p=>!knownIds.has(p.id));
+    if(newPhotos.length){
+      mosaicPhotos=[...newPhotos,...mosaicPhotos].slice(0,MOSAIC_MAX);
+      renderMosaic(newPhotos.map(p=>p.id));
+    }
+    // Handle deletions
+    const freshIds=new Set(freshPhotos.map(p=>p.id));
+    const removed=mosaicPhotos.filter(p=>!freshIds.has(p.id));
+    if(removed.length){
+      mosaicPhotos=mosaicPhotos.filter(p=>freshIds.has(p.id));
+      renderMosaic();
+    }
+  },4000);
+}
+
+function stopMosaic(){
+  mosaicActive=false;
+  clearInterval(mosaicPollInterval);
+  document.getElementById('mosaic-overlay').style.display='none';
+}
+
+function renderMosaic(newIds=[]){
+  const grid=document.getElementById('mosaic-grid');
+  const W=grid.offsetWidth||window.innerWidth;
+  const H=grid.offsetHeight||(window.innerHeight-52);
+  const count=mosaicPhotos.length;
+  document.getElementById('mosaic-count').textContent=count+' foto'+(count!==1?'s':'');
+
+  if(mosaicStyle==='grid') renderGrid(grid,W,H,newIds);
+  else if(mosaicStyle==='dynamic') renderDynamic(grid,W,H,newIds);
+  else if(mosaicStyle==='masonry') renderMasonry(grid,W,H,newIds);
+}
+
+function renderGrid(grid,W,H,newIds){
+  const count=mosaicPhotos.length;
+  if(!count){grid.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:24px">Esperando fotos...</div>';return;}
+  const cols=Math.ceil(Math.sqrt(count*(W/H)));
+  const rows=Math.ceil(count/cols);
+  const cw=Math.floor(W/cols)-4;
+  const ch=Math.floor(H/rows)-4;
+
+  // Remove deleted cells
+  const existingIds=new Set(mosaicPhotos.map(p=>p.id));
+  grid.querySelectorAll('.mosaic-cell').forEach(el=>{
+    if(!existingIds.has(el.dataset.id)) el.remove();
+  });
+
+  mosaicPhotos.forEach((p,i)=>{
+    const col=i%cols, row=Math.floor(i/cols);
+    const x=col*(cw+4)+4, y=row*(ch+4)+4;
+    let cell=grid.querySelector('[data-id="'+p.id+'"]');
+    const isNew=newIds.includes(p.id);
+    if(!cell){
+      cell=document.createElement('div');
+      cell.className='mosaic-cell'+(isNew?' new-cell':'');
+      cell.dataset.id=p.id;
+      cell.innerHTML='<img src="'+p.content+'" loading="lazy"/><div class="mcell-author">'+p.author+'</div>';
+      grid.appendChild(cell);
+    }
+    cell.style.left=x+'px';cell.style.top=y+'px';
+    cell.style.width=cw+'px';cell.style.height=ch+'px';
+    if(isNew) setTimeout(()=>cell.classList.remove('new-cell'),600);
+  });
+}
+
+function renderDynamic(grid,W,H,newIds){
+  const count=mosaicPhotos.length;
+  if(!count){grid.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:24px">Esperando fotos...</div>';return;}
+
+  // First photo is featured (2x2), rest are small
+  const featuredId=mosaicPhotos[0]?.id;
+  const cols=4;
+  const smallW=Math.floor(W/cols)-4;
+  const smallH=Math.floor(H/3)-4;
+  const featW=smallW*2+4, featH=smallH*2+4;
+
+  const existingIds=new Set(mosaicPhotos.map(p=>p.id));
+  grid.querySelectorAll('.mosaic-cell').forEach(el=>{if(!existingIds.has(el.dataset.id)) el.remove();});
+
+  // Layout: featured top-left (2x2), rest fill around
+  let positions=[];
+  positions.push({x:4,y:4,w:featW,h:featH,featured:true}); // featured
+  // Small cells: right of featured (cols 2,3) rows 0,1
+  for(let c2=2;c2<cols;c2++) for(let r=0;r<2;r++) positions.push({x:c2*(smallW+4)+4,y:r*(smallH+4)+4,w:smallW,h:smallH});
+  // Bottom row: all cols
+  for(let c2=0;c2<cols;c2++) positions.push({x:c2*(smallW+4)+4,y:2*(smallH+4)+4,w:smallW,h:smallH});
+
+  mosaicPhotos.slice(0,positions.length).forEach((p,i)=>{
+    const pos=positions[i];
+    let cell=grid.querySelector('[data-id="'+p.id+'"]');
+    const isNew=newIds.includes(p.id);
+    if(!cell){
+      cell=document.createElement('div');
+      cell.className='mosaic-cell'+(isNew?' new-cell':'')+(pos.featured?' featured':'');
+      cell.dataset.id=p.id;
+      cell.innerHTML='<img src="'+p.content+'" loading="lazy"/><div class="mcell-author">'+p.author+'</div>';
+      grid.appendChild(cell);
+    }
+    cell.classList.toggle('featured',!!pos.featured);
+    cell.style.left=pos.x+'px';cell.style.top=pos.y+'px';
+    cell.style.width=pos.w+'px';cell.style.height=pos.h+'px';
+    if(isNew) setTimeout(()=>cell.classList.remove('new-cell'),600);
+  });
+}
+
+function renderMasonry(grid,W,H,newIds){
+  const count=mosaicPhotos.length;
+  if(!count){grid.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:24px">Esperando fotos...</div>';return;}
+
+  const cols=Math.min(5,Math.max(3,Math.ceil(count/3)));
+  const colW=Math.floor(W/cols)-4;
+  const colHeights=new Array(cols).fill(4);
+  const existingIds=new Set(mosaicPhotos.map(p=>p.id));
+  grid.querySelectorAll('.mosaic-cell').forEach(el=>{if(!existingIds.has(el.dataset.id)) el.remove();});
+
+  mosaicPhotos.forEach(p=>{
+    // Pick shortest column
+    const col=colHeights.indexOf(Math.min(...colHeights));
+    // Random-ish height based on id hash
+    const hash=p.id.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    const cellH=Math.floor(colW*(0.6+((hash%40)/100)));
+    const x=col*(colW+4)+4;
+    const y=colHeights[col];
+    let cell=grid.querySelector('[data-id="'+p.id+'"]');
+    const isNew=newIds.includes(p.id);
+    if(!cell){
+      cell=document.createElement('div');
+      cell.className='mosaic-cell'+(isNew?' new-cell':'');
+      cell.dataset.id=p.id;
+      cell.innerHTML='<img src="'+p.content+'" loading="lazy"/><div class="mcell-author">'+p.author+'</div>';
+      grid.appendChild(cell);
+    }
+    cell.style.left=x+'px';cell.style.top=y+'px';
+    cell.style.width=colW+'px';cell.style.height=cellH+'px';
+    colHeights[col]+=cellH+4;
+    if(isNew) setTimeout(()=>cell.classList.remove('new-cell'),600);
+  });
+}
+
+window.addEventListener('resize',()=>{if(mosaicActive) renderMosaic();});
+
+
+// ── MOMENTS ENGINE ────────────────────────────────────────────
+let lastMomentId=null;
+let momentAnimFrame=null;
+
+async function pollMoments(){
+  try{
+    const moments=await api('moments?event_id=eq.'+eventId+'&order=launched_at.desc&limit=1');
+    if(!Array.isArray(moments)||!moments.length) return;
+    const m=moments[0];
+    if(m.id===lastMomentId) return;
+    // Check if launched within last 60s
+    const age=(Date.now()-new Date(m.launched_at).getTime())/1000;
+    if(age>60){lastMomentId=m.id;return;}
+    lastMomentId=m.id;
+    let effect={type:'confetti',duration:10,subtext:''};
+    try{effect=JSON.parse(m.effect||'{}');}catch(e){}
+    showMoment(m.text,effect);
+  }catch(e){}
+}
+
+function showMoment(text, effect){
+  const overlay=document.getElementById('moment-overlay');
+  const mainText=document.getElementById('moment-main-text');
+  const subText=document.getElementById('moment-sub-text');
+  const canvas=document.getElementById('moment-canvas');
+  const flash=document.getElementById('moment-flash');
+  const duration=(effect.duration||10)*1000;
+
+  // Setup canvas
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  overlay.style.display='flex';
+
+  // Text animation
+  mainText.textContent=text;
+  subText.textContent=effect.subtext||'';
+  setTimeout(()=>{
+    mainText.style.opacity='1';mainText.style.transform='scale(1)';
+    subText.style.opacity='1';subText.style.transform='translateY(0)';
+  },100);
+
+  // Flash effect
+  if(effect.type==='flash'||effect.type==='all'){
+    flash.style.opacity='0.9';
+    setTimeout(()=>flash.style.opacity='0',150);
+    setTimeout(()=>{flash.style.opacity='0.5';setTimeout(()=>flash.style.opacity='0',100);},300);
+  }
+
+  // Particle effects
+  const ctx=canvas.getContext('2d');
+  const particles=[];
+  const type=effect.type;
+
+  if(type==='confetti'||type==='all'){
+    const cols=['#f0176f','#ffd700','#00f5ff','#ff6b9d','#a855f7','#22d3ee','#fb923c','#4ade80'];
+    for(let i=0;i<200;i++){
+      particles.push({
+        x:Math.random()*canvas.width, y:-20-Math.random()*canvas.height*0.5,
+        w:8+Math.random()*10, h:4+Math.random()*6,
+        color:cols[Math.floor(Math.random()*cols.length)],
+        rot:Math.random()*360, rotS:(Math.random()-0.5)*8,
+        vx:(Math.random()-0.5)*6, vy:3+Math.random()*5,
+        o:1, type:'confetti'
+      });
+    }
+  }
+
+  if(type==='petals'||type==='all'){
+    const cols=['#ffb7c5','#ff9eb5','#ffd6e0','#ff85a1','#ffadc5'];
+    for(let i=0;i<120;i++){
+      particles.push({
+        x:Math.random()*canvas.width, y:-30-Math.random()*200,
+        s:10+Math.random()*20,
+        color:cols[Math.floor(Math.random()*cols.length)],
+        rot:Math.random()*360, rotS:(Math.random()-0.5)*3,
+        vx:(Math.random()-0.5)*2, vy:1+Math.random()*2.5,
+        t:Math.random()*Math.PI*2, o:0.8, type:'petal'
+      });
+    }
+  }
+
+  if(type==='fireworks'||type==='all'){
+    // Launch fireworks periodically
+    const fw=setInterval(()=>{
+      const x=canvas.width*0.2+Math.random()*canvas.width*0.6;
+      const y=canvas.height*0.1+Math.random()*canvas.height*0.5;
+      const cols=['#f0176f','#ffd700','#00f5ff','#ff6b9d','#a855f7','#ffffff','#4ade80'];
+      const col=cols[Math.floor(Math.random()*cols.length)];
+      for(let i=0;i<60;i++){
+        const angle=(i/60)*Math.PI*2;
+        const speed=3+Math.random()*6;
+        particles.push({
+          x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-2,
+          color:col,r:2+Math.random()*3,o:1,decay:0.015+Math.random()*0.01,type:'spark'
+        });
+      }
+    },400);
+    setTimeout(()=>clearInterval(fw),duration-500);
+  }
+
+  // Animation loop
+  let startTime=Date.now();
+  cancelAnimationFrame(momentAnimFrame);
+  function drawMoment(){
+    const elapsed=Date.now()-startTime;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];
+      if(p.type==='confetti'){
+        ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+        ctx.globalAlpha=p.o;ctx.fillStyle=p.color;
+        ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
+        p.y+=p.vy;p.x+=p.vx;p.rot+=p.rotS;p.vy+=0.1;
+        if(p.y>canvas.height+20) particles.splice(i,1);
+      } else if(p.type==='petal'){
+        p.t+=0.03;
+        ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+        ctx.globalAlpha=p.o;ctx.fillStyle=p.color;
+        ctx.beginPath();ctx.ellipse(0,0,p.s/2,p.s,Math.sin(p.t)*0.5,0,Math.PI*2);
+        ctx.fill();ctx.restore();
+        p.y+=p.vy;p.x+=p.vx+Math.sin(p.t)*0.8;p.rot+=p.rotS;
+        if(p.y>canvas.height+30) particles.splice(i,1);
+      } else if(p.type==='spark'){
+        ctx.globalAlpha=p.o;ctx.fillStyle=p.color;
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+        p.x+=p.vx;p.y+=p.vy;p.vy+=0.15;p.o-=p.decay;p.r*=0.97;
+        if(p.o<=0) particles.splice(i,1);
+      }
+    }
+    if(elapsed<duration) momentAnimFrame=requestAnimationFrame(drawMoment);
+    else hideMoment();
+  }
+  drawMoment();
+
+  // Auto-hide
+  setTimeout(hideMoment, duration);
+}
+
+function hideMoment(){
+  cancelAnimationFrame(momentAnimFrame);
+  const overlay=document.getElementById('moment-overlay');
+  const mainText=document.getElementById('moment-main-text');
+  const subText=document.getElementById('moment-sub-text');
+  mainText.style.opacity='0';mainText.style.transform='scale(1.2)';
+  subText.style.opacity='0';
+  setTimeout(()=>{
+    overlay.style.display='none';
+    const ctx=document.getElementById('moment-canvas').getContext('2d');
+    ctx.clearRect(0,0,document.getElementById('moment-canvas').width,document.getElementById('moment-canvas').height);
+  },500);
 }
 
 init();
