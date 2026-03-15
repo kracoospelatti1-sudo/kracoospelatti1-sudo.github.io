@@ -318,6 +318,7 @@ input[type=range]{accent-color:var(--pink)}
         <div class="card-title">Datos del evento</div>
         <div class="fg"><div><label>Nombre *</label><input type="text" id="ev-name" placeholder="Boda de Caro & Pablo"/></div><div><label>Fecha</label><input type="date" id="ev-date"/></div></div>
         <div class="fg full"><div><label>Subtítulo</label><input type="text" id="ev-subtitle" placeholder="Salón La Armonía · 20hs"/></div></div>
+        <div class="fg full"><div><label>🔗 Código personalizado (opcional)</label><input type="text" id="ev-custom-code" placeholder="ej: boda-caro-pablo" style="text-transform:lowercase"/><div style="font-size:11px;color:var(--muted);margin-top:4px">Se usa en la URL en lugar del ID. Solo letras, números y guiones.</div></div></div>
         <div class="fg full" style="margin-bottom:0">
           <div>
             <label>📧 Email del cliente</label>
@@ -1273,6 +1274,11 @@ input[type=range]{accent-color:var(--pink)}
         <input type="text" id="edit-ev-subtitle" placeholder="ej: Salón Crystal · Buenos Aires" class="field"/>
       </div>
       <div>
+        <label>🔗 Código personalizado</label>
+        <input type="text" id="edit-ev-custom-code" placeholder="ej: boda-caro-pablo" class="field" style="text-transform:lowercase"/>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Solo letras, números y guiones. Deja vacío para usar el ID automático.</div>
+      </div>
+      <div>
         <label>Email del cliente</label>
         <input type="email" id="edit-ev-email" placeholder="cliente@email.com" class="field"/>
       </div>
@@ -1467,6 +1473,7 @@ function openEditEvent(ev){
   document.getElementById('edit-ev-name').value = ev.name || '';
   document.getElementById('edit-ev-date').value = ev.date || '';
   document.getElementById('edit-ev-subtitle').value = ev.subtitle || '';
+  document.getElementById('edit-ev-custom-code').value = ev.custom_code || '';
   document.getElementById('edit-ev-email').value = ev.client_email || '';
   document.getElementById('edit-ev-pin').value = ev.admin_pin || '';
   document.getElementById('edit-ev-pin-duration').value = '0';
@@ -1490,6 +1497,7 @@ async function saveEditEvent(){
     date: document.getElementById('edit-ev-date').value.trim() || null,
     subtitle: document.getElementById('edit-ev-subtitle').value.trim() || null,
     client_email: document.getElementById('edit-ev-email').value.trim() || null,
+    custom_code: document.getElementById('edit-ev-custom-code').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'')||null,
   };
 
   const pin = document.getElementById('edit-ev-pin').value.trim();
@@ -1768,6 +1776,8 @@ async function evCreate(){
   if(subtitle) body.subtitle=subtitle;
   const evEmail=document.getElementById('ev-email').value.trim();
   if(evEmail) body.client_email=evEmail;
+  const evCode=document.getElementById('ev-custom-code').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+  if(evCode) body.custom_code=evCode;
   // Auto-generate PIN if duration set but no PIN
   if(pinDurationHrs>0&&!evPin){
     evPin=Math.floor(1000+Math.random()*9000).toString();
@@ -1789,6 +1799,7 @@ async function evCreate(){
     document.getElementById('ev-pin').value='';
     document.getElementById('ev-pin-duration').value='12';
     document.getElementById('ev-email').value='';
+    document.getElementById('ev-custom-code').value='';
     goNav('events');
   }
 }
@@ -1836,13 +1847,14 @@ function showLinks(){
   if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
   notice.classList.remove('show');content.style.display='block';
   const base=location.origin+'/';
-  const screenUrl=base+'screen.html?event='+selectedEvent.id;
-  const guestUrl=base+'guest.html?event='+selectedEvent.id;
+  const evCode=selectedEvent.custom_code||selectedEvent.id;
+  const screenUrl=base+'screen.html?event='+evCode;
+  const guestUrl=base+'guest.html?event='+evCode;
   document.getElementById('link-screen').textContent=screenUrl;
   document.getElementById('link-guest').textContent=guestUrl;
   // Show short code
-  document.getElementById('event-code-display').textContent=selectedEvent.id.toUpperCase();
-  document.getElementById('screen-short-url').textContent=location.hostname+'/screen.html?event='+selectedEvent.id;
+  document.getElementById('event-code-display').textContent=evCode.toUpperCase();
+  document.getElementById('screen-short-url').textContent=location.hostname+'/screen.html?event='+evCode;
   const qrDiv=document.getElementById('qr-container');
   qrDiv.innerHTML='';
   try{new QRCode(qrDiv,{text:guestUrl,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});}catch(e){}

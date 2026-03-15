@@ -1507,7 +1507,8 @@ async function applyGuestDesign(ev){
 async function init(){
   if(!eventId){document.getElementById('page-loading').innerHTML='<div style="text-align:center;padding:32px"><div style="font-size:40px">⚠️</div><p style="color:var(--pink);margin-top:12px">Falta el ID del evento.<br>Abrí este link desde el admin.</p></div>';return;}
   try{
-    const evs=await apiRest('events?id=eq.'+eventId);
+    let evs=await apiRest('events?id=eq.'+eventId);
+    if(!evs[0]) evs=await apiRest('events?custom_code=eq.'+eventId);
     if(!evs[0]) throw new Error('Evento no encontrado');
     const ev=evs[0];
 
