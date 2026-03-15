@@ -209,6 +209,17 @@ const eventId=params.get('event');
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
 let currentFeaturedPostId=null,reactionCounts={};
 let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5,transition:'fade'};
+let sharedAudioCtx=null;
+function getAudioCtx(){
+  if(!sharedAudioCtx){
+    sharedAudioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  }
+  if(sharedAudioCtx.state==='suspended') sharedAudioCtx.resume();
+  return sharedAudioCtx;
+}
+// Unlock audio on first user interaction
+document.addEventListener('click',()=>{getAudioCtx();},{once:true});
+document.addEventListener('touchstart',()=>{getAudioCtx();},{once:true});
 
 // ── FONT LOADER ───────────────────────────────────────────────
 function loadScreenFont(font){
@@ -346,7 +357,8 @@ function applyTicker(text, color){
 function playSound(type){
   if(type==='none') return;
   try{
-    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const ctx=getAudioCtx();
+    if(ctx.state==='suspended'){ctx.resume().then(()=>playSound(type));return;}
     if(type==='chime'){
       [523,659,784].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,ctx.currentTime+i*0.15);g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+i*0.15+0.05);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.5);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.5);});
     } else if(type==='pop'){
@@ -777,7 +789,18 @@ async function pollPosts(){
       if(p.type==='audio'&&p.content&&!getPlayedAudioIds().has(p.id)){
         markAudioPlayed(p.id);
         addMsgToStrip(p);
-        setTimeout(()=>{try{new Audio(p.content).play();}catch(e){}},800);
+        setTimeout(()=>{
+        const a=new Audio(p.content);
+        const playPromise=a.play();
+        if(playPromise!==undefined){
+          playPromise.catch(()=>{
+            // Autoplay blocked - queue for next user interaction
+            const resume=()=>{a.play().catch(()=>{});document.removeEventListener('click',resume);document.removeEventListener('touchstart',resume);};
+            document.addEventListener('click',resume,{once:true});
+            document.addEventListener('touchstart',resume,{once:true});
+          });
+        }
+      },800);
       }
     });
     playSound(cfg.sound);showNewBadge();
