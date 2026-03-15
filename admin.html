@@ -1330,6 +1330,13 @@ setTimeout(checkPreviewButton, 500);
 
 function formatExpiry(isoStr){
   const d=new Date(isoStr);
+  const remaining=d-Date.now();
+  if(remaining>0 && remaining<3600000){
+    // Less than 1 hour - show countdown
+    const mins=Math.floor(remaining/60000);
+    const secs=Math.floor((remaining%60000)/1000);
+    return 'vence en '+mins+'m '+secs+'s';
+  }
   return d.toLocaleDateString('es-AR')+' '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
 }
 
@@ -1666,9 +1673,11 @@ async function loadEvents(restrictedId=null){
     }
     if(ev.admin_pin){
       const expired=ev.pin_expires_at&&new Date(ev.pin_expires_at)<now;
+      const remaining=ev.pin_expires_at?(new Date(ev.pin_expires_at)-Date.now()):null;
+      const isShort=remaining&&remaining>0&&remaining<3600000;
       const expStr=ev.pin_expires_at?
         (expired?'<span style="color:var(--red);font-size:10px">🔒 PIN vencido</span>':
-        '<span style="color:var(--green);font-size:10px">🔑 PIN: '+ev.admin_pin+' · vence '+formatExpiry(ev.pin_expires_at)+'</span>'):
+        '<span class="pin-expiry-live" data-expiry="'+ev.pin_expires_at+'" data-pin="'+ev.admin_pin+'" style="color:var(--green);font-size:10px">🔑 PIN: '+ev.admin_pin+' · vence '+formatExpiry(ev.pin_expires_at)+'</span>'):
         '<span style="color:var(--muted);font-size:10px">🔑 PIN: '+ev.admin_pin+' (sin vencimiento)</span>';
       const pinDiv=document.createElement('div');
       pinDiv.style.marginTop='8px';
@@ -1707,6 +1716,28 @@ async function loadEvents(restrictedId=null){
   });
 }
 
+// Live countdown for short expiry events
+let countdownInterval=null;
+function startCountdown(){
+  clearInterval(countdownInterval);
+  countdownInterval=setInterval(()=>{
+    // Check if any visible PIN expiry text needs updating
+    document.querySelectorAll('.pin-expiry-live').forEach(el=>{
+      const isoStr=el.dataset.expiry;
+      if(!isoStr) return;
+      const remaining=new Date(isoStr)-Date.now();
+      if(remaining<=0){
+        el.textContent='🔒 PIN vencido';
+        el.style.color='var(--red)';
+      } else if(remaining<3600000){
+        const mins=Math.floor(remaining/60000);
+        const secs=Math.floor((remaining%60000)/1000);
+        el.textContent='🔑 PIN: '+el.dataset.pin+' · vence en '+mins+'m '+secs+'s';
+      }
+    });
+  },1000);
+}
+
 function selectEvent(ev,cardEl){
   selectedEvent=ev;
   document.getElementById('sidebar-event').textContent=ev.name;
@@ -1716,6 +1747,7 @@ function selectEvent(ev,cardEl){
   cardEl.classList.add('selected');
 
   toast('✓ "'+ev.name+'" seleccionado');
+  startCountdown();
 }
 
 async function evCreate(){
@@ -2680,7 +2712,7 @@ function closeSidebar(){
 if(sessionStorage.getItem('ew_unlocked')==='1'){
   document.getElementById('pin-lock').style.display='none';
   document.getElementById('main-app').style.display='grid';
-  loadEvents();
+  loadEvents().then(()=>startCountdown());
   startGlobalPoller();
   // Check restricted event PIN expiry periodically
   setInterval(async()=>{
