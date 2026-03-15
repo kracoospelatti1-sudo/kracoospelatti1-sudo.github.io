@@ -368,7 +368,7 @@ nav.scrolled{
 .testi-role{font-size:12px;color:var(--muted)}
 
 /* ─── PRICING ───────────────────────────────────── */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.pricing-grid{display:grid;grid-template-columns:1fr;gap:16px;max-width:600px;margin:0 auto}
 .plan{
   background:var(--card);border:1px solid var(--border);
   border-radius:20px;padding:36px 28px;
@@ -509,7 +509,7 @@ footer p{font-size:13px;color:var(--muted)}
 
   .stats-row{grid-template-columns:1fr 1fr}
   .testi-grid{grid-template-columns:1fr}
-  .pricing-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}
+  .pricing-grid{max-width:100%}
 
   .section{padding:80px 0}
   footer{padding:28px 24px;flex-direction:column;align-items:flex-start;gap:8px}
@@ -544,7 +544,7 @@ footer p{font-size:13px;color:var(--muted)}
   <div class="nav-links">
     <a href="#como-funciona">Cómo funciona</a>
     <a href="#features">Funciones</a>
-    <a href="#precios">Precios</a>
+    <a href="#precios">Precio</a>
     <a href="https://wa.me/5492352487435?text=Hola!%20Quiero%20saber%20m%C3%A1s%20sobre%20EventWall%20%F0%9F%8E%89" target="_blank" class="nav-cta">Contactar →</a>
   </div>
   <button class="nav-mobile-btn" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex';document.querySelector('.nav-links').style.flexDirection='column';document.querySelector('.nav-links').style.position='fixed';document.querySelector('.nav-links').style.top='60px';document.querySelector('.nav-links').style.left='0';document.querySelector('.nav-links').style.right='0';document.querySelector('.nav-links').style.background='rgba(7,7,14,0.98)';document.querySelector('.nav-links').style.padding='24px';document.querySelector('.nav-links').style.gap='20px';document.querySelector('.nav-links').style.borderBottom='1px solid rgba(255,255,255,0.07)'">☰</button>
@@ -784,58 +784,31 @@ footer p{font-size:13px;color:var(--muted)}
 <!-- PRICING -->
 <div id="precios" class="section-wrap">
   <div class="section">
-    <div class="section-label reveal">Planes</div>
-    <h2 class="reveal">Simple y <span class="c">transparente</span></h2>
-    <p class="section-sub reveal">Sin sorpresas. Elegís el plan que se adapta a tu evento.</p>
+    <div class="section-label reveal">Precio</div>
+    <h2 class="reveal">Todo incluido,<br><span class="c">sin sorpresas</span></h2>
+    <p class="section-sub reveal">Un solo plan con todo lo que tu evento necesita.</p>
     <div class="pricing-grid">
-      <div class="plan reveal">
-        <div class="plan-tier">Básico</div>
+      <div class="plan featured reveal">
+        <div class="plan-tag">✨ Todo incluido</div>
+        <div class="plan-tier">EventWall completo</div>
         <div class="plan-price"><sup>$</sup>XX</div>
-        <div class="plan-billing">por evento</div>
+        <div class="plan-billing">por evento · precio único</div>
         <div class="plan-divider"></div>
-        <ul class="plan-list">
-          <li><span class="ok">✓</span> Hasta 100 invitados</li>
-          <li><span class="ok">✓</span> Fotos y mensajes</li>
-          <li><span class="ok">✓</span> QR personalizado</li>
-          <li><span class="ok">✓</span> Álbum por email</li>
-          <li class="off"><span class="ok no">✓</span> Diseño personalizado</li>
-          <li class="off"><span class="ok no">✓</span> Votaciones</li>
-          <li class="off"><span class="ok no">✓</span> Soporte prioritario</li>
-        </ul>
-        <a href="https://wa.me/5492352487435?text=Hola!%20Me%20interesa%20el%20plan%20B%C3%A1sico%20de%20EventWall" target="_blank" class="plan-btn ghost">Consultar</a>
-      </div>
-      <div class="plan featured reveal reveal-delay-1">
-        <div class="plan-tag">⭐ Más popular</div>
-        <div class="plan-tier">Premium</div>
-        <div class="plan-price"><sup>$</sup>XX</div>
-        <div class="plan-billing">por evento</div>
-        <div class="plan-divider"></div>
-        <ul class="plan-list">
+        <ul class="plan-list" style="display:grid;grid-template-columns:1fr 1fr;gap:12px 24px">
           <li><span class="ok">✓</span> Invitados ilimitados</li>
-          <li><span class="ok">✓</span> Fotos, mensajes y audio</li>
-          <li><span class="ok">✓</span> QR personalizado</li>
-          <li><span class="ok">✓</span> Álbum por email</li>
-          <li><span class="ok">✓</span> Diseño personalizado</li>
+          <li><span class="ok">✓</span> Fotos con marcos y filtros</li>
+          <li><span class="ok">✓</span> Mensajes en tiempo real</li>
+          <li><span class="ok">✓</span> Mensajes de voz</li>
+          <li><span class="ok">✓</span> Deseos especiales</li>
           <li><span class="ok">✓</span> Votaciones interactivas</li>
-          <li class="off"><span class="ok no">✓</span> Soporte prioritario</li>
-        </ul>
-        <a href="https://wa.me/5492352487435?text=Hola!%20Me%20interesa%20el%20plan%20Premium%20de%20EventWall" target="_blank" class="plan-btn pink">Consultar</a>
-      </div>
-      <div class="plan reveal reveal-delay-2">
-        <div class="plan-tier">Full</div>
-        <div class="plan-price"><sup>$</sup>XX</div>
-        <div class="plan-billing">por evento</div>
-        <div class="plan-divider"></div>
-        <ul class="plan-list">
-          <li><span class="ok">✓</span> Invitados ilimitados</li>
-          <li><span class="ok">✓</span> Fotos, mensajes y audio</li>
           <li><span class="ok">✓</span> QR personalizado</li>
-          <li><span class="ok">✓</span> Álbum por email</li>
           <li><span class="ok">✓</span> Diseño personalizado</li>
-          <li><span class="ok">✓</span> Votaciones interactivas</li>
-          <li><span class="ok">✓</span> Soporte prioritario</li>
+          <li><span class="ok">✓</span> Álbum automático por email</li>
+          <li><span class="ok">✓</span> Soporte durante el evento</li>
         </ul>
-        <a href="https://wa.me/5492352487435?text=Hola!%20Me%20interesa%20el%20plan%20Full%20de%20EventWall" target="_blank" class="plan-btn ghost">Consultar</a>
+        <div style="margin-top:32px">
+          <a href="https://wa.me/5492352487435?text=Hola!%20Quiero%20contratar%20EventWall%20para%20mi%20evento%20%F0%9F%8E%89" target="_blank" class="plan-btn pink">Contratar por WhatsApp →</a>
+        </div>
       </div>
     </div>
   </div>
