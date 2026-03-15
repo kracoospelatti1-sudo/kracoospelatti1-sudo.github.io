@@ -1273,6 +1273,12 @@ function goNav(page){
   if(page==='print') showPrint();
   if(page==='polls') showPolls();
   if(page==='guest-design') showGuestDesign();
+  if(page==='settings'&&sessionStorage.getItem('ew_restricted_event')){
+    // Restricted users can't access settings
+    goNav('events');
+    toast('⚠️ No tenés permiso para acceder a la configuración');
+    return;
+  }
 }
 
 function toast(msg,dur=3000){
@@ -1386,6 +1392,9 @@ async function loadEvents(restrictedId=null){
   if(createBtn) createBtn.style.display=restricted?'none':'';
   const createPageBtn=document.querySelector('#page-events .btn-pink');
   if(createPageBtn) createPageBtn.style.display=restricted?'none':'';
+  // Hide settings button for restricted users
+  const settingsBtn=document.querySelector('.nav-btn[onclick*="settings"]');
+  if(settingsBtn) settingsBtn.style.display=restricted?'none':'';
   const grid=document.getElementById('events-list');
   grid.innerHTML='<div class="empty"><div class="empty-ico">⏳</div><div class="empty-txt">Conectando...</div></div>';
   const query=restricted?'events?id=eq.'+restricted:'events?order=created_at.desc';
