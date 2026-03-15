@@ -1833,6 +1833,61 @@ async function moderatePhotoWithAI(imageDataUrl){
 init();
 resumeCooldowns();
 
+
+// ── TOAST ────────────────────────────────────────────────────
+function toast(msg){
+  let t=document.getElementById('guest-toast');
+  if(!t){
+    t=document.createElement('div');t.id='guest-toast';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;font-weight:500;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2500);
+}
+
+// ── MY PHOTOS ────────────────────────────────────────────────
+async function loadMyPhotos(){
+  const name=document.getElementById('guest-name').value.trim();
+  const loading=document.getElementById('my-photos-loading');
+  const empty=document.getElementById('my-photos-empty');
+  const grid=document.getElementById('my-photos-grid');
+  loading.style.display='block';empty.style.display='none';grid.innerHTML='';
+  if(!name){
+    loading.style.display='none';
+    empty.style.display='block';
+    empty.innerHTML='<div style="font-size:36px;margin-bottom:10px">👤</div><p style="font-size:15px;font-weight:600">Ingresá tu nombre primero</p>';
+    return;
+  }
+  try{
+    const posts=await apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&author=eq.'+encodeURIComponent(name)+'&order=created_at.desc');
+    loading.style.display='none';
+    if(!posts.length){empty.style.display='block';return;}
+    posts.forEach(p=>{
+      const card=document.createElement('div');
+      card.className='my-photo-card';
+      card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/><div class="my-photo-overlay"><button class="my-photo-del" onclick="deleteMyPhoto(''+p.id+'',this.closest('.my-photo-card'))">🗑 Eliminar</button></div>';
+      card.addEventListener('touchstart',()=>card.querySelector('.my-photo-overlay').style.opacity='1');
+      card.addEventListener('touchend',()=>setTimeout(()=>card.querySelector('.my-photo-overlay').style.opacity='0',2000));
+      grid.appendChild(card);
+    });
+  }catch(e){
+    loading.style.display='none';
+    grid.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px">Error al cargar fotos</p>';
+  }
+}
+
+async function deleteMyPhoto(id, cardEl){
+  if(!confirm('¿Eliminar esta foto? No se puede deshacer.')) return;
+  try{
+    await apiRest('posts?id=eq.'+id,{method:'DELETE'});
+    cardEl.style.transition='all 0.3s';
+    cardEl.style.opacity='0';cardEl.style.transform='scale(0.8)';
+    setTimeout(()=>cardEl.remove(),300);
+    toast('🗑 Foto eliminada');
+    loadStats();
+  }catch(e){toast('Error al eliminar');}
+}
 </script>
 </body>
 </html>
