@@ -208,7 +208,7 @@ const params=new URLSearchParams(location.search);
 const eventId=params.get('event');
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
 let currentFeaturedPostId=null,reactionCounts={};
-let cfg={interval:6000,sound:'chime',fsBubble:32};
+let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5};
 
 // ── FONT LOADER ───────────────────────────────────────────────
 function loadScreenFont(font){
@@ -302,6 +302,9 @@ function applyTheme(design){
 
   // Ticker
   applyTicker(design.ticker, design.tickerColor);
+
+  // Carousel limit
+  if(design.carouselLimit) cfg.carouselLimit=parseInt(design.carouselLimit)||5;
 }
 
 function applyBgImage(url, opacity){
@@ -684,6 +687,8 @@ async function loadPosts(){
   lastPostCount=posts.length;
   updateCounters();
   photoPosts=posts.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
+  // Keep only the last N photos in carousel
+  if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
   buildStrip();
   if(photoPosts.length) showFeatured(photoPosts[0],0);
   // Mark ALL existing messages+wishes+audios as already shown
@@ -727,7 +732,11 @@ async function pollPosts(){
   if(newItems.length){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
-        photoPosts.unshift(p);addToStrip(p);showFeatured(p,0);
+        photoPosts.unshift(p);
+        // Trim to carousel limit
+        if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
+        buildStrip();
+        showFeatured(p,0);
       }
       if(p.type==='audio'&&p.content&&!getPlayedAudioIds().has(p.id)){
         markAudioPlayed(p.id);

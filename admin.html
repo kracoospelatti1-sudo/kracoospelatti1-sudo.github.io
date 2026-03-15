@@ -575,6 +575,16 @@ input[type=range]{accent-color:var(--pink)}
                 </select>
               </div>
               <div class="design-field">
+                <label>Fotos en el carrusel</label>
+                <select id="cfg-carousel-limit">
+                  <option value="3">Últimas 3 fotos</option>
+                  <option value="5" selected>Últimas 5 fotos</option>
+                  <option value="10">Últimas 10 fotos</option>
+                  <option value="20">Últimas 20 fotos</option>
+                  <option value="999">Todas las fotos</option>
+                </select>
+              </div>
+              <div class="design-field">
                 <label>Tiempo entre fotos (seg)</label>
                 <input type="number" id="cfg-interval" value="6" min="3" max="60"/>
               </div>
@@ -1532,6 +1542,7 @@ function showDesign(){
   if(saved.fsBubble){setVal('fs-bubble',saved.fsBubble);document.getElementById('fs-bubble-val').textContent=saved.fsBubble+'px';}
   if(saved.overlay){setVal('cfg-overlay',saved.overlay);document.getElementById('cfg-overlay-val').textContent=saved.overlay+'%';}
   if(saved.radius){setVal('cfg-radius',saved.radius);document.getElementById('cfg-radius-val').textContent=saved.radius+'px';}
+  setVal('cfg-carousel-limit',saved.carouselLimit||'5');
   setVal('cfg-transition',saved.transition||'fade');
   setVal('cfg-fit',saved.fit||'contain');
   setVal('cfg-shadow',saved.shadow||'heavy');
@@ -1700,6 +1711,7 @@ function saveDesign(){
     fsTitle:getV('fs-title'), fsBubble:getV('fs-bubble'),
     interval:getV('cfg-interval'), sound:getV('cfg-sound'),
     overlay:getV('cfg-overlay'), radius:getV('cfg-radius'),
+    carouselLimit:getV('cfg-carousel-limit')||'5',
     transition:getV('cfg-transition')||'fade',
     fit:getV('cfg-fit')||'contain',
     shadow:getV('cfg-shadow')||'heavy',
