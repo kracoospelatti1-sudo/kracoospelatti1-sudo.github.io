@@ -97,6 +97,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .ws-qr-label{font-size:clamp(13px,1.8vw,18px);color:rgba(255,255,255,0.5);margin-top:4px}
 .ws-countdown{font-family:var(--font-title);font-size:clamp(18px,3vw,42px);font-weight:700;color:var(--accent,#f0176f);letter-spacing:2px;min-height:54px}
 .ws-live-dot{width:10px;height:10px;background:var(--accent,#f0176f);border-radius:50%;animation:blink 1.4s infinite;display:inline-block;margin-right:8px;vertical-align:middle}
+.ws-msgs{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);width:min(560px,90vw);display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.ws-msg-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:12px 18px;display:flex;align-items:flex-start;gap:12px;animation:wsMsgIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);backdrop-filter:blur(8px)}
+.ws-msg-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.ws-msg-body{min-width:0}
+.ws-msg-text{font-size:clamp(13px,1.6vw,16px);color:rgba(255,255,255,0.9);font-weight:500;line-height:1.4;word-break:break-word}
+.ws-msg-author{font-size:12px;color:var(--accent,#f0176f);font-weight:600;margin-top:3px}
+@keyframes wsMsgIn{from{opacity:0;transform:translateY(16px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 /* LOADING */
 .screen-loading{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;color:rgba(255,255,255,0.4)}
@@ -214,6 +221,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
       <div class="ws-qr-label">📸 Subí fotos · 💬 Enviá mensajes · 🥂 Dejá un deseo</div>
       <div class="ws-countdown" id="ws-countdown"></div>
     </div>
+    <div class="ws-msgs" id="ws-msgs"></div>
   </div>
 
   <div class="header">
@@ -558,9 +566,27 @@ async function pollMessages(){
   const newMsgs=msgs.filter(m=>m.id&&!shown.has(m.id)&&!msgBubbleQueue.find(q=>q.id===m.id));
   if(newMsgs.length){
     newMsgs.forEach(m=>addMsgToStrip(m));
+    const ws=document.getElementById('waiting-screen');
+    const waitingActive=ws&&ws.style.display!=='none';
+    if(waitingActive){
+      newMsgs.forEach(m=>addMsgToWaiting(m));
+    }
     msgBubbleQueue.push(...newMsgs);
-    if(!msgBubbleShowing) showNextBubble();
+    if(!msgBubbleShowing&&!waitingActive) showNextBubble();
   }
+}
+
+function addMsgToWaiting(msg){
+  const container=document.getElementById('ws-msgs');
+  if(!container) return;
+  let icon='💬';
+  try{const f=JSON.parse(msg.frame||'{}');icon=(f.emoji&&f.emoji!=='none')?f.emoji:'💬';}catch(e){}
+  const card=document.createElement('div');
+  card.className='ws-msg-card';
+  card.innerHTML=`<div class="ws-msg-icon">${icon}</div><div class="ws-msg-body"><div class="ws-msg-text">${msg.content}</div><div class="ws-msg-author">— ${msg.author}</div></div>`;
+  container.insertBefore(card, container.firstChild);
+  // Máximo 3 mensajes visibles
+  while(container.children.length>3) container.removeChild(container.lastChild);
 }
 
 function showNextBubble(){
@@ -1079,7 +1105,12 @@ function hideWaitingScreen(){
   clearInterval(waitCountdownTimer);
   const ws=document.getElementById('waiting-screen');
   ws.classList.add('hide');
-  setTimeout(()=>{ws.style.display='none';ws.classList.remove('hide');},900);
+  setTimeout(()=>{
+    ws.style.display='none';
+    ws.classList.remove('hide');
+    // Mostrar burbujas de mensajes acumulados durante la espera
+    if(msgBubbleQueue.length&&!msgBubbleShowing) showNextBubble();
+  },900);
 }
 
 // ── BACKGROUND CANVAS EFFECTS ────────────────────────────────
