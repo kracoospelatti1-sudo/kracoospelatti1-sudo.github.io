@@ -208,7 +208,7 @@ const params=new URLSearchParams(location.search);
 const eventId=params.get('event');
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
 let currentFeaturedPostId=null,reactionCounts={};
-let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5};
+let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5,transition:'fade'};
 
 // ── FONT LOADER ───────────────────────────────────────────────
 function loadScreenFont(font){
@@ -305,6 +305,8 @@ function applyTheme(design){
 
   // Carousel limit
   if(design.carouselLimit) cfg.carouselLimit=parseInt(design.carouselLimit)||5;
+  // Transition
+  if(design.transition) cfg.transition=design.transition;
 }
 
 function applyBgImage(url, opacity){
@@ -640,9 +642,10 @@ function markAudioPlayed(id){
 function showFeatured(post,idx){
   featuredIdx=idx;currentFeaturedPostId=post.id;
   const img=document.getElementById('featured-img');
-  img.style.opacity='0';
-  setTimeout(()=>{
-    img.src=post.content;img.style.display='block';img.style.opacity='1';
+  const t=cfg.transition||'fade';
+
+  function applyContent(){
+    img.src=post.content;img.style.display='block';
     document.getElementById('no-content').style.display='none';
     const hasCaption=post.content_text&&post.content_text.trim();
     const overlay=document.getElementById('featured-overlay');
@@ -651,8 +654,34 @@ function showFeatured(post,idx){
       document.getElementById('featured-caption').textContent='"'+post.content_text+'"';
       document.getElementById('featured-author').textContent='— '+post.author;
     }
-  },300);
-  reactionCounts={};updateReactionUI();loadReactions();
+  }
+
+  if(t==='none'){
+    applyContent();img.style.opacity='1';img.style.transform='';
+  } else if(t==='fade'){
+    img.style.transition='opacity 0.8s ease';
+    img.style.opacity='0';
+    setTimeout(()=>{applyContent();img.style.opacity='1';},300);
+  } else if(t==='slide'){
+    img.style.transition='opacity 0.4s ease, transform 0.5s ease';
+    img.style.opacity='0';img.style.transform='translateX(60px)';
+    setTimeout(()=>{
+      applyContent();
+      img.style.transform='translateX(-60px)';
+      void img.offsetWidth;
+      img.style.transition='opacity 0.5s ease, transform 0.5s ease';
+      img.style.opacity='1';img.style.transform='translateX(0)';
+    },200);
+  } else if(t==='zoom'){
+    img.style.transition='opacity 0.5s ease, transform 0.5s ease';
+    img.style.opacity='0';img.style.transform='scale(1.08)';
+    setTimeout(()=>{
+      applyContent();
+      img.style.opacity='1';img.style.transform='scale(1)';
+    },200);
+  }
+
+  reactionCounts={};loadReactions();
 }
 
 function rotateFeatured(){
