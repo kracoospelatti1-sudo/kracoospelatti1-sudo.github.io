@@ -741,20 +741,27 @@ async function pollPosts(){
 
   // Handle deleted posts
   const removedIds=posts.filter(p=>!freshIds.has(p.id)).map(p=>p.id);
-  removedIds.forEach(id=>{
-    if(currentFeaturedPostId===id){
+  if(removedIds.length){
+    removedIds.forEach(id=>{
       photoPosts=photoPosts.filter(p=>p.id!==id);
+      msgBubbleQueue=msgBubbleQueue.filter(m=>m.id!==id);
+      if(currentFeaturedPostId===id) currentFeaturedPostId=null;
+    });
+    // Rebuild photoPosts from fresh data to fill the gap
+    const freshPhotos=fresh.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
+    const limit=cfg.carouselLimit||5;
+    photoPosts=freshPhotos.slice(0,limit);
+    buildStrip();
+    // If featured was deleted or no current, show first available
+    if(!currentFeaturedPostId){
       if(photoPosts.length) showFeatured(photoPosts[0],0);
       else{
         document.getElementById('featured-img').style.display='none';
         document.getElementById('featured-overlay').style.display='none';
         document.getElementById('no-content').style.display='flex';
-        currentFeaturedPostId=null;
       }
     }
-    photoPosts=photoPosts.filter(p=>p.id!==id);
-    msgBubbleQueue=msgBubbleQueue.filter(m=>m.id!==id);
-  });
+  }
 
   // Handle new posts — compare by ID not by count
   const newItems=fresh.filter(f=>!knownIds.has(f.id));
