@@ -152,15 +152,6 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 </div>
 
 <!-- MESSAGE BUBBLE OVERLAY -->
-<div id="msg-bubble-overlay" style="position:fixed;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
-  <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:min(680px,88vw);width:fit-content;min-width:180px;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5);overflow:hidden;word-break:break-word">
-    <div id="bubble-tail" style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:24px solid var(--bubble-bg)"></div>
-    <div id="msg-bubble-icon" style="font-size:36px;margin-bottom:14px">💬</div>
-    <div id="msg-bubble-text" style="font-family:var(--font-title);font-size:clamp(18px,3.5vw,38px);font-weight:800;color:var(--bubble-txt);line-height:1.35;margin-bottom:16px"></div>
-    <div id="msg-bubble-author" style="font-size:16px;font-weight:600;color:var(--bubble-txt);opacity:0.55"></div>
-  </div>
-</div>
-
 <!-- WISH OVERLAY -->
 <div id="wish-overlay" style="position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;overflow:hidden">
   <div id="wish-bg" style="position:absolute;inset:0;background:linear-gradient(135deg,#1a0a14,#2d1020,#1a0a14);background-size:400% 400%;animation:gradShift 8s ease infinite"></div>
@@ -205,6 +196,14 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 
   <div class="grid">
     <div class="featured-side" id="featured-side">
+      <div id="msg-bubble-overlay" style="position:absolute;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
+        <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:min(680px,88%);width:fit-content;min-width:180px;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5);overflow:hidden;word-break:break-word">
+          <div id="bubble-tail" style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;"></div>
+          <div id="msg-bubble-icon" style="font-size:clamp(24px,4vw,48px);margin-bottom:10px"></div>
+          <div id="msg-bubble-text" style="font-family:var(--font-title);font-weight:800;line-height:1.25;word-break:break-word;overflow-wrap:break-word;max-width:100%"></div>
+          <div id="msg-bubble-author" style="font-size:clamp(12px,1.5vw,18px);opacity:0.6;margin-top:12px"></div>
+        </div>
+      </div>
       <div class="new-badge" id="new-badge">¡Nuevo contenido! 🎉</div>
       <div class="reaction-toast" id="reaction-toast"></div>
       <div class="no-content" id="no-content">
