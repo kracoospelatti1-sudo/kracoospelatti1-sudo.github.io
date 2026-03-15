@@ -729,6 +729,18 @@ input[type=range]{accent-color:var(--pink)}
                 </div>
               </div>
               <div class="design-field">
+                <label>✨ Efecto de fondo animado</label>
+                <select id="cfg-bg-effect" onchange="previewTheme()" style="width:100%;padding:10px 12px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit">
+                  <option value="none">Sin efecto</option>
+                  <option value="confetti">🎉 Confetti (Fiesta)</option>
+                  <option value="petals">🌸 Pétalos (Romántico / Boda)</option>
+                  <option value="neon">⚡ Grilla neón (Futurista / Cyber)</option>
+                  <option value="gold">✨ Polvo dorado (Elegante / Lujo)</option>
+                  <option value="stars">⭐ Estrellas</option>
+                  <option value="bubbles">🫧 Burbujas</option>
+                </select>
+              </div>
+              <div class="design-field">
                 <label>Imagen de fondo (URL)</label>
                 <input type="text" id="cfg-bg-image" placeholder="https://... (opcional)"/>
               </div>
