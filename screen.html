@@ -762,30 +762,36 @@ function showFeatured(post,idx){
     }
   }
 
-  if(t==='none'){
-    applyContent();img.style.opacity='1';img.style.transform='';
-  } else if(t==='fade'){
-    img.style.transition='opacity 0.8s ease';
-    img.style.opacity='0';
-    setTimeout(()=>{applyContent();img.style.opacity='1';},300);
-  } else if(t==='slide'){
-    img.style.transition='opacity 0.4s ease, transform 0.5s ease';
-    img.style.opacity='0';img.style.transform='translateX(60px)';
-    setTimeout(()=>{
-      applyContent();
-      img.style.transform='translateX(-60px)';
-      void img.offsetWidth;
+  // Preload image first, then apply transition
+  const preloader=new Image();
+  preloader.onload=()=>{
+    if(t==='none'){
+      applyContent();img.style.opacity='1';img.style.transform='';
+    } else if(t==='fade'){
+      img.style.transition='opacity 0.8s ease';
+      img.style.opacity='0';
+      setTimeout(()=>{applyContent();img.style.opacity='1';},300);
+    } else if(t==='slide'){
+      img.style.transition='opacity 0.4s ease, transform 0.5s ease';
+      img.style.opacity='0';img.style.transform='translateX(60px)';
+      setTimeout(()=>{
+        applyContent();
+        img.style.transform='translateX(-60px)';
+        void img.offsetWidth;
+        img.style.transition='opacity 0.5s ease, transform 0.5s ease';
+        img.style.opacity='1';img.style.transform='translateX(0)';
+      },200);
+    } else if(t==='zoom'){
       img.style.transition='opacity 0.5s ease, transform 0.5s ease';
-      img.style.opacity='1';img.style.transform='translateX(0)';
-    },200);
-  } else if(t==='zoom'){
-    img.style.transition='opacity 0.5s ease, transform 0.5s ease';
-    img.style.opacity='0';img.style.transform='scale(1.08)';
-    setTimeout(()=>{
-      applyContent();
-      img.style.opacity='1';img.style.transform='scale(1)';
-    },200);
-  }
+      img.style.opacity='0';img.style.transform='scale(1.08)';
+      setTimeout(()=>{
+        applyContent();
+        img.style.opacity='1';img.style.transform='scale(1)';
+      },200);
+    }
+  };
+  preloader.onerror=()=>{applyContent();img.style.opacity='1';}; // fallback
+  preloader.src=post.content;
 
   reactionCounts={};loadReactions();
 }
@@ -874,16 +880,19 @@ async function pollPosts(){
   if(newItems.length){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
-        // Add to front but don't interrupt current photo
+        // Add to front, show after current photo finishes its full display time
         photoPosts.unshift(p);
         if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
         buildStrip();
-        // Only switch if no photo is currently showing
         if(!currentFeaturedPostId){
+          // No photo showing — show it now
           featuredIdx=0;
           showFeatured(photoPosts[0],0);
+          // Reset rotation timer so it gets full time
+          clearInterval(rotateTimer);
+          rotateTimer=setInterval(rotateFeatured,cfg.interval);
         }
-        // Otherwise let the rotation timer show it naturally on next cycle
+        // If photo already showing, it will appear naturally on next rotation
       }
       if(p.type==='audio'&&p.content&&!getPlayedAudioIds().has(p.id)){
         markAudioPlayed(p.id);
