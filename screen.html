@@ -109,6 +109,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 
 <!-- MOMENT OVERLAY -->
 <div id="moment-overlay" style="position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;pointer-events:none">
+  <div id="moment-blur-bg" style="position:absolute;inset:0;backdrop-filter:blur(12px) brightness(0.6);-webkit-backdrop-filter:blur(12px) brightness(0.6);background:rgba(0,0,0,0.3);opacity:0;transition:opacity 0.5s ease"></div>
   <canvas id="moment-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
   <div id="moment-flash" style="position:absolute;inset:0;background:#fff;opacity:0;transition:opacity 0.1s;pointer-events:none"></div>
   <div id="moment-text-wrap" style="position:relative;z-index:2;text-align:center;padding:0 40px">
@@ -1342,13 +1343,17 @@ function showMoment(text, effect){
   canvas.height=window.innerHeight;
   overlay.style.display='flex';
 
+  // Blur background in
+  const blurBg=document.getElementById('moment-blur-bg');
+  if(blurBg) setTimeout(()=>blurBg.style.opacity='1',50);
+
   // Text animation
   mainText.textContent=text;
   subText.textContent=effect.subtext||'';
   setTimeout(()=>{
     mainText.style.opacity='1';mainText.style.transform='scale(1)';
     subText.style.opacity='1';subText.style.transform='translateY(0)';
-  },100);
+  },200);
 
   // Flash effect
   if(effect.type==='flash'||effect.type==='all'){
@@ -1452,8 +1457,10 @@ function hideMoment(){
   const overlay=document.getElementById('moment-overlay');
   const mainText=document.getElementById('moment-main-text');
   const subText=document.getElementById('moment-sub-text');
+  const blurBg2=document.getElementById('moment-blur-bg');
   mainText.style.opacity='0';mainText.style.transform='scale(1.2)';
   subText.style.opacity='0';
+  if(blurBg2) blurBg2.style.opacity='0';
   setTimeout(()=>{
     overlay.style.display='none';
     const ctx=document.getElementById('moment-canvas').getContext('2d');
