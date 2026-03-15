@@ -1714,7 +1714,7 @@ async function loadEvents(restrictedId=null){
     }
     grid.appendChild(card);
   });
-  startCountdown();
+  setTimeout(startCountdown, 100); // after DOM update
 }
 
 // Live countdown for short expiry events
@@ -1760,7 +1760,7 @@ async function evCreate(){
   const date=document.getElementById('ev-date').value;
   const subtitle=document.getElementById('ev-subtitle').value.trim();
   const evPin=document.getElementById('ev-pin').value.trim();
-  const pinDurationHrs=parseInt(document.getElementById('ev-pin-duration').value)||0;
+  const pinDurationHrs=parseFloat(document.getElementById('ev-pin-duration').value)||0;
   if(date) body.date=date;
   if(subtitle) body.subtitle=subtitle;
   const evEmail=document.getElementById('ev-email').value.trim();
