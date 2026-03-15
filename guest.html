@@ -1287,29 +1287,17 @@ async function sendPhoto(){
   if(!checkCooldown('photo')) return;
   showSending();
   try{
-    // Upload original photo (no frame/filter/stickers) for clean download
-    const origCanvas=document.createElement('canvas');
-    origCanvas.width=originalImage.naturalWidth||originalImage.width;
-    origCanvas.height=originalImage.naturalHeight||originalImage.height;
-    const origCtx=origCanvas.getContext('2d');
-    origCtx.drawImage(originalImage,0,0);
-    const origBlob=await new Promise(resolve=>origCanvas.toBlob(resolve,'image/jpeg',0.95));
-    const origFile=new File([origBlob],'original.jpg',{type:'image/jpeg'});
-    setProgress(20,'Subiendo original...');
-    const originalUrl=await uploadFile(origFile,'originals');
-
-    // Upload with frame/filter/stickers for display
+    // Upload photo with frame/filter/stickers
     const canvas=document.getElementById('preview-canvas');
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.92));
     const file=new File([blob],'photo.jpg',{type:'image/jpeg'});
-    setProgress(50,'Subiendo foto...');
+    setProgress(30,'Subiendo foto...');
     const url=await uploadFile(file,'photos');
     const caption=document.getElementById('photo-caption').value.trim();
     await apiRest('posts',{method:'POST',body:JSON.stringify({
       event_id:eventId,type:'photo',author:name,
       content:url,content_text:caption||null,
       frame:selectedFrame,
-      original_url:originalUrl,
       approved:true
     })});
     setProgress(100,'¡Listo!');
