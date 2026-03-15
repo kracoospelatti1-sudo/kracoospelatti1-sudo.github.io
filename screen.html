@@ -98,6 +98,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 @keyframes mosaicPop{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
 .mosaic-cell.featured{border-color:var(--accent);box-shadow:0 0 20px rgba(240,23,111,0.4)}
 
+/* MESSAGE TEXT ANIMATIONS */
+@keyframes msgTypewriter{from{width:0}to{width:100%}}
+@keyframes msgBounce{0%,100%{transform:scale(1)}20%{transform:scale(1.15)}40%{transform:scale(0.92)}60%{transform:scale(1.08)}80%{transform:scale(0.97)}}
+@keyframes msgFadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.msg-anim-bounce{animation:msgBounce 0.8s ease}
+.msg-anim-fade{animation:msgFadeIn 0.7s ease}
+.msg-anim-wave span{display:inline-block;animation:msgBounce 0.8s ease infinite}
+.msg-anim-wave span:nth-child(odd){animation-delay:0.1s}
+.msg-anim-wave span:nth-child(3n){animation-delay:0.2s}
+
 /* LIGHT THEME */
 body.theme-light .sidebar{background:rgba(0,0,0,0.06);border-left-color:rgba(0,0,0,0.1)}
 body.theme-light .cpill{background:rgba(0,0,0,0.06);border-color:rgba(0,0,0,0.1);color:rgba(0,0,0,0.7)}
@@ -538,6 +548,28 @@ function showNextBubble(){
   textEl.style.wordBreak='break-word';
   textEl.style.overflowWrap='break-word';
   textEl.style.maxWidth='100%';
+  // Apply font
+  if(custom.font) textEl.style.fontFamily="'"+custom.font+"',sans-serif";
+  // Apply format styles
+  if(custom.bold) textEl.style.fontWeight='800'; else textEl.style.fontWeight='800';
+  textEl.style.fontStyle=custom.italic?'italic':'normal';
+  textEl.style.textDecoration=custom.underline?'underline':'none';
+  textEl.style.textShadow=custom.shadow?'3px 3px 12px rgba(0,0,0,0.5)':'none';
+  textEl.style.webkitTextStroke=custom.outline?('2px '+(custom.textColor||'#1a1a1a')):'';
+  // Apply animation
+  textEl.classList.remove('msg-anim-bounce','msg-anim-fade','msg-anim-wave');
+  if(custom.animation==='bounce') textEl.classList.add('msg-anim-bounce');
+  else if(custom.animation==='fade') textEl.classList.add('msg-anim-fade');
+  else if(custom.animation==='wave'){
+    // Wrap each char in span
+    textEl.innerHTML=[...msg.content].map(ch=>ch===' '?' ':`<span>${ch}</span>`).join('');
+    textEl.classList.add('msg-anim-wave');
+  } else if(custom.animation==='typewriter'){
+    textEl.style.overflow='hidden';
+    textEl.style.whiteSpace='nowrap';
+    textEl.style.width='0';
+    textEl.style.animation='msgTypewriter '+(msg.content.length*0.06)+'s steps('+msg.content.length+') forwards';
+  }
   document.getElementById('msg-bubble-author').textContent='— '+msg.author;
   // Apply custom style
   const card=document.getElementById('msg-bubble-card');

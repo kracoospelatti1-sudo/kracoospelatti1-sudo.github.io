@@ -445,6 +445,18 @@ body{
 .my-photo-overlay{position:absolute;inset:0;background:linear-gradient(transparent 50%,rgba(0,0,0,0.7));display:flex;flex-direction:column;justify-content:flex-end;padding:8px;opacity:0;transition:opacity 0.2s}
 .my-photo-card:hover .my-photo-overlay,.my-photo-card:active .my-photo-overlay{opacity:1}
 .my-photo-del{background:rgba(239,68,68,0.9);border:none;color:#fff;border-radius:6px;padding:6px 10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;width:100%}
+
+/* MESSAGE ANIMATIONS */
+@keyframes msgTypewriter{from{width:0}to{width:100%}}
+@keyframes msgBounce{0%,100%{transform:scale(1)}20%{transform:scale(1.15)}40%{transform:scale(0.92)}60%{transform:scale(1.08)}80%{transform:scale(0.97)}}
+@keyframes msgFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg-anim-bounce{animation:msgBounce 0.7s ease}
+.msg-anim-fade{animation:msgFadeIn 0.6s ease}
+.msg-anim-wave span{display:inline-block;animation:msgBounce 0.6s ease infinite}
+.msg-anim-wave span:nth-child(2){animation-delay:0.1s}
+.msg-anim-wave span:nth-child(3){animation-delay:0.2s}
+.msg-anim-wave span:nth-child(4){animation-delay:0.3s}
+.msg-anim-wave span:nth-child(5){animation-delay:0.4s}
 </style>
 </head>
 <body>
@@ -590,8 +602,9 @@ body{
       <div class="char-count"><span id="char-count">0</span>/200</div>
 
       <div class="msg-custom">
+        <!-- Burbuja -->
         <div class="custom-row">
-          <span class="custom-label">Estilo de burbuja</span>
+          <span class="custom-label">Estilo</span>
           <div class="style-row">
             <button class="bubble-style-btn active" onclick="selectBubbleStyle('bubble',this)">💬 Burbuja</button>
             <button class="bubble-style-btn" onclick="selectBubbleStyle('card',this)">🃏 Tarjeta</button>
@@ -599,6 +612,7 @@ body{
             <button class="bubble-style-btn" onclick="selectBubbleStyle('minimal',this)">✏️ Minimal</button>
           </div>
         </div>
+        <!-- Emoji -->
         <div class="custom-row">
           <span class="custom-label">Emoji</span>
           <div class="emoji-row">
@@ -615,26 +629,79 @@ body{
             <button class="emoji-opt" onclick="selectMsgEmoji('🍾',this)">🍾</button>
           </div>
         </div>
+        <!-- Color de fondo -->
         <div class="custom-row">
-          <span class="custom-label">Color</span>
+          <span class="custom-label">Fondo</span>
           <div class="color-row">
-            <div class="color-dot active" onclick="selectMsgColor('#ffffff','#1a1a1a',this)" style="background:#ffffff;border:2px solid #e0e0e0"></div>
-            <div class="color-dot" onclick="selectMsgColor('#fce4f3','#c2185b',this)" style="background:#fce4f3"></div>
-            <div class="color-dot" onclick="selectMsgColor('#e8f5e9','#2e7d32',this)" style="background:#e8f5e9"></div>
-            <div class="color-dot" onclick="selectMsgColor('#e3f2fd','#1565c0',this)" style="background:#e3f2fd"></div>
-            <div class="color-dot" onclick="selectMsgColor('#fff8e1','#f57f17',this)" style="background:#fff8e1"></div>
-            <div class="color-dot" onclick="selectMsgColor('#f3e5f5','#7b1fa2',this)" style="background:#f3e5f5"></div>
-            <div class="color-dot" onclick="selectMsgColor('#1a1a2e','#ffffff',this)" style="background:#1a1a2e"></div>
-            <div class="color-dot" onclick="selectMsgColor('#0d0900','#f5a623',this)" style="background:#0d0900;border:2px solid #333"></div>
+            <div class="color-dot active" onclick="selectMsgBg('#ffffff',this)" style="background:#ffffff;border:2px solid #e0e0e0"></div>
+            <div class="color-dot" onclick="selectMsgBg('#fce4f3',this)" style="background:#fce4f3"></div>
+            <div class="color-dot" onclick="selectMsgBg('#e8f5e9',this)" style="background:#e8f5e9"></div>
+            <div class="color-dot" onclick="selectMsgBg('#e3f2fd',this)" style="background:#e3f2fd"></div>
+            <div class="color-dot" onclick="selectMsgBg('#fff8e1',this)" style="background:#fff8e1"></div>
+            <div class="color-dot" onclick="selectMsgBg('#f3e5f5',this)" style="background:#f3e5f5"></div>
+            <div class="color-dot" onclick="selectMsgBg('#1a1a2e',this)" style="background:#1a1a2e"></div>
+            <div class="color-dot" onclick="selectMsgBg('#0d0900',this)" style="background:#0d0900;border:2px solid #333"></div>
+            <div class="color-dot" onclick="selectMsgBg('#f0176f',this)" style="background:#f0176f"></div>
+            <div class="color-dot" onclick="selectMsgBg('#07070f',this)" style="background:#07070f;border:2px solid #333"></div>
           </div>
         </div>
+        <!-- Color de texto -->
         <div class="custom-row">
-          <span class="custom-label">Tamaño</span>
-          <div class="size-row">
-            <button class="size-opt" onclick="selectMsgSize('small',this)" style="font-size:12px">A</button>
-            <button class="size-opt active" onclick="selectMsgSize('medium',this)" style="font-size:16px">A</button>
-            <button class="size-opt" onclick="selectMsgSize('large',this)" style="font-size:20px">A</button>
-            <button class="size-opt" onclick="selectMsgSize('xlarge',this)" style="font-size:24px">A</button>
+          <span class="custom-label">Color texto</span>
+          <div class="color-row">
+            <div class="color-dot active" onclick="selectMsgTextColor('#1a1a1a',this)" style="background:#1a1a1a"></div>
+            <div class="color-dot" onclick="selectMsgTextColor('#ffffff',this)" style="background:#ffffff;border:2px solid #e0e0e0"></div>
+            <div class="color-dot" onclick="selectMsgTextColor('#f0176f',this)" style="background:#f0176f"></div>
+            <div class="color-dot" onclick="selectMsgTextColor('#f5a623',this)" style="background:#f5a623"></div>
+            <div class="color-dot" onclick="selectMsgTextColor('#00f5ff',this)" style="background:#00f5ff"></div>
+            <div class="color-dot" onclick="selectMsgTextColor('#a855f7',this)" style="background:#a855f7"></div>
+            <div class="color-dot" onclick="selectMsgTextColor('#4ade80',this)" style="background:#4ade80"></div>
+            <div class="color-dot" onclick="selectMsgTextColor('#c9a84c',this)" style="background:#c9a84c"></div>
+          </div>
+        </div>
+        <!-- Fuente -->
+        <div class="custom-row">
+          <span class="custom-label">Fuente</span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <button class="bubble-style-btn active" onclick="selectMsgFont('Syne',this)" style="font-family:'Syne',sans-serif">Syne</button>
+            <button class="bubble-style-btn" onclick="selectMsgFont('DM Sans',this)" style="font-family:'DM Sans',sans-serif">DM Sans</button>
+            <button class="bubble-style-btn" onclick="selectMsgFont('Playfair Display',this)" style="font-family:'Playfair Display',serif">Playfair</button>
+            <button class="bubble-style-btn" onclick="selectMsgFont('Bebas Neue',this)" style="font-family:'Bebas Neue',sans-serif;letter-spacing:1px">BEBAS</button>
+            <button class="bubble-style-btn" onclick="selectMsgFont('Pacifico',this)" style="font-family:'Pacifico',cursive">Pacifico</button>
+            <button class="bubble-style-btn" onclick="selectMsgFont('Oswald',this)" style="font-family:'Oswald',sans-serif">Oswald</button>
+          </div>
+        </div>
+        <!-- Tamaño + Estilo -->
+        <div class="custom-row" style="display:flex;gap:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:120px">
+            <span class="custom-label">Tamaño</span>
+            <div class="size-row">
+              <button class="size-opt" onclick="selectMsgSize('small',this)" style="font-size:12px">A</button>
+              <button class="size-opt active" onclick="selectMsgSize('medium',this)" style="font-size:16px">A</button>
+              <button class="size-opt" onclick="selectMsgSize('large',this)" style="font-size:20px">A</button>
+              <button class="size-opt" onclick="selectMsgSize('xlarge',this)" style="font-size:24px">A</button>
+            </div>
+          </div>
+          <div style="flex:1;min-width:120px">
+            <span class="custom-label">Formato</span>
+            <div style="display:flex;gap:6px">
+              <button class="size-opt" id="tog-bold" onclick="toggleMsgStyle('bold',this)" style="font-weight:800">B</button>
+              <button class="size-opt" id="tog-italic" onclick="toggleMsgStyle('italic',this)" style="font-style:italic">I</button>
+              <button class="size-opt" id="tog-underline" onclick="toggleMsgStyle('underline',this)" style="text-decoration:underline">U</button>
+              <button class="size-opt" id="tog-shadow" onclick="toggleMsgStyle('shadow',this)" style="text-shadow:1px 1px 3px rgba(0,0,0,0.4)">S</button>
+              <button class="size-opt" id="tog-outline" onclick="toggleMsgStyle('outline',this);" style="-webkit-text-stroke:1px #f0176f;color:transparent">O</button>
+            </div>
+          </div>
+        </div>
+        <!-- Animación -->
+        <div class="custom-row">
+          <span class="custom-label">✨ Animación</span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <button class="bubble-style-btn active" onclick="selectMsgAnimation('none',this)">Sin animación</button>
+            <button class="bubble-style-btn" onclick="selectMsgAnimation('typewriter',this)">⌨️ Máquina</button>
+            <button class="bubble-style-btn" onclick="selectMsgAnimation('bounce',this)">🎯 Rebote</button>
+            <button class="bubble-style-btn" onclick="selectMsgAnimation('wave',this)">🌊 Ola</button>
+            <button class="bubble-style-btn" onclick="selectMsgAnimation('fade',this)">💫 Fade</button>
           </div>
         </div>
       </div>
@@ -1538,6 +1605,13 @@ let msgEmoji='💬';
 let msgBgColor='#ffffff';
 let msgTextColor='#1a1a1a';
 let msgSize='medium';
+let msgFont='Syne';
+let msgBold=false;
+let msgItalic=false;
+let msgUnderline=false;
+let msgShadow=false;
+let msgOutline=false;
+let msgAnimation='none';
 
 function selectMsgEmoji(emoji,btn){
   msgEmoji=emoji;
@@ -1549,6 +1623,48 @@ function selectMsgEmoji(emoji,btn){
 function selectMsgColor(bg,txt,btn){
   msgBgColor=bg;msgTextColor=txt;
   document.querySelectorAll('.color-dot,.color-opt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateMsgPreview();
+}
+function selectMsgBg(bg,btn){
+  msgBgColor=bg;
+  // Only deactivate bg color dots (first color-row)
+  btn.closest('.color-row').querySelectorAll('.color-dot').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateMsgPreview();
+}
+function selectMsgTextColor(color,btn){
+  msgTextColor=color;
+  btn.closest('.color-row').querySelectorAll('.color-dot').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateMsgPreview();
+}
+function selectMsgFont(font,btn){
+  msgFont=font;
+  // Load font if needed
+  if(!document.getElementById('gf-msg-'+font.replace(/\s/g,'-'))){
+    const link=document.createElement('link');
+    link.id='gf-msg-'+font.replace(/\s/g,'-');
+    link.rel='stylesheet';
+    link.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(font)+':wght@400;700;800&display=swap';
+    document.head.appendChild(link);
+  }
+  btn.closest('div').querySelectorAll('.bubble-style-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateMsgPreview();
+}
+function toggleMsgStyle(style,btn){
+  if(style==='bold') msgBold=!msgBold;
+  else if(style==='italic') msgItalic=!msgItalic;
+  else if(style==='underline') msgUnderline=!msgUnderline;
+  else if(style==='shadow') msgShadow=!msgShadow;
+  else if(style==='outline') msgOutline=!msgOutline;
+  btn.classList.toggle('active');
+  updateMsgPreview();
+}
+function selectMsgAnimation(anim,btn){
+  msgAnimation=anim;
+  btn.closest('div').querySelectorAll('.bubble-style-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   updateMsgPreview();
 }
@@ -1587,6 +1703,13 @@ function updateMsgPreview(){
   textEl.style.fontSize=sizes[msgSize]||'18px';
   textEl.style.wordBreak='break-word';
   textEl.style.overflowWrap='break-word';
+  textEl.style.fontFamily=msgFont?("'"+msgFont+"',sans-serif"):"'Syne',sans-serif";
+  textEl.style.fontWeight=msgBold?'800':'800';
+  textEl.style.fontStyle=msgItalic?'italic':'normal';
+  textEl.style.textDecoration=msgUnderline?'underline':'none';
+  textEl.style.textShadow=msgShadow?'2px 2px 8px rgba(0,0,0,0.4)':'none';
+  textEl.style.webkitTextStroke=msgOutline?('1px '+msgTextColor):'';
+  textEl.style.textContent='';
   textEl.textContent=text;
 }
 function updateWishCount(el){document.getElementById('wish-count').textContent=el.value.length;}
@@ -1614,7 +1737,7 @@ async function sendMessage(){
     const sizes={small:20,medium:32,large:48,xlarge:60};
     await apiRest('posts',{method:'POST',body:JSON.stringify({
       event_id:eventId,type:'message',author:name,content:text,approved:true,
-      frame:JSON.stringify({emoji:msgEmoji==='none'?'':msgEmoji,bgColor:msgBgColor,textColor:msgTextColor,fontSize:sizes[msgSize]||32,bubbleStyle:msgBubbleStyle})
+      frame:JSON.stringify({emoji:msgEmoji==='none'?'':msgEmoji,bgColor:msgBgColor,textColor:msgTextColor,fontSize:sizes[msgSize]||32,bubbleStyle:msgBubbleStyle,font:msgFont||'Syne',bold:msgBold,italic:msgItalic,underline:msgUnderline,shadow:msgShadow,outline:msgOutline,animation:msgAnimation||'none'})
     })});
     setProgress(100,'¡Listo!');setLastSent('message');setTimeout(()=>{hideSending();showSuccess();},300);
   }catch(e){hideSending();showFormError('msg-error','Error: '+e.message);}
@@ -1696,6 +1819,8 @@ function resetForm(){
   document.querySelectorAll('.color-dot,.color-opt').forEach((b,i)=>b.classList.toggle('active',i===0));
   document.querySelectorAll('.size-opt').forEach((b,i)=>b.classList.toggle('active',i===1));
   document.querySelectorAll('.bubble-style-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  msgFont='Syne';msgBold=false;msgItalic=false;msgUnderline=false;msgShadow=false;msgOutline=false;msgAnimation='none';
+  ['tog-bold','tog-italic','tog-underline','tog-shadow','tog-outline'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
   const wishEl=document.getElementById('wish-text');
   if(wishEl){wishEl.value='';document.getElementById('wish-count').textContent='0';}
   removePhoto();
