@@ -303,6 +303,7 @@ let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
 let currentFeaturedPostId=null,reactionCounts={};
 let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5,transition:'fade',kenBurns:'no',waitTitle:'',waitSubtitle:'',waitStart:'',waitCountdown:'yes'};
 let waitCountdownTimer=null;
+let waitingScreenActive=false;
 let sharedAudioCtx=null;
 function getAudioCtx(){
   if(!sharedAudioCtx){
@@ -566,9 +567,7 @@ async function pollMessages(){
   const newMsgs=msgs.filter(m=>m.id&&!shown.has(m.id)&&!msgBubbleQueue.find(q=>q.id===m.id));
   if(newMsgs.length){
     newMsgs.forEach(m=>addMsgToStrip(m));
-    const ws=document.getElementById('waiting-screen');
-    const waitingActive=ws&&ws.style.display!=='none';
-    if(waitingActive){
+    if(waitingScreenActive){
       newMsgs.forEach(m=>{addMsgToWaiting(m);markMsgShown(m.id);});
     } else {
       msgBubbleQueue.push(...newMsgs);
@@ -1053,6 +1052,7 @@ setInterval(pollMoments,3000);
 
 // ── WAITING SCREEN ───────────────────────────────────────────
 function showWaitingScreen(eventId, ev){
+  waitingScreenActive=true;
   const ws=document.getElementById('waiting-screen');
   ws.style.display='flex';
   // Texts
@@ -1103,15 +1103,13 @@ function startWaitCountdown(){
 }
 
 function hideWaitingScreen(){
+  if(!waitingScreenActive) return;
+  waitingScreenActive=false;
   clearInterval(waitCountdownTimer);
+  msgBubbleQueue=[];
   const ws=document.getElementById('waiting-screen');
   ws.classList.add('hide');
-  setTimeout(()=>{
-    ws.style.display='none';
-    ws.classList.remove('hide');
-    // Limpiar cola — los mensajes de espera ya fueron marcados como vistos
-    msgBubbleQueue=[];
-  },900);
+  setTimeout(()=>{ws.style.display='none';ws.classList.remove('hide');},900);
 }
 
 // ── BACKGROUND CANVAS EFFECTS ────────────────────────────────
