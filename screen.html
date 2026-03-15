@@ -143,7 +143,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 
 <!-- MESSAGE BUBBLE OVERLAY -->
 <div id="msg-bubble-overlay" style="position:fixed;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
-  <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:min(680px,90vw);width:fit-content;min-width:200px;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5)">
+  <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:min(680px,88vw);width:fit-content;min-width:180px;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5);overflow:hidden;word-break:break-word">
     <div id="bubble-tail" style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:24px solid var(--bubble-bg)"></div>
     <div id="msg-bubble-icon" style="font-size:36px;margin-bottom:14px">💬</div>
     <div id="msg-bubble-text" style="font-family:var(--font-title);font-size:clamp(18px,3.5vw,38px);font-weight:800;color:var(--bubble-txt);line-height:1.35;margin-bottom:16px"></div>
@@ -535,6 +535,9 @@ function showNextBubble(){
   const textLen=msg.content.length;
   const dynMax=textLen<=10?fontSize:textLen<=30?Math.round(fontSize*0.85):textLen<=60?Math.round(fontSize*0.7):Math.round(fontSize*0.6);
   textEl.style.fontSize='clamp(16px,3.5vw,'+dynMax+'px)';
+  textEl.style.wordBreak='break-word';
+  textEl.style.overflowWrap='break-word';
+  textEl.style.maxWidth='100%';
   document.getElementById('msg-bubble-author').textContent='— '+msg.author;
   // Apply custom style
   const card=document.getElementById('msg-bubble-card');
@@ -839,11 +842,16 @@ async function pollPosts(){
   if(newItems.length){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
+        // Add to front but don't interrupt current photo
         photoPosts.unshift(p);
-        // Trim to carousel limit
         if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
         buildStrip();
-        showFeatured(p,0);
+        // Only switch if no photo is currently showing
+        if(!currentFeaturedPostId){
+          featuredIdx=0;
+          showFeatured(photoPosts[0],0);
+        }
+        // Otherwise let the rotation timer show it naturally on next cycle
       }
       if(p.type==='audio'&&p.content&&!getPlayedAudioIds().has(p.id)){
         markAudioPlayed(p.id);
