@@ -183,6 +183,35 @@ input[type=range]{accent-color:var(--pink)}
 .sidebar-overlay.show{display:block}
 
 @media(max-width:768px){
+  #gd-main-grid{grid-template-columns:1fr !important}
+  #gd-main-grid > div:last-child{
+    order:-1;
+    position:relative !important;
+    top:auto !important;
+  }
+  #gd-main-grid > div:last-child > div:first-child{display:none} /* hide label */
+  #gd-preview{
+    display:flex !important;
+    overflow-x:auto;
+    border-radius:16px !important;
+    max-width:100% !important;
+    height:180px !important;
+    aspect-ratio:unset !important;
+  }
+  /* Phone frame in mobile - show as horizontal strip */
+  #gd-main-grid > div:last-child > div:nth-child(2){
+    background:transparent !important;
+    border-radius:0 !important;
+    padding:0 !important;
+    box-shadow:none !important;
+    max-width:100% !important;
+  }
+  #gd-main-grid > div:last-child > div:nth-child(2) > div{
+    border-radius:16px !important;
+    overflow:hidden;
+    max-height:200px;
+    overflow-y:auto;
+  }
   .mobile-header{display:flex}
   .shell{grid-template-columns:1fr;min-height:auto}
   .sidebar{position:fixed;top:0;left:0;bottom:0;width:260px;transform:translateX(-100%);padding:20px 16px;overflow-y:auto}
@@ -861,7 +890,7 @@ input[type=range]{accent-color:var(--pink)}
   <div class="notice" id="gd-notice">⚠️ Seleccioná un evento primero</div>
 
   <div id="gd-content" style="display:none">
-    <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start">
+    <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start" id="gd-main-grid">
 
       <!-- LEFT: TABBED EDITOR -->
       <div>
@@ -1045,9 +1074,10 @@ input[type=range]{accent-color:var(--pink)}
         </div>
 
         <!-- SAVE -->
-        <div style="display:flex;gap:10px;margin-top:4px">
+        <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
           <button class="btn-pink" onclick="saveGuestDesign()">💾 Guardar y aplicar</button>
           <button class="btn-ghost" onclick="resetGuestDesign()">↺ Resetear</button>
+          <button class="btn-ghost" onclick="document.getElementById('gd-main-grid').lastElementChild.scrollIntoView({behavior:'smooth'})" style="display:none" id="btn-preview-scroll">👁 Ver preview</button>
         </div>
       </div>
 
@@ -1132,6 +1162,14 @@ function logout(){
 }
 
 function startGlobalPoller(){}
+
+// Show preview scroll button on mobile
+function checkPreviewButton(){
+  const btn=document.getElementById('btn-preview-scroll');
+  if(btn) btn.style.display=window.innerWidth<=768?'':'none';
+}
+window.addEventListener('resize', checkPreviewButton);
+setTimeout(checkPreviewButton, 500);
 
 function formatExpiry(isoStr){
   const d=new Date(isoStr);
@@ -1767,7 +1805,7 @@ async function showAlbum(){
       <div class="album-card-overlay">
         <div class="album-card-author">📷 ${p.author}</div>
         <div class="album-card-actions">
-          <button class="album-dl-btn" onclick="downloadSinglePhoto('${p.content}','${p.author}')" title="Descargar">⬇</button>
+          <button class="album-dl-btn" onclick="downloadSinglePhoto('${p.content}','${p.author}','${p.original_url||''}')" title="Descargar sin marco">⬇</button>
           <button class="album-del-btn" onclick="deleteAlbumPhoto('${p.id}')" title="Eliminar">🗑</button>
         </div>
       </div>`;
@@ -1798,7 +1836,7 @@ function openPhotoModal(p){
   }
   document.getElementById('photo-modal-img').src=p.content;
   document.getElementById('photo-modal-info').textContent='📷 '+p.author+(p.content_text?' · "'+p.content_text+'"':'');
-  document.getElementById('photo-modal-dl').onclick=()=>downloadSinglePhoto(p.content,p.author);
+  document.getElementById('photo-modal-dl').onclick=()=>downloadSinglePhoto(p.content,p.author,p.original_url);
   document.getElementById('photo-modal-del').onclick=()=>{deleteAlbumPhoto(p.id);modal.style.display='none';};
   modal.style.display='flex';
 }
@@ -1810,9 +1848,10 @@ async function deleteAlbumPhoto(id){
   showAlbum();
 }
 
-async function downloadSinglePhoto(url,author){
+async function downloadSinglePhoto(url,author,originalUrl){
   try{
-    const res=await fetch(url);
+    const dlUrl=originalUrl||url;
+    const res=await fetch(dlUrl);
     const blob=await res.blob();
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
@@ -1826,10 +1865,12 @@ async function downloadAlbum(){
   const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=eq.photo&approved=eq.true');
   const photos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
   if(!photos.length){toast('No hay fotos para descargar');return;}
-  toast('⬇ Descargando '+photos.length+' fotos...',5000);
+  toast('⬇ Descargando '+photos.length+' fotos sin marco...');
   for(let i=0;i<photos.length;i++){
     try{
-      const res=await fetch(photos[i].content);
+      // Use original_url if available (no frame), fallback to content
+      const downloadUrl=photos[i].original_url||photos[i].content;
+      const res=await fetch(downloadUrl);
       const blob=await res.blob();
       const url=URL.createObjectURL(blob);
       const a=document.createElement('a');
