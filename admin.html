@@ -1759,12 +1759,17 @@ async function evCreate(){
   const body={name};
   const date=document.getElementById('ev-date').value;
   const subtitle=document.getElementById('ev-subtitle').value.trim();
-  const evPin=document.getElementById('ev-pin').value.trim();
+  let evPin=document.getElementById('ev-pin').value.trim();
   const pinDurationHrs=parseFloat(document.getElementById('ev-pin-duration').value)||0;
   if(date) body.date=date;
   if(subtitle) body.subtitle=subtitle;
   const evEmail=document.getElementById('ev-email').value.trim();
   if(evEmail) body.client_email=evEmail;
+  // Auto-generate PIN if duration set but no PIN
+  if(pinDurationHrs>0&&!evPin){
+    evPin=Math.floor(1000+Math.random()*9000).toString();
+    document.getElementById('ev-pin').value=evPin;
+  }
   if(evPin){
     body.admin_pin=evPin;
     if(pinDurationHrs>0){
