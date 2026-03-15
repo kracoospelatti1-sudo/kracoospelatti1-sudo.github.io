@@ -686,7 +686,14 @@ async function loadPosts(){
   photoPosts=posts.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
   buildStrip();
   if(photoPosts.length) showFeatured(photoPosts[0],0);
-  // Load last 5 messages+audios into sidebar strip
+  // Mark ALL existing messages+wishes+audios as already shown
+  // so they don't replay after reload
+  posts.forEach(p=>{
+    if(p.type==='message'||p.type==='wish') markMsgShown(p.id);
+    if(p.type==='audio') markAudioPlayed(p.id);
+    if(p.type==='wish') markWishShown(p.id);
+  });
+  // Load last 5 messages+audios into sidebar strip (display only, not bubble queue)
   const sidebarPosts=posts.filter(p=>p.type==='message'||p.type==='audio').slice(0,5).reverse();
   sidebarPosts.forEach(m=>addMsgToStrip(m));
 }
