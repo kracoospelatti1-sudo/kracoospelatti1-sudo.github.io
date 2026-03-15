@@ -1462,6 +1462,7 @@ let autoApprove=false;
 let editingEventId = null;
 
 function openEditEvent(ev){
+  if(sessionStorage.getItem('ew_restricted_event')) return;
   editingEventId = ev.id;
   document.getElementById('edit-ev-name').value = ev.name || '';
   document.getElementById('edit-ev-date').value = ev.date || '';
@@ -1480,6 +1481,7 @@ function closeEditModal(){
 
 async function saveEditEvent(){
   if(!editingEventId) return;
+  if(sessionStorage.getItem('ew_restricted_event')){toast('❌ No tenés permiso para editar eventos');return;}
   const name = document.getElementById('edit-ev-name').value.trim();
   if(!name){toast('❌ El nombre es obligatorio');return;}
 
@@ -1691,19 +1693,18 @@ async function loadEvents(restrictedId=null){
     if(sessionStorage.getItem('ew_restricted_event')===ev.id){
       setTimeout(()=>card.click(),100);
     }
-    // Show edit button for all admins, delete only for master
-    const editBtn=document.createElement('button');
-    editBtn.className='del-btn';
-    editBtn.innerHTML='✏️';
-    editBtn.title='Editar evento';
-    const isRestricted=!!sessionStorage.getItem('ew_restricted_event');
-    editBtn.style.cssText='position:absolute;top:12px;right:'+(isRestricted?'12px':'52px')+';background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#6366f1;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;transition:all 0.2s;';
-    editBtn.onmouseenter=()=>editBtn.style.background='rgba(99,102,241,0.35)';
-    editBtn.onmouseleave=()=>editBtn.style.background='rgba(99,102,241,0.15)';
-    editBtn.onclick=(e)=>{e.stopPropagation();openEditEvent(ev);};
-    card.appendChild(editBtn);
-
+    // Show edit and delete buttons only for master admin
     if(!sessionStorage.getItem('ew_restricted_event')){
+      const editBtn=document.createElement('button');
+      editBtn.className='del-btn';
+      editBtn.innerHTML='✏️';
+      editBtn.title='Editar evento';
+      editBtn.style.cssText='position:absolute;top:12px;right:52px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#6366f1;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;transition:all 0.2s;';
+      editBtn.onmouseenter=()=>editBtn.style.background='rgba(99,102,241,0.35)';
+      editBtn.onmouseleave=()=>editBtn.style.background='rgba(99,102,241,0.15)';
+      editBtn.onclick=(e)=>{e.stopPropagation();openEditEvent(ev);};
+      card.appendChild(editBtn);
+
       const delBtn=document.createElement('button');
       delBtn.className='del-btn';
       delBtn.innerHTML='🗑';
