@@ -752,95 +752,201 @@ let selectedFrame='none';
 // ── FRAMES ───────────────────────────────────────────────────
 const FRAMES=[
   {id:'none', name:'Sin marco', draw:null},
-  {id:'hearts', name:'❤️ Corazones', draw:(ctx,w,h)=>{
-    ctx.strokeStyle='rgba(240,23,111,0.9)';ctx.lineWidth=Math.max(w*0.035,8);ctx.strokeRect(0,0,w,h);
-    ctx.font=Math.floor(w*0.08)+'px serif';
-    const e=['❤️','💕','💖','💗'];const step=w/6;
-    for(let x=step;x<w;x+=step){ctx.fillText(e[Math.floor(x/step)%e.length],x-14,22);ctx.fillText(e[(Math.floor(x/step)+2)%e.length],x-14,h-4);}
-  }},
+
+  // ── DECORATIVOS ───────────────────────────────────────────
   {id:'stars', name:'⭐ Estrellas', draw:(ctx,w,h)=>{
-    const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'rgba(245,166,35,0.9)');g.addColorStop(1,'rgba(240,23,111,0.9)');
-    ctx.strokeStyle=g;ctx.lineWidth=Math.max(w*0.04,10);ctx.strokeRect(0,0,w,h);
-    ctx.font=Math.floor(w*0.07)+'px serif';const step=w/7;
-    for(let x=step/2;x<w;x+=step){ctx.fillText('⭐',x-12,20);ctx.fillText('✨',x-12,h-4);}
+    const stars=['⭐','✨','💫','⭐','✨'];
+    const sz=Math.floor(w*0.09);ctx.font=sz+'px serif';
+    [[0.03,0.1],[0.88,0.07],[0.05,0.88],[0.87,0.85],[0.45,0.04],[0.45,0.93],[0.01,0.48],[0.93,0.48]].forEach(([x,y],i)=>{
+      ctx.save();ctx.translate(x*w,y*h);ctx.rotate([-0.3,0.2,-0.1,0.25,0.15,-0.2,0.1,-0.15][i]);
+      ctx.fillText(stars[i%stars.length],0,0);ctx.restore();
+    });
   }},
   {id:'flowers', name:'🌸 Flores', draw:(ctx,w,h)=>{
-    ctx.strokeStyle='rgba(255,107,157,0.85)';ctx.lineWidth=Math.max(w*0.045,10);ctx.strokeRect(0,0,w,h);
-    ctx.font=Math.floor(w*0.075)+'px serif';const f=['🌸','🌺','🌹','💐'];const step=w/6;
-    for(let x=step/2;x<w;x+=step){ctx.fillText(f[Math.floor(x/step)%f.length],x-14,22);ctx.fillText(f[(Math.floor(x/step)+2)%f.length],x-14,h-4);}
+    const items=['🌸','🌺','🌼','🌸','🌺'];
+    const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
+    [[0.02,0.12],[0.86,0.08],[0.03,0.9],[0.85,0.88],[0.43,0.05],[0.43,0.95],[0.0,0.5],[0.91,0.5]].forEach(([x,y],i)=>{
+      ctx.save();ctx.translate(x*w,y*h);ctx.rotate([-0.4,0.3,-0.2,0.35,0.1,-0.3,0.2,-0.1][i]);
+      ctx.fillText(items[i%items.length],0,0);ctx.restore();
+    });
   }},
-  {id:'gold', name:'✨ Dorado', draw:(ctx,w,h)=>{
-    ctx.strokeStyle='#c9a84c';ctx.lineWidth=Math.max(w*0.05,12);ctx.strokeRect(0,0,w,h);
-    ctx.strokeStyle='rgba(201,168,76,0.4)';ctx.lineWidth=2;ctx.strokeRect(14,14,w-28,h-28);
-    ctx.font=Math.floor(w*0.065)+'px serif';
-    ['💫','✨','⭐','💫'].forEach((e,i)=>{ctx.fillText(e,i*(w/4),24);ctx.fillText(e,i*(w/4),h-4);});
-  }},
-  {id:'party', name:'🎉 Fiesta', draw:(ctx,w,h)=>{
-    ctx.strokeStyle='rgba(99,102,241,0.9)';ctx.lineWidth=Math.max(w*0.04,8);ctx.strokeRect(0,0,w,h);
-    ctx.font=Math.floor(w*0.075)+'px serif';const p=['🎉','🎊','🎈','🥳'];const step=w/6;
-    for(let x=step/2;x<w;x+=step){ctx.fillText(p[Math.floor(x/step)%p.length],x-14,22);ctx.fillText(p[(Math.floor(x/step)+2)%p.length],x-14,h-4);}
-  }},
-  {id:'rainbow', name:'🌈 Arcoíris', draw:(ctx,w,h)=>{
-    const colors=['#ff0000','#ff8800','#ffff00','#00cc00','#0088ff','#8800ff'];
-    const bw=Math.max(w*0.025,6);
-    colors.forEach((col,i)=>{ctx.strokeStyle=col;ctx.lineWidth=bw;ctx.strokeRect(i*bw/2,i*bw/2,w-i*bw,h-i*bw);});
-  }},
-  {id:'neon', name:'💜 Neón', draw:(ctx,w,h)=>{
-    ctx.shadowColor='#a855f7';ctx.shadowBlur=20;
-    ctx.strokeStyle='#a855f7';ctx.lineWidth=Math.max(w*0.04,8);ctx.strokeRect(0,0,w,h);
-    ctx.shadowColor='#00f5ff';ctx.strokeStyle='#00f5ff';ctx.lineWidth=Math.max(w*0.015,3);ctx.strokeRect(8,8,w-16,h-16);
-    ctx.shadowBlur=0;
-  }},
-  {id:'polaroid', name:'📷 Polaroid', draw:(ctx,w,h)=>{
-    // White thick bottom border (polaroid style)
-    ctx.fillStyle='#ffffff';
-    ctx.fillRect(0,h-Math.floor(h*0.15),w,Math.floor(h*0.15));
-    ctx.fillRect(0,0,Math.floor(w*0.04),h);
-    ctx.fillRect(w-Math.floor(w*0.04),0,Math.floor(w*0.04),h);
-    ctx.fillRect(0,0,w,Math.floor(h*0.04));
-    ctx.strokeStyle='#e0e0e0';ctx.lineWidth=1;ctx.strokeRect(0,0,w,h);
-  }},
-  {id:'vintage', name:'🎞️ Vintage', draw:(ctx,w,h)=>{
-    // Sepia vignette effect
-    const grad=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.3,w/2,h/2,Math.max(w,h)*0.8);
-    grad.addColorStop(0,'rgba(0,0,0,0)');grad.addColorStop(1,'rgba(101,67,33,0.6)');
-    ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
-    ctx.strokeStyle='rgba(101,67,33,0.7)';ctx.lineWidth=Math.max(w*0.05,10);ctx.strokeRect(0,0,w,h);
+  {id:'hearts_deco', name:'💕 Corazones', draw:(ctx,w,h)=>{
+    const items=['💕','❤️','💗','💖','💓'];
+    const sz=Math.floor(w*0.09);ctx.font=sz+'px serif';
+    [[0.02,0.11],[0.87,0.08],[0.03,0.91],[0.86,0.88],[0.44,0.05],[0.44,0.95],[0.0,0.49],[0.92,0.5]].forEach(([x,y],i)=>{
+      ctx.save();ctx.translate(x*w,y*h);ctx.rotate([-0.3,0.2,-0.15,0.25,-0.1,0.2,-0.2,0.15][i]);
+      ctx.fillText(items[i%items.length],0,0);ctx.restore();
+    });
   }},
   {id:'balloons', name:'🎈 Globos', draw:(ctx,w,h)=>{
-    ctx.strokeStyle='rgba(240,23,111,0.85)';ctx.lineWidth=Math.max(w*0.035,7);ctx.strokeRect(0,0,w,h);
-    ctx.font=Math.floor(w*0.085)+'px serif';
-    const b=['🎈','🎀','🎁','🎊'];const step=w/5;
-    for(let x=step/2;x<w;x+=step){ctx.fillText(b[Math.floor(x/step)%b.length],x-16,24);ctx.fillText(b[(Math.floor(x/step)+2)%b.length],x-16,h-4);}
+    const items=['🎈','🎉','🎊','🎈','🎉'];
+    const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
+    [[0.02,0.13],[0.86,0.09],[0.03,0.91],[0.85,0.87],[0.43,0.06],[0.43,0.96]].forEach(([x,y],i)=>{
+      ctx.save();ctx.translate(x*w,y*h);ctx.rotate([-0.2,0.15,-0.1,0.2,0.05,-0.15][i]);
+      ctx.fillText(items[i%items.length],0,0);ctx.restore();
+    });
   }},
-  {id:'xv', name:'👑 XV Años', draw:(ctx,w,h)=>{
-    const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'#d4af37');g.addColorStop(0.5,'#fff8dc');g.addColorStop(1,'#d4af37');
-    ctx.strokeStyle=g;ctx.lineWidth=Math.max(w*0.05,12);ctx.strokeRect(0,0,w,h);
-    ctx.font=Math.floor(w*0.07)+'px serif';
-    const r=['👑','💎','🌟','💐'];const step=w/5;
-    for(let x=step/2;x<w;x+=step){ctx.fillText(r[Math.floor(x/step)%r.length],x-14,22);ctx.fillText(r[(Math.floor(x/step)+2)%r.length],x-14,h-4);}
+
+  // ── TEMÁTICOS ─────────────────────────────────────────────
+  {id:'gold_frame', name:'✨ Dorado', draw:(ctx,w,h)=>{
+    const lw=Math.max(w*0.025,6);
+    // Outer gold border
+    const grad=ctx.createLinearGradient(0,0,w,h);
+    grad.addColorStop(0,'#f5d060');grad.addColorStop(0.3,'#c9a84c');
+    grad.addColorStop(0.6,'#f5d060');grad.addColorStop(1,'#a07820');
+    ctx.strokeStyle=grad;ctx.lineWidth=lw;
+    ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
+    // Inner thin line
+    ctx.strokeStyle='rgba(245,208,96,0.5)';ctx.lineWidth=lw*0.3;
+    ctx.strokeRect(lw*1.8,lw*1.8,w-lw*3.6,h-lw*3.6);
+    // Corner ornaments
+    const cs=lw*3;
+    [[0,0],[w,0],[0,h],[w,h]].forEach(([x,y])=>{
+      ctx.save();ctx.translate(x,y);
+      const rot=(x===0&&y===0)?0:(x===w&&y===0)?Math.PI/2:(x===0&&y===h)?-Math.PI/2:Math.PI;
+      ctx.rotate(rot);
+      ctx.strokeStyle='#f5d060';ctx.lineWidth=lw*0.8;
+      ctx.beginPath();ctx.moveTo(lw,lw*4);ctx.lineTo(lw,lw);ctx.lineTo(lw*4,lw);ctx.stroke();
+      ctx.restore();
+    });
+  }},
+  {id:'neon_frame', name:'⚡ Neón', draw:(ctx,w,h)=>{
+    const lw=Math.max(w*0.02,5);
+    // Cyan neon glow
+    ctx.shadowColor='#00f5ff';ctx.shadowBlur=lw*3;
+    ctx.strokeStyle='#00f5ff';ctx.lineWidth=lw;
+    ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
+    // Pink inner neon
+    ctx.shadowColor='#f0176f';ctx.shadowBlur=lw*2;
+    ctx.strokeStyle='#f0176f';ctx.lineWidth=lw*0.5;
+    ctx.strokeRect(lw*2,lw*2,w-lw*4,h-lw*4);
+    ctx.shadowBlur=0;
+  }},
+  {id:'romantic', name:'💒 Romántico', draw:(ctx,w,h)=>{
+    const lw=Math.max(w*0.025,6);
+    // Rose gradient border
+    const grad=ctx.createLinearGradient(0,0,w,h);
+    grad.addColorStop(0,'rgba(255,107,157,0.9)');
+    grad.addColorStop(0.5,'rgba(255,182,193,0.7)');
+    grad.addColorStop(1,'rgba(255,107,157,0.9)');
+    ctx.strokeStyle=grad;ctx.lineWidth=lw;
+    ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
+    // Soft vignette
+    const vg=ctx.createRadialGradient(w/2,h/2,h*0.3,w/2,h/2,h*0.8);
+    vg.addColorStop(0,'rgba(0,0,0,0)');
+    vg.addColorStop(1,'rgba(180,0,60,0.25)');
+    ctx.fillStyle=vg;ctx.fillRect(0,0,w,h);
+    // Corner roses
+    const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
+    ['🌹','🌹','🌹','🌹'].forEach((e,[x,y])=>{
+      ctx.fillText(e,x,y);
+    },[...[[0.01,0.12],[0.86,0.09],[0.01,0.92],[0.86,0.92]]].map(([x,y])=>[x*w,y*h]));
+  }},
+
+  // ── TEMPORADA ─────────────────────────────────────────────
+  {id:'birthday', name:'🎂 Cumpleaños', draw:(ctx,w,h)=>{
+    const lw=Math.max(w*0.022,5);
+    // Colorful dashed border
+    const colors=['#f0176f','#ffd700','#00f5ff','#a855f7','#4ade80'];
+    const dash=lw*2;
+    colors.forEach((col,ci)=>{
+      ctx.strokeStyle=col;ctx.lineWidth=lw;
+      ctx.setLineDash([dash,dash*colors.length-dash]);
+      ctx.lineDashOffset=-(dash*ci*2);
+      ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
+    });
+    ctx.setLineDash([]);
+    // Emojis
+    const items=['🎂','🎈','🎉','🎊','🥳'];
+    const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
+    [[0.02,0.13],[0.87,0.1],[0.44,0.06],[0.03,0.92],[0.86,0.9]].forEach(([x,y],i)=>{
+      ctx.save();ctx.translate(x*w,y*h);ctx.rotate([-0.2,0.15,-0.05,0.2,-0.15][i]);
+      ctx.fillText(items[i],0,0);ctx.restore();
+    });
   }},
   {id:'wedding', name:'💍 Boda', draw:(ctx,w,h)=>{
-    ctx.strokeStyle='rgba(255,255,255,0.9)';ctx.lineWidth=Math.max(w*0.05,12);ctx.strokeRect(0,0,w,h);
-    ctx.strokeStyle='rgba(201,168,76,0.6)';ctx.lineWidth=2;ctx.strokeRect(10,10,w-20,h-20);
-    ctx.font=Math.floor(w*0.07)+'px serif';
-    const e=['💍','🤍','🕊️','🌹'];const step=w/5;
-    for(let x=step/2;x<w;x+=step){ctx.fillText(e[Math.floor(x/step)%e.length],x-14,22);ctx.fillText(e[(Math.floor(x/step)+2)%e.length],x-14,h-4);}
+    const lw=Math.max(w*0.022,5);
+    // White/gold elegant border
+    ctx.strokeStyle='rgba(255,255,255,0.9)';ctx.lineWidth=lw;
+    ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
+    ctx.strokeStyle='rgba(201,168,76,0.6)';ctx.lineWidth=lw*0.4;
+    ctx.strokeRect(lw*2,lw*2,w-lw*4,h-lw*4);
+    // Corner decoration
+    const sz=Math.floor(w*0.09);ctx.font=sz+'px serif';
+    ['💍','💐','🕊️','💒'].forEach((e,i)=>{
+      const positions=[[0.02,0.12],[0.86,0.1],[0.03,0.91],[0.85,0.9]];
+      ctx.save();ctx.translate(positions[i][0]*w,positions[i][1]*h);
+      ctx.rotate([0.1,-0.1,0.15,-0.15][i]);
+      ctx.fillText(e,0,0);ctx.restore();
+    });
+    // Soft white vignette edges
+    ['top','bottom','left','right'].forEach(side=>{
+      const g=side==='top'?ctx.createLinearGradient(0,0,0,h*0.15):
+               side==='bottom'?ctx.createLinearGradient(0,h,0,h*0.85):
+               side==='left'?ctx.createLinearGradient(0,0,w*0.15,0):
+               ctx.createLinearGradient(w,0,w*0.85,0);
+      g.addColorStop(0,'rgba(255,255,255,0.15)');
+      g.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    });
   }},
-  {id:'soccer', name:'⚽ Fútbol', draw:(ctx,w,h)=>{
-    ctx.strokeStyle='rgba(34,197,94,0.9)';ctx.lineWidth=Math.max(w*0.04,8);ctx.strokeRect(0,0,w,h);
-    ctx.strokeStyle='rgba(34,197,94,0.3)';ctx.lineWidth=2;ctx.strokeRect(8,8,w-16,h-16);
-    ctx.font=Math.floor(w*0.08)+'px serif';
-    const e=['⚽','🏆','🥅','👟'];const step=w/5;
-    for(let x=step/2;x<w;x+=step){ctx.fillText(e[Math.floor(x/step)%e.length],x-14,22);ctx.fillText(e[(Math.floor(x/step)+2)%e.length],x-14,h-4);}
+  {id:'graduation', name:'🎓 Graduación', draw:(ctx,w,h)=>{
+    const lw=Math.max(w*0.022,5);
+    // Navy/gold border
+    ctx.strokeStyle='#1a237e';ctx.lineWidth=lw*1.5;
+    ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
+    const grad=ctx.createLinearGradient(0,0,w,0);
+    grad.addColorStop(0,'#f5d060');grad.addColorStop(0.5,'#c9a84c');grad.addColorStop(1,'#f5d060');
+    ctx.strokeStyle=grad;ctx.lineWidth=lw*0.5;
+    ctx.strokeRect(lw*2,lw*2,w-lw*4,h-lw*4);
+    const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
+    ['🎓','⭐','📜','🏆'].forEach((e,i)=>{
+      const pos=[[0.02,0.12],[0.86,0.1],[0.03,0.91],[0.85,0.9]];
+      ctx.save();ctx.translate(pos[i][0]*w,pos[i][1]*h);
+      ctx.rotate([0.1,-0.1,0.15,-0.1][i]);ctx.fillText(e,0,0);ctx.restore();
+    });
   }},
-  {id:'simple_pink', name:'🩷 Rosa simple', draw:(ctx,w,h)=>{
-    ctx.strokeStyle='#f0176f';ctx.lineWidth=Math.max(w*0.04,10);ctx.strokeRect(0,0,w,h);
-    ctx.strokeStyle='rgba(240,23,111,0.3)';ctx.lineWidth=2;ctx.strokeRect(10,10,w-20,h-20);
+
+  // ── CON NOMBRE DEL EVENTO ──────────────────────────────────
+  {id:'event_name', name:'📛 Nombre evento', draw:(ctx,w,h)=>{
+    // Bottom banner with event name
+    const bh=Math.floor(h*0.12);
+    const grad=ctx.createLinearGradient(0,h-bh,0,h);
+    grad.addColorStop(0,'rgba(0,0,0,0)');
+    grad.addColorStop(0.4,'rgba(7,7,15,0.85)');
+    grad.addColorStop(1,'rgba(7,7,15,0.95)');
+    ctx.fillStyle=grad;ctx.fillRect(0,h-bh,w,bh);
+    // Event name text
+    const evName=document.getElementById('ev-name')?.textContent||'EventWall';
+    const fs=Math.floor(h*0.055);
+    ctx.font='700 '+fs+'px "DM Sans",sans-serif';
+    ctx.fillStyle='#ffffff';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(evName,w/2,h-bh*0.45);
+    // Pink accent line
+    const lh=Math.max(h*0.005,2);
+    ctx.fillStyle='#f0176f';ctx.fillRect(0,h-bh,w,lh);
+    ctx.textAlign='left';
   }},
-  {id:'simple_black', name:'🖤 Negro elegante', draw:(ctx,w,h)=>{
-    ctx.strokeStyle='#1a1a1a';ctx.lineWidth=Math.max(w*0.05,12);ctx.strokeRect(0,0,w,h);
-    ctx.strokeStyle='rgba(0,0,0,0.2)';ctx.lineWidth=2;ctx.strokeRect(12,12,w-24,h-24);
+  {id:'event_polaroid', name:'📷 Polaroid', draw:(ctx,w,h)=>{
+    // Polaroid style white border
+    const bl=Math.floor(w*0.04);
+    const bb=Math.floor(h*0.18);
+    // White frame
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,w,bl); // top
+    ctx.fillRect(0,0,bl,h); // left
+    ctx.fillRect(w-bl,0,bl,h); // right
+    ctx.fillRect(0,h-bb,w,bb); // bottom (wider)
+    // Shadow inside
+    ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.lineWidth=1;
+    ctx.strokeRect(bl,bl,w-bl*2,h-bb-bl);
+    // Event name in polaroid strip
+    const evName=document.getElementById('ev-name')?.textContent||'EventWall';
+    const fs=Math.floor(h*0.06);
+    ctx.font='italic '+fs+'px "Playfair Display",Georgia,serif';
+    ctx.fillStyle='#333333';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(evName,w/2,h-bb*0.45);
+    ctx.textAlign='left';
   }},
 ];
 
@@ -886,47 +992,161 @@ function renderPreviewCanvas(){
   const H=originalImage.naturalHeight||originalImage.height;
   canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');
-  // Apply filter
+  // Apply CSS filter
   const filter=FILTERS.find(f=>f.id===selectedFilter);
-  ctx.filter=(filter&&filter.css!=='none')?filter.css:'none';
+  ctx.filter=(filter&&filter.css&&filter.css!=='none')?filter.css:'none';
   ctx.drawImage(originalImage,0,0,W,H);
   ctx.filter='none';
+  // Apply canvas-based filter effect (grain, vignette, flares, etc.)
+  if(filter&&filter.canvas) filter.canvas(ctx,W,H);
   // Apply frame
   const frame=FRAMES.find(f=>f.id===selectedFrame);
   if(frame&&frame.draw) frame.draw(ctx,W,H);
   // Apply stickers
   if(selectedStickers.length){
-    const sz=Math.floor(W*0.12);
+    const sz=Math.floor(W*0.13);
     ctx.font=sz+'px serif';
     const positions=[
-      [W*0.05,H*0.12],[W*0.82,H*0.1],[W*0.5,H*0.08],
-      [W*0.1,H*0.82],[W*0.78,H*0.85]
+      [W*0.05,H*0.13],[W*0.82,H*0.1],[W*0.5,H*0.06],
+      [W*0.08,H*0.82],[W*0.78,H*0.85]
     ];
     selectedStickers.forEach((emoji,i)=>{
       const [x,y]=positions[i%positions.length];
-      ctx.save();
-      ctx.translate(x,y);
+      ctx.save();ctx.translate(x,y);
       ctx.rotate([-0.3,0.2,-0.15,0.25,-0.1][i%5]);
-      ctx.fillText(emoji,0,0);
-      ctx.restore();
+      ctx.fillText(emoji,0,0);ctx.restore();
     });
   }
 }
 
 // ── FILTERS ──────────────────────────────────────────────────
 const FILTERS=[
-  {id:'none',    name:'Original', css:'none'},
-  {id:'warm',    name:'🌅 Cálido',  css:'sepia(0.3) saturate(1.4) brightness(1.05)'},
-  {id:'cool',    name:'❄️ Frío',    css:'hue-rotate(200deg) saturate(1.2) brightness(1.05)'},
-  {id:'bw',      name:'⚫ B&N',     css:'grayscale(1)'},
-  {id:'vintage', name:'📷 Vintage', css:'sepia(0.6) contrast(1.1) brightness(0.9) saturate(0.8)'},
-  {id:'vivid',   name:'🌈 Vívido',  css:'saturate(2) contrast(1.1)'},
-  {id:'fade',    name:'🌫 Faded',   css:'saturate(0.7) brightness(1.15) contrast(0.85)'},
-  {id:'drama',   name:'🎭 Drama',   css:'contrast(1.4) brightness(0.9) saturate(1.2)'},
-  {id:'rose',    name:'🌸 Rosa',    css:'sepia(0.2) hue-rotate(320deg) saturate(1.3)'},
-  {id:'golden',  name:'✨ Dorado',  css:'sepia(0.4) saturate(1.5) brightness(1.1) hue-rotate(10deg)'},
-  {id:'night',   name:'🌙 Noche',   css:'brightness(0.75) saturate(0.9) contrast(1.3)'},
-  {id:'pastel',  name:'🍬 Pastel',  css:'saturate(0.7) brightness(1.2) contrast(0.85)'},
+  {id:'none',      name:'Original',   css:'none',                                          canvas:null},
+
+  // ── CINEMÁTICOS ───────────────────────────────────────────
+  {id:'kodak',     name:'🎞 Kodak',    css:'saturate(1.3) contrast(1.05) brightness(1.02) sepia(0.15)',
+    canvas:(ctx,w,h)=>{
+      // Warm highlights, slight grain
+      const g=ctx.createRadialGradient(w*0.5,h*0.3,0,w*0.5,h*0.5,w*0.7);
+      g.addColorStop(0,'rgba(255,200,100,0.06)');g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
+  {id:'fuji',      name:'🌿 Fuji',     css:'saturate(1.15) hue-rotate(5deg) brightness(1.03) contrast(0.98)',
+    canvas:(ctx,w,h)=>{
+      // Cool greens, soft
+      const g=ctx.createRadialGradient(w*0.5,h*0.5,0,w*0.5,h*0.5,w*0.6);
+      g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,30,20,0.08)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
+  {id:'polaroid',  name:'📷 Polaroid', css:'contrast(0.9) brightness(1.1) saturate(0.85) sepia(0.1)',
+    canvas:(ctx,w,h)=>{
+      // Faded corners
+      const g=ctx.createRadialGradient(w/2,h/2,h*0.2,w/2,h/2,h*0.75);
+      g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(255,240,210,0.15)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
+  {id:'cinema',    name:'🎬 Cinema',   css:'contrast(1.2) brightness(0.9) saturate(0.8)',
+    canvas:(ctx,w,h)=>{
+      // Letterbox bars + vignette
+      const bh=Math.floor(h*0.08);
+      ctx.fillStyle='rgba(0,0,0,0.85)';
+      ctx.fillRect(0,0,w,bh);ctx.fillRect(0,h-bh,w,bh);
+      const g=ctx.createRadialGradient(w/2,h/2,h*0.25,w/2,h/2,h*0.7);
+      g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,0.35)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
+
+  // ── VINTAGE / ÉPOCA ───────────────────────────────────────
+  {id:'sepia',     name:'📜 Sepia',    css:'sepia(0.9) contrast(1.05)',                     canvas:null},
+  {id:'vintage',   name:'📷 Vintage',  css:'sepia(0.5) contrast(1.1) brightness(0.92) saturate(0.75)',
+    canvas:(ctx,w,h)=>{
+      // Grain effect
+      const imageData=ctx.getImageData(0,0,w,h);
+      const data=imageData.data;
+      for(let i=0;i<data.length;i+=4){
+        const grain=(Math.random()-0.5)*25;
+        data[i]+=grain;data[i+1]+=grain;data[i+2]+=grain;
+      }
+      ctx.putImageData(imageData,0,0);
+      // Vignette
+      const g=ctx.createRadialGradient(w/2,h/2,h*0.3,w/2,h/2,h*0.75);
+      g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(50,20,0,0.4)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
+  {id:'faded',     name:'🌫 Desteñido', css:'saturate(0.6) brightness(1.15) contrast(0.8)', canvas:null},
+  {id:'grainy',    name:'🎞 Con grano', css:'contrast(1.1) brightness(0.95)',
+    canvas:(ctx,w,h)=>{
+      const imageData=ctx.getImageData(0,0,w,h);
+      const data=imageData.data;
+      for(let i=0;i<data.length;i+=4){
+        const grain=(Math.random()-0.5)*40;
+        data[i]+=grain;data[i+1]+=grain;data[i+2]+=grain;
+      }
+      ctx.putImageData(imageData,0,0);
+    }},
+
+  // ── ESTADO DE ÁNIMO ───────────────────────────────────────
+  {id:'warm',      name:'🌅 Cálido',   css:'sepia(0.25) saturate(1.4) brightness(1.05)',   canvas:null},
+  {id:'cool',      name:'❄️ Frío',     css:'hue-rotate(195deg) saturate(1.15) brightness(1.05)', canvas:null},
+  {id:'drama',     name:'🎭 Drama',    css:'contrast(1.45) brightness(0.85) saturate(1.1)',
+    canvas:(ctx,w,h)=>{
+      const g=ctx.createRadialGradient(w/2,h/2,h*0.2,w/2,h/2,h*0.72);
+      g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,0.45)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
+  {id:'golden_hr', name:'🌇 Hora dorada', css:'sepia(0.4) saturate(1.6) brightness(1.08) hue-rotate(8deg)',
+    canvas:(ctx,w,h)=>{
+      const g=ctx.createLinearGradient(0,0,0,h);
+      g.addColorStop(0,'rgba(255,160,50,0.12)');g.addColorStop(1,'rgba(200,80,0,0.08)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
+  {id:'moonlight',  name:'🌙 Luz de luna', css:'brightness(0.8) saturate(0.6) hue-rotate(210deg) contrast(1.1)',
+    canvas:(ctx,w,h)=>{
+      const g=ctx.createRadialGradient(w*0.8,h*0.1,0,w*0.8,h*0.1,w*0.6);
+      g.addColorStop(0,'rgba(180,200,255,0.08)');g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
+
+  // ── EFECTOS DE LUZ ────────────────────────────────────────
+  {id:'vignette',  name:'🔲 Viñeta',   css:'contrast(1.05) brightness(0.98)',
+    canvas:(ctx,w,h)=>{
+      const g=ctx.createRadialGradient(w/2,h/2,h*0.28,w/2,h/2,h*0.72);
+      g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,0.55)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
+  {id:'sunlight',  name:'☀️ Sol',       css:'brightness(1.1) saturate(1.2)',
+    canvas:(ctx,w,h)=>{
+      // Sun flare from top-right
+      const g=ctx.createRadialGradient(w*0.85,h*0.08,0,w*0.85,h*0.08,w*0.5);
+      g.addColorStop(0,'rgba(255,240,180,0.35)');
+      g.addColorStop(0.3,'rgba(255,200,100,0.12)');
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+      // Lens streak
+      ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=w*0.04;
+      ctx.beginPath();ctx.moveTo(w*0.85,h*0.08);ctx.lineTo(w*0.1,h*0.9);ctx.stroke();
+    }},
+  {id:'bokeh',     name:'🔆 Bokeh',    css:'brightness(1.05) contrast(0.95)',
+    canvas:(ctx,w,h)=>{
+      // Soft out-of-focus light circles
+      for(let i=0;i<12;i++){
+        const x=Math.random()*w,y=Math.random()*h;
+        const r=20+Math.random()*60;
+        const g=ctx.createRadialGradient(x,y,0,x,y,r);
+        const alpha=0.04+Math.random()*0.08;
+        g.addColorStop(0,'rgba(255,240,200,'+alpha+')');
+        g.addColorStop(1,'rgba(255,255,255,0)');
+        ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+      }
+    }},
+  {id:'softglow',  name:'💫 Destello', css:'brightness(1.08) contrast(0.95)',
+    canvas:(ctx,w,h)=>{
+      const g=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w*0.5);
+      g.addColorStop(0,'rgba(255,255,255,0.12)');
+      g.addColorStop(0.5,'rgba(255,255,255,0.03)');
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+    }},
 ];
 let selectedFilter='none';
 
