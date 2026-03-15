@@ -341,6 +341,12 @@ input[type=range]{accent-color:var(--pink)}
             <label>Duración del acceso</label>
             <select id="ev-pin-duration">
               <option value="0">Sin vencimiento</option>
+              <option value="0.033">2 minutos (prueba)</option>
+              <option value="0.083">5 minutos (prueba)</option>
+              <option value="0.25">15 minutos</option>
+              <option value="0.5">30 minutos</option>
+              <option value="1">1 hora</option>
+              <option value="3">3 horas</option>
               <option value="6">6 horas</option>
               <option value="12" selected>12 horas</option>
               <option value="24">24 horas</option>
@@ -2674,18 +2680,45 @@ if(sessionStorage.getItem('ew_unlocked')==='1'){
   // Check restricted event PIN expiry periodically
   setInterval(async()=>{
     const rid=sessionStorage.getItem('ew_restricted_event');
-    if(!rid) return;
-    try{
-      const res=await fetch(SUPABASE_URL+'/rest/v1/events?id=eq.'+rid+'&select=pin_expires_at',{
-        headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
-      });
-      const data=await res.json();
-      if(data[0]?.pin_expires_at&&new Date(data[0].pin_expires_at)<new Date()){
-        sessionStorage.clear();
-        alert('Tu acceso a este evento ha vencido.');
-        location.reload();
-      }
-    }catch(e){}
+    if(rid){
+      // Check restricted event PIN expiry
+      try{
+        const res=await fetch(SUPABASE_URL+'/rest/v1/events?id=eq.'+rid+'&select=pin_expires_at',{
+          headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+        });
+        const data=await res.json();
+        if(data[0]?.pin_expires_at&&new Date(data[0].pin_expires_at)<new Date()){
+          sessionStorage.clear();
+          alert('Tu acceso a este evento ha vencido.');
+          location.reload();
+        }
+      }catch(e){}
+    } else {
+      // Master admin: check all events for expiry and send album email
+      try{
+        const now=new Date().toISOString();
+        const expired=await api('events?pin_expires_at=lt.'+now+'&client_email=not.is.null&select=*');
+        if(!Array.isArray(expired)||!expired.length) return;
+        for(const ev of expired){
+          // Check if we already sent the email (use localStorage to track)
+          const sentKey='ew_album_sent_'+ev.id;
+          if(localStorage.getItem(sentKey)) continue;
+          // Mark as sent first to avoid duplicates
+          localStorage.setItem(sentKey,'1');
+          // Fetch posts and send email
+          try{
+            const posts=await api('posts?event_id=eq.'+ev.id+'&approved=eq.true&order=created_at.asc');
+            if(Array.isArray(posts)&&posts.length>0){
+              toast('📧 Enviando álbum de "'+ev.name+'" a '+ev.client_email+'...',6000);
+              await sendAlbumEmail(ev, posts);
+            }
+          }catch(e){
+            // Remove sent flag so it retries next check
+            localStorage.removeItem(sentKey);
+          }
+        }
+      }catch(e){}
+    }
   },60000); // Check every minute
 }
 // Save session on unlock
