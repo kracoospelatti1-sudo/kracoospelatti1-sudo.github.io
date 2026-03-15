@@ -288,6 +288,7 @@ input[type=range]{accent-color:var(--pink)}
     <button class="nav-btn" onclick="goNav('links')">🔗 Links & QR</button>
     <button class="nav-btn" onclick="goNav('design')">🎨 Diseño</button>
     <button class="nav-btn" onclick="goNav('album')">📥 Álbum</button>
+    <button class="nav-btn" onclick="goNav('messages')">💬 Mensajes</button>
     <div class="nav-sep"></div>
     <button class="nav-btn" onclick="goNav('print')">🖨 Modo impresión</button>
     <button class="nav-btn" onclick="goNav('polls')">🗳 Votaciones</button>
@@ -883,6 +884,32 @@ input[type=range]{accent-color:var(--pink)}
       </div>
     </div>
 
+    <!-- MESSAGES -->
+    <div class="page" id="page-messages">
+      <div class="page-title">Mensajes</div>
+      <div class="page-sub">Mensajes, deseos y audios del evento en tiempo real</div>
+      <div class="notice" id="messages-notice">⚠️ Seleccioná un evento primero</div>
+      <div id="messages-content" style="display:none">
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div>
+              <div id="messages-ev-name" style="font-size:18px;font-weight:700;color:var(--text)">—</div>
+              <div id="messages-count" style="font-size:13px;color:var(--muted);margin-top:2px">0 mensajes</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div id="messages-live-dot" style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--pink);animation:pulse 1.5s infinite"></div>
+                Actualizando en vivo
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div id="messages-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- PRINT -->
     <div class="page" id="page-print">
       <div class="page-title">Modo impresión</div>
@@ -1465,11 +1492,12 @@ function generatePin(){
 }
 
 function goNav(page){
+  clearInterval(messagesRefreshTimer);
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   closeSidebar(); // close on mobile after nav
-  const map={events:0,'new-event':1,links:2,design:3,album:4,print:5,polls:6,'guest-design':7,moments:8,settings:9};
+  const map={events:0,'new-event':1,links:2,design:3,album:4,messages:5,print:6,polls:7,'guest-design':8,moments:9,settings:10};
   const btns=document.querySelectorAll('.nav-btn');
   if(map[page]!==undefined) btns[map[page]].classList.add('active');
   if(page==='events') loadEvents();
@@ -1477,6 +1505,7 @@ function goNav(page){
   if(page==='links') showLinks();
   if(page==='design') showDesign();
   if(page==='album') showAlbum();
+  if(page==='messages') showMessages();
   if(page==='print') showPrint();
   if(page==='polls') showPolls();
   if(page==='guest-design') showGuestDesign();
@@ -2305,6 +2334,59 @@ async function deleteAlbumPhoto(id){
   await api('posts?id=eq.'+id,{method:'DELETE'});
   toast('🗑 Foto eliminada');
   showAlbum();
+}
+
+// ── MESSAGES ─────────────────────────────────────────────────
+let messagesRefreshTimer=null;
+
+async function showMessages(){
+  const notice=document.getElementById('messages-notice');
+  const content=document.getElementById('messages-content');
+  clearInterval(messagesRefreshTimer);
+  if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
+  notice.classList.remove('show');content.style.display='block';
+  document.getElementById('messages-ev-name').textContent=selectedEvent.name;
+  await loadMessages();
+  messagesRefreshTimer=setInterval(loadMessages,5000);
+}
+
+async function loadMessages(){
+  if(!selectedEvent) return;
+  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=in.(message,wish,audio)&approved=eq.true&order=created_at.desc');
+  if(!Array.isArray(posts)) return;
+  document.getElementById('messages-count').textContent=posts.length+' mensaje'+(posts.length!==1?'s':'');
+  const list=document.getElementById('messages-list');
+  if(!posts.length){
+    list.innerHTML='<div class="empty"><div class="empty-ico">💬</div><div class="empty-txt">No hay mensajes aún</div></div>';
+    return;
+  }
+  list.innerHTML='';
+  posts.forEach(p=>{
+    const typeMap={message:{icon:'💬',label:'Mensaje',color:'#3b82f6'},wish:{icon:'💌',label:'Deseo especial',color:'#f0176f'},audio:{icon:'🎤',label:'Audio',color:'#8b5cf6'}};
+    const t=typeMap[p.type]||{icon:'💬',label:p.type,color:'#888'};
+    const time=new Date(p.created_at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)';
+    row.innerHTML=`
+      <div style="font-size:28px;flex-shrink:0;line-height:1">${t.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+          <span style="font-weight:700;color:var(--text);font-size:14px">${p.author}</span>
+          <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:${t.color}22;color:${t.color}">${t.label}</span>
+          <span style="font-size:11px;color:var(--muted)">${time}</span>
+        </div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.5;word-break:break-word">${p.type==='audio'?'<em>Mensaje de voz</em>':(p.content||'')}</div>
+      </div>
+      <button class="btn-delete-post" onclick="deleteMessage('${p.id}')" title="Eliminar">🗑</button>`;
+    list.appendChild(row);
+  });
+}
+
+async function deleteMessage(id){
+  if(!confirm('¿Eliminar este mensaje?')) return;
+  await api('posts?id=eq.'+id,{method:'DELETE'});
+  toast('🗑 Mensaje eliminado');
+  await loadMessages();
 }
 
 async function downloadSinglePhoto(url,author,originalUrl){
