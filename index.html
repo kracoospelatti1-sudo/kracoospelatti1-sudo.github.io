@@ -447,6 +447,37 @@ nav.scrolled{
 .btn-wa:hover{transform:translateY(-2px);box-shadow:0 0 64px rgba(37,211,102,0.5),0 8px 28px rgba(0,0,0,0.4)}
 .btn-wa svg{width:22px;height:22px;fill:#fff;flex-shrink:0}
 
+/* ─── FAQ ───────────────────────────────────────── */
+.faq-list{display:flex;flex-direction:column;gap:12px;max-width:720px}
+.faq-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;transition:border-color 0.2s;
+}
+.faq-item.open{border-color:var(--pink-border)}
+.faq-q{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:22px 24px;background:none;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;
+  color:#fff;text-align:left;transition:color 0.2s;
+}
+.faq-q:hover{color:var(--pink)}
+.faq-item.open .faq-q{color:var(--pink)}
+.faq-icon{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:var(--pink-dim);border:1px solid var(--pink-border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:var(--pink);
+  transition:transform 0.3s;
+}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.35s ease,padding 0.35s ease;
+  padding:0 24px;
+  font-size:15px;color:var(--muted);line-height:1.75;
+}
+.faq-item.open .faq-a{max-height:200px;padding:0 24px 22px}
+
 /* ─── FOOTER ────────────────────────────────────── */
 footer{
   padding:40px 48px;
@@ -814,6 +845,74 @@ footer p{font-size:13px;color:var(--muted)}
   </div>
 </div>
 
+<!-- FAQ -->
+<div class="section-wrap dark">
+  <div class="section">
+    <div class="section-label reveal">FAQ</div>
+    <h2 class="reveal">Preguntas <span class="c">frecuentes</span></h2>
+    <p class="section-sub reveal">Todo lo que necesitás saber antes de contratar.</p>
+    <div class="faq-list reveal">
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Necesitan wifi en el salón?
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-a">Sí, se necesita conexión a internet tanto en el televisor como en los celulares de los invitados. El sistema funciona 100% en la nube, por lo que no hay nada que instalar. La mayoría de los salones tienen wifi, y los invitados pueden usar sus datos móviles sin problema.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Los invitados tienen que descargar alguna app?
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-a">No. Los invitados escanean el QR con la cámara del celular y se abre directamente en el navegador. Sin apps, sin registro, sin contraseña. En menos de 10 segundos ya están participando.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿En qué pantallas funciona?
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-a">En cualquier dispositivo con navegador: Smart TV, televisor con Chromecast o Fire Stick, computadora conectada al proyector, tablet, etc. Solo abrís el link del evento en el navegador y listo.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Cuántas fotos y mensajes aguanta?
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-a">El plan incluye invitados y contenido ilimitado. No hay un tope de fotos, mensajes o audios. El sistema está preparado para eventos con cientos de personas mandando contenido al mismo tiempo.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Cómo recibo las fotos del evento?
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-a">Al terminar el evento, el álbum completo con todas las fotos, mensajes y deseos se envía automáticamente al email que nos indicás. También podés descargarlo manualmente desde el panel de administración en cualquier momento.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Puedo personalizar los colores y el diseño?
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-a">Sí, el plan incluye personalización completa: colores, tipografías, marcos para fotos y diseño general de la pantalla. Lo adaptamos a la estética de tu evento antes del día.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          ¿Qué pasa si tengo un problema el día del evento?
+          <div class="faq-icon">+</div>
+        </button>
+        <div class="faq-a">Tenés soporte directo por WhatsApp durante todo el evento. Si algo no funciona como esperás, te respondemos al instante para resolverlo.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- CTA FINAL -->
 <div id="contacto" class="cta-wrap">
   <div class="cta-inner reveal">
@@ -833,6 +932,14 @@ footer p{font-size:13px;color:var(--muted)}
 </footer>
 
 <script>
+// FAQ accordion
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el=>el.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
 // Nav scroll effect
 const nav=document.getElementById('navbar');
 window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
