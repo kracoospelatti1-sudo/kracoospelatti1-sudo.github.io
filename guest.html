@@ -1522,6 +1522,17 @@ async function applyGuestDesign(ev){
   const voteBtn=document.getElementById('vote-btn');
   if(voteBtn) voteBtn.style.display='none';
 
+  // Reactions
+  const showRxn=d.showReactions!==false;
+  document.querySelectorAll('.rxn-btns,.rxn-bar').forEach(el=>el.style.display=showRxn?'':'none');
+
+  // Photo editing (frames, filters, stickers)
+  const showPhotoEdit=d.showPhotoEdit!==false;
+  ['frame-picker','filter-picker','sticker-picker'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display=showPhotoEdit?'':'none';
+  });
+
   // Activate first visible tab if current is hidden
   const activeBtn=document.querySelector('.tab-btn.active');
   if(activeBtn&&activeBtn.style.display==='none'&&firstVisible){
