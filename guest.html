@@ -2301,42 +2301,16 @@ function resumeCooldowns(){
 }
 
 // ── AI PHOTO MODERATION ───────────────────────────────────────
-// Uses Claude API to check if photo is appropriate before uploading
+// Calls Supabase Edge Function which proxies to Anthropic API
 async function moderatePhotoWithAI(imageDataUrl){
   try{
-    const base64 = imageDataUrl.split(',')[1];
-    const mediaType = imageDataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://jxqwrbmnfmnzddkcimrm.supabase.co/functions/v1/moderate-photo', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': '', // handled by proxy
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 100,
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: { type: 'base64', media_type: mediaType, data: base64 }
-            },
-            {
-              type: 'text',
-              text: 'Is this image appropriate for a family event? Reply with only: SAFE or UNSAFE and one word reason. Example: "SAFE normal" or "UNSAFE nudity"'
-            }
-          ]
-        }]
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageDataUrl })
     });
-    if(!response.ok) return {safe: true}; // if API fails, allow through
-    const data = await response.json();
-    const reply = (data.content?.[0]?.text||'SAFE').trim().toUpperCase();
-    const safe = reply.startsWith('SAFE');
-    const reason = reply.split(' ')[1]||'';
-    return {safe, reason};
+    if(!response.ok) return {safe: true};
+    return await response.json();
   } catch(e){
     return {safe: true}; // fail open — don't block if AI unreachable
   }
