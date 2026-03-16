@@ -2422,12 +2422,13 @@ async function loadGallery(){
   grid.innerHTML='';
   try{
     const name=document.getElementById('guest-name').value.trim();
-    const [photos,reactions]=await Promise.all([
-      apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&approved=eq.true&order=created_at.desc&limit=60'),
-      apiRest('reactions?event_id=eq.'+eventId+'&select=post_id,emoji,guest_name')
-    ]);
+    const photos=await apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&approved=eq.true&order=created_at.desc&limit=60');
     loading.style.display='none';
     if(!photos.length){empty.style.display='block';return;}
+    const postIds=photos.map(p=>p.id).join(',');
+    const reactions=postIds
+      ? await apiRest('reactions?post_id=in.('+postIds+')&select=post_id,emoji,guest_name')
+      : [];
     // aggregate
     const rxnMap={};
     myReactions={};
