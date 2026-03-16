@@ -1017,20 +1017,20 @@ async function pollPosts(){
   if(newItems.length){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
-        // Add to front, show after current photo finishes its full display time
         photoPosts.unshift(p);
         if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
         buildStrip();
         if(!currentFeaturedPostId){
-          // No photo showing — show it now (also hide waiting screen)
           hideWaitingScreen();
           featuredIdx=0;
           showFeatured(photoPosts[0],0);
-          // Reset rotation timer so it gets full time
           clearInterval(rotateTimer);
           rotateTimer=setInterval(rotateFeatured,cfg.interval);
+        } else {
+          // Keep featuredIdx pointing to the photo currently on screen
+          const cur=photoPosts.findIndex(p=>p.id===currentFeaturedPostId);
+          if(cur>=0) featuredIdx=cur;
         }
-        // If photo already showing, it will appear naturally on next rotation
       }
       if(p.type==='audio'&&p.content&&!getPlayedAudioIds().has(p.id)){
         markAudioPlayed(p.id);
