@@ -852,9 +852,7 @@ function showFeatured(post,idx){
     document.getElementById('no-content').style.display='none';
     const hasCaption=post.content_text&&post.content_text.trim();
     const overlay=document.getElementById('featured-overlay');
-    const rxnEl=document.getElementById('featured-reactions');
-    rxnEl.style.opacity='0';
-    setTimeout(()=>{rxnEl.innerHTML='';},400);
+    document.getElementById('featured-reactions').style.opacity='0';
     if(hasCaption){
       document.getElementById('featured-caption').textContent='"'+post.content_text+'"';
       document.getElementById('featured-author').textContent='— '+post.author;
@@ -1106,6 +1104,7 @@ async function updateFeaturedReactions(postId){
     rxns.forEach(r=>{counts[r.emoji]=(counts[r.emoji]||0)+1;});
     const container=document.getElementById('featured-reactions');
     if(!container)return;
+    container.innerHTML='';
     const EMOJIS=['❤️','🎉','😍','🔥'];
     EMOJIS.forEach(e=>{
       let pill=container.querySelector('[data-rxn="'+e+'"]');
