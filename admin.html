@@ -43,25 +43,38 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .event-stats{display:flex;gap:12px;margin-top:14px}
 .estat{text-align:center}.estat-num{font-size:18px;font-weight:700;color:var(--pink)}.estat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
 .badge-pending{position:absolute;top:14px;right:14px;background:#f5a62322;color:var(--gold);font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid #f5a62344}
-.mod-filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.filter-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-.filter-btn.active{background:var(--pink);border-color:var(--pink);color:#fff}
-.posts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.post-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.post-card.approved{border-color:#22c55e44}
-.post-img{width:100%;height:150px;object-fit:cover;display:block}
-.post-body{padding:14px}
-.post-author{font-size:12px;font-weight:600;color:var(--pink);margin-bottom:5px}
-.post-text{font-size:13px;color:var(--text);line-height:1.5}
-.tbadge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px}
-.type-photo{background:#3b82f622;color:#60a5fa}.type-message{background:#a855f722;color:#c084fc}.type-audio{background:#f5a62322;color:var(--gold)}.type-wish{background:rgba(255,107,157,0.15);color:#ff6b9d}
-.post-actions{display:flex;gap:8px;margin-top:12px}
-.btn-approve{flex:1;padding:8px;background:#22c55e22;border:1px solid #22c55e44;color:var(--green);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-.btn-approve:hover{background:#22c55e44}.btn-approve.done{background:#22c55e;color:#fff;border-color:#22c55e}
-.btn-reject{flex:1;padding:8px;background:#ef444422;border:1px solid #ef444444;color:var(--red);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-.btn-delete-post{padding:8px 10px;background:rgba(100,100,100,0.15);border:1px solid rgba(100,100,100,0.25);color:var(--muted);border-radius:8px;cursor:pointer;font-size:13px;transition:all 0.2s;flex-shrink:0}
-.btn-delete-post:hover{background:#ef444422;border-color:#ef444444;color:var(--red)}
-.post-time{font-size:10px;color:var(--muted);margin-top:8px}
+/* MOD STATS */
+.mod-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.mod-stat-ico{font-size:20px;line-height:1;flex-shrink:0}
+.mod-stat-num{font-size:22px;font-weight:800;font-family:'Syne',sans-serif;line-height:1}
+.mod-stat-lbl{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px}
+
+/* FILTER BAR */
+.mod-filter-bar{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px;margin-bottom:20px}
+.filter-btn{flex:1;padding:8px 14px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:13px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;font-weight:500;white-space:nowrap}
+.filter-btn.active{background:var(--surface2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+
+/* POST CARDS */
+.post-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.15s,border-color 0.2s}
+.post-card:hover{transform:translateY(-2px)}
+.post-card.approved{border-color:rgba(34,197,94,0.25)}
+.post-card.pending{border-color:rgba(245,158,11,0.2)}
+.post-thumb{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;background:#000}
+.post-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.post-thumb-overlay{position:absolute;bottom:0;left:0;right:0;padding:8px 12px;background:linear-gradient(transparent,rgba(0,0,0,0.75));display:flex;justify-content:space-between;align-items:flex-end}
+.post-status{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0}
+.post-status.approved{background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3)}
+.post-status.pending{background:rgba(245,158,11,0.2);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)}
+.post-body{padding:14px;flex:1;display:flex;flex-direction:column;gap:10px}
+.post-meta{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.post-author{font-size:13px;font-weight:600;color:var(--text)}
+.post-time{font-size:11px;color:var(--muted)}
+.post-content-preview{font-size:13px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;line-height:1.55;word-break:break-word;flex:1}
+.post-actions{display:flex;gap:8px;margin-top:auto}
+.btn-approve-post{flex:1;padding:9px;border-radius:8px;border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.1);color:#22c55e;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-approve-post:hover{background:rgba(34,197,94,0.22)}
+.btn-delete-post{flex:1;padding:9px;border-radius:8px;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);color:#ef4444;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+.btn-delete-post:hover{background:rgba(239,68,68,0.2)}
 .link-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .link-label{font-size:12px;color:var(--muted);width:80px;flex-shrink:0}
 .link-box{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--text);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -390,11 +403,11 @@ input[type=range]{accent-color:var(--pink)}
     <div class="page" id="page-moderation">
       <div class="page-title">Moderación</div>
       <div class="page-sub">Aprobá o eliminá publicaciones del evento</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin-bottom:16px" id="mod-stats-row"></div>
-      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <div id="mod-stats-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:20px"></div>
+      <div class="mod-filter-bar">
         <button class="filter-btn active" onclick="filterPosts('all',this)">Todos</button>
-        <button class="filter-btn" onclick="filterPosts('approved',this)">Aprobados</button>
-        <button class="filter-btn" onclick="filterPosts('pending',this)">Pendientes</button>
+        <button class="filter-btn" onclick="filterPosts('pending',this)">⏳ Pendientes</button>
+        <button class="filter-btn" onclick="filterPosts('approved',this)">✓ Aprobados</button>
       </div>
       <div id="posts-container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px"></div>
     </div>
@@ -1974,15 +1987,15 @@ function updateStats(){
   const wishes=allPosts.filter(p=>p.type==='wish').length;
   const audios=allPosts.filter(p=>p.type==='audio').length;
   const row=document.getElementById('mod-stats-row');
-  if(row) row.innerHTML=`
-    <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-lbl">Total</div></div>
-    <div class="stat-box" style="color:#22c55e"><div class="stat-num">${approved}</div><div class="stat-lbl">Aprobados</div></div>
-    <div class="stat-box" style="color:#f59e0b"><div class="stat-num">${pending}</div><div class="stat-lbl">Pendientes</div></div>
-    <div class="stat-box"><div class="stat-num">${photos}</div><div class="stat-lbl">📸 Fotos</div></div>
-    <div class="stat-box"><div class="stat-num">${messages}</div><div class="stat-lbl">💬 Msgs</div></div>
-    <div class="stat-box"><div class="stat-num">${wishes}</div><div class="stat-lbl">💌 Deseos</div></div>
-    <div class="stat-box"><div class="stat-num">${audios}</div><div class="stat-lbl">🎤 Audios</div></div>
-  `;
+  if(!row)return;
+  const stat=(ico,num,lbl,color)=>`<div class="mod-stat" style="border-left:3px solid ${color}"><div class="mod-stat-ico">${ico}</div><div><div class="mod-stat-num" style="color:${color}">${num}</div><div class="mod-stat-lbl">${lbl}</div></div></div>`;
+  row.innerHTML=
+    stat('📊',total,'Total','var(--pink)')+
+    stat('⏳',pending,'Pendientes','#f59e0b')+
+    stat('✓',approved,'Aprobados','#22c55e')+
+    stat('📷',photos,'Fotos','#60a5fa')+
+    stat('💬',messages+audios,'Mensajes','#c084fc')+
+    stat('💌',wishes,'Deseos','#ff6b9d');
 }
 function filterPosts(f,btn){
   currentFilter=f;
@@ -1999,34 +2012,53 @@ function renderPosts(){
   container.innerHTML='';
   if(!filtered.length){
     const msg=currentFilter==='approved'?'No hay posts aprobados':currentFilter==='pending'?'No hay posts pendientes':'No hay posts aún';
-    container.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--muted)"><div style="font-size:36px;margin-bottom:12px">📭</div><div>${msg}</div></div>`;
+    container.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:48px;margin-bottom:16px">📭</div><div style="font-size:15px;font-weight:600">${msg}</div></div>`;
     return;
   }
   const typeIco={photo:'📷',message:'💬',wish:'💌',audio:'🎤'};
   const typeLbl={photo:'Foto',message:'Mensaje',wish:'Deseo',audio:'Audio'};
+  const typeColor={photo:'#60a5fa',message:'#c084fc',wish:'#ff6b9d',audio:'#f59e0b'};
   filtered.forEach(post=>{
     const card=document.createElement('div');
-    card.className='post-card'+(post.approved?' approved':' pending');
-    const time=new Date(post.created_at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-    let preview='';
-    if(post.type==='photo'&&post.content) preview=`<img src="${post.content}" alt="foto" style="width:100%;height:140px;object-fit:cover;border-radius:8px;display:block"/>`;
-    else if(post.content) preview=`<div style="font-size:13px;color:var(--muted);background:rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;line-height:1.5;word-break:break-word">${post.content.substring(0,80)}${post.content.length>80?'…':''}</div>`;
-    card.innerHTML=`
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:18px">${typeIco[post.type]||'📝'}</span>
-          <span style="font-size:12px;font-weight:600;color:var(--muted)">${typeLbl[post.type]||post.type}</span>
-          <span style="font-size:11px;color:var(--muted)">${time}</span>
+    card.className='post-card '+(post.approved?'approved':'pending');
+    const d=new Date(post.created_at);
+    const time=d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    const date=d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
+    const color=typeColor[post.type]||'var(--muted)';
+    const statusBadge=`<span class="post-status ${post.approved?'approved':'pending'}">${post.approved?'✓ Aprobado':'⏳ Pendiente'}</span>`;
+    const approveBtn=!post.approved?`<button class="btn-approve-post" onclick="approvePost('${post.id}')">✓ Aprobar</button>`:'';
+
+    let mediaHtml='';
+    if(post.type==='photo'&&post.content){
+      mediaHtml=`<div class="post-thumb">
+        <img src="${post.content}" alt="foto" loading="lazy"/>
+        <div class="post-thumb-overlay">
+          <span style="font-size:11px;font-weight:600;color:#fff">👤 ${post.author||'Anónimo'}</span>
+          ${statusBadge}
         </div>
-        <span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:${post.approved?'rgba(34,197,94,0.15)':'rgba(245,158,11,0.15)'};color:${post.approved?'#22c55e':'#f59e0b'}">${post.approved?'✓ Aprobado':'⏳ Pendiente'}</span>
-      </div>
-      <div style="font-size:13px;font-weight:600">👤 ${post.author||'Anónimo'}</div>
-      ${preview}
-      <div style="display:flex;gap:8px;margin-top:4px">
-        ${!post.approved?`<button onclick="approvePost('${post.id}')" style="flex:1;padding:8px;border-radius:8px;border:1px solid #22c55e;background:rgba(34,197,94,0.1);color:#22c55e;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">✓ Aprobar</button>`:''}
-        <button onclick="deletePost('${post.id}')" style="flex:1;padding:8px;border-radius:8px;border:1px solid #ef4444;background:rgba(239,68,68,0.1);color:#ef4444;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">🗑 Eliminar</button>
-      </div>
-    `;
+      </div>`;
+    }
+
+    const contentPreview=post.type!=='photo'&&post.content
+      ?`<div class="post-content-preview">${post.content.substring(0,120)}${post.content.length>120?'…':''}</div>`:'';
+
+    card.innerHTML=`
+      ${mediaHtml}
+      <div class="post-body">
+        <div class="post-meta">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:16px">${typeIco[post.type]||'📝'}</span>
+            <span style="font-size:11px;font-weight:700;color:${color}">${typeLbl[post.type]||post.type}</span>
+          </div>
+          ${post.type!=='photo'?statusBadge:''}
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="post-author">${post.type!=='photo'?'👤 ':''} ${post.author||'Anónimo'}</span>
+          <span class="post-time">${date} · ${time}</span>
+        </div>
+        ${contentPreview}
+        <div class="post-actions">${approveBtn}<button class="btn-delete-post" onclick="deletePost('${post.id}')">🗑 Eliminar</button></div>
+      </div>`;
     container.appendChild(card);
   });
 }
