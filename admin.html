@@ -1065,15 +1065,138 @@ input[type=range]{accent-color:var(--pink)}
       <!-- LEFT: TABBED EDITOR -->
       <div>
         <!-- TABS -->
-        <div style="display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="dtab active" onclick="switchGDTab('textos',this)">✏️ Textos</button>
+        <div style="display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:0;flex-wrap:wrap">
+          <button class="dtab active" onclick="switchGDTab('plantillas',this)">🎨 Plantillas</button>
+          <button class="dtab" onclick="switchGDTab('textos',this)">✏️ Textos</button>
           <button class="dtab" onclick="switchGDTab('colores',this)">🎨 Colores</button>
           <button class="dtab" onclick="switchGDTab('estilo',this)">🔤 Estilo</button>
           <button class="dtab" onclick="switchGDTab('opciones',this)">⚙️ Funciones</button>
         </div>
+        <div style="height:1px;background:var(--border);margin-bottom:16px"></div>
+
+        <!-- TAB: PLANTILLAS -->
+        <div class="dtab-panel active" id="gdtab-plantillas">
+          <div class="card">
+            <div class="card-title">🎨 Plantillas de diseño</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Elegí una plantilla para aplicar colores y tipografía de un solo click</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+
+              <div onclick="applyGDTemplate('clasico')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#0c0c0f;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#f0176f;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#ffffff">Nombre</div>
+                </div>
+                <div style="background:#faf8f6;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#1a1a1a">Clásico</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#f0176f"></div>
+                </div>
+              </div>
+
+              <div onclick="applyGDTemplate('dark')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#07070f;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#f0176f;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#ffffff">Nombre</div>
+                </div>
+                <div style="background:#0d0d0d;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#e0e0e0">Dark</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#f0176f"></div>
+                </div>
+              </div>
+
+              <div onclick="applyGDTemplate('boda')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#1a0f0f;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#c9a87c;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#fff5ee">Nombre</div>
+                </div>
+                <div style="background:#fffaf7;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#3d2010">Boda</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#c9a87c"></div>
+                </div>
+              </div>
+
+              <div onclick="applyGDTemplate('floral')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#1a0010;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#e91e8c;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#ffe0ef">Nombre</div>
+                </div>
+                <div style="background:#fff0f5;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#3d0020">Floral</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#e91e8c"></div>
+                </div>
+              </div>
+
+              <div onclick="applyGDTemplate('xv')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#1a0030;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#9333ea;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#f8e6ff">Nombre</div>
+                </div>
+                <div style="background:#f8f0ff;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#2d0060">XV Años</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#9333ea"></div>
+                </div>
+              </div>
+
+              <div onclick="applyGDTemplate('dorado')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#0d0900;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#d97706;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#fff8e1">Nombre</div>
+                </div>
+                <div style="background:#fffbf0;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#3d2800">Dorado</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#d97706"></div>
+                </div>
+              </div>
+
+              <div onclick="applyGDTemplate('ocean')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#0a1628;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#2563eb;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#e0f2fe">Nombre</div>
+                </div>
+                <div style="background:#f0f7ff;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#0a1628">Ocean</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#2563eb"></div>
+                </div>
+              </div>
+
+              <div onclick="applyGDTemplate('neon')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#0d001a;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#a855f7;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#f0d0ff">Nombre</div>
+                </div>
+                <div style="background:#0a0015;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#e0c0ff">Neon</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#a855f7"></div>
+                </div>
+              </div>
+
+              <div onclick="applyGDTemplate('boho')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#1a1208;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#a8825c;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#f5ead8">Nombre</div>
+                </div>
+                <div style="background:#f5ead8;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#3d2800">Boho</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#a8825c"></div>
+                </div>
+              </div>
+
+              <div onclick="applyGDTemplate('sunset')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="background:#1a0808;padding:10px 12px">
+                  <div style="font-size:8px;font-weight:700;color:#fb923c;letter-spacing:1px;margin-bottom:3px">EVENTWALL</div>
+                  <div style="font-size:11px;font-weight:800;color:#fff0e8">Nombre</div>
+                </div>
+                <div style="background:#fff5f0;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
+                  <div style="font-size:10px;color:#3d1000">Sunset</div>
+                  <div style="width:10px;height:10px;border-radius:50%;background:#fb923c"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
 
         <!-- TAB: TEXTOS -->
-        <div class="dtab-panel active" id="gdtab-textos">
+        <div class="dtab-panel" id="gdtab-textos">
           <div class="card">
             <div class="card-title">✏️ Textos</div>
             <div style="display:flex;flex-direction:column;gap:12px">
@@ -1247,7 +1370,7 @@ input[type=range]{accent-color:var(--pink)}
         </div>
 
         <!-- SAVE -->
-        <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
+        <div style="margin-top:12px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <button class="btn-pink" onclick="saveGuestDesign()">💾 Guardar y aplicar</button>
           <button class="btn-ghost" onclick="resetGuestDesign()">↺ Resetear</button>
           <button class="btn-ghost" onclick="document.getElementById('gd-main-grid').lastElementChild.scrollIntoView({behavior:'smooth'})" style="display:none" id="btn-preview-scroll">👁 Ver preview</button>
@@ -2283,6 +2406,31 @@ function applyGDPalette(name){
   };
   setC('gd-bg',p.bg);setC('gd-accent',p.accent);setC('gd-hero',p.hero);
   setC('gd-hero-txt',p.heroTxt);setC('gd-text',p.textColor);setC('gd-field-bg',p.fieldBg);
+  updateGuestPreview();
+}
+
+function applyGDTemplate(name){
+  const T={
+    clasico:  {bg:'#faf8f6',accent:'#f0176f',hero:'#0c0c0f',heroTxt:'#ffffff',textColor:'#1a1a1a',fieldBg:'#ffffff',fontTitle:'Syne',font:'DM Sans'},
+    dark:     {bg:'#0d0d0d',accent:'#f0176f',hero:'#07070f',heroTxt:'#ffffff',textColor:'#e0e0e0',fieldBg:'#1a1a1a',fontTitle:'Syne',font:'DM Sans'},
+    boda:     {bg:'#fffaf7',accent:'#c9a87c',hero:'#1a0f0f',heroTxt:'#fff5ee',textColor:'#3d2010',fieldBg:'#fffdf8',fontTitle:'Playfair Display',font:'Lato'},
+    floral:   {bg:'#fff0f5',accent:'#e91e8c',hero:'#1a0010',heroTxt:'#ffe0ef',textColor:'#3d0020',fieldBg:'#fff8fb',fontTitle:'Great Vibes',font:'Nunito'},
+    xv:       {bg:'#f8f0ff',accent:'#9333ea',hero:'#1a0030',heroTxt:'#f8e6ff',textColor:'#2d0060',fieldBg:'#fdf8ff',fontTitle:'Great Vibes',font:'Nunito'},
+    dorado:   {bg:'#fffbf0',accent:'#d97706',hero:'#0d0900',heroTxt:'#fff8e1',textColor:'#3d2800',fieldBg:'#fffef8',fontTitle:'Playfair Display',font:'Lato'},
+    ocean:    {bg:'#f0f7ff',accent:'#2563eb',hero:'#0a1628',heroTxt:'#e0f2fe',textColor:'#0a1628',fieldBg:'#f8fbff',fontTitle:'Raleway',font:'Inter'},
+    neon:     {bg:'#0a0015',accent:'#a855f7',hero:'#0d001a',heroTxt:'#f0d0ff',textColor:'#e0c0ff',fieldBg:'#150025',fontTitle:'Bebas Neue',font:'Inter'},
+    boho:     {bg:'#f5ead8',accent:'#a8825c',hero:'#1a1208',heroTxt:'#f5ead8',textColor:'#3d2800',fieldBg:'#fdf5e6',fontTitle:'Playfair Display',font:'Lato'},
+    sunset:   {bg:'#fff5f0',accent:'#fb923c',hero:'#1a0808',heroTxt:'#fff0e8',textColor:'#3d1000',fieldBg:'#fff8f5',fontTitle:'Syne',font:'DM Sans'},
+  };
+  const t=T[name];if(!t) return;
+  const setC=(id,val)=>{
+    const el=document.getElementById(id);const hex=document.getElementById(id+'-hex');
+    if(el) el.value=val;if(hex) hex.value=val.toUpperCase();
+  };
+  setC('gd-bg',t.bg);setC('gd-accent',t.accent);setC('gd-hero',t.hero);
+  setC('gd-hero-txt',t.heroTxt);setC('gd-text',t.textColor);setC('gd-field-bg',t.fieldBg);
+  const ft=document.getElementById('gd-font-title');if(ft) ft.value=t.fontTitle;
+  const fb=document.getElementById('gd-font');if(fb) fb.value=t.font;
   updateGuestPreview();
 }
 
