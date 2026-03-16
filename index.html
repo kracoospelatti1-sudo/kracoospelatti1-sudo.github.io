@@ -137,6 +137,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
@@ -774,6 +775,47 @@ footer p{font-size:13px;color:var(--muted)}
 .reveal-delay-2{}
 .reveal-delay-3{}
 
+/* ─── ANNOUNCEMENT BAR ─────────────────────────── */
+:root{--announce-h:42px}
+#announce-bar{
+  position:fixed;top:0;left:0;right:0;z-index:250;
+  height:var(--announce-h);
+  background:linear-gradient(90deg,#b01050,var(--pink),#e01060,#b01050);
+  background-size:300% 100%;animation:announce-shift 5s linear infinite;
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  gap:10px;font-size:13px;font-weight:500;padding:0 48px;
+  transition:transform 0.35s ease;
+}
+#announce-bar.hidden{transform:translateY(-100%);pointer-events:none}
+@keyframes announce-shift{0%{background-position:0%}100%{background-position:100%}}
+#announce-bar a{color:#fff;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.55);transition:border-color 0.2s}
+#announce-bar a:hover{border-bottom-color:#fff}
+.announce-close{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.65);cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;transition:color 0.2s}
+.announce-close:hover{color:#fff}
+nav{top:var(--announce-h)!important}
+body.announce-closed nav{top:0!important}
+.hero{padding-top:calc(140px + var(--announce-h))!important}
+body.announce-closed .hero{padding-top:140px!important}
+@media(max-width:900px){
+  nav{padding-top:calc(12px + 0px)}
+  .hero{padding-top:calc(88px + var(--announce-h))!important}
+  body.announce-closed .hero{padding-top:88px!important}
+}
+@media(max-width:580px){
+  #announce-bar{font-size:11px;padding:0 36px 0 10px;gap:6px}
+  :root{--announce-h:48px}
+}
+
+/* ─── NAV ACTIVE LINK ───────────────────────────── */
+.nav-links a.nav-active{color:#fff!important}
+
+/* ─── SWIPER TESTIMONIALS ───────────────────────── */
+.testi-swiper{padding-bottom:52px!important;overflow:visible!important}
+.testi-swiper .swiper-pagination{bottom:0}
+.testi-swiper .swiper-pagination-bullet{background:var(--muted);opacity:1;transition:background 0.2s,transform 0.2s}
+.testi-swiper .swiper-pagination-bullet-active{background:var(--pink);transform:scale(1.25)}
+.testi-swiper .testi{height:100%;margin:0}
+
 /* ─── MARQUEE ──────────────────────────────────── */
 .marquee-outer{
   flex:1;overflow:hidden;
@@ -1078,6 +1120,14 @@ footer p{font-size:13px;color:var(--muted)}
 </head>
 <body>
 
+<!-- ANNOUNCEMENT BAR -->
+<div id="announce-bar">
+  🔥 <strong>Solo 3 fechas disponibles este mes</strong> — Reservá antes de que se agoten &nbsp;
+  <a href="https://wa.me/5492352487435?text=Hola!%20Quiero%20reservar%20EventWall%20%F0%9F%8E%89" target="_blank">Consultar ahora →</a>
+  <button class="announce-close" onclick="closeAnnounce()" aria-label="Cerrar aviso">✕</button>
+</div>
+<script>if(sessionStorage.getItem('ew-announce-closed')){document.getElementById('announce-bar').classList.add('hidden');document.body.classList.add('announce-closed');}</script>
+
 <!-- WA FLOAT -->
 <a class="wa-float" href="https://wa.me/5492352487435?text=Hola!%20Quiero%20saber%20m%C3%A1s%20sobre%20EventWall%20%F0%9F%8E%89" target="_blank" title="Escribinos por WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -1096,7 +1146,7 @@ footer p{font-size:13px;color:var(--muted)}
     <a href="https://wa.me/5492352487435?text=Hola!%20Quiero%20saber%20m%C3%A1s%20sobre%20EventWall%20%F0%9F%8E%89" target="_blank" class="nav-cta">Contactar →</a>
     <a href="admin.html" style="font-size:13px;color:rgba(255,255,255,0.25);padding:8px 12px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;transition:all 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.7)';this.style.borderColor='rgba(255,255,255,0.25)'" onmouseout="this.style.color='rgba(255,255,255,0.25)';this.style.borderColor='rgba(255,255,255,0.1)'">⚙</a>
   </div>
-  <button class="nav-mobile-btn" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex';document.querySelector('.nav-links').style.flexDirection='column';document.querySelector('.nav-links').style.position='fixed';document.querySelector('.nav-links').style.top='60px';document.querySelector('.nav-links').style.left='0';document.querySelector('.nav-links').style.right='0';document.querySelector('.nav-links').style.background='rgba(7,7,14,0.98)';document.querySelector('.nav-links').style.padding='24px';document.querySelector('.nav-links').style.gap='20px';document.querySelector('.nav-links').style.borderBottom='1px solid rgba(255,255,255,0.07)'">☰</button>
+  <button class="nav-mobile-btn" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menú">☰</button>
 </nav>
 
 <!-- HERO -->
@@ -1405,40 +1455,95 @@ footer p{font-size:13px;color:var(--muted)}
     <div class="section-label reveal">Testimonios</div>
     <h2 class="reveal">Lo que dicen<br><span class="c">nuestros clientes</span></h2>
     <p class="section-sub reveal">Eventos que ya vivieron la experiencia EventWall.</p>
-    <div class="testi-grid">
-      <div class="testi reveal">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">Los invitados estuvieron toda la noche sacando fotos para verlas en la pantalla. Fue el hit absoluto de la boda. Todos preguntaban cómo contratarlo.</p>
-        <div class="testi-author">
-          <div class="testi-avatar">👰</div>
-          <div>
-            <div class="testi-name">Carolina & Martín</div>
-            <div class="testi-role">Boda · Salón Crystal, Buenos Aires</div>
+    <div class="swiper testi-swiper" data-aos="fade-up">
+      <div class="swiper-wrapper">
+
+        <div class="swiper-slide">
+          <div class="testi">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">Los invitados estuvieron toda la noche sacando fotos para verlas en la pantalla. Fue el hit absoluto de la boda. Todos preguntaban cómo contratarlo.</p>
+            <div class="testi-author">
+              <div class="testi-avatar">👰</div>
+              <div>
+                <div class="testi-name">Carolina & Martín</div>
+                <div class="testi-role">Boda · Salón Crystal, Buenos Aires</div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="testi reveal reveal-delay-1">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">Lo usamos en el evento de fin de año corporativo. Los empleados amaron poder participar desde el celular. Totalmente recomendable.</p>
-        <div class="testi-author">
-          <div class="testi-avatar">🏢</div>
-          <div>
-            <div class="testi-name">Luciana R.</div>
-            <div class="testi-role">Evento corporativo · 200 personas</div>
+
+        <div class="swiper-slide">
+          <div class="testi">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">Lo usamos en el evento de fin de año corporativo. Los empleados amaron poder participar desde el celular. Totalmente recomendable.</p>
+            <div class="testi-author">
+              <div class="testi-avatar">🏢</div>
+              <div>
+                <div class="testi-name">Luciana R.</div>
+                <div class="testi-role">Evento corporativo · 200 personas</div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="testi reveal reveal-delay-2">
-        <div class="testi-stars">★★★★★</div>
-        <p class="testi-text">Mi hija se emocionó cuando vio los mensajes de todos apareciendo en pantalla durante su fiesta de 15. Fue un momento increíble.</p>
-        <div class="testi-author">
-          <div class="testi-avatar">🎂</div>
-          <div>
-            <div class="testi-name">Marcela V.</div>
-            <div class="testi-role">Fiesta de 15 · Córdoba</div>
+
+        <div class="swiper-slide">
+          <div class="testi">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">Mi hija se emocionó cuando vio los mensajes de todos apareciendo en pantalla durante su fiesta de 15. Fue un momento increíble.</p>
+            <div class="testi-author">
+              <div class="testi-avatar">🎂</div>
+              <div>
+                <div class="testi-name">Marcela V.</div>
+                <div class="testi-role">Fiesta de 15 · Córdoba</div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <div class="swiper-slide">
+          <div class="testi">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">Contratamos EventWall para la boda y fue un éxito total. Las fotos aparecían en pantalla y todos querían ver las suyas. El álbum que llegó por email con el PDF fue un detalle hermoso.</p>
+            <div class="testi-author">
+              <div class="testi-avatar">💍</div>
+              <div>
+                <div class="testi-name">Diego & Sofía</div>
+                <div class="testi-role">Boda · Mendoza · 180 invitados</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide">
+          <div class="testi">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">Para mi cumpleaños de 50 quería algo diferente. EventWall hizo que los mensajes de mis seres queridos aparecieran en la pantalla en tiempo real. Lloré de emoción.</p>
+            <div class="testi-author">
+              <div class="testi-avatar">🎉</div>
+              <div>
+                <div class="testi-name">Patricia M.</div>
+                <div class="testi-role">Cumpleaños 50 · Rosario</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide">
+          <div class="testi">
+            <div class="testi-stars">★★★★★</div>
+            <p class="testi-text">Lo implementamos en nuestra graduación universitaria. Más de 300 egresados participando, subiendo fotos y mensajes. La pantalla estuvo activa toda la noche.</p>
+            <div class="testi-author">
+              <div class="testi-avatar">🎓</div>
+              <div>
+                <div class="testi-name">Comisión de Graduados UNCUYO</div>
+                <div class="testi-role">Graduación · 300+ asistentes</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
+      <div class="swiper-pagination"></div>
     </div>
   </div>
 </div>
@@ -1735,7 +1840,53 @@ function submitForm(){
   window.open('https://wa.me/5492352487435?text='+encodeURIComponent(text),'_blank');
 }
 
-// FAQ accordion
+// ── ANNOUNCEMENT BAR ─────────────────────────────
+function closeAnnounce(){
+  document.getElementById('announce-bar').classList.add('hidden');
+  document.body.classList.add('announce-closed');
+  sessionStorage.setItem('ew-announce-closed','1');
+}
+
+// ── MOBILE MENU ───────────────────────────────────
+function toggleMobileMenu(){
+  const links=document.querySelector('.nav-links');
+  const btn=document.getElementById('nav-hamburger');
+  const isOpen=links.classList.contains('mobile-open');
+  if(isOpen){
+    links.classList.remove('mobile-open');
+    links.style.cssText='';
+    btn.textContent='☰';
+  }else{
+    links.classList.add('mobile-open');
+    const navTop=document.getElementById('navbar').offsetHeight;
+    links.style.cssText=`display:flex;flex-direction:column;position:fixed;top:${navTop}px;left:0;right:0;background:rgba(7,7,14,0.98);padding:24px;gap:20px;border-bottom:1px solid rgba(255,255,255,0.07);z-index:199;backdrop-filter:blur(20px)`;
+    btn.textContent='✕';
+  }
+}
+// Close menu on link click or outside click
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.nav-links a').forEach(a=>{
+    a.addEventListener('click',()=>{
+      const links=document.querySelector('.nav-links');
+      links.classList.remove('mobile-open');
+      links.style.cssText='';
+      document.getElementById('nav-hamburger').textContent='☰';
+    });
+  });
+  document.addEventListener('click',e=>{
+    const nav=document.getElementById('navbar');
+    if(!nav.contains(e.target)){
+      const links=document.querySelector('.nav-links');
+      if(links.classList.contains('mobile-open')){
+        links.classList.remove('mobile-open');
+        links.style.cssText='';
+        document.getElementById('nav-hamburger').textContent='☰';
+      }
+    }
+  });
+});
+
+// ── FAQ ACCORDION ─────────────────────────────────
 function toggleFaq(btn){
   const item=btn.closest('.faq-item');
   const isOpen=item.classList.contains('open');
@@ -1743,11 +1894,53 @@ function toggleFaq(btn){
   if(!isOpen) item.classList.add('open');
 }
 
-// Nav scroll effect
+// ── NAV SCROLL + ACTIVE SECTION ───────────────────
 const nav=document.getElementById('navbar');
 window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
 
-// AOS: apply to legacy .reveal elements then init
+const navLinks=document.querySelectorAll('.nav-links a[href^="#"]');
+const sectionIds=['como-funciona','features','precios','contacto'];
+const sectionObserver=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const id=e.target.getAttribute('id');
+      navLinks.forEach(a=>{
+        a.classList.toggle('nav-active',a.getAttribute('href')==='#'+id);
+      });
+    }
+  });
+},{threshold:0.35,rootMargin:'-60px 0px -55% 0px'});
+sectionIds.forEach(id=>{const el=document.getElementById(id);if(el)sectionObserver.observe(el);});
+
+// ── HERO MOCKUP ANIMATION ─────────────────────────
+const newBadge=document.querySelector('.m-new-badge');
+if(newBadge){
+  const badges=['🎉 Nueva foto de Agustín','💬 Mensaje de Valentina','📸 Foto de Rodrigo','💌 Deseo especial de Lucía','🎤 Audio de Marcos','🎊 Foto de Camila'];
+  let bi=0;
+  newBadge.style.transition='opacity 0.3s ease,transform 0.3s ease';
+  setInterval(()=>{
+    newBadge.style.opacity='0';newBadge.style.transform='translateX(-8px)';
+    setTimeout(()=>{
+      bi=(bi+1)%badges.length;
+      newBadge.textContent=badges[bi];
+      newBadge.style.opacity='1';newBadge.style.transform='';
+    },320);
+  },3200);
+}
+
+// ── DYNAMIC COUNTDOWN ─────────────────────────────
+(function(){
+  const months=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const now=new Date();
+  const endOfMonth=new Date(now.getFullYear(),now.getMonth()+1,0,23,59,59);
+  const daysLeft=Math.max(1,Math.ceil((endOfMonth-now)/(1000*60*60*24)));
+  const dEl=document.getElementById('cta2-days');
+  const mEl=document.getElementById('cta2-month');
+  if(dEl) dEl.textContent=daysLeft;
+  if(mEl) mEl.textContent=months[now.getMonth()];
+})();
+
+// ── AOS: apply to legacy .reveal elements then init
 document.querySelectorAll('.reveal').forEach(el=>{
   if(!el.hasAttribute('data-aos')) el.setAttribute('data-aos','fade-up');
   if(el.classList.contains('reveal-delay-1')) el.setAttribute('data-aos-delay','100');
@@ -1803,6 +1996,14 @@ if(spInner)spObserver.observe(spInner);
 // AOS init
 AOS.init({duration:750,easing:'ease-out-cubic',once:true,offset:60});
 
+// ── SWIPER TESTIMONIALS ───────────────────────────
+new Swiper('.testi-swiper',{
+  slidesPerView:1,spaceBetween:16,loop:true,
+  autoplay:{delay:4500,disableOnInteraction:false,pauseOnMouseEnter:true},
+  pagination:{el:'.testi-swiper .swiper-pagination',clickable:true},
+  breakpoints:{768:{slidesPerView:2},1100:{slidesPerView:3}},
+});
+
 // CTA sticky
 const ctaSticky=document.getElementById('cta-sticky');
 const heroEl=document.querySelector('.hero');
@@ -1852,5 +2053,6 @@ if(spGrid){
   spObs.observe(spGrid);
 }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </body>
 </html>
