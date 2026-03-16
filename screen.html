@@ -45,12 +45,37 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 
 /* SIDEBAR */
 .sidebar{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(0,0,0,0.3);overflow:hidden;min-height:0}
-.qr-section{padding:clamp(8px,1vw,16px);margin-top:auto;flex-shrink:0;overflow:hidden}
-.qr-inner{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,0.6vw,10px);text-align:center;overflow:hidden}
-.qr-box{background:#fff;padding:clamp(6px,0.7vw,12px);border-radius:clamp(8px,0.8vw,14px)}
-.qr-box img{width:clamp(90px,10vw,160px)!important;height:clamp(90px,10vw,160px)!important;image-rendering:pixelated;display:block}
-.qr-text{font-size:clamp(9px,0.85vw,12px);color:rgba(255,255,255,0.45);line-height:1.4;overflow:hidden}
-.qr-text strong{color:rgba(255,255,255,0.8);display:block;font-size:clamp(9px,0.9vw,13px);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qr-section{padding:clamp(8px,1vw,14px);margin-top:auto;flex-shrink:0;overflow:hidden}
+.qr-inner{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:clamp(10px,1vw,16px);
+  padding:clamp(8px,1vw,14px);
+  display:flex;flex-direction:column;align-items:center;
+  gap:clamp(6px,0.7vw,10px);text-align:center;overflow:hidden;
+}
+.qr-chip{
+  font-size:clamp(8px,0.7vw,10px);font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--accent,#f0176f);
+  background:rgba(240,23,111,0.12);border:1px solid rgba(240,23,111,0.25);
+  padding:3px 8px;border-radius:20px;
+}
+.qr-box{
+  background:#fff;
+  padding:clamp(5px,0.6vw,10px);
+  border-radius:clamp(8px,0.8vw,12px);
+  box-shadow:0 0 0 1px rgba(255,255,255,0.1),0 0 clamp(12px,1.5vw,24px) rgba(240,23,111,0.25);
+  position:relative;overflow:hidden;
+}
+.qr-box::after{
+  content:'';position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent,#f0176f),transparent);
+  animation:qrScan 2.5s ease-in-out infinite;top:0;
+}
+@keyframes qrScan{0%{top:0;opacity:1}100%{top:100%;opacity:0.6}}
+.qr-box img{width:clamp(80px,9vw,150px)!important;height:clamp(80px,9vw,150px)!important;image-rendering:pixelated;display:block}
+.qr-text{font-size:clamp(9px,0.8vw,12px);color:rgba(255,255,255,0.4);line-height:1.5;overflow:hidden}
+.qr-text strong{color:rgba(255,255,255,0.85);display:block;font-size:clamp(9px,0.85vw,13px);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* MESSAGE BUBBLE OVERLAY */
 @keyframes bubbleIn{from{transform:scale(0.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
@@ -275,8 +300,9 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
       <div class="msg-strip" id="msg-strip"></div>
       <div class="qr-section">
         <div class="qr-inner">
+          <div class="qr-chip">📸 Escaneá</div>
           <div class="qr-box"><img id="qr-img" width="120" height="120" style="display:block"/></div>
-          <div class="qr-text"><strong>Escaneá para participar</strong>Subí fotos y mensajes<br>en tiempo real</div>
+          <div class="qr-text"><strong>Participá en el evento</strong>Subí fotos · Mensajes<br>en tiempo real</div>
         </div>
       </div>
     </div>
