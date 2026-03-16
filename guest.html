@@ -851,6 +851,7 @@ const params=new URLSearchParams(location.search);
 let eventId=params.get('event');
 
 let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
+let gdFlags={showReactions:true,showPhotoEdit:true}; // updated by applyGuestDesign
 let audioChunks=[],recTimer=null,recSecs=0,audioUrl=null;
 let selectedFrame='none';
 
@@ -1522,16 +1523,20 @@ async function applyGuestDesign(ev){
   const voteBtn=document.getElementById('vote-btn');
   if(voteBtn) voteBtn.style.display='none';
 
-  // Reactions
-  const showRxn=d.showReactions!==false;
-  document.querySelectorAll('.rxn-btns,.rxn-bar').forEach(el=>el.style.display=showRxn?'':'none');
+  // Save flags globally for use in photo handler
+  gdFlags.showReactions=d.showReactions!==false;
+  gdFlags.showPhotoEdit=d.showPhotoEdit!==false;
 
-  // Photo editing (frames, filters, stickers)
-  const showPhotoEdit=d.showPhotoEdit!==false;
-  ['frame-picker','filter-picker','sticker-picker'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.style.display=showPhotoEdit?'':'none';
-  });
+  // Reactions — hide all gallery-reactions divs
+  document.querySelectorAll('.gallery-reactions').forEach(el=>el.style.display=gdFlags.showReactions?'':'none');
+
+  // Photo editing (frames, filters, stickers) — only hide if currently visible
+  if(!gdFlags.showPhotoEdit){
+    ['frame-picker','filter-picker','sticker-picker'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.style.display='none';
+    });
+  }
 
   // Activate first visible tab if current is hidden
   const activeBtn=document.querySelector('.tab-btn.active');
@@ -1683,12 +1688,14 @@ function handleFileSelect(input){
       document.getElementById('canvas-preview-wrap').style.display='block';
       document.getElementById('caption-wrap').style.display='block';
       document.getElementById('upload-zone').style.display='none';
-      document.getElementById('frame-picker').style.display='block';
-      document.getElementById('filter-picker').style.display='block';
-      document.getElementById('sticker-picker').style.display='block';
-      buildFramePicker();
-      buildFilterPicker();
-      buildStickerPicker();
+      if(gdFlags.showPhotoEdit){
+        document.getElementById('frame-picker').style.display='block';
+        document.getElementById('filter-picker').style.display='block';
+        document.getElementById('sticker-picker').style.display='block';
+        buildFramePicker();
+        buildFilterPicker();
+        buildStickerPicker();
+      }
     };
     img.src=e.target.result;
   };
@@ -2518,7 +2525,7 @@ function renderGalleryCard(post,counts){
   }).join('');
   card.innerHTML='<img class="gallery-img" src="'+post.content+'" loading="lazy" alt="'+post.author+'"/>'
     +'<div class="gallery-author">'+post.author+'</div>'
-    +'<div class="gallery-reactions">'+btns+'</div>';
+    +(gdFlags.showReactions?'<div class="gallery-reactions">'+btns+'</div>':'');
   grid.appendChild(card);
 }
 
