@@ -455,6 +455,10 @@ body{
 .rxn-emoji{font-size:17px;line-height:1}
 .rxn-count{font-size:10px;font-weight:700;color:var(--muted);min-height:13px}
 .rxn-btn.reacted .rxn-count{color:var(--pink)}
+.rxn-popover{position:fixed;z-index:999;background:#1a1a2e;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:12px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,0.5);max-width:200px;pointer-events:none;opacity:0;transition:opacity 0.15s}
+.rxn-popover.show{opacity:1}
+.rxn-popover-title{font-size:13px;font-weight:700;margin-bottom:6px}
+.rxn-popover-names{color:rgba(255,255,255,0.75);line-height:1.6}
 
 .my-photo-card{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:#000;cursor:pointer;width:100%;max-width:100%}
 .my-photo-rxn{position:absolute;top:8px;right:8px;z-index:3;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);border-radius:20px;padding:3px 8px;font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;gap:3px;pointer-events:none}
@@ -2479,7 +2483,42 @@ async function deleteMyPhoto(id, cardEl){
 
 // ── GALLERY & REACTIONS ───────────────────────────────────────
 const REACTION_EMOJIS=['❤️','🎉','😍','🔥'];
-let myReactions={}; // key: postId → emoji (one reaction per photo per person)
+let myReactions={};
+
+// Popover singleton
+let _rxnPopover=null,_rxnPopoverTimer=null;
+function getRxnPopover(){
+  if(!_rxnPopover){
+    _rxnPopover=document.createElement('div');
+    _rxnPopover.className='rxn-popover';
+    document.body.appendChild(_rxnPopover);
+    document.addEventListener('click',()=>hideRxnPopover(),{passive:true});
+  }
+  return _rxnPopover;
+}
+function hideRxnPopover(){
+  if(_rxnPopover) _rxnPopover.classList.remove('show');
+  clearTimeout(_rxnPopoverTimer);
+}
+function showRxnPopover(e,btn,emoji){
+  e.preventDefault();
+  const names=btn.dataset.rxnNames?JSON.parse(decodeURIComponent(btn.dataset.rxnNames)):[];
+  if(!names.length) return;
+  const pop=getRxnPopover();
+  pop.innerHTML='<div class="rxn-popover-title">'+emoji+' '+names.length+'</div>'
+    +'<div class="rxn-popover-names">'+names.join(', ')+'</div>';
+  // Position near button
+  const r=btn.getBoundingClientRect();
+  pop.style.left=Math.min(r.left,window.innerWidth-210)+'px';
+  pop.style.top=(r.top-pop.offsetHeight-8)+'px';
+  pop.classList.add('show');
+  // Reposition after render (offsetHeight now correct)
+  requestAnimationFrame(()=>{
+    pop.style.top=(r.top-pop.offsetHeight-8)+'px';
+  });
+  clearTimeout(_rxnPopoverTimer);
+  _rxnPopoverTimer=setTimeout(hideRxnPopover,3000);
+} // key: postId → emoji (one reaction per photo per person)
 
 async function loadGallery(){
   const grid=document.getElementById('gallery-grid');
@@ -2497,12 +2536,14 @@ async function loadGallery(){
     const reactions=orFilter
       ? await apiRest('reactions?or=('+orFilter+')&select=post_id,emoji,guest_name')
       : [];
-    // aggregate
+    // aggregate counts and names per emoji per post
     const rxnMap={};
     myReactions={};
     reactions.forEach(r=>{
       if(!rxnMap[r.post_id]) rxnMap[r.post_id]={};
-      rxnMap[r.post_id][r.emoji]=(rxnMap[r.post_id][r.emoji]||0)+1;
+      if(!rxnMap[r.post_id][r.emoji]) rxnMap[r.post_id][r.emoji]={count:0,names:[]};
+      rxnMap[r.post_id][r.emoji].count++;
+      if(r.guest_name) rxnMap[r.post_id][r.emoji].names.push(r.guest_name);
       if(name && r.guest_name===name) myReactions[r.post_id]=r.emoji;
     });
     photos.forEach(p=>renderGalleryCard(p,rxnMap[p.id]||{}));
@@ -2517,9 +2558,12 @@ function renderGalleryCard(post,counts){
   card.className='gallery-card';
   card.dataset.postId=post.id;
   const btns=REACTION_EMOJIS.map(e=>{
-    const c=counts[e]||0;
+    const data=counts[e]||{count:0,names:[]};
+    const c=data.count;
     const active=myReactions[post.id]===e?' reacted':'';
-    return '<button class="rxn-btn'+active+'" onclick="toggleReaction(\''+post.id+'\',\''+e+'\',this)">'
+    const namesAttr=c?'data-rxn-names="'+encodeURIComponent(JSON.stringify(data.names))+'"':'';
+    return '<button class="rxn-btn'+active+'" onclick="toggleReaction(\''+post.id+'\',\''+e+'\',this)" '
+      +namesAttr+' oncontextmenu="showRxnPopover(event,this,\''+e+'\');return false">'
       +'<span class="rxn-emoji">'+e+'</span>'
       +'<span class="rxn-count">'+(c||'')+'</span>'
       +'</button>';
@@ -2527,6 +2571,13 @@ function renderGalleryCard(post,counts){
   card.innerHTML='<img class="gallery-img" src="'+post.content+'" loading="lazy" alt="'+post.author+'"/>'
     +'<div class="gallery-author">'+post.author+'</div>'
     +(gdFlags.showReactions?'<div class="gallery-reactions">'+btns+'</div>':'');
+  // Long-press on rxn buttons to show who reacted (mobile)
+  card.querySelectorAll('.rxn-btn[data-rxn-names]').forEach(btn=>{
+    let lt;
+    btn.addEventListener('touchstart',()=>{lt=setTimeout(()=>showRxnPopover({preventDefault:()=>{}},btn,btn.querySelector('.rxn-emoji').textContent),500)},{passive:true});
+    btn.addEventListener('touchend',()=>clearTimeout(lt),{passive:true});
+    btn.addEventListener('touchmove',()=>clearTimeout(lt),{passive:true});
+  });
   grid.appendChild(card);
 }
 
