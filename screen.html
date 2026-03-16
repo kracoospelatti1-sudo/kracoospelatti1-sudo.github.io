@@ -438,7 +438,7 @@ function applyTheme(design){
 
   // Sidebar width
   const sidebar=document.querySelector('.sidebar');
-  const sidebarW=parseInt(design.sidebarWidth)||180;
+  const sidebarW=design.sidebarWidth!=null?parseInt(design.sidebarWidth):240;
   if(sidebar) sidebar.style.display=sidebarW===0?'none':'flex';
   const grid=document.querySelector('.grid');
   if(grid&&sidebarW>0) grid.style.gridTemplateColumns='1fr '+sidebarW+'px';
