@@ -2425,9 +2425,9 @@ async function loadGallery(){
     const photos=await apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&approved=eq.true&order=created_at.desc&limit=60');
     loading.style.display='none';
     if(!photos.length){empty.style.display='block';return;}
-    const postIds=photos.map(p=>p.id).join(',');
-    const reactions=postIds
-      ? await apiRest('reactions?post_id=in.('+postIds+')&select=post_id,emoji,guest_name')
+    const orFilter=photos.map(p=>'post_id.eq.'+p.id).join(',');
+    const reactions=orFilter
+      ? await apiRest('reactions?or=('+orFilter+')&select=post_id,emoji,guest_name')
       : [];
     // aggregate
     const rxnMap={};
