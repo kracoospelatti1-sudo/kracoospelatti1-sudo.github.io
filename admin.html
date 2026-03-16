@@ -2039,8 +2039,12 @@ function renderPosts(){
       </div>`;
     }
 
-    const contentPreview=post.type!=='photo'&&post.content
-      ?`<div class="post-content-preview">${post.content.substring(0,120)}${post.content.length>120?'…':''}</div>`:'';
+    let contentPreview='';
+    if(post.type==='audio'){
+      contentPreview=`<div class="post-content-preview" style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">🎤</span><span style="font-style:italic">Mensaje de voz</span></div>`;
+    } else if(post.type!=='photo'&&post.content){
+      contentPreview=`<div class="post-content-preview">${post.content.substring(0,120)}${post.content.length>120?'…':''}</div>`;
+    }
 
     card.innerHTML=`
       ${mediaHtml}
