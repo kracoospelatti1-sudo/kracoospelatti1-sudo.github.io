@@ -37,6 +37,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .featured-overlay{position:absolute;bottom:0;left:0;right:0;padding:clamp(16px,2vh,32px) clamp(20px,2.5vw,40px);background:linear-gradient(transparent,rgba(0,0,0,0.85));z-index:2;display:none}
 .featured-caption{font-family:var(--font-title);font-size:clamp(16px,1.8vw,28px);font-weight:700;line-height:1.4;margin-bottom:6px;color:var(--txt)}
 .featured-author{font-size:clamp(11px,1.1vw,16px);color:var(--accent);font-weight:600}
+.featured-reactions{display:flex;gap:clamp(6px,0.8vw,12px);flex-wrap:wrap;margin-top:clamp(8px,1vh,14px)}
+.feat-rxn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.25);border-radius:40px;padding:clamp(4px,0.5vh,8px) clamp(10px,1.2vw,18px);animation:badgePop 0.3s ease}
+.feat-rxn-emoji{font-size:clamp(16px,1.8vw,26px);line-height:1}
+.feat-rxn-count{font-size:clamp(13px,1.4vw,20px);font-weight:800;color:#fff}
 .no-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:rgba(255,255,255,0.2);z-index:1}
 .no-content .big{font-size:clamp(40px,6vw,80px)}
 
@@ -293,6 +297,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
       <div class="featured-overlay" id="featured-overlay">
         <div class="featured-caption" id="featured-caption"></div>
         <div class="featured-author" id="featured-author"></div>
+        <div class="featured-reactions" id="featured-reactions"></div>
       </div>
     </div>
 
@@ -847,11 +852,17 @@ function showFeatured(post,idx){
     document.getElementById('no-content').style.display='none';
     const hasCaption=post.content_text&&post.content_text.trim();
     const overlay=document.getElementById('featured-overlay');
-    overlay.style.display=hasCaption?'block':'none';
+    document.getElementById('featured-reactions').innerHTML='';
     if(hasCaption){
       document.getElementById('featured-caption').textContent='"'+post.content_text+'"';
       document.getElementById('featured-author').textContent='— '+post.author;
+      overlay.style.display='block';
+    } else {
+      document.getElementById('featured-caption').textContent='';
+      document.getElementById('featured-author').textContent='';
+      overlay.style.display='none';
     }
+    updateFeaturedReactions(post.id);
   }
 
   // Preload image first, then apply transition
@@ -1082,7 +1093,31 @@ async function init(){
   setInterval(pollWishes,5000);
   setInterval(pollMessages,3500);
   setInterval(pollForPolls,4000);
-setInterval(pollMoments,3000);
+  setInterval(pollMoments,3000);
+  setInterval(()=>{if(currentFeaturedPostId)updateFeaturedReactions(currentFeaturedPostId);},5000);
+}
+
+async function updateFeaturedReactions(postId){
+  try{
+    const rxns=await api('reactions?post_id=eq.'+postId+'&select=emoji');
+    const counts={};
+    rxns.forEach(r=>{counts[r.emoji]=(counts[r.emoji]||0)+1;});
+    const container=document.getElementById('featured-reactions');
+    if(!container)return;
+    container.innerHTML='';
+    const EMOJIS=['❤️','🎉','😍','🔥'];
+    EMOJIS.forEach(e=>{
+      if(!counts[e])return;
+      const pill=document.createElement('span');
+      pill.className='feat-rxn';
+      pill.innerHTML='<span class="feat-rxn-emoji">'+e+'</span><span class="feat-rxn-count">'+counts[e]+'</span>';
+      container.appendChild(pill);
+    });
+    const overlay=document.getElementById('featured-overlay');
+    const hasCaption=document.getElementById('featured-caption').textContent.trim();
+    if(container.children.length>0||hasCaption) overlay.style.display='block';
+    else overlay.style.display='none';
+  }catch(e){}
 }
 
 

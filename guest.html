@@ -2411,7 +2411,7 @@ async function deleteMyPhoto(id, cardEl){
 
 // ── GALLERY & REACTIONS ───────────────────────────────────────
 const REACTION_EMOJIS=['❤️','🎉','😍','🔥'];
-let myReactions={}; // key: postId_emoji → true
+let myReactions={}; // key: postId → emoji (one reaction per photo per person)
 
 async function loadGallery(){
   const grid=document.getElementById('gallery-grid');
@@ -2435,7 +2435,7 @@ async function loadGallery(){
     reactions.forEach(r=>{
       if(!rxnMap[r.post_id]) rxnMap[r.post_id]={};
       rxnMap[r.post_id][r.emoji]=(rxnMap[r.post_id][r.emoji]||0)+1;
-      if(name && r.guest_name===name) myReactions[r.post_id+'_'+r.emoji]=true;
+      if(name && r.guest_name===name) myReactions[r.post_id]=r.emoji;
     });
     photos.forEach(p=>renderGalleryCard(p,rxnMap[p.id]||{}));
   }catch(e){
@@ -2450,7 +2450,7 @@ function renderGalleryCard(post,counts){
   card.dataset.postId=post.id;
   const btns=REACTION_EMOJIS.map(e=>{
     const c=counts[e]||0;
-    const active=myReactions[post.id+'_'+e]?' reacted':'';
+    const active=myReactions[post.id]===e?' reacted':'';
     return '<button class="rxn-btn'+active+'" onclick="toggleReaction(\''+post.id+'\',\''+e+'\',this)">'
       +'<span class="rxn-emoji">'+e+'</span>'
       +'<span class="rxn-count">'+(c||'')+'</span>'
@@ -2465,34 +2465,47 @@ function renderGalleryCard(post,counts){
 async function toggleReaction(postId,emoji,btn){
   const name=document.getElementById('guest-name').value.trim();
   if(!name){toast('Ingresá tu nombre para reaccionar 👆');return;}
-  const key=postId+'_'+emoji;
-  const already=myReactions[key];
-  const countEl=btn.querySelector('.rxn-count');
-  const cur=parseInt(countEl.textContent)||0;
-  if(already){
-    btn.classList.remove('reacted');
-    countEl.textContent=cur>1?cur-1:'';
-    delete myReactions[key];
-    try{
-      await apiRest('reactions?post_id=eq.'+postId+'&guest_name=eq.'+encodeURIComponent(name)+'&emoji=eq.'+encodeURIComponent(emoji),{method:'DELETE'});
-    }catch(e){
-      btn.classList.add('reacted');
-      countEl.textContent=cur||'';
-      myReactions[key]=true;
+
+  const prevEmoji=myReactions[postId]; // emoji currently chosen for this photo (if any)
+  const isSame=prevEmoji===emoji;
+  const card=btn.closest('.gallery-card');
+
+  // Optimistic UI: clear all reacted states on this card
+  card.querySelectorAll('.rxn-btn').forEach(b=>{
+    const bEmoji=b.querySelector('.rxn-emoji').textContent;
+    const bCount=b.querySelector('.rxn-count');
+    const bCur=parseInt(bCount.textContent)||0;
+    if(b.classList.contains('reacted')){
+      b.classList.remove('reacted');
+      bCount.textContent=bCur>1?bCur-1:'';
     }
-  }else{
-    btn.classList.add('reacted');
-    countEl.textContent=cur+1;
-    myReactions[key]=true;
-    try{
+    // If switching to a new emoji, increment its count
+    if(!isSame && bEmoji===emoji){
+      b.classList.add('reacted');
+      bCount.textContent=bCur+1;
+    }
+  });
+
+  if(isSame){
+    delete myReactions[postId];
+  } else {
+    myReactions[postId]=emoji;
+  }
+
+  try{
+    // Always delete existing reaction for this photo first
+    if(prevEmoji){
+      await apiRest('reactions?post_id=eq.'+postId+'&guest_name=eq.'+encodeURIComponent(name),{method:'DELETE'});
+    }
+    // Insert new reaction unless toggling off
+    if(!isSame){
       await apiRest('reactions',{method:'POST',body:JSON.stringify({
         post_id:postId,guest_name:name,emoji:emoji
       })});
-    }catch(e){
-      btn.classList.remove('reacted');
-      countEl.textContent=cur||'';
-      delete myReactions[key];
     }
+  }catch(e){
+    // Revert on error by reloading gallery
+    loadGallery();
   }
 }
 </script>
