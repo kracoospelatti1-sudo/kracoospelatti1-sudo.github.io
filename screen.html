@@ -852,7 +852,7 @@ function showFeatured(post,idx){
     document.getElementById('no-content').style.display='none';
     const hasCaption=post.content_text&&post.content_text.trim();
     const overlay=document.getElementById('featured-overlay');
-    document.getElementById('featured-reactions').innerHTML='';
+    document.getElementById('featured-reactions').innerHTML=''; // clear on photo change
     if(hasCaption){
       document.getElementById('featured-caption').textContent='"'+post.content_text+'"';
       document.getElementById('featured-author').textContent='— '+post.author;
@@ -1104,14 +1104,22 @@ async function updateFeaturedReactions(postId){
     rxns.forEach(r=>{counts[r.emoji]=(counts[r.emoji]||0)+1;});
     const container=document.getElementById('featured-reactions');
     if(!container)return;
-    container.innerHTML='';
     const EMOJIS=['❤️','🎉','😍','🔥'];
     EMOJIS.forEach(e=>{
-      if(!counts[e])return;
-      const pill=document.createElement('span');
-      pill.className='feat-rxn';
-      pill.innerHTML='<span class="feat-rxn-emoji">'+e+'</span><span class="feat-rxn-count">'+counts[e]+'</span>';
-      container.appendChild(pill);
+      let pill=container.querySelector('[data-rxn="'+e+'"]');
+      if(counts[e]){
+        if(!pill){
+          pill=document.createElement('span');
+          pill.className='feat-rxn';
+          pill.dataset.rxn=e;
+          pill.innerHTML='<span class="feat-rxn-emoji">'+e+'</span><span class="feat-rxn-count">'+counts[e]+'</span>';
+          container.appendChild(pill);
+        } else {
+          pill.querySelector('.feat-rxn-count').textContent=counts[e];
+        }
+      } else if(pill){
+        pill.remove();
+      }
     });
     const overlay=document.getElementById('featured-overlay');
     const hasCaption=document.getElementById('featured-caption').textContent.trim();
