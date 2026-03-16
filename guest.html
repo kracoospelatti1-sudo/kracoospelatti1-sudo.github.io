@@ -855,7 +855,15 @@ const params=new URLSearchParams(location.search);
 let eventId=params.get('event');
 
 let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
-let gdFlags={showReactions:true,showPhotoEdit:true,showDeletePhoto:true}; // updated by applyGuestDesign
+let gdFlags={showReactions:true,showPhotoEdit:true,showDeletePhoto:true};
+
+function formatDateES(str){
+  if(!str) return '';
+  const m=str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m) return str;
+  const months=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return parseInt(m[3])+' de '+months[parseInt(m[2])-1]+' de '+m[1];
+} // updated by applyGuestDesign
 let audioChunks=[],recTimer=null,recSecs=0,audioUrl=null;
 let selectedFrame='none';
 
@@ -1567,7 +1575,7 @@ async function init(){
 
     document.title=ev.name+' · EventWall';
     document.getElementById('ev-name').textContent=ev.name;
-    document.getElementById('ev-sub').textContent=[ev.date,ev.subtitle].filter(Boolean).join(' · ');
+    document.getElementById('ev-sub').textContent=[formatDateES(ev.date),ev.subtitle].filter(Boolean).join(' · ');
     document.getElementById('page-loading').style.display='none';
     document.getElementById('app').style.display='block';
     initTabsHint();

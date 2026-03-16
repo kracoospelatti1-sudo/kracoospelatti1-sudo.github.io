@@ -1616,6 +1616,14 @@ function checkPreviewButton(){
 window.addEventListener('resize', checkPreviewButton);
 setTimeout(checkPreviewButton, 500);
 
+function formatDateES(str){
+  if(!str) return '';
+  const m=str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m) return str;
+  const months=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return parseInt(m[3])+' de '+months[parseInt(m[2])-1]+' de '+m[1];
+}
+
 function formatExpiry(isoStr){
   const d=new Date(isoStr);
   const remaining=d-Date.now();
@@ -1963,7 +1971,7 @@ async function loadEvents(restrictedId=null){
     const card=document.createElement('div');
     card.className='event-card'+(selectedEvent?.id===ev.id?' selected':'');
     card.innerHTML=
-      `<div class="event-name">${ev.name}</div><div class="event-date">${ev.date||''}${ev.subtitle?' · '+ev.subtitle:''}</div>
+      `<div class="event-name">${ev.name}</div><div class="event-date">${formatDateES(ev.date)}${ev.subtitle?' · '+ev.subtitle:''}</div>
       ${ev.custom_code
         ? `<div style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-family:monospace;font-size:12px;font-weight:700;background:var(--pink-dim);color:var(--pink);padding:3px 10px;border-radius:6px;letter-spacing:1px">🔗 ${ev.custom_code}</div>`
         : `<div style="display:inline-block;margin-top:6px;font-family:monospace;font-size:10px;font-weight:700;background:rgba(255,255,255,0.06);color:var(--muted);padding:3px 10px;border-radius:6px;letter-spacing:1px">${ev.id.slice(0,8)}…</div>`
@@ -2512,7 +2520,7 @@ async function showAlbum(){
   if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
   notice.classList.remove('show');content.style.display='block';
   document.getElementById('album-ev-name').textContent=selectedEvent.name;
-  document.getElementById('album-ev-sub').textContent=selectedEvent.date||'';
+  document.getElementById('album-ev-sub').textContent=formatDateES(selectedEvent.date);
   const emailBtn=document.getElementById('btn-send-email');
   if(emailBtn) emailBtn.style.display=selectedEvent.client_email?'':'none';
   const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=eq.photo&approved=eq.true&order=created_at.desc');
