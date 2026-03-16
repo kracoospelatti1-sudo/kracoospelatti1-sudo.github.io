@@ -107,7 +107,7 @@
       "name": "¿Cómo recibo las fotos del evento?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Al terminar el evento, el álbum completo con todas las fotos, mensajes y deseos se envía automáticamente al email que nos indicás. También podés descargarlo manualmente desde el panel de administración en cualquier momento."
+        "text": "Al terminar el evento, el álbum completo con todas las fotos, mensajes y deseos se envía automáticamente al email que nos indicás, junto con un PDF descargable con el resumen de la noche. También podés descargarlo manualmente desde el panel de administración en cualquier momento."
       }
     },
     {
@@ -1262,27 +1262,6 @@ body.announce-closed .hero{padding-top:140px!important}
   </div>
 </div>
 
-<!-- SOCIAL PROOF COUNTER -->
-<div class="sp-wrap">
-  <div class="sp-inner" id="sp-inner">
-    <div class="sp-item">
-      <span class="sp-num" data-target="50" data-suffix="+">0+</span>
-      <div class="sp-label">Eventos realizados</div>
-    </div>
-    <div class="sp-item">
-      <span class="sp-num" data-target="5000" data-suffix="+">0+</span>
-      <div class="sp-label">Fotos compartidas</div>
-    </div>
-    <div class="sp-item">
-      <span class="sp-num" data-target="100" data-suffix="%">0%</span>
-      <div class="sp-label">Clientes satisfechos</div>
-    </div>
-    <div class="sp-item">
-      <span class="sp-num" data-target="0" data-prefix="" data-suffix=" apps">0 apps</span>
-      <div class="sp-label">Para descargar</div>
-    </div>
-  </div>
-</div>
 
 <!-- HOW IT WORKS -->
 <div id="como-funciona" class="section-wrap dark">
@@ -1846,8 +1825,6 @@ const spObserver=new IntersectionObserver(entries=>{
     spObserver.unobserve(e.target);
   });
 },{threshold:0.3});
-const spInner=document.getElementById('sp-inner');
-if(spInner)spObserver.observe(spInner);
 
 // AOS init
 AOS.init({duration:750,easing:'ease-out-cubic',once:true,offset:60});
