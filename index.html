@@ -210,7 +210,7 @@ nav.scrolled{
   color:#fff;font-size:22px;padding:4px;
 }
 
-/* ─── HERO ──────────────────────────────────────── */
+/* ─── HERO (updated) ────────────────────────────── */
 .hero{
   position:relative;min-height:100vh;
   display:flex;flex-direction:column;
@@ -577,6 +577,68 @@ nav.scrolled{
 .btn-wa:hover{transform:translateY(-2px);box-shadow:0 0 64px rgba(37,211,102,0.5),0 8px 28px rgba(0,0,0,0.4)}
 .btn-wa svg{width:22px;height:22px;fill:#fff;flex-shrink:0}
 
+/* ─── PRICING v2 EXTRA ───────────────────────────── */
+@keyframes pr2-pulse{0%,100%{box-shadow:0 0 32px rgba(240,23,111,0.5),0 4px 20px rgba(0,0,0,0.3)}50%{box-shadow:0 0 56px rgba(240,23,111,0.85),0 8px 32px rgba(0,0,0,0.5)}}
+.pr2-wrap{max-width:820px;margin:0 auto}
+.pr2-compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:40px}
+.pr2-col{padding:28px 24px}
+.pr2-col.before{background:rgba(255,255,255,0.03);border-right:1px solid var(--border)}
+.pr2-col.after{background:linear-gradient(160deg,rgba(240,23,111,0.08) 0%,transparent 70%)}
+.pr2-col-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.pr2-col.before .pr2-col-label{color:var(--muted)}
+.pr2-col.after .pr2-col-label{color:var(--pink)}
+.pr2-col-label i{display:inline-block;width:6px;height:6px;border-radius:50%;flex-shrink:0;font-style:normal}
+.pr2-col.before .pr2-col-label i{background:var(--muted)}
+.pr2-col.after .pr2-col-label i{background:var(--pink)}
+.pr2-row{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;line-height:1.5;padding:9px 0;border-bottom:1px solid var(--border)}
+.pr2-row:last-child{border-bottom:none}
+.pr2-row .pr2-ico{font-size:15px;flex-shrink:0;margin-top:1px}
+.pr2-col.before .pr2-row{color:var(--muted)}
+.pr2-col.after .pr2-row{color:rgba(255,255,255,0.85)}
+.pr2-card{background:linear-gradient(160deg,rgba(240,23,111,0.13) 0%,var(--card) 60%);border:1px solid rgba(240,23,111,0.35);border-radius:20px;padding:40px 36px;position:relative;box-shadow:0 0 48px rgba(240,23,111,0.12),0 20px 60px rgba(0,0,0,0.4)}
+.pr2-badge-urgency{display:inline-flex;align-items:center;gap:7px;background:rgba(240,23,111,0.15);border:1px solid rgba(240,23,111,0.35);color:#fff;padding:7px 18px;border-radius:40px;font-size:12px;font-weight:700;letter-spacing:0.3px;margin-bottom:24px}
+.pr2-price-block{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.pr2-price-old{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--muted);text-decoration:line-through;opacity:0.55;line-height:1;padding-bottom:6px}
+.pr2-price-new{font-family:'Syne',sans-serif;font-size:58px;font-weight:800;line-height:1;color:#fff;display:flex;align-items:flex-start;gap:4px}
+.pr2-price-new sup{font-size:24px;margin-top:12px;color:var(--muted)}
+.pr2-price-label{font-size:13px;color:var(--muted);margin-bottom:28px}
+.pr2-features{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:11px 24px;margin-bottom:32px}
+.pr2-features li{font-size:13.5px;color:rgba(255,255,255,0.85);display:flex;align-items:flex-start;gap:9px}
+.pr2-features li .ok{color:var(--pink);font-weight:700;flex-shrink:0;margin-top:1px}
+.pr2-guarantee{display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:28px}
+.pr2-guarantee-ico{font-size:20px;flex-shrink:0;margin-top:2px}
+.pr2-guarantee-text{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5}
+.pr2-guarantee-text strong{color:#fff;display:block;margin-bottom:2px;font-size:13.5px}
+.pr2-payments{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:32px}
+.pr2-payments span{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-weight:600;color:rgba(255,255,255,0.7)}
+.pr2-cta-btn{display:block;text-align:center;background:var(--pink);color:#fff;padding:20px 24px;border-radius:14px;font-size:18px;font-weight:700;font-family:'DM Sans',sans-serif;text-decoration:none;border:none;cursor:pointer;animation:pr2-pulse 2.2s ease-in-out infinite;transition:opacity 0.2s,transform 0.2s}
+.pr2-cta-btn:hover{opacity:0.9;transform:translateY(-2px);animation:none;box-shadow:0 0 56px rgba(240,23,111,0.7)}
+@media(max-width:620px){.pr2-compare{grid-template-columns:1fr}.pr2-col.before{border-right:none;border-bottom:1px solid var(--border)}.pr2-features{grid-template-columns:1fr}.pr2-card{padding:32px 20px}}
+
+/* ─── CTA2 FINAL ─────────────────────────────────── */
+@keyframes cta2-gradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes cta2-float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-18px) rotate(8deg)}}
+@keyframes cta2-float2{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(-6deg)}}
+.cta2-wrap{position:relative;overflow:hidden;border-top:1px solid var(--border)}
+.cta2-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0c0c18 0%,rgba(240,23,111,0.2) 40%,#07070e 70%,rgba(240,23,111,0.12) 100%);background-size:300% 300%;animation:cta2-gradient 8s ease infinite;z-index:0}
+.cta2-noise{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)' opacity='0.04'/%3E%3C/svg%3E");z-index:0;pointer-events:none}
+.cta2-emojis{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.cta2-emoji{position:absolute;font-size:28px;opacity:0.1;animation:cta2-float 5s ease-in-out infinite}
+.cta2-emoji:nth-child(2){animation:cta2-float2 6.5s ease-in-out infinite;animation-delay:-.8s}
+.cta2-emoji:nth-child(3){animation:cta2-float 7s ease-in-out infinite;animation-delay:-2s}
+.cta2-emoji:nth-child(4){animation:cta2-float2 4.8s ease-in-out infinite;animation-delay:-1.3s}
+.cta2-emoji:nth-child(5){animation:cta2-float 6s ease-in-out infinite;animation-delay:-3s}
+.cta2-emoji:nth-child(6){animation:cta2-float2 5.5s ease-in-out infinite;animation-delay:-.5s}
+.cta2-inner{position:relative;z-index:2;max-width:800px;margin:0 auto;padding:110px 24px;text-align:center}
+.cta2-inner h2{font-family:'Syne',sans-serif;font-size:clamp(36px,5.5vw,66px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:20px}
+.cta2-inner p{font-size:18px;color:var(--muted);margin-bottom:16px;line-height:1.7}
+.cta2-countdown{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:40px;padding:8px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:44px}
+.cta2-countdown strong{color:var(--pink)}
+.cta2-buttons{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.cta2-btn-demo{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.07);color:#fff;border:1px solid rgba(255,255,255,0.18);padding:18px 32px;border-radius:14px;font-size:16px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;text-decoration:none;transition:all 0.25s}
+.cta2-btn-demo:hover{background:rgba(255,255,255,0.13);transform:translateY(-2px);border-color:rgba(255,255,255,0.3)}
+@media(max-width:520px){.cta2-buttons{flex-direction:column;align-items:stretch}.btn-wa,.cta2-btn-demo{justify-content:center}}
+
 /* ─── FAQ ───────────────────────────────────────── */
 .faq-list{display:flex;flex-direction:column;gap:12px;max-width:720px}
 .faq-item{
@@ -717,9 +779,9 @@ footer p{font-size:13px;color:var(--muted)}
   nav{padding:14px 24px}
   nav.scrolled{padding:12px 24px}
   .nav-links{display:none}
-  .nav-mobile-btn{display:block}
+  .nav-mobile-btn{display:block;padding:10px}
 
-  .hero{padding:110px 20px 80px}
+  .hero{padding:88px 20px 60px}
   .hero h1{letter-spacing:-2px}
 
   .mockup-body{grid-template-columns:1fr 1fr}
@@ -736,18 +798,53 @@ footer p{font-size:13px;color:var(--muted)}
   .testi-grid{grid-template-columns:1fr}
   .pricing-grid{max-width:100%}
 
-  .section{padding:80px 0}
+  .section{padding:64px 0}
+  .section-sub{margin-bottom:40px}
   footer{padding:28px 24px;flex-direction:column;align-items:flex-start;gap:8px}
 }
 
 @media(max-width:480px){
+  /* Hero compacto */
+  .hero{padding:76px 16px 48px}
   .hero h1{letter-spacing:-1.5px}
+  .hero-mockup{display:none}
+  .hero-ministats{margin-top:20px;font-size:12px;gap:10px}
   .hero-btns{flex-direction:column;width:100%}
   .btn-primary,.btn-secondary{width:100%;justify-content:center}
-  .mockup-body{grid-template-columns:1fr}
-  .mockup-body .m-card:not(:first-child){display:none}
+
+  /* Secciones compactas */
+  .section{padding:52px 0}
+  .section-sub{margin-bottom:36px}
   .proof-sep{display:none}
+
+  /* Social proof: ocultar el primero (duplicado) */
+  .sp-wrap{display:none}
+
+  /* Gallery: ocultar barra de OS que confunde */
+  .gal-screen-bar{display:none}
+  .gal-inner{padding:52px 0}
+
+  /* Cards más compactas */
+  .testi{padding:20px}
+  .feat{padding:20px}
+  .step{padding:28px 20px}
+  .sp-item{padding:24px 12px}
+  .plan{padding:28px 20px}
+
+  /* Ocultar columna izquierda del formulario */
+  .contact-left{display:none}
+  .contact-inner{padding:52px 0}
+
+  /* Evitar doble CTA flotante */
+  #cta-sticky{display:none!important}
+
+  /* FAQ tap targets */
+  .faq-icon{width:36px;height:36px;font-size:16px}
+
+  /* Stats grid */
   .stats-row{grid-template-columns:1fr 1fr}
+
+  /* WA float */
   .wa-float{bottom:20px;right:20px;width:50px;height:50px}
   .wa-float svg{width:24px;height:24px}
 }
@@ -1340,33 +1437,46 @@ footer p{font-size:13px;color:var(--muted)}
   </div>
 </div>
 
-<!-- URGENCIA PRICING -->
-<div style="padding:0 24px;background:var(--dark)">
-  <div style="max-width:600px;margin:0 auto;padding:0 0 0">
-    <div style="background:linear-gradient(135deg,rgba(240,23,111,0.12),rgba(240,23,111,0.06));border:1px solid rgba(240,23,111,0.3);border-radius:16px;padding:20px 28px;text-align:center;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
-      <span style="font-size:20px">🔥</span>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--pink);letter-spacing:0.5px">OFERTA DE LANZAMIENTO</div>
-        <div style="font-size:14px;color:rgba(255,255,255,0.7);margin-top:2px">Precio especial por tiempo limitado · Solo quedan fechas disponibles para los próximos eventos</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PRICING -->
+<!-- PRICING v2 -->
 <div id="precios" class="section-wrap">
   <div class="section">
     <div class="section-label reveal">Precio</div>
     <h2 class="reveal">Todo incluido,<br><span class="c">sin sorpresas</span></h2>
     <p class="section-sub reveal">Un solo plan con todo lo que tu evento necesita.</p>
-    <div class="pricing-grid">
-      <div class="plan featured reveal">
-        <div class="plan-tag">✨ Todo incluido</div>
-        <div class="plan-tier">EventWall completo</div>
-        <div class="plan-price"><sup>$</sup>29.999</div>
-        <div class="plan-billing">por evento · precio único</div>
-        <div class="plan-divider"></div>
-        <ul class="plan-list" style="display:grid;grid-template-columns:1fr 1fr;gap:12px 24px">
+
+    <div class="pr2-wrap reveal">
+
+      <!-- COMPARATIVA ANTES / DESPUÉS -->
+      <div class="pr2-compare">
+        <div class="pr2-col before">
+          <div class="pr2-col-label"><i></i>Sin EventWall</div>
+          <div class="pr2-row"><span class="pr2-ico">💸</span>El fotógrafo cobra extra por edición y álbum</div>
+          <div class="pr2-row"><span class="pr2-ico">⏳</span>El álbum tarda semanas o meses en llegar</div>
+          <div class="pr2-row"><span class="pr2-ico">😴</span>Los invitados miran el teléfono y se aburren</div>
+          <div class="pr2-row"><span class="pr2-ico">📵</span>Las fotos quedan guardadas y nadie las ve</div>
+          <div class="pr2-row"><span class="pr2-ico">🤷</span>No sabés qué vivió cada invitado</div>
+        </div>
+        <div class="pr2-col after">
+          <div class="pr2-col-label"><i></i>Con EventWall</div>
+          <div class="pr2-row"><span class="pr2-ico">⚡</span>Todo en tiempo real, en pantalla grande</div>
+          <div class="pr2-row"><span class="pr2-ico">📧</span>Álbum automático al terminar el evento</div>
+          <div class="pr2-row"><span class="pr2-ico">🎉</span>Invitados enganchados y participando</div>
+          <div class="pr2-row"><span class="pr2-ico">🖼️</span>Las fotos se ven en el momento, no después</div>
+          <div class="pr2-row"><span class="pr2-ico">✨</span>Un recuerdo compartido que dura para siempre</div>
+        </div>
+      </div>
+
+      <!-- CARD DE PRECIO -->
+      <div class="pr2-card">
+        <div class="pr2-badge-urgency">🔥 Solo 3 fechas disponibles este mes</div>
+
+        <div class="pr2-price-block">
+          <div class="pr2-price-old">$39.999</div>
+          <div class="pr2-price-new"><sup>$</sup>29.999</div>
+        </div>
+        <div class="pr2-price-label">por evento · precio único · todo incluido</div>
+
+        <ul class="pr2-features">
           <li><span class="ok">✓</span> Invitados ilimitados</li>
           <li><span class="ok">✓</span> Fotos con marcos y filtros</li>
           <li><span class="ok">✓</span> Mensajes en tiempo real</li>
@@ -1378,15 +1488,26 @@ footer p{font-size:13px;color:var(--muted)}
           <li><span class="ok">✓</span> Álbum automático por email</li>
           <li><span class="ok">✓</span> Soporte durante el evento</li>
         </ul>
-        <div style="margin-top:32px">
-          <a href="https://wa.me/5492352487435?text=Hola!%20Quiero%20contratar%20EventWall%20para%20mi%20evento%20%F0%9F%8E%89" target="_blank" class="plan-btn pink">Contratar por WhatsApp →</a>
+
+        <div class="pr2-guarantee">
+          <div class="pr2-guarantee-ico">🛡️</div>
+          <div class="pr2-guarantee-text">
+            <strong>Garantía total</strong>
+            Si EventWall no funciona el día del evento, te devolvemos el dinero. Sin preguntas.
+          </div>
         </div>
-        <div style="margin-top:20px;padding:16px;background:rgba(37,211,102,0.06);border:1px solid rgba(37,211,102,0.2);border-radius:12px;text-align:center">
-          <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:4px">Garantía incluida</div>
-          <div style="font-size:14px;font-weight:600;color:#fff">Si algo falla el día del evento, te devolvemos el dinero</div>
+
+        <div class="pr2-payments">
+          <span>Transferencia</span>
+          <span>Mercado Pago</span>
+          <span>Efectivo</span>
         </div>
-        <div style="margin-top:14px;text-align:center;font-size:12px;color:var(--muted)">Transferencia · Mercado Pago · Efectivo</div>
+
+        <a href="https://wa.me/5492352487435?text=Hola!%20Quiero%20contratar%20EventWall%20para%20mi%20evento%20%F0%9F%8E%89" target="_blank" class="pr2-cta-btn">
+          Contratar por WhatsApp →
+        </a>
       </div>
+
     </div>
   </div>
 </div>
@@ -1522,6 +1643,36 @@ footer p{font-size:13px;color:var(--muted)}
       <p class="form-note">Al enviar se abre WhatsApp con tu consulta lista para mandar 🚀</p>
     </div>
 
+  </div>
+</div>
+
+<!-- CTA2 FINAL -->
+<div class="cta2-wrap">
+  <div class="cta2-bg"></div>
+  <div class="cta2-noise"></div>
+  <div class="cta2-emojis">
+    <div class="cta2-emoji" style="top:12%;left:7%">🎉</div>
+    <div class="cta2-emoji" style="top:65%;left:4%">📸</div>
+    <div class="cta2-emoji" style="top:20%;right:8%">💍</div>
+    <div class="cta2-emoji" style="top:70%;right:6%">🎂</div>
+    <div class="cta2-emoji" style="top:45%;left:15%">✨</div>
+    <div class="cta2-emoji" style="top:38%;right:14%">🎊</div>
+  </div>
+  <div class="cta2-inner reveal">
+    <h2>Tu evento es único.<br><span class="c">¿Quién va a capturarlo?</span></h2>
+    <p>Cada foto, cada mensaje, cada momento. En pantalla grande. En tiempo real. Para siempre.</p>
+    <div class="cta2-countdown">
+      ⏳ Quedan <strong id="cta2-days">16</strong> días para reservar tu fecha de <strong id="cta2-month">marzo</strong>
+    </div>
+    <div class="cta2-buttons">
+      <a href="https://wa.me/5492352487435?text=Hola!%20Quiero%20reservar%20EventWall%20para%20mi%20evento%20%F0%9F%8E%89" target="_blank" class="btn-wa">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Reservar por WhatsApp
+      </a>
+      <a href="https://kracoospelatti1-sudo.github.io/screen.html" target="_blank" class="cta2-btn-demo">
+        ▶ Ver demo en vivo
+      </a>
+    </div>
   </div>
 </div>
 
