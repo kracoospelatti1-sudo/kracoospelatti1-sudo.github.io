@@ -851,7 +851,7 @@ const params=new URLSearchParams(location.search);
 let eventId=params.get('event');
 
 let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
-let gdFlags={showReactions:true,showPhotoEdit:true}; // updated by applyGuestDesign
+let gdFlags={showReactions:true,showPhotoEdit:true,showDeletePhoto:true}; // updated by applyGuestDesign
 let audioChunks=[],recTimer=null,recSecs=0,audioUrl=null;
 let selectedFrame='none';
 
@@ -1526,6 +1526,7 @@ async function applyGuestDesign(ev){
   // Save flags globally for use in photo handler
   gdFlags.showReactions=d.showReactions!==false;
   gdFlags.showPhotoEdit=d.showPhotoEdit!==false;
+  gdFlags.showDeletePhoto=d.showDeletePhoto!==false;
 
   // Reactions — hide all gallery-reactions divs
   document.querySelectorAll('.gallery-reactions').forEach(el=>el.style.display=gdFlags.showReactions?'':'none');
@@ -2432,8 +2433,8 @@ async function loadMyPhotos(){
       const counts=rxnMap[p.id]||{};
       const pills=['❤️','🎉','😍','🔥'].filter(e=>counts[e]).map(e=>'<span>'+e+' '+counts[e]+'</span>').join('');
       const rxnBadge=pills?'<div class="my-photo-rxn">'+pills+'</div>':'';
-      const delBtn='<button class="my-photo-del" onclick="deleteMyPhoto(\''+p.id+'\',this.closest(\'.my-photo-card\'))">🗑 Eliminar</button>';
-      card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/>'+rxnBadge+'<div class="my-photo-overlay">'+delBtn+'</div>';
+      const delBtn=gdFlags.showDeletePhoto?'<button class="my-photo-del" onclick="deleteMyPhoto(\''+p.id+'\',this.closest(\'.my-photo-card\'))">🗑 Eliminar</button>':'';
+      card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/>'+rxnBadge+(delBtn?'<div class="my-photo-overlay">'+delBtn+'</div>':'');
       card.addEventListener('touchstart',()=>card.querySelector('.my-photo-overlay').style.opacity='1');
       card.addEventListener('touchend',()=>setTimeout(()=>card.querySelector('.my-photo-overlay').style.opacity='0',2000));
       grid.appendChild(card);

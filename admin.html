@@ -1216,6 +1216,7 @@ input[type=range]{accent-color:var(--pink)}
               <label class="toggle-label" onclick="toggleGDOption('vote')"><div class="opt-toggle on" id="tog-show-vote"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗳 Votaciones</div><div style="font-size:12px;color:var(--muted)">Participar en encuestas</div></div></label>
               <label class="toggle-label" onclick="toggleGDOption('reactions')"><div class="opt-toggle on" id="tog-show-reactions"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">❤️ Reacciones en fotos</div><div style="font-size:12px;color:var(--muted)">❤️🎉😍🔥 en la galería de invitados</div></div></label>
               <label class="toggle-label" onclick="toggleGDOption('photoEdit')"><div class="opt-toggle on" id="tog-show-photoEdit"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🎨 Personalización de foto</div><div style="font-size:12px;color:var(--muted)">Marcos, filtros y stickers</div></div></label>
+              <label class="toggle-label" onclick="toggleGDOption('deletePhoto')"><div class="opt-toggle on" id="tog-show-deletePhoto"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗑 Borrar fotos propias</div><div style="font-size:12px;color:var(--muted)">El invitado puede eliminar sus fotos</div></div></label>
             </div>
           </div>
         </div>
@@ -2726,7 +2727,7 @@ const GD_DEFAULTS = {
   title:'', subtitle:'', welcome:'Compartí tu momento con todos 📷',
   btnText:'Enviar a la pantalla ✨',
   bg:'#faf8f6', accent:'#f0176f', hero:'#0c0c0f', heroTxt:'#ffffff',
-  showPhoto:true, showMessage:true, showAudio:true, showWish:true, showVote:true, showReactions:true, showPhotoEdit:true
+  showPhoto:true, showMessage:true, showAudio:true, showWish:true, showVote:true, showReactions:true, showPhotoEdit:true, showDeletePhoto:true
 };
 
 function getGDKey(){ return 'ew_guest_design_'+(selectedEvent?.id||''); }
@@ -2756,7 +2757,7 @@ async function showGuestDesign(){
   setV2('gd-show-logo',d.showLogo||'yes');
   if(d.fontSize){setV2('gd-font-size',d.fontSize);const fv=document.getElementById('gd-font-size-val');if(fv)fv.textContent=d.fontSize+'px';}
   // toggles
-  ['photo','message','audio','wish','vote','reactions','photoEdit'].forEach(k=>{
+  ['photo','message','audio','wish','vote','reactions','photoEdit','deletePhoto'].forEach(k=>{
     const on=d['show'+k.charAt(0).toUpperCase()+k.slice(1)];
     const tog=document.getElementById('tog-show-'+k);
     if(tog) tog.classList.toggle('on',on);
@@ -2905,6 +2906,7 @@ async function saveGuestDesign(){
     showVote:getGDToggle('vote'),
     showReactions:getGDToggle('reactions'),
     showPhotoEdit:getGDToggle('photoEdit'),
+    showDeletePhoto:getGDToggle('deletePhoto'),
   };
   // Upsert to Supabase
   try {
