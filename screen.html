@@ -550,6 +550,7 @@ function addMsgToStrip(msg){
   if(msg.type!=='message'&&msg.type!=='audio') return;
   const card=document.createElement('div');
   card.className='msg-card';
+  card.dataset.id=msg.id;
   if(msg.type==='audio'){
     card.innerHTML=`<div class="msg-card-icon">🎤</div><div class="msg-card-text" style="font-style:italic">Mensaje de voz</div><div class="msg-card-author">— ${msg.author}</div>`;
     // Auto-play button style indicator
@@ -956,6 +957,9 @@ async function pollPosts(){
       photoPosts=photoPosts.filter(p=>p.id!==id);
       msgBubbleQueue=msgBubbleQueue.filter(m=>m.id!==id);
       if(currentFeaturedPostId===id) currentFeaturedPostId=null;
+      // Remove from sidebar strip
+      const stripCard=document.querySelector('#msg-strip [data-id="'+id+'"]');
+      if(stripCard) stripCard.remove();
     });
     // Rebuild photoPosts from fresh data to fill the gap
     const freshPhotos=fresh.filter(p=>p.type==='photo'&&p.content&&p.content.startsWith('http'));
