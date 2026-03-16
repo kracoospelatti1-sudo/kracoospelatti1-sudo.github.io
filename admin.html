@@ -649,7 +649,7 @@ input[type=range]{accent-color:var(--pink)}
                 <label>Ancho del sidebar</label>
                 <select id="cfg-sidebar-width">
                   <option value="180">Angosto (180px)</option>
-                  <option value="240">Normal (240px)</option>
+                  <option value="240" selected>Normal (240px)</option>
                   <option value="0">Sin sidebar</option>
                 </select>
               </div>
@@ -2165,7 +2165,7 @@ function showDesign(){
   setVal('cfg-show-header',saved.showHeader||'yes');
   setVal('cfg-qr-size',saved.qrSize||'120');
   setVal('cfg-qr-text',saved.qrText||'');
-  setVal('cfg-sidebar-width',saved.sidebarWidth||'180');
+  setVal('cfg-sidebar-width',saved.sidebarWidth||'240');
   setVal('cfg-show-counters',saved.showCounters||'yes');
   setVal('cfg-show-reactions',saved.showReactions||'yes');
   setVal('cfg-ticker',saved.ticker||'');
@@ -2415,7 +2415,7 @@ function saveDesign(){
     showHeader:getV('cfg-show-header')||'yes',
     qrSize:getV('cfg-qr-size')||'120',
     qrText:getV('cfg-qr-text')||'Escaneá para participar',
-    sidebarWidth:getV('cfg-sidebar-width')||'180',
+    sidebarWidth:getV('cfg-sidebar-width')||'240',
     showCounters:getV('cfg-show-counters')||'yes',
     showReactions:getV('cfg-show-reactions')||'yes',
     ticker:getV('cfg-ticker')||'',
