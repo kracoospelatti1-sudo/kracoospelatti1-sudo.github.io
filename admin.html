@@ -1382,6 +1382,18 @@ const SUPABASE_KEY = 'sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 // ── PIN ──────────────────────────────────────────────────────
 const DEFAULT_PIN = '1234';
 function getPin(){ return localStorage.getItem('ew_pin')||DEFAULT_PIN; }
+
+async function syncPinFromSupabase(){
+  try{
+    const res=await fetch(SUPABASE_URL+'/rest/v1/app_config?key=eq.master_pin&select=value',{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    const data=await res.json();
+    if(Array.isArray(data)&&data[0]?.value){
+      localStorage.setItem('ew_pin',data[0].value);
+    }
+  }catch(e){}
+}
 function logout(){
   if(!confirm('¿Cerrar sesión?')) return;
   sessionStorage.clear();
@@ -1458,15 +1470,24 @@ function unlockAdmin(restrictedEventId=null){
   startGlobalPoller();
 }
 function checkPin(input){ if(event&&event.key==='Enter') submitPin(); }
-function changePin(){
+async function changePin(){
   const cur=document.getElementById('pin-current').value;
   const nw=document.getElementById('pin-new').value;
   if(cur!==getPin()){toast('❌ PIN actual incorrecto');return;}
   if(nw.length<4){toast('❌ El PIN debe tener al menos 4 dígitos');return;}
-  localStorage.setItem('ew_pin',nw);
-  document.getElementById('pin-current').value='';
-  document.getElementById('pin-new').value='';
-  toast('✅ PIN actualizado');
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/app_config?key=eq.master_pin',{
+      method:'PATCH',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({value:nw})
+    });
+    localStorage.setItem('ew_pin',nw);
+    document.getElementById('pin-current').value='';
+    document.getElementById('pin-new').value='';
+    toast('✅ PIN actualizado en todos los dispositivos');
+  }catch(e){
+    toast('❌ Error al guardar PIN');
+  }
 }
 
 // ── API ──────────────────────────────────────────────────────
@@ -2858,6 +2879,9 @@ function closeSidebar(){
   document.querySelector('.sidebar').classList.remove('open');
   document.getElementById('sidebar-overlay').classList.remove('show');
 }
+
+// Sync PIN desde Supabase siempre al cargar
+syncPinFromSupabase();
 
 // Auto-load if already unlocked this session
 if(sessionStorage.getItem('ew_unlocked')==='1'){
