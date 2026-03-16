@@ -137,7 +137,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
@@ -809,12 +808,19 @@ body.announce-closed .hero{padding-top:140px!important}
 /* ─── NAV ACTIVE LINK ───────────────────────────── */
 .nav-links a.nav-active{color:#fff!important}
 
-/* ─── SWIPER TESTIMONIALS ───────────────────────── */
-.testi-swiper{padding-bottom:52px!important;overflow:visible!important}
-.testi-swiper .swiper-pagination{bottom:0}
-.testi-swiper .swiper-pagination-bullet{background:var(--muted);opacity:1;transition:background 0.2s,transform 0.2s}
-.testi-swiper .swiper-pagination-bullet-active{background:var(--pink);transform:scale(1.25)}
-.testi-swiper .testi{height:100%;margin:0}
+/* ─── TESTIMONIALS STATIC ───────────────────────── */
+.testi-featured{position:relative;background:var(--card);border-left:4px solid var(--pink);border-radius:16px;padding:2.5rem 2.5rem 2rem;margin-bottom:1.5rem;overflow:hidden}
+.testi-quote-mark{font-family:Georgia,serif;font-size:8rem;line-height:1;color:var(--pink);opacity:.15;position:absolute;top:-1rem;left:1.5rem;pointer-events:none;user-select:none}
+.testi-featured .testi-text{font-size:1.2rem;font-style:italic;line-height:1.65;color:#fff;margin-bottom:1.5rem;position:relative;z-index:1}
+.testi-featured .testi-author{display:flex;flex-direction:column;gap:.25rem}
+.testi-stars{color:var(--pink);font-size:.95rem;letter-spacing:2px;margin-bottom:.15rem}
+.testi-name{font-weight:700;color:#fff}
+.testi-role{color:var(--muted);font-size:.85rem}
+.testi-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.testi-sm{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.75rem;display:flex;flex-direction:column;gap:.6rem}
+.testi-sm .testi-text{color:var(--muted);font-size:.95rem;line-height:1.6;flex:1}
+.testi-sm .testi-author{margin-top:.5rem}
+@media(max-width:640px){.testi-pair{grid-template-columns:1fr}.testi-featured .testi-text{font-size:1.05rem}}
 
 /* ─── MARQUEE ──────────────────────────────────── */
 .marquee-outer{
@@ -1306,86 +1312,6 @@ body.announce-closed .hero{padding-top:140px!important}
   </div>
 </div>
 
-<!-- FEATURES -->
-      <div class="gal-screen-bar">
-        <div class="gal-dot" style="background:#ff5f57"></div>
-        <div class="gal-dot" style="background:#febc2e"></div>
-        <div class="gal-dot" style="background:#28c840"></div>
-        <div class="gal-url">eventwall · boda-sofi-y-fede · pantalla</div>
-      </div>
-      <div class="gal-screen-header">
-        <div class="gal-event-title">Boda de Sofía &amp; Federico ✨</div>
-        <div class="gal-live-badge"><div class="gal-live-dot"></div>EN VIVO</div>
-      </div>
-      <div class="gal-grid">
-
-        <!-- Card 1: foto con badge LIVE -->
-        <div class="gal-card">
-          <div class="gal-badge-live"><div class="gal-badge-live-dot"></div>LIVE</div>
-          <div class="gal-card-media" style="background:linear-gradient(135deg,#1a0635,#5b1a8a,#9d2bc7)">🥂</div>
-          <div class="gal-card-body">
-            <div class="gal-guest-name">Valentina Ríos</div>
-            <div class="gal-content-type">📸 foto · hace 10 seg</div>
-          </div>
-        </div>
-
-        <!-- Card 2: foto -->
-        <div class="gal-card">
-          <div class="gal-new-tag">Nuevo</div>
-          <div class="gal-card-media" style="background:linear-gradient(135deg,#0a1f3e,#0d3d7a,#1565c0)">💃</div>
-          <div class="gal-card-body">
-            <div class="gal-guest-name">Rodrigo Méndez</div>
-            <div class="gal-content-type">📸 foto · hace 2 min</div>
-          </div>
-        </div>
-
-        <!-- Card 3: mensaje -->
-        <div class="gal-card">
-          <div class="gal-card-media" style="background:linear-gradient(135deg,#0f2a10,#1b5e20,#2e7d32)">🎂</div>
-          <div class="gal-card-body">
-            <div class="gal-guest-name">Lucía Fernández</div>
-            <div class="gal-content-type">💬 mensaje · hace 4 min</div>
-          </div>
-        </div>
-
-        <!-- Card 4: foto -->
-        <div class="gal-card">
-          <div class="gal-card-media" style="background:linear-gradient(135deg,#3e0a0a,#7b1a1a,#c62828)">👰</div>
-          <div class="gal-card-body">
-            <div class="gal-guest-name">Marcela Godoy</div>
-            <div class="gal-content-type">📸 foto · hace 6 min</div>
-          </div>
-        </div>
-
-        <!-- Card 5: audio -->
-        <div class="gal-card">
-          <div class="gal-card-media" style="background:linear-gradient(135deg,#1a1000,#4e3500,#7a5200)">🎉</div>
-          <div class="gal-card-body">
-            <div class="gal-guest-name">Agustín Peralta</div>
-            <div class="gal-content-type">🎤 audio · hace 8 min</div>
-          </div>
-        </div>
-
-        <!-- Card 6: foto -->
-        <div class="gal-card">
-          <div class="gal-card-media" style="background:linear-gradient(135deg,#001a2e,#004d66,#00838f)">🥳</div>
-          <div class="gal-card-body">
-            <div class="gal-guest-name">Camila Torres</div>
-            <div class="gal-content-type">📸 foto · hace 9 min</div>
-          </div>
-        </div>
-
-      </div>
-      <div class="gal-footer-bar">
-        <div class="gal-footer-count"><div class="gal-footer-dot"></div>47 publicaciones esta noche</div>
-        <span>Escaneá el QR para participar</span>
-      </div>
-    </div>
-  </div>
-</div>
--->
-
-<!-- FEATURES -->
 <div id="features" class="section-wrap">
   <div class="section">
     <div class="section-label reveal">Funcionalidades</div>
@@ -1444,106 +1370,43 @@ body.announce-closed .hero{padding-top:140px!important}
   </div>
 </div>
 
-<!-- TESTIMONIALS REMOVED -->
-<!--
+<!-- TESTIMONIALS -->
 <div class="section-wrap dark">
   <div class="section">
     <div class="section-label reveal">Testimonios</div>
     <h2 class="reveal">Lo que dicen<br><span class="c">nuestros clientes</span></h2>
     <p class="section-sub reveal">Eventos que ya vivieron la experiencia EventWall.</p>
-    <div class="swiper testi-swiper" data-aos="fade-up">
-      <div class="swiper-wrapper">
 
-        <div class="swiper-slide">
-          <div class="testi">
-            <div class="testi-stars">★★★★★</div>
-            <p class="testi-text">Los invitados estuvieron toda la noche sacando fotos para verlas en la pantalla. Fue el hit absoluto de la boda. Todos preguntaban cómo contratarlo.</p>
-            <div class="testi-author">
-              <div class="testi-avatar">👰</div>
-              <div>
-                <div class="testi-name">Carolina & Martín</div>
-                <div class="testi-role">Boda · Salón Crystal, Buenos Aires</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="swiper-slide">
-          <div class="testi">
-            <div class="testi-stars">★★★★★</div>
-            <p class="testi-text">Lo usamos en el evento de fin de año corporativo. Los empleados amaron poder participar desde el celular. Totalmente recomendable.</p>
-            <div class="testi-author">
-              <div class="testi-avatar">🏢</div>
-              <div>
-                <div class="testi-name">Luciana R.</div>
-                <div class="testi-role">Evento corporativo · 200 personas</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="swiper-slide">
-          <div class="testi">
-            <div class="testi-stars">★★★★★</div>
-            <p class="testi-text">Mi hija se emocionó cuando vio los mensajes de todos apareciendo en pantalla durante su fiesta de 15. Fue un momento increíble.</p>
-            <div class="testi-author">
-              <div class="testi-avatar">🎂</div>
-              <div>
-                <div class="testi-name">Marcela V.</div>
-                <div class="testi-role">Fiesta de 15 · Córdoba</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="swiper-slide">
-          <div class="testi">
-            <div class="testi-stars">★★★★★</div>
-            <p class="testi-text">Contratamos EventWall para la boda y fue un éxito total. Las fotos aparecían en pantalla y todos querían ver las suyas. El álbum que llegó por email con el PDF fue un detalle hermoso.</p>
-            <div class="testi-author">
-              <div class="testi-avatar">💍</div>
-              <div>
-                <div class="testi-name">Diego & Sofía</div>
-                <div class="testi-role">Boda · Mendoza · 180 invitados</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="swiper-slide">
-          <div class="testi">
-            <div class="testi-stars">★★★★★</div>
-            <p class="testi-text">Para mi cumpleaños de 50 quería algo diferente. EventWall hizo que los mensajes de mis seres queridos aparecieran en la pantalla en tiempo real. Lloré de emoción.</p>
-            <div class="testi-author">
-              <div class="testi-avatar">🎉</div>
-              <div>
-                <div class="testi-name">Patricia M.</div>
-                <div class="testi-role">Cumpleaños 50 · Rosario</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="swiper-slide">
-          <div class="testi">
-            <div class="testi-stars">★★★★★</div>
-            <p class="testi-text">Lo implementamos en nuestra graduación universitaria. Más de 300 egresados participando, subiendo fotos y mensajes. La pantalla estuvo activa toda la noche.</p>
-            <div class="testi-author">
-              <div class="testi-avatar">🎓</div>
-              <div>
-                <div class="testi-name">Comisión de Graduados UNCUYO</div>
-                <div class="testi-role">Graduación · 300+ asistentes</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+    <div class="testi-featured reveal">
+      <div class="testi-quote-mark">"</div>
+      <p class="testi-text">Los invitados estuvieron toda la noche sacando fotos para verlas en la pantalla. Fue el hit absoluto de la boda. Todos preguntaban cómo contratarlo.</p>
+      <div class="testi-author">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-name">Carolina &amp; Martín</div>
+        <div class="testi-role">Boda · Salón Crystal, Buenos Aires</div>
       </div>
-      <div class="swiper-pagination"></div>
+    </div>
+
+    <div class="testi-pair">
+      <div class="testi-sm reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Mi hija se emocionó cuando vio los mensajes de todos apareciendo en pantalla durante su fiesta de 15. Fue un momento increíble."</p>
+        <div class="testi-author">
+          <div class="testi-name">Marcela V.</div>
+          <div class="testi-role">Fiesta de 15 · Córdoba</div>
+        </div>
+      </div>
+      <div class="testi-sm reveal reveal-delay-1">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Lo usamos en el evento de fin de año corporativo. Los empleados amaron poder participar desde el celular. Totalmente recomendable."</p>
+        <div class="testi-author">
+          <div class="testi-name">Luciana R.</div>
+          <div class="testi-role">Evento corporativo · 200 personas</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
--->
 
 <!-- SOCIAL PROOF COUNTER (sp-) -->
 <div class="sp-wrap">
@@ -1868,8 +1731,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
   });
   document.addEventListener('click',e=>{
-    const nav=document.getElementById('navbar');
-    if(!nav.contains(e.target)){
+    if(!document.getElementById('navbar').contains(e.target)){
       const links=document.querySelector('.nav-links');
       if(links.classList.contains('mobile-open')){
         links.classList.remove('mobile-open');
@@ -2040,6 +1902,5 @@ if(spGrid){
   spObs.observe(spGrid);
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </body>
 </html>
