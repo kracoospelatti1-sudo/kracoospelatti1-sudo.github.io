@@ -457,6 +457,7 @@ body{
 .rxn-btn.reacted .rxn-count{color:var(--pink)}
 
 .my-photo-card{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:#000;cursor:pointer;width:100%;max-width:100%}
+.my-photo-rxn{position:absolute;top:8px;right:8px;z-index:3;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);border-radius:20px;padding:3px 8px;font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;gap:3px;pointer-events:none}
 .my-photo-card img{width:100%;height:100%;object-fit:cover;display:block}
 .my-photo-overlay{position:absolute;inset:0;background:linear-gradient(transparent 50%,rgba(0,0,0,0.7));display:flex;flex-direction:column;justify-content:flex-end;padding:8px;opacity:0;transition:opacity 0.2s}
 .my-photo-card:hover .my-photo-overlay,.my-photo-card:active .my-photo-overlay{opacity:1}
@@ -2393,11 +2394,24 @@ async function loadMyPhotos(){
     const posts=await apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&author=eq.'+encodeURIComponent(name)+'&order=created_at.desc');
     loading.style.display='none';
     if(!posts.length){empty.style.display='block';return;}
+
+    // Fetch reactions for all my photos at once
+    const orFilter=posts.map(p=>'post_id.eq.'+p.id).join(',');
+    let rxnCounts={};
+    if(orFilter){
+      try{
+        const rxns=await apiRest('reactions?or=('+orFilter+')&select=post_id');
+        rxns.forEach(r=>{rxnCounts[r.post_id]=(rxnCounts[r.post_id]||0)+1;});
+      }catch(e){}
+    }
+
     posts.forEach(p=>{
       const card=document.createElement('div');
       card.className='my-photo-card';
+      const count=rxnCounts[p.id]||0;
+      const rxnBadge=count>0?'<div class="my-photo-rxn">❤️ '+count+'</div>':'';
       const delBtn='<button class="my-photo-del" onclick="deleteMyPhoto(\''+p.id+'\',this.closest(\'.my-photo-card\'))">🗑 Eliminar</button>';
-      card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/><div class="my-photo-overlay">'+delBtn+'</div>';
+      card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/>'+rxnBadge+'<div class="my-photo-overlay">'+delBtn+'</div>';
       card.addEventListener('touchstart',()=>card.querySelector('.my-photo-overlay').style.opacity='1');
       card.addEventListener('touchend',()=>setTimeout(()=>card.querySelector('.my-photo-overlay').style.opacity='0',2000));
       grid.appendChild(card);
