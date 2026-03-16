@@ -1108,8 +1108,13 @@ function selectFrame(id){
 function renderPreviewCanvas(){
   if(!originalImage) return;
   const canvas=document.getElementById('preview-canvas');
-  const W=originalImage.naturalWidth||originalImage.width;
-  const H=originalImage.naturalHeight||originalImage.height;
+  const MAX_DIM=1920;
+  let W=originalImage.naturalWidth||originalImage.width;
+  let H=originalImage.naturalHeight||originalImage.height;
+  if(W>MAX_DIM||H>MAX_DIM){
+    if(W>=H){H=Math.round(H*MAX_DIM/W);W=MAX_DIM;}
+    else{W=Math.round(W*MAX_DIM/H);H=MAX_DIM;}
+  }
   canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');
   // Apply CSS filter
@@ -1682,7 +1687,7 @@ async function sendPhoto(){
   try{
     // Upload photo with frame/filter/stickers
     const canvas=document.getElementById('preview-canvas');
-    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.92));
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.82));
     const file=new File([blob],'photo.jpg',{type:'image/jpeg'});
     setProgress(30,'Subiendo foto...');
     const url=await uploadFile(file,'photos');
