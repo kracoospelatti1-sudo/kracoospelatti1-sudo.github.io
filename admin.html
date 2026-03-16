@@ -411,18 +411,18 @@ input[type=range]{accent-color:var(--pink)}
       <div id="links-content" style="display:none">
         <div class="card">
           <div class="card-title">Código del evento</div>
-          <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;padding:20px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)">
-            <div style="text-align:center">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:20px;margin-bottom:20px;padding:20px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)">
+            <div style="text-align:center;flex-shrink:0">
               <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Código</div>
-              <div id="event-code-display" style="font-family:monospace;font-size:52px;font-weight:800;color:var(--pink);letter-spacing:8px;line-height:1">—</div>
+              <div id="event-code-display" style="font-family:monospace;font-size:clamp(28px,5vw,52px);font-weight:800;color:var(--pink);letter-spacing:4px;line-height:1">—</div>
               <div style="font-size:11px;color:var(--muted);margin-top:8px">Escribí este código en el TV</div>
             </div>
-            <div style="flex:1;min-width:0;border-left:1px solid var(--border);padding-left:20px">
+            <div style="flex:1;min-width:180px;border-left:1px solid var(--border);padding-left:20px">
               <div style="font-size:13px;color:var(--muted);line-height:1.8">
                 En el televisor abrí el navegador y escribí:<br>
-                <span id="screen-short-url" style="font-family:monospace;font-size:14px;color:var(--text);background:var(--surface);padding:4px 10px;border-radius:6px;display:block;margin-top:6px;word-break:break-all;overflow-wrap:break-word"></span>
+                <span id="screen-short-url" style="font-family:monospace;font-size:13px;color:var(--text);background:var(--surface);padding:4px 10px;border-radius:6px;display:block;margin-top:6px;word-break:break-all;overflow-wrap:anywhere"></span>
               </div>
-              <button class="copy-btn" style="margin-top:12px" onclick="copyText(document.getElementById('link-screen').textContent)">Copiar URL pantalla</button>
+              <button class="copy-btn" style="margin-top:12px;white-space:nowrap" onclick="copyText(document.getElementById('link-screen').textContent)">Copiar URL pantalla</button>
             </div>
           </div>
         </div>
