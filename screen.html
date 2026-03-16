@@ -40,15 +40,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .no-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:rgba(255,255,255,0.2);z-index:1}
 .no-content .big{font-size:clamp(40px,6vw,80px)}
 
-/* REACTION OVERLAY */
-.reaction-overlay{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:hidden}
-.floating-emoji{position:absolute;font-size:clamp(28px,4vw,52px);animation:floatUp 2.5s ease-out forwards;pointer-events:none}
-@keyframes floatUp{0%{transform:translateY(0) scale(0.5);opacity:1}100%{transform:translateY(-90%) scale(0.8);opacity:0}}
-.reaction-bar{position:absolute;bottom:0;left:0;right:0;z-index:10;display:flex;justify-content:center;padding:clamp(8px,1vh,14px);gap:clamp(6px,0.8vw,12px);background:linear-gradient(transparent,rgba(0,0,0,0.75))}
-.react-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:clamp(6px,0.7vh,10px) clamp(10px,1.2vw,20px);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:5px;color:#fff;font-family:'DM Sans',sans-serif;font-size:clamp(12px,1.2vw,20px)}
-.react-btn:hover{background:rgba(255,255,255,0.25);transform:scale(1.1)}
-.react-btn .cnt{font-size:clamp(10px,1vw,16px);font-weight:700;color:rgba(255,255,255,0.8)}
-.reaction-toast{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:clamp(6px,0.8vh,12px) clamp(14px,1.6vw,24px);font-size:clamp(12px,1.2vw,18px);color:#fff;white-space:nowrap;display:none;z-index:15}
 .new-badge{position:absolute;top:clamp(10px,1.5vh,20px);left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:clamp(6px,0.8vh,12px) clamp(14px,1.8vw,28px);border-radius:20px;font-size:clamp(11px,1.2vw,18px);font-weight:700;display:none;z-index:20;pointer-events:none;animation:badgePop 0.4s cubic-bezier(0.175,0.885,0.32,1.275)}
 @keyframes badgePop{from{transform:translateX(-50%) scale(0.7);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
 
@@ -268,7 +259,6 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
         </div>
       </div>
       <div class="new-badge" id="new-badge">¡Nuevo contenido! 🎉</div>
-      <div class="reaction-toast" id="reaction-toast"></div>
       <div class="no-content" id="no-content">
         <div class="big">📸</div>
         <p style="font-size:16px">Esperando contenido...</p>
@@ -279,15 +269,6 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
         <div class="featured-caption" id="featured-caption"></div>
         <div class="featured-author" id="featured-author"></div>
       </div>
-      <div class="reaction-bar" id="reaction-bar">
-        <button class="react-btn" onclick="sendReaction('❤️')"><span>❤️</span><span class="cnt" id="rc-heart">0</span></button>
-        <button class="react-btn" onclick="sendReaction('😂')"><span>😂</span><span class="cnt" id="rc-laugh">0</span></button>
-        <button class="react-btn" onclick="sendReaction('😍')"><span>😍</span><span class="cnt" id="rc-love">0</span></button>
-        <button class="react-btn" onclick="sendReaction('🔥')"><span>🔥</span><span class="cnt" id="rc-fire">0</span></button>
-        <button class="react-btn" onclick="sendReaction('👏')"><span>👏</span><span class="cnt" id="rc-clap">0</span></button>
-        <button class="react-btn" onclick="sendReaction('🥳')"><span>🥳</span><span class="cnt" id="rc-party">0</span></button>
-      </div>
-      <div class="reaction-overlay" id="reaction-overlay"></div>
     </div>
 
     <div class="sidebar">
@@ -304,7 +285,6 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 
 <!-- hidden for internal tracking -->
 <div id="photo-strip" style="display:none"></div>
-<div id="reaction-summary" style="display:none"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
@@ -366,7 +346,7 @@ let eventId=params.get('event');
 const mosaicParam=params.get('mosaic');
 let eventName='';
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
-let currentFeaturedPostId=null,reactionCounts={};
+let currentFeaturedPostId=null;
 let cfg={interval:6000,sound:'chime',fsBubble:32,carouselLimit:5,transition:'fade',kenBurns:'no',waitTitle:'',waitSubtitle:'',waitStart:'',waitCountdown:'yes'};
 let waitCountdownTimer=null;
 let waitingScreenActive=false;
@@ -444,10 +424,6 @@ function applyTheme(design){
   // Counters
   const counters=document.querySelector('.counter-pills');
   if(counters) counters.style.display=(design.showCounters==='no')?'none':'flex';
-
-  // Reactions bar
-  const rbar=document.getElementById('reaction-bar');
-  if(rbar) rbar.style.display=(design.showReactions==='no')?'none':'flex';
 
   // QR size
   const qrSize=parseInt(design.qrSize)||120;
@@ -548,46 +524,6 @@ function playSound(type){
   }catch(e){}
 }
 
-// ── REACTIONS ─────────────────────────────────────────────────
-const EMOJI_MAP={'❤️':'rc-heart','😂':'rc-laugh','😍':'rc-love','🔥':'rc-fire','👏':'rc-clap','🥳':'rc-party'};
-
-function spawnEmoji(emoji){
-  const overlay=document.getElementById('reaction-overlay');
-  for(let i=0;i<3;i++){
-    setTimeout(()=>{
-      const el=document.createElement('div');el.className='floating-emoji';el.textContent=emoji;
-      el.style.left=Math.random()*80+10+'%';el.style.bottom='80px';
-      el.style.animationDelay=Math.random()*0.3+'s';
-      overlay.appendChild(el);setTimeout(()=>el.remove(),3000);
-    },i*150);
-  }
-}
-
-async function sendReaction(emoji){
-  if(!currentFeaturedPostId) return;
-  spawnEmoji(emoji);
-  reactionCounts[emoji]=(reactionCounts[emoji]||0)+1;
-  updateReactionUI();
-  const t=document.getElementById('reaction-toast');
-  t.textContent=emoji+' ¡Reacción enviada!';t.style.display='block';
-  clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2000);
-  await apiPost('reactions',{post_id:currentFeaturedPostId,event_id:eventId,emoji});
-}
-
-async function loadReactions(){
-  if(!currentFeaturedPostId) return;
-  const data=await api('reactions?post_id=eq.'+currentFeaturedPostId+'&select=emoji');
-  if(!Array.isArray(data)) return;
-  reactionCounts={};
-  data.forEach(r=>{reactionCounts[r.emoji]=(reactionCounts[r.emoji]||0)+1;});
-  updateReactionUI();
-}
-
-function updateReactionUI(){
-  Object.entries(EMOJI_MAP).forEach(([emoji,id])=>{
-    const el=document.getElementById(id);if(el) el.textContent=reactionCounts[emoji]||0;
-  });
-}
 
 // ── MESSAGE BUBBLES ───────────────────────────────────────────
 let msgBubbleQueue=[],msgBubbleShowing=false;
@@ -802,8 +738,6 @@ async function pollForPolls(){
       document.getElementById('poll-overlay').style.display='none';
       pollScreenVisible=false;
       clearInterval(pollTimerInterval);
-      const rbar=document.getElementById('reaction-bar');
-      if(rbar) rbar.style.display='flex';
     }
     return;
   }
@@ -840,9 +774,6 @@ function renderPollScreen(poll,votes){
   document.getElementById('poll-overlay').style.display='flex';
   pollScreenVisible=true;
   startPollTimer(poll);
-  // Hide reactions while poll is active
-  const rbar=document.getElementById('reaction-bar');
-  if(rbar) rbar.style.display='none';
 }
 
 function startPollTimer(poll){
@@ -949,7 +880,6 @@ function showFeatured(post,idx){
   preloader.onerror=()=>{applyContent();img.style.opacity='1';}; // fallback
   preloader.src=post.content;
 
-  reactionCounts={};loadReactions();
 }
 
 function rotateFeatured(){
