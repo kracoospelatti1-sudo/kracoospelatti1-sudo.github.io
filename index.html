@@ -751,6 +751,219 @@ footer p{font-size:13px;color:var(--muted)}
   .wa-float{bottom:20px;right:20px;width:50px;height:50px}
   .wa-float svg{width:24px;height:24px}
 }
+
+/* ─── HERO PARTICLES ────────────────────────────── */
+.hero-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.hero-particle{
+  position:absolute;font-size:22px;
+  animation:particleFloat linear infinite;
+  opacity:0;user-select:none;
+}
+@keyframes particleFloat{
+  0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+  5%{opacity:0.35}
+  90%{opacity:0.2}
+  100%{transform:translateY(-120px) rotate(360deg);opacity:0}
+}
+.hero-ministats{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;
+  margin-top:32px;font-size:13px;color:rgba(255,255,255,0.35);
+  position:relative;z-index:1;
+  animation:fadeUp 0.6s 0.5s ease both;
+}
+.hero-ministats-sep{color:rgba(255,255,255,0.15)}
+
+/* ─── SOCIAL PROOF COUNTER (sp-) ────────────────── */
+.sp-wrap{
+  padding:0 24px;
+  background:linear-gradient(180deg,var(--dark2) 0%,var(--dark) 100%);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.sp-wrap::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%,rgba(240,23,111,0.07) 0%,transparent 65%);
+}
+.sp-inner{
+  max-width:1100px;margin:0 auto;
+  padding:80px 0;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:2px;background:var(--border);
+  border:1px solid var(--border);border-radius:24px;overflow:hidden;
+  position:relative;z-index:1;
+}
+.sp-item{
+  background:var(--card);
+  padding:44px 28px;text-align:center;
+  position:relative;overflow:hidden;
+  transition:background 0.3s;
+}
+.sp-item:hover{background:#161625}
+.sp-item::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--pink),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.sp-item:hover::after{opacity:1}
+.sp-num{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(44px,5vw,68px);
+  font-weight:800;line-height:1;
+  color:var(--pink);
+  text-shadow:0 0 40px rgba(240,23,111,0.4);
+  margin-bottom:12px;
+  display:block;
+  transition:text-shadow 0.3s;
+}
+.sp-item:hover .sp-num{text-shadow:0 0 60px rgba(240,23,111,0.65)}
+.sp-label{
+  font-size:14px;font-weight:500;
+  color:rgba(255,255,255,0.55);
+  line-height:1.4;
+}
+@keyframes sp-countup{
+  from{opacity:0;transform:translateY(16px) scale(0.9)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.sp-inner.sp-animated .sp-num{
+  animation:sp-countup 0.5s ease both;
+}
+.sp-inner.sp-animated .sp-item:nth-child(2) .sp-num{animation-delay:0.08s}
+.sp-inner.sp-animated .sp-item:nth-child(3) .sp-num{animation-delay:0.16s}
+.sp-inner.sp-animated .sp-item:nth-child(4) .sp-num{animation-delay:0.24s}
+@media(max-width:900px){
+  .sp-inner{grid-template-columns:1fr 1fr;padding:0}
+}
+@media(max-width:480px){
+  .sp-inner{grid-template-columns:1fr 1fr;border-radius:16px}
+  .sp-item{padding:32px 16px}
+}
+
+/* ─── GALLERY / EVENT PREVIEW (gal-) ────────────── */
+.gal-wrap{
+  padding:0 24px;
+  background:var(--dark2);
+  border-bottom:1px solid var(--border);
+}
+.gal-inner{max-width:1100px;margin:0 auto;padding:110px 0}
+.gal-screen-chrome{
+  background:var(--dark3);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,0.65),0 0 0 1px rgba(240,23,111,0.08),inset 0 1px 0 rgba(255,255,255,0.06);
+  position:relative;
+}
+.gal-screen-bar{
+  background:rgba(255,255,255,0.025);
+  padding:14px 20px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);
+}
+.gal-dot{width:11px;height:11px;border-radius:50%}
+.gal-url{
+  flex:1;text-align:center;
+  font-size:12px;color:rgba(255,255,255,0.22);font-family:monospace;
+  background:rgba(255,255,255,0.04);padding:5px 14px;border-radius:6px;
+  max-width:360px;margin:0 auto;
+}
+.gal-screen-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 24px 14px;
+  border-bottom:1px solid var(--border);
+}
+.gal-event-title{
+  font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+  color:#fff;
+}
+.gal-live-badge{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(240,23,111,0.12);border:1px solid rgba(240,23,111,0.3);
+  color:var(--pink);padding:5px 13px;border-radius:40px;
+  font-size:11px;font-weight:700;letter-spacing:0.5px;
+}
+.gal-live-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--pink);
+  animation:gal-pulse 1.3s infinite;
+}
+@keyframes gal-pulse{
+  0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(240,23,111,0.5)}
+  50%{opacity:0.6;box-shadow:0 0 0 5px rgba(240,23,111,0)}
+}
+.gal-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;padding:20px;
+  background:var(--dark);
+}
+.gal-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;
+  transition:transform 0.3s ease,border-color 0.3s ease,box-shadow 0.3s ease;
+  cursor:default;
+  position:relative;
+}
+.gal-card:hover{
+  transform:translateY(-6px) scale(1.01);
+  border-color:rgba(255,255,255,0.18);
+  box-shadow:0 20px 48px rgba(0,0,0,0.55);
+}
+.gal-card-media{
+  width:100%;aspect-ratio:4/3;
+  display:flex;align-items:center;justify-content:center;
+  font-size:52px;position:relative;overflow:hidden;
+  user-select:none;
+}
+.gal-card-media::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 30%,rgba(0,0,0,0.5));
+  pointer-events:none;
+}
+.gal-card-body{padding:14px 14px 12px}
+.gal-guest-name{font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);margin-bottom:4px}
+.gal-content-type{
+  font-size:11px;color:rgba(255,255,255,0.45);
+  display:flex;align-items:center;gap:5px;
+}
+.gal-badge-live{
+  position:absolute;top:10px;right:10px;z-index:2;
+  display:flex;align-items:center;gap:5px;
+  background:rgba(7,7,14,0.88);
+  border:1px solid rgba(240,23,111,0.4);
+  color:var(--pink);padding:4px 10px;border-radius:20px;
+  font-size:10px;font-weight:700;letter-spacing:0.5px;
+  backdrop-filter:blur(8px);
+}
+.gal-badge-live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--pink);
+  animation:gal-pulse 1.3s infinite;
+}
+.gal-new-tag{
+  position:absolute;top:10px;left:10px;z-index:2;
+  background:rgba(7,7,14,0.85);
+  border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.7);padding:3px 9px;border-radius:6px;
+  font-size:10px;font-weight:600;backdrop-filter:blur(6px);
+}
+.gal-footer-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 20px;
+  border-top:1px solid var(--border);
+  font-size:12px;color:rgba(255,255,255,0.3);
+}
+.gal-footer-count{display:flex;align-items:center;gap:6px}
+.gal-footer-dot{width:5px;height:5px;border-radius:50%;background:var(--pink);animation:gal-pulse 1.3s infinite}
+@media(max-width:900px){
+  .gal-grid{grid-template-columns:repeat(2,1fr)}
+  .gal-grid .gal-card:last-child{display:none}
+}
+@media(max-width:480px){
+  .gal-grid{grid-template-columns:1fr 1fr;gap:8px;padding:12px}
+  .gal-card-media{font-size:36px}
+  .gal-inner{padding:80px 0}
+}
 </style>
 </head>
 <body>
@@ -780,15 +993,17 @@ footer p{font-size:13px;color:var(--muted)}
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-glow2"></div>
+  <!-- Partículas flotantes -->
+  <div class="hero-particles" id="hero-particles" aria-hidden="true"></div>
 
   <div class="hero-badge">
     <div class="hero-badge-dot"></div>
-    El muro digital para eventos
+    ✦ El muro digital para eventos
   </div>
 
-  <h1>Tus invitados,<br>en <span class="highlight">pantalla grande</span></h1>
+  <h1>El momento que todos<br>van a <span class="highlight">recordar</span></h1>
 
-  <p class="hero-sub">Fotos, mensajes y momentos en tiempo real. Los invitados escanean un QR y aparecen en la pantalla del evento al instante.</p>
+  <p class="hero-sub">Los invitados escanean un QR y sus fotos, mensajes y deseos aparecen en pantalla grande al instante. Sin apps, sin registro.</p>
 
   <div class="hero-btns">
     <a href="https://wa.me/5492352487435?text=Hola!%20Quiero%20saber%20m%C3%A1s%20sobre%20EventWall%20%F0%9F%8E%89" target="_blank" class="btn-primary">
@@ -796,6 +1011,14 @@ footer p{font-size:13px;color:var(--muted)}
       Quiero mi EventWall
     </a>
     <a href="#como-funciona" class="btn-secondary">Ver cómo funciona ↓</a>
+  </div>
+
+  <div class="hero-ministats">
+    <span>50+ eventos realizados</span>
+    <span class="hero-ministats-sep">·</span>
+    <span>5.000+ fotos compartidas</span>
+    <span class="hero-ministats-sep">·</span>
+    <span>0 apps para descargar</span>
   </div>
 
   <div class="hero-mockup">
@@ -836,6 +1059,12 @@ footer p{font-size:13px;color:var(--muted)}
   </div>
 </section>
 
+<!-- CTA STICKY -->
+<a id="cta-sticky" href="https://wa.me/5492352487435?text=Hola!%20Quiero%20saber%20m%C3%A1s%20sobre%20EventWall%20%F0%9F%8E%89" target="_blank" style="position:fixed;bottom:96px;right:28px;z-index:400;display:none;align-items:center;gap:8px;background:var(--pink);color:#fff;padding:11px 20px;border-radius:50px;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;box-shadow:0 8px 32px rgba(240,23,111,0.5);text-decoration:none;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 40px rgba(240,23,111,0.65)'" onmouseout="this.style.transform='';this.style.boxShadow='0 8px 32px rgba(240,23,111,0.5)'">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  Quiero mi EventWall
+</a>
+
 <!-- PROOF BAR -->
 <div class="proof">
   <div class="proof-inner">
@@ -852,26 +1081,24 @@ footer p{font-size:13px;color:var(--muted)}
   </div>
 </div>
 
-<!-- STATS -->
-<div class="section-wrap">
-  <div class="section reveal">
-    <div class="stats-row">
-      <div class="stat-item">
-        <div class="stat-val">∞</div>
-        <div class="stat-desc">Fotos por evento</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-val">5s</div>
-        <div class="stat-desc">Y aparece en pantalla</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-val">0</div>
-        <div class="stat-desc">Apps para descargar</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-val">100%</div>
-        <div class="stat-desc">Personalizable</div>
-      </div>
+<!-- SOCIAL PROOF COUNTER -->
+<div class="sp-wrap">
+  <div class="sp-inner" id="sp-inner">
+    <div class="sp-item">
+      <span class="sp-num" data-target="50" data-suffix="+">0+</span>
+      <div class="sp-label">Eventos realizados</div>
+    </div>
+    <div class="sp-item">
+      <span class="sp-num" data-target="5000" data-suffix="+">0+</span>
+      <div class="sp-label">Fotos compartidas</div>
+    </div>
+    <div class="sp-item">
+      <span class="sp-num" data-target="100" data-suffix="%">0%</span>
+      <div class="sp-label">Clientes satisfechos</div>
+    </div>
+    <div class="sp-item">
+      <span class="sp-num" data-target="0" data-prefix="" data-suffix=" apps">0 apps</span>
+      <div class="sp-label">Para descargar</div>
     </div>
   </div>
 </div>
@@ -899,6 +1126,90 @@ footer p{font-size:13px;color:var(--muted)}
         <div class="step-ico">🎉</div>
         <h3>La magia pasa sola</h3>
         <p>Las fotos, mensajes y deseos aparecen en la pantalla. Al terminar, el álbum completo llega automáticamente por email.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY: ASÍ SE VE EN TU EVENTO (gal-) -->
+<div class="gal-wrap">
+  <div class="gal-inner">
+    <div class="section-label reveal">Vista previa</div>
+    <h2 class="reveal" style="font-family:'Syne',sans-serif;font-size:clamp(32px,4.5vw,56px);font-weight:800;line-height:1.08;letter-spacing:-1.5px;margin-bottom:18px">Así se <span style="color:var(--pink)">vive</span> un EventWall</h2>
+    <p class="section-sub reveal">Esto es lo que ven tus invitados en pantalla. Fotos, mensajes y momentos en tiempo real, todo en un solo lugar.</p>
+    <div class="gal-screen-chrome reveal">
+      <div class="gal-screen-bar">
+        <div class="gal-dot" style="background:#ff5f57"></div>
+        <div class="gal-dot" style="background:#febc2e"></div>
+        <div class="gal-dot" style="background:#28c840"></div>
+        <div class="gal-url">eventwall · boda-sofi-y-fede · pantalla</div>
+      </div>
+      <div class="gal-screen-header">
+        <div class="gal-event-title">Boda de Sofía &amp; Federico ✨</div>
+        <div class="gal-live-badge"><div class="gal-live-dot"></div>EN VIVO</div>
+      </div>
+      <div class="gal-grid">
+
+        <!-- Card 1: foto con badge LIVE -->
+        <div class="gal-card">
+          <div class="gal-badge-live"><div class="gal-badge-live-dot"></div>LIVE</div>
+          <div class="gal-card-media" style="background:linear-gradient(135deg,#1a0635,#5b1a8a,#9d2bc7)">🥂</div>
+          <div class="gal-card-body">
+            <div class="gal-guest-name">Valentina Ríos</div>
+            <div class="gal-content-type">📸 foto · hace 10 seg</div>
+          </div>
+        </div>
+
+        <!-- Card 2: foto -->
+        <div class="gal-card">
+          <div class="gal-new-tag">Nuevo</div>
+          <div class="gal-card-media" style="background:linear-gradient(135deg,#0a1f3e,#0d3d7a,#1565c0)">💃</div>
+          <div class="gal-card-body">
+            <div class="gal-guest-name">Rodrigo Méndez</div>
+            <div class="gal-content-type">📸 foto · hace 2 min</div>
+          </div>
+        </div>
+
+        <!-- Card 3: mensaje -->
+        <div class="gal-card">
+          <div class="gal-card-media" style="background:linear-gradient(135deg,#0f2a10,#1b5e20,#2e7d32)">🎂</div>
+          <div class="gal-card-body">
+            <div class="gal-guest-name">Lucía Fernández</div>
+            <div class="gal-content-type">💬 mensaje · hace 4 min</div>
+          </div>
+        </div>
+
+        <!-- Card 4: foto -->
+        <div class="gal-card">
+          <div class="gal-card-media" style="background:linear-gradient(135deg,#3e0a0a,#7b1a1a,#c62828)">👰</div>
+          <div class="gal-card-body">
+            <div class="gal-guest-name">Marcela Godoy</div>
+            <div class="gal-content-type">📸 foto · hace 6 min</div>
+          </div>
+        </div>
+
+        <!-- Card 5: audio -->
+        <div class="gal-card">
+          <div class="gal-card-media" style="background:linear-gradient(135deg,#1a1000,#4e3500,#7a5200)">🎉</div>
+          <div class="gal-card-body">
+            <div class="gal-guest-name">Agustín Peralta</div>
+            <div class="gal-content-type">🎤 audio · hace 8 min</div>
+          </div>
+        </div>
+
+        <!-- Card 6: foto -->
+        <div class="gal-card">
+          <div class="gal-card-media" style="background:linear-gradient(135deg,#001a2e,#004d66,#00838f)">🥳</div>
+          <div class="gal-card-body">
+            <div class="gal-guest-name">Camila Torres</div>
+            <div class="gal-content-type">📸 foto · hace 9 min</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="gal-footer-bar">
+        <div class="gal-footer-count"><div class="gal-footer-dot"></div>47 publicaciones esta noche</div>
+        <span>Escaneá el QR para participar</span>
       </div>
     </div>
   </div>
@@ -1007,6 +1318,41 @@ footer p{font-size:13px;color:var(--muted)}
   </div>
 </div>
 
+<!-- SOCIAL PROOF COUNTER (sp-) -->
+<div class="sp-wrap">
+  <div class="sp-inner reveal" id="sp-counter-grid">
+    <div class="sp-item">
+      <span class="sp-num" data-target="50" data-suffix="+">0</span>
+      <div class="sp-label">Eventos realizados</div>
+    </div>
+    <div class="sp-item">
+      <span class="sp-num" data-target="5000" data-suffix="+" data-separator=".">0</span>
+      <div class="sp-label">Fotos compartidas</div>
+    </div>
+    <div class="sp-item">
+      <span class="sp-num" data-target="2000" data-suffix="+" data-separator=".">0</span>
+      <div class="sp-label">Invitados conectados</div>
+    </div>
+    <div class="sp-item">
+      <span class="sp-num" data-target="100" data-suffix="%">0</span>
+      <div class="sp-label">Clientes satisfechos</div>
+    </div>
+  </div>
+</div>
+
+<!-- URGENCIA PRICING -->
+<div style="padding:0 24px;background:var(--dark)">
+  <div style="max-width:600px;margin:0 auto;padding:0 0 0">
+    <div style="background:linear-gradient(135deg,rgba(240,23,111,0.12),rgba(240,23,111,0.06));border:1px solid rgba(240,23,111,0.3);border-radius:16px;padding:20px 28px;text-align:center;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
+      <span style="font-size:20px">🔥</span>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--pink);letter-spacing:0.5px">OFERTA DE LANZAMIENTO</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.7);margin-top:2px">Precio especial por tiempo limitado · Solo quedan fechas disponibles para los próximos eventos</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- PRICING -->
 <div id="precios" class="section-wrap">
   <div class="section">
@@ -1035,6 +1381,11 @@ footer p{font-size:13px;color:var(--muted)}
         <div style="margin-top:32px">
           <a href="https://wa.me/5492352487435?text=Hola!%20Quiero%20contratar%20EventWall%20para%20mi%20evento%20%F0%9F%8E%89" target="_blank" class="plan-btn pink">Contratar por WhatsApp →</a>
         </div>
+        <div style="margin-top:20px;padding:16px;background:rgba(37,211,102,0.06);border:1px solid rgba(37,211,102,0.2);border-radius:12px;text-align:center">
+          <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:4px">Garantía incluida</div>
+          <div style="font-size:14px;font-weight:600;color:#fff">Si algo falla el día del evento, te devolvemos el dinero</div>
+        </div>
+        <div style="margin-top:14px;text-align:center;font-size:12px;color:var(--muted)">Transferencia · Mercado Pago · Efectivo</div>
       </div>
     </div>
   </div>
@@ -1221,6 +1572,100 @@ const observer=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});
 },{threshold:0.12});
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// Hero particles
+(function(){
+  const emojis=['📸','💍','🎉','🥂','🎊','✨','💫','🎈','💃','🥳'];
+  const container=document.getElementById('hero-particles');
+  if(!container)return;
+  for(let i=0;i<14;i++){
+    const p=document.createElement('span');
+    p.className='hero-particle';
+    p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDuration=(8+Math.random()*14)+'s';
+    p.style.animationDelay=(Math.random()*12)+'s';
+    p.style.fontSize=(14+Math.random()*16)+'px';
+    container.appendChild(p);
+  }
+})();
+
+// Animated counters
+const spObserver=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    e.target.classList.add('sp-animated');
+    e.target.querySelectorAll('.sp-num[data-target]').forEach((el,i)=>{
+      const target=parseInt(el.dataset.target);
+      const suffix=el.dataset.suffix||'';
+      if(target===0){el.textContent='0'+suffix;return;}
+      const duration=1800;
+      const delay=i*100;
+      setTimeout(()=>{
+        const start=Date.now();
+        const tick=()=>{
+          const p=Math.min((Date.now()-start)/duration,1);
+          const ease=1-Math.pow(1-p,3);
+          el.textContent=Math.floor(ease*target).toLocaleString('es-AR')+suffix;
+          if(p<1)requestAnimationFrame(tick);
+        };
+        tick();
+      },delay);
+    });
+    spObserver.unobserve(e.target);
+  });
+},{threshold:0.3});
+const spInner=document.getElementById('sp-inner');
+if(spInner)spObserver.observe(spInner);
+
+// CTA sticky
+const ctaSticky=document.getElementById('cta-sticky');
+const heroEl=document.querySelector('.hero');
+const preciosEl=document.getElementById('precios');
+if(ctaSticky&&heroEl&&preciosEl){
+  window.addEventListener('scroll',()=>{
+    const show=scrollY>heroEl.offsetHeight && scrollY<preciosEl.offsetTop;
+    ctaSticky.style.display=show?'flex':'none';
+  },{passive:true});
+}
+
+// ── SOCIAL PROOF COUNT-UP ────────────────────────
+function spFormat(val,sep){
+  if(!sep) return String(val);
+  return val.toLocaleString('es-AR').replace(/,/g,'.');
+}
+function spAnimate(el){
+  const target=parseInt(el.dataset.target,10);
+  const suffix=el.dataset.suffix||'';
+  const sep=el.dataset.separator||'';
+  const duration=1600;
+  const startTime=performance.now();
+  function step(now){
+    const elapsed=now-startTime;
+    const progress=Math.min(elapsed/duration,1);
+    // ease-out cubic
+    const eased=1-Math.pow(1-progress,3);
+    const current=Math.round(eased*target);
+    el.textContent=spFormat(current,sep)+suffix;
+    if(progress<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const spGrid=document.getElementById('sp-counter-grid');
+if(spGrid){
+  const spObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('sp-animated');
+        e.target.querySelectorAll('.sp-num').forEach((num,i)=>{
+          setTimeout(()=>spAnimate(num),i*80);
+        });
+        spObs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.2});
+  spObs.observe(spGrid);
+}
 </script>
 </body>
 </html>
