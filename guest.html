@@ -861,8 +861,7 @@ function formatDateES(str){
   if(!str) return '';
   const m=str.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if(!m) return str;
-  const months=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  return parseInt(m[3])+' de '+months[parseInt(m[2])-1]+' de '+m[1];
+  return m[3]+'/'+m[2]+'/'+m[1];
 } // updated by applyGuestDesign
 let audioChunks=[],recTimer=null,recSecs=0,audioUrl=null;
 let selectedFrame='none';
