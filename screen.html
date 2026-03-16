@@ -300,6 +300,41 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
+// Renderiza un QR en un canvas existente por id, usando el canvas que genera qrcodejs directamente
+function renderQR(text, canvasId, size){
+  const target=document.getElementById(canvasId);
+  if(!target) return;
+  const tmp=document.createElement('div');
+  tmp.style.cssText='position:absolute;left:-9999px;top:-9999px;';
+  document.body.appendChild(tmp);
+  try{
+    new QRCode(tmp,{text,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});
+    // qrcodejs renderiza el canvas síncronamente; la img es opcional
+    const src=tmp.querySelector('canvas');
+    if(src){
+      target.width=size;target.height=size;
+      target.getContext('2d').drawImage(src,0,0,size,size);
+      tmp.remove();return;
+    }
+    // fallback: esperar img (browsers que bloquean canvas cross-origin)
+    const img=tmp.querySelector('img');
+    if(img){
+      const poll=setInterval(()=>{
+        if(img.complete&&img.naturalWidth){
+          clearInterval(poll);
+          const i=new Image();
+          i.onload=()=>{target.width=size;target.height=size;target.getContext('2d').drawImage(i,0,0,size,size);};
+          i.src=img.src;
+          tmp.remove();
+        }
+      },50);
+      setTimeout(()=>{clearInterval(poll);tmp.remove();},3000);
+      return;
+    }
+  }catch(e){}
+  tmp.remove();
+}
+
 const SUPABASE_URL='https://jxqwrbmnfmnzddkcimrm.supabase.co';
 const SUPABASE_KEY='sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 
@@ -1053,15 +1088,7 @@ async function init(){
   const saved=localStorage.getItem('ew_design_'+eventId);
   // QR
   const guestUrl=location.origin+'/guest.html?event='+eventId;
-  const tmp=document.createElement('div');tmp.style.display='none';document.body.appendChild(tmp);
-  try{
-    new QRCode(tmp,{text:guestUrl,width:120,height:120,correctLevel:QRCode.CorrectLevel.M});
-    setTimeout(()=>{
-      const img=tmp.querySelector('img');
-      if(img){const i=new Image();i.onload=()=>{const ctx=document.getElementById('qr-canvas').getContext('2d');ctx.drawImage(i,0,0,120,120);};i.src=img.src;}
-      tmp.remove();
-    },200);
-  }catch(e){tmp.remove();}
+  renderQR(guestUrl, 'qr-canvas', 120);
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   // Apply theme AFTER app is visible so DOM queries work
@@ -1094,15 +1121,7 @@ function showWaitingScreen(eventId, ev){
   document.getElementById('ws-subtitle').textContent=subtitle;
   // Big QR
   const guestUrl=location.origin+'/guest.html?event='+(ev.custom_code||eventId);
-  const tmp=document.createElement('div');tmp.style.display='none';document.body.appendChild(tmp);
-  try{
-    new QRCode(tmp,{text:guestUrl,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
-    setTimeout(()=>{
-      const img=tmp.querySelector('img');
-      if(img){const i=new Image();i.onload=()=>{const ctx=document.getElementById('ws-qr-canvas').getContext('2d');ctx.drawImage(i,0,0,220,220);};i.src=img.src;}
-      tmp.remove();
-    },200);
-  }catch(e){tmp.remove();}
+  renderQR(guestUrl, 'ws-qr-canvas', 220);
   // Countdown
   startWaitCountdown();
 }
