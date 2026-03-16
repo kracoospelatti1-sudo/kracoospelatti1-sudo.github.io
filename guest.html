@@ -101,10 +101,18 @@ body{
 .input:focus{border-color:var(--pink)}
 
 /* TYPE TABS */
+.tabs-wrap{position:relative;margin-bottom:16px}
+.tabs-wrap::after{
+  content:'';position:absolute;top:0;right:0;
+  width:52px;height:calc(100% - 6px);
+  background:linear-gradient(to right,transparent,var(--bg) 80%);
+  pointer-events:none;transition:opacity 0.3s;z-index:2;
+}
+.tabs-wrap.at-end::after{opacity:0}
 .type-tabs{
   display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;
   scrollbar-width:none;-webkit-overflow-scrolling:touch;
-  margin-bottom:16px;
+  margin-bottom:0;
 }
 .type-tabs::-webkit-scrollbar{display:none}
 .tab-btn{
@@ -542,7 +550,8 @@ body{
     </div>
 
     <!-- TYPE TABS -->
-    <div class="type-tabs">
+    <div class="tabs-wrap">
+    <div class="type-tabs" id="type-tabs">
       <button class="tab-btn active" onclick="selectType('photo',this)"><span class="ico">📷</span><span class="lbl">Foto</span></button>
       <button class="tab-btn" onclick="selectType('message',this)"><span class="ico">💬</span><span class="lbl">Mensaje</span></button>
       <button class="tab-btn" onclick="selectType('audio',this)"><span class="ico">🎤</span><span class="lbl">Audio</span></button>
@@ -551,6 +560,7 @@ body{
       <button class="tab-btn" id="my-photos-btn" onclick="selectType('my-photos',this);loadMyPhotos()"><span class="ico">🖼</span><span class="lbl">Mis fotos</span></button>
       <button class="tab-btn" id="gallery-btn" onclick="selectType('gallery',this);loadGallery()"><span class="ico">🎉</span><span class="lbl">Galería</span></button>
     </div>
+    </div><!-- end tabs-wrap -->
 
     <!-- ── PHOTO SECTION ── -->
     <div class="section active" id="section-photo">
@@ -1538,6 +1548,7 @@ async function init(){
     document.getElementById('ev-sub').textContent=[ev.date,ev.subtitle].filter(Boolean).join(' · ');
     document.getElementById('page-loading').style.display='none';
     document.getElementById('app').style.display='block';
+    initTabsHint();
     buildFramePicker();
     await applyGuestDesign(ev);
     // Start expiry polling so open pages also lock when PIN expires
@@ -2395,6 +2406,26 @@ async function loadMyPhotos(){
     loading.style.display='none';
     grid.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px">Error al cargar fotos</p>';
   }
+}
+
+// ── TABS SCROLL HINT ─────────────────────────────────────────
+function initTabsHint(){
+  const tabs=document.getElementById('type-tabs');
+  const wrap=tabs?.closest('.tabs-wrap');
+  if(!tabs||!wrap) return;
+  function check(){
+    const atEnd=tabs.scrollLeft+tabs.clientWidth>=tabs.scrollWidth-4;
+    wrap.classList.toggle('at-end',atEnd);
+  }
+  tabs.addEventListener('scroll',check,{passive:true});
+  check();
+  // Peek: scroll right a bit then back to hint there's more
+  setTimeout(()=>{
+    if(tabs.scrollWidth>tabs.clientWidth){
+      tabs.scrollBy({left:50,behavior:'smooth'});
+      setTimeout(()=>tabs.scrollBy({left:-50,behavior:'smooth'}),700);
+    }
+  },1400);
 }
 
 async function deleteMyPhoto(id, cardEl){
