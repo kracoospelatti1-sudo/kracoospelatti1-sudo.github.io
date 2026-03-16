@@ -527,7 +527,7 @@ function playSound(type){
 
 
 // ── MESSAGE BUBBLES ───────────────────────────────────────────
-let msgBubbleQueue=[],msgBubbleShowing=false;
+let msgBubbleQueue=[],msgBubbleShowing=false,currentBubbleId=null,_bubbleTimer=null;
 const MSG_ICONS=['💬','😂','❤️','🔥','😍','🎉','👏','💕','😎','🥳','💯','✨'];
 
 function getShownKey(prefix){
@@ -662,15 +662,26 @@ function showNextBubble(){
   card.style.animation='none';void card.offsetWidth;
   card.style.animation='bubbleIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) forwards';
   overlay.style.display='flex';
+  currentBubbleId=msg.id;
   const readTime=Math.max(4000,3000+msg.content.length*60);
-  setTimeout(()=>{
+  _bubbleTimer=setTimeout(()=>{
+    _bubbleTimer=null;currentBubbleId=null;
     card.style.animation='bubbleOut 0.4s ease forwards';
     setTimeout(()=>{overlay.style.display='none';setTimeout(showNextBubble,800);},400);
   },readTime);
 }
 
+function dismissBubble(){
+  if(!_bubbleTimer) return;
+  clearTimeout(_bubbleTimer);_bubbleTimer=null;currentBubbleId=null;
+  const overlay=document.getElementById('msg-bubble-overlay');
+  const card=document.getElementById('msg-bubble-card');
+  card.style.animation='bubbleOut 0.3s ease forwards';
+  setTimeout(()=>{overlay.style.display='none';msgBubbleShowing=false;setTimeout(showNextBubble,400);},300);
+}
+
 // ── WISH WALL ─────────────────────────────────────────────────
-let wishQueue=[],wishShowing=false,lastWishDisplayTime=0;
+let wishQueue=[],wishShowing=false,lastWishDisplayTime=0,currentWishId=null,_wishTimer=null;
 const WISH_SCREEN_COOLDOWN=30*60*1000; // 30 min entre deseos en pantalla
 
 function getShownWishIds(){
@@ -713,6 +724,7 @@ function showNextWish(){
   wishShowing=true;
   lastWishDisplayTime=Date.now();
   const wish=wishQueue.shift();markWishShown(wish.id);
+  currentWishId=wish.id;
   document.getElementById('wish-author').textContent=wish.author+' dice:';
   const textEl=document.getElementById('wish-text');
   textEl.textContent=wish.content;
@@ -722,10 +734,19 @@ function showNextWish(){
   const overlay=document.getElementById('wish-overlay');
   overlay.style.display='flex';overlay.style.opacity='1';overlay.style.transition='';
   const readTime=Math.max(6000,6000+wish.content.length*80);
-  setTimeout(()=>{
+  _wishTimer=setTimeout(()=>{
+    _wishTimer=null;currentWishId=null;
     overlay.style.transition='opacity 0.8s';overlay.style.opacity='0';
     setTimeout(()=>{overlay.style.display='none';overlay.style.opacity='1';overlay.style.transition='';setTimeout(showNextWish,1500);},800);
   },readTime);
+}
+
+function dismissWish(){
+  if(!_wishTimer) return;
+  clearTimeout(_wishTimer);_wishTimer=null;currentWishId=null;
+  const overlay=document.getElementById('wish-overlay');
+  overlay.style.transition='opacity 0.3s';overlay.style.opacity='0';
+  setTimeout(()=>{overlay.style.display='none';overlay.style.opacity='1';overlay.style.transition='';wishShowing=false;setTimeout(showNextWish,400);},300);
 }
 
 // ── POLL SCREEN ───────────────────────────────────────────────
@@ -956,7 +977,10 @@ async function pollPosts(){
     removedIds.forEach(id=>{
       photoPosts=photoPosts.filter(p=>p.id!==id);
       msgBubbleQueue=msgBubbleQueue.filter(m=>m.id!==id);
+      wishQueue=wishQueue.filter(w=>w.id!==id);
       if(currentFeaturedPostId===id) currentFeaturedPostId=null;
+      if(currentBubbleId===id) dismissBubble();
+      if(currentWishId===id) dismissWish();
       // Remove from sidebar strip
       const stripCard=document.querySelector('#msg-strip [data-id="'+id+'"]');
       if(stripCard) stripCard.remove();
