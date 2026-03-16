@@ -556,7 +556,7 @@ body{
       <button class="tab-btn" onclick="selectType('message',this)"><span class="ico">💬</span><span class="lbl">Mensaje</span></button>
       <button class="tab-btn" onclick="selectType('audio',this)"><span class="ico">🎤</span><span class="lbl">Audio</span></button>
       <button class="tab-btn" id="wish-btn" onclick="selectType('wish',this)" disabled><span class="ico">💌</span><span class="lbl" id="wish-btn-sub">Especial</span></button>
-      <button class="tab-btn" id="vote-btn" onclick="selectType('vote',this);loadVotePolls()"><span class="ico">🗳</span><span class="lbl" id="vote-label">Votar</span></button>
+      <button class="tab-btn" id="vote-btn" onclick="selectType('vote',this);loadVotePolls()" style="display:none"><span class="ico">🗳</span><span class="lbl" id="vote-label">Votar</span></button>
       <button class="tab-btn" id="my-photos-btn" onclick="selectType('my-photos',this);loadMyPhotos()"><span class="ico">🖼</span><span class="lbl">Mis fotos</span></button>
       <button class="tab-btn" id="gallery-btn" onclick="selectType('gallery',this);loadGallery()"><span class="ico">🎉</span><span class="lbl">Galería</span></button>
     </div>
