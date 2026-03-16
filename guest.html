@@ -100,59 +100,45 @@ body{
 }
 .input:focus{border-color:var(--pink)}
 
-/* TYPE SELECTOR */
-.type-label{margin-bottom:10px}
-.type-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:8px;margin-bottom:10px;
+/* TYPE TABS */
+.type-tabs{
+  display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  margin-bottom:16px;
 }
-.type-btn{
-  display:flex;flex-direction:column;align-items:center;
-  gap:6px;padding:20px 6px;
+.type-tabs::-webkit-scrollbar{display:none}
+.tab-btn{
+  flex-shrink:0;display:flex;flex-direction:column;align-items:center;
+  gap:4px;padding:12px 14px;min-width:62px;
   background:#fff;border:1.5px solid var(--border);
   border-radius:var(--radius-sm);cursor:pointer;
-  transition:all 0.2s;-webkit-appearance:none;
+  transition:border-color 0.2s,background 0.2s;-webkit-appearance:none;
   font-family:'DM Sans',sans-serif;
 }
-.type-btn .ico{font-size:32px;line-height:1}
-.type-btn .lbl{font-size:14px;font-weight:600;color:var(--muted)}
-.type-btn.active{
-  border-color:var(--pink);background:var(--pink-light);
-}
-.type-btn.active .lbl{color:var(--pink)}
-
-/* EXTRA BUTTONS */
-.extra-btns{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.extra-btn{
-  display:flex;align-items:center;gap:12px;
-  padding:16px 18px;background:#fff;
-  border:1.5px solid var(--border);border-radius:var(--radius-sm);
-  cursor:pointer;transition:all 0.2s;-webkit-appearance:none;
-  font-family:'DM Sans',sans-serif;width:100%;text-align:left;
-}
-.extra-btn .ico{font-size:22px}
-.extra-btn .info{flex:1}
-.extra-btn .info strong{display:block;font-size:16px;font-weight:600;color:var(--text)}
-.extra-btn .info span{font-size:13px;color:var(--muted)}
-.extra-btn.active{border-color:var(--pink);background:var(--pink-light)}
-.extra-btn.active .info strong{color:var(--pink)}
+.tab-btn .ico{font-size:24px;line-height:1}
+.tab-btn .lbl{font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
+.tab-btn.active{border-color:var(--pink);background:var(--pink-light)}
+.tab-btn.active .lbl{color:var(--pink)}
+#wish-btn:disabled{opacity:0.45;cursor:not-allowed;pointer-events:none}
 
 /* ── FORM SECTIONS ──────────────────────────────────────────── */
-.section{display:none}
+.section{display:none;animation:secFadeIn 0.25s ease}
 .section.active{display:block}
+@keyframes secFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* PHOTO */
 .upload-zone{
-  width:100%;min-height:180px;
+  width:100%;min-height:160px;
   border:2px dashed var(--border);border-radius:var(--radius);
   display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:8px;cursor:pointer;
-  background:#fff;transition:all 0.2s;margin-bottom:12px;
+  justify-content:center;gap:6px;cursor:pointer;
+  background:#fff;transition:border-color 0.2s,background 0.2s;margin-bottom:12px;
+  -webkit-tap-highlight-color:transparent;
 }
-.upload-zone:active{border-color:var(--pink);background:var(--pink-light)}
-.upload-zone .uz-ico{font-size:48px}
-.upload-zone .uz-txt{font-size:16px;font-weight:600;color:var(--muted)}
-.upload-zone .uz-sub{font-size:13px;color:var(--border)}
+.upload-zone:active,.upload-zone:hover{border-color:var(--pink);background:var(--pink-light)}
+.upload-zone .uz-ico{font-size:44px;margin-bottom:2px}
+.upload-zone .uz-txt{font-size:16px;font-weight:700;color:var(--text)}
+.upload-zone .uz-sub{font-size:12px;color:var(--muted)}
 
 .orient-warn{
   background:#fef3c7;border:1px solid #f59e0b;border-radius:var(--radius-sm);
@@ -314,7 +300,6 @@ body{
 .audio-info span{font-size:14px;color:var(--muted)}
 
 /* WISH */
-#wish-btn:disabled{opacity:0.45;cursor:not-allowed;pointer-events:none}
 .wish-banner{
   background:linear-gradient(135deg,#1a0a14,#2d1020);
   border-radius:var(--radius);padding:24px 20px;
@@ -390,17 +375,28 @@ body{
   position:fixed;inset:0;z-index:210;
   background:#fff;display:none;flex-direction:column;
   align-items:center;justify-content:center;gap:12px;padding:32px;
+  overflow:hidden;
 }
 .success-screen.show{display:flex}
-.success-ico{font-size:64px;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)}
-@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.success-ico{font-size:72px;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes popIn{from{transform:scale(0) rotate(-15deg)}to{transform:scale(1) rotate(0deg)}}
 .success-title{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--text)}
-.success-sub{font-size:17px;color:var(--muted);text-align:center}
+.success-sub{font-size:16px;color:var(--muted);text-align:center;max-width:260px;line-height:1.5}
 .success-btn{
-  margin-top:8px;padding:14px 32px;
+  margin-top:8px;padding:16px 36px;
   background:var(--pink);color:#fff;border:none;
-  border-radius:var(--radius-sm);font-size:18px;font-weight:700;
+  border-radius:var(--radius-sm);font-size:17px;font-weight:700;
   font-family:'DM Sans',sans-serif;cursor:pointer;
+  box-shadow:0 8px 24px rgba(240,23,111,0.3);
+}
+/* Confetti */
+.confetti-piece{
+  position:absolute;width:8px;height:8px;border-radius:2px;
+  animation:confettiFall 1.2s ease-in forwards;pointer-events:none;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0}
 }
 
 /* POLL LOCK */
@@ -534,28 +530,14 @@ body{
       <input type="text" class="input" id="guest-name" placeholder="¿Cómo te llamás?" autocomplete="name"/>
     </div>
 
-    <!-- TYPE SELECTOR -->
-    <label class="label type-label">¿Qué querés compartir?</label>
-    <div class="type-grid">
-      <button class="type-btn active" onclick="selectType('photo',this)"><span class="ico">📷</span><span class="lbl">Foto</span></button>
-      <button class="type-btn" onclick="selectType('message',this)"><span class="ico">💬</span><span class="lbl">Mensaje</span></button>
-      <button class="type-btn" onclick="selectType('audio',this)"><span class="ico">🎤</span><span class="lbl">Audio</span></button>
-    </div>
-
-    <!-- EXTRA BUTTONS -->
-    <div class="extra-btns" id="extra-btns">
-      <button class="extra-btn wish-btn" id="wish-btn" onclick="selectType('wish',this)" disabled>
-        <span class="ico">💌</span>
-        <div class="info"><strong>Mensaje especial</strong><span id="wish-btn-sub">Se habilita cuando empiece el evento</span></div>
-      </button>
-      <button class="extra-btn vote-btn" id="vote-btn" onclick="selectType('vote',this);loadVotePolls()">
-        <span class="ico">🗳</span>
-        <div class="info"><strong id="vote-label">Votaciones activas</strong><span>Participá en encuestas del evento</span></div>
-      </button>
-      <button class="extra-btn" id="my-photos-btn" onclick="selectType('my-photos',this);loadMyPhotos()">
-        <span class="ico">🖼</span>
-        <div class="info"><strong>Mis fotos</strong><span>Ver y borrar las fotos que subiste</span></div>
-      </button>
+    <!-- TYPE TABS -->
+    <div class="type-tabs">
+      <button class="tab-btn active" onclick="selectType('photo',this)"><span class="ico">📷</span><span class="lbl">Foto</span></button>
+      <button class="tab-btn" onclick="selectType('message',this)"><span class="ico">💬</span><span class="lbl">Mensaje</span></button>
+      <button class="tab-btn" onclick="selectType('audio',this)"><span class="ico">🎤</span><span class="lbl">Audio</span></button>
+      <button class="tab-btn" id="wish-btn" onclick="selectType('wish',this)" disabled><span class="ico">💌</span><span class="lbl" id="wish-btn-sub">Especial</span></button>
+      <button class="tab-btn" id="vote-btn" onclick="selectType('vote',this);loadVotePolls()"><span class="ico">🗳</span><span class="lbl" id="vote-label">Votar</span></button>
+      <button class="tab-btn" id="my-photos-btn" onclick="selectType('my-photos',this);loadMyPhotos()"><span class="ico">🖼</span><span class="lbl">Mis fotos</span></button>
     </div>
 
     <!-- ── PHOTO SECTION ── -->
@@ -1431,8 +1413,9 @@ async function applyGuestDesign(ev){
     .hero-pill { background: ${accent}22 !important; border-color: ${accent}55 !important; color: ${heroTxt}cc !important; }
     .stat-num { color: ${accent} !important; }
     .section-label { font-family: '${fontTitle}', sans-serif !important; color: ${textColor}88 !important; }
-    .type-btn, button.type-btn { font-family: '${font}', sans-serif !important; border-radius: ${btnRadius}px !important; }
-    .type-btn.active, button.type-btn.active { border-color: ${accent} !important; background: ${accent}15 !important; color: ${accent} !important; }
+    .tab-btn { font-family: '${font}', sans-serif !important; border-radius: ${btnRadius}px !important; }
+    .tab-btn.active { border-color: ${accent} !important; background: ${accent}15 !important; }
+    .tab-btn.active .lbl { color: ${accent} !important; }
     input.field, textarea.field, select.field, .field { 
       background: ${fieldBg} !important; 
       border-radius: ${fieldRadius}px !important; 
@@ -1485,7 +1468,7 @@ async function applyGuestDesign(ev){
     {key:'showMessage', idx:1, section:'section-message'},
     {key:'showAudio',   idx:2, section:'section-audio'},
   ];
-  const typeBtns=document.querySelectorAll('.type-grid .type-btn');
+  const typeBtns=document.querySelectorAll('.type-tabs .tab-btn');
   let firstVisible=null;
   map.forEach(({key,idx,section})=>{
     const show = d[key]!==false;
@@ -1503,7 +1486,7 @@ async function applyGuestDesign(ev){
   if(voteBtn) voteBtn.style.display=d.showVote!==false?'':'none';
 
   // Activate first visible tab if current is hidden
-  const activeBtn=document.querySelector('.type-btn.active');
+  const activeBtn=document.querySelector('.tab-btn.active');
   if(activeBtn&&activeBtn.style.display==='none'&&firstVisible){
     firstVisible.click();
   }
@@ -1587,14 +1570,14 @@ function updateWishBtn(eventStarted){
   const remaining=wishCooldownRemaining();
   if(!eventStarted){
     btn.disabled=true;
-    sub.textContent='Se habilita cuando empiece el evento';
+    sub.textContent='Pronto';
   } else if(remaining>0){
     btn.disabled=true;
     const mins=Math.ceil(remaining/60000);
-    sub.textContent='Disponible en '+mins+' min';
+    sub.textContent=mins+'min';
   } else {
     btn.disabled=false;
-    sub.textContent='Aparece en pantalla completa con animación';
+    sub.textContent='Especial';
   }
 }
 
@@ -1618,7 +1601,7 @@ async function loadStats(){
 
 // ── TYPE ─────────────────────────────────────────────────────
 function selectType(type,btn){
-  document.querySelectorAll('.type-btn,.extra-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('section-'+type).classList.add('active');
@@ -1973,7 +1956,23 @@ function setProgress(pct,label){
 }
 function showSending(){setProgress(10,'Preparando...');document.getElementById('sending-overlay').classList.add('show');}
 function hideSending(){document.getElementById('sending-overlay').classList.remove('show');setProgress(0,'');}
-function showSuccess(){document.getElementById('success-screen').classList.add('show');loadStats();}
+function showSuccess(){
+  document.getElementById('success-screen').classList.add('show');
+  launchConfetti();
+  loadStats();
+}
+
+function launchConfetti(){
+  const ss=document.getElementById('success-screen');
+  const colors=['#f0176f','#ffd700','#00f5ff','#a855f7','#4ade80','#ff6b9d','#f5a623'];
+  for(let i=0;i<50;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.cssText=`left:${Math.random()*100}%;top:${-10-Math.random()*20}px;background:${colors[i%colors.length]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;animation-duration:${0.8+Math.random()*0.8}s;animation-delay:${Math.random()*0.4}s;border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    ss.appendChild(p);
+    setTimeout(()=>p.remove(),1600);
+  }
+}
 function showFormError(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');}
 function hideFormError(id){document.getElementById(id).classList.remove('show');}
 function resetForm(){
@@ -2000,8 +1999,8 @@ function resetForm(){
   document.getElementById('waveform').style.display='none';
   ['photo-error','msg-error','audio-error','wish-error'].forEach(id=>hideFormError(id));
   // Reset to photo tab
-  document.querySelectorAll('.type-btn,.extra-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.type-btn')[0]?.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn')[0]?.classList.add('active');
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('section-photo')?.classList.add('active');
 }
@@ -2319,6 +2318,14 @@ async function moderatePhotoWithAI(imageDataUrl){
 init();
 resumeCooldowns();
 
+// ── NAME PERSISTENCE ──────────────────────────────────────────
+(function(){
+  const nameEl=document.getElementById('guest-name');
+  if(!nameEl) return;
+  const saved=localStorage.getItem('ew_guest_name');
+  if(saved) nameEl.value=saved;
+  nameEl.addEventListener('input',()=>localStorage.setItem('ew_guest_name',nameEl.value));
+})();
 
 // ── TOAST ────────────────────────────────────────────────────
 function toast(msg){
