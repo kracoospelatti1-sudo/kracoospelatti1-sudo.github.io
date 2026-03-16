@@ -642,7 +642,7 @@ nav.scrolled{
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .form-group{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
 .form-group.full{grid-column:span 2}
-.form-label{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px}
+.form-label{font-size:13px;font-weight:600;color:rgba(255,255,255,0.6);letter-spacing:0.2px}
 .form-input{
   width:100%;padding:13px 16px;
   background:var(--dark);border:1px solid var(--border2);
@@ -1476,11 +1476,11 @@ body.announce-closed .hero{padding-top:140px!important}
     <div class="contact-form reveal">
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Tu nombre</label>
-          <input class="form-input" id="f-name" type="text" placeholder="Ej: Carolina López"/>
+          <label class="form-label">👤 Tu nombre</label>
+          <input class="form-input" id="f-name" type="text" placeholder="Ej: Carolina López" autocomplete="name"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Tipo de evento</label>
+          <label class="form-label">🎉 Tipo de evento</label>
           <select class="form-input" id="f-type">
             <option value="" disabled selected>Seleccioná...</option>
             <option>💍 Boda</option>
@@ -1493,11 +1493,11 @@ body.announce-closed .hero{padding-top:140px!important}
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Fecha del evento</label>
-          <input class="form-input" id="f-date" type="date"/>
+          <label class="form-label">📅 Fecha del evento</label>
+          <input class="form-input" id="f-date" type="text" placeholder="DD/MM/AAAA" inputmode="numeric" maxlength="10" oninput="maskDate(this)"/>
         </div>
         <div class="form-group">
-          <label class="form-label">Cantidad estimada de invitados</label>
+          <label class="form-label">👥 Cantidad de invitados</label>
           <select class="form-input" id="f-guests">
             <option value="" disabled selected>Seleccioná...</option>
             <option>Menos de 50</option>
@@ -1507,7 +1507,7 @@ body.announce-closed .hero{padding-top:140px!important}
           </select>
         </div>
         <div class="form-group full">
-          <label class="form-label">Mensaje adicional (opcional)</label>
+          <label class="form-label">💬 Mensaje adicional (opcional)</label>
           <input class="form-input" id="f-msg" type="text" placeholder="Salón, ciudad, algo que quieras contarnos..."/>
         </div>
       </div>
@@ -1557,6 +1557,14 @@ body.announce-closed .hero{padding-top:140px!important}
 
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
+// Date mask: auto-insert slashes as user types DD/MM/AAAA
+function maskDate(el){
+  let v=el.value.replace(/\D/g,'');
+  if(v.length>2) v=v.slice(0,2)+'/'+v.slice(2);
+  if(v.length>5) v=v.slice(0,5)+'/'+v.slice(5,9);
+  el.value=v;
+}
+
 // Contact form → WhatsApp
 function submitForm(){
   const name   = document.getElementById('f-name').value.trim();

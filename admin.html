@@ -1349,6 +1349,51 @@ input[type=range]{accent-color:var(--pink)}
               </div>
             </div>
           </div>
+          <div class="card" style="margin-top:12px">
+            <div class="card-title">🖼 Marca de agua en fotos</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Se aplica automáticamente a cada foto que sube un invitado (PNG con transparencia recomendado)</p>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <label>Imagen PNG</label>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                  <input type="file" id="gd-wm-file" accept="image/png,image/svg+xml,image/webp" style="display:none" onchange="uploadWatermark(this)"/>
+                  <button class="btn-ghost" onclick="document.getElementById('gd-wm-file').click()">📁 Elegir PNG</button>
+                  <span id="gd-wm-status" style="font-size:12px;color:var(--muted)">Sin marca de agua</span>
+                </div>
+                <div id="gd-wm-preview" style="display:none;margin-top:10px">
+                  <img id="gd-wm-img" style="max-height:60px;max-width:160px;border-radius:6px;border:1px solid var(--border);background:repeating-conic-gradient(#aaa 0% 25%,#fff 0% 50%) 0/12px 12px;padding:4px" alt="watermark"/>
+                  <button onclick="removeWatermark()" style="display:block;margin-top:6px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-align:left;padding:0">✕ Quitar marca de agua</button>
+                </div>
+                <input type="hidden" id="gd-wm-url" value=""/>
+              </div>
+              <div class="design-grid">
+                <div class="design-field">
+                  <label>Posición</label>
+                  <select id="gd-wm-pos">
+                    <option value="br">Inferior derecha</option>
+                    <option value="bl">Inferior izquierda</option>
+                    <option value="tr">Superior derecha</option>
+                    <option value="tl">Superior izquierda</option>
+                    <option value="center">Centro</option>
+                  </select>
+                </div>
+                <div class="design-field">
+                  <label>Tamaño (% del ancho)</label>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <input type="range" id="gd-wm-size" min="5" max="50" value="20" style="flex:1" oninput="document.getElementById('gd-wm-size-val').textContent=this.value+'%'"/>
+                    <span id="gd-wm-size-val" style="font-size:12px;color:var(--muted);min-width:36px">20%</span>
+                  </div>
+                </div>
+                <div class="design-field">
+                  <label>Opacidad</label>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <input type="range" id="gd-wm-opacity" min="10" max="100" value="70" style="flex:1" oninput="document.getElementById('gd-wm-opacity-val').textContent=this.value+'%'"/>
+                    <span id="gd-wm-opacity-val" style="font-size:12px;color:var(--muted);min-width:36px">70%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- TAB: OPCIONES -->
@@ -2441,6 +2486,36 @@ function applyGDTemplate(name){
   updateGuestPreview();
 }
 
+async function uploadWatermark(input){
+  const file=input.files[0];if(!file) return;
+  const status=document.getElementById('gd-wm-status');
+  status.textContent='Subiendo...';
+  try{
+    const ext=file.name.split('.').pop();
+    const path='watermarks/'+(selectedEvent?.id||'global')+'/wm.'+ext;
+    const res=await fetch(SUPABASE_URL+'/storage/v1/object/'+BUCKET+'/'+path,{
+      method:'PUT',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':file.type,'x-upsert':'true'},
+      body:file
+    });
+    if(!res.ok) throw new Error(await res.text());
+    const url=SUPABASE_URL+'/storage/v1/object/public/'+BUCKET+'/'+path;
+    document.getElementById('gd-wm-url').value=url;
+    document.getElementById('gd-wm-img').src=url;
+    document.getElementById('gd-wm-preview').style.display='block';
+    status.textContent='✅ '+file.name;
+  }catch(e){
+    status.textContent='❌ Error: '+e.message.slice(0,60);
+  }
+  input.value='';
+}
+
+function removeWatermark(){
+  document.getElementById('gd-wm-url').value='';
+  document.getElementById('gd-wm-preview').style.display='none';
+  document.getElementById('gd-wm-status').textContent='Sin marca de agua';
+}
+
 function resetGuestDesign(){
   if(!confirm('¿Resetear el diseño del invitado?')) return;
   localStorage.removeItem('ew_guest_design_'+(selectedEvent?.id||''));
@@ -2952,6 +3027,20 @@ async function showGuestDesign(){
     const tog=document.getElementById('tog-show-'+k);
     if(tog) tog.classList.toggle('on',on);
   });
+  // Watermark
+  const wmUrl=d.wmUrl||'';
+  document.getElementById('gd-wm-url').value=wmUrl;
+  if(wmUrl){
+    document.getElementById('gd-wm-img').src=wmUrl;
+    document.getElementById('gd-wm-preview').style.display='block';
+    document.getElementById('gd-wm-status').textContent='✅ Marca de agua activa';
+  } else {
+    document.getElementById('gd-wm-preview').style.display='none';
+    document.getElementById('gd-wm-status').textContent='Sin marca de agua';
+  }
+  if(d.wmPos) document.getElementById('gd-wm-pos').value=d.wmPos;
+  if(d.wmSize){document.getElementById('gd-wm-size').value=d.wmSize;document.getElementById('gd-wm-size-val').textContent=d.wmSize+'%';}
+  if(d.wmOpacity){document.getElementById('gd-wm-opacity').value=d.wmOpacity;document.getElementById('gd-wm-opacity-val').textContent=d.wmOpacity+'%';}
   updateGuestPreview();
 }
 
@@ -3097,6 +3186,10 @@ async function saveGuestDesign(){
     showReactions:getGDToggle('reactions'),
     showPhotoEdit:getGDToggle('photoEdit'),
     showDeletePhoto:getGDToggle('deletePhoto'),
+    wmUrl:getV('gd-wm-url')||'',
+    wmPos:getV('gd-wm-pos')||'br',
+    wmSize:parseInt(getV('gd-wm-size')||'20'),
+    wmOpacity:parseInt(getV('gd-wm-opacity')||'70'),
   };
   // Upsert to Supabase
   try {
