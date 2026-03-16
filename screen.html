@@ -279,6 +279,14 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
         <div class="featured-caption" id="featured-caption"></div>
         <div class="featured-author" id="featured-author"></div>
       </div>
+      <div class="reaction-bar" id="reaction-bar">
+        <button class="react-btn" onclick="sendReaction('❤️')"><span>❤️</span><span class="cnt" id="rc-heart">0</span></button>
+        <button class="react-btn" onclick="sendReaction('😂')"><span>😂</span><span class="cnt" id="rc-laugh">0</span></button>
+        <button class="react-btn" onclick="sendReaction('😍')"><span>😍</span><span class="cnt" id="rc-love">0</span></button>
+        <button class="react-btn" onclick="sendReaction('🔥')"><span>🔥</span><span class="cnt" id="rc-fire">0</span></button>
+        <button class="react-btn" onclick="sendReaction('👏')"><span>👏</span><span class="cnt" id="rc-clap">0</span></button>
+        <button class="react-btn" onclick="sendReaction('🥳')"><span>🥳</span><span class="cnt" id="rc-party">0</span></button>
+      </div>
       <div class="reaction-overlay" id="reaction-overlay"></div>
     </div>
 
@@ -962,7 +970,18 @@ function buildStrip(){
   photoPosts.slice(0,6).forEach(p=>addToStrip(p));
 }
 
-function updateCounters(){}
+function updateCounters(){
+  const photoCount=photoPosts.length;
+  const msgCount=posts.filter(p=>p.type==='message'||p.type==='audio').length;
+  const wishCount=posts.filter(p=>p.type==='wish').length;
+  const pills=document.querySelector('.counter-pills');
+  if(!pills)return;
+  pills.innerHTML=`
+    <div class="cpill"><span>${photoCount}</span> Foto${photoCount!==1?'s':''}</div>
+    <div class="cpill"><span>${msgCount}</span> Mensaje${msgCount!==1?'s':''}</div>
+    <div class="cpill"><span>${wishCount}</span> Deseo${wishCount!==1?'s':''}</div>
+  `;
+}
 
 function showNewBadge(){
   const b=document.getElementById('new-badge');b.style.display='block';
