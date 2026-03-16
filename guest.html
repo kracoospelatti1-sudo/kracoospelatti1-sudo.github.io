@@ -2397,19 +2397,23 @@ async function loadMyPhotos(){
 
     // Fetch reactions for all my photos at once
     const orFilter=posts.map(p=>'post_id.eq.'+p.id).join(',');
-    let rxnCounts={};
+    let rxnMap={};
     if(orFilter){
       try{
-        const rxns=await apiRest('reactions?or=('+orFilter+')&select=post_id');
-        rxns.forEach(r=>{rxnCounts[r.post_id]=(rxnCounts[r.post_id]||0)+1;});
+        const rxns=await apiRest('reactions?or=('+orFilter+')&select=post_id,emoji');
+        rxns.forEach(r=>{
+          if(!rxnMap[r.post_id]) rxnMap[r.post_id]={};
+          rxnMap[r.post_id][r.emoji]=(rxnMap[r.post_id][r.emoji]||0)+1;
+        });
       }catch(e){}
     }
 
     posts.forEach(p=>{
       const card=document.createElement('div');
       card.className='my-photo-card';
-      const count=rxnCounts[p.id]||0;
-      const rxnBadge=count>0?'<div class="my-photo-rxn">❤️ '+count+'</div>':'';
+      const counts=rxnMap[p.id]||{};
+      const pills=['❤️','🎉','😍','🔥'].filter(e=>counts[e]).map(e=>'<span>'+e+' '+counts[e]+'</span>').join('');
+      const rxnBadge=pills?'<div class="my-photo-rxn">'+pills+'</div>':'';
       const delBtn='<button class="my-photo-del" onclick="deleteMyPhoto(\''+p.id+'\',this.closest(\'.my-photo-card\'))">🗑 Eliminar</button>';
       card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/>'+rxnBadge+'<div class="my-photo-overlay">'+delBtn+'</div>';
       card.addEventListener('touchstart',()=>card.querySelector('.my-photo-overlay').style.opacity='1');
