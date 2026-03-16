@@ -45,12 +45,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 
 /* SIDEBAR */
 .sidebar{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(0,0,0,0.3);overflow:hidden;min-height:0}
-.qr-section{padding:clamp(10px,1.2vw,20px);margin-top:auto}
-.qr-inner{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,0.8vw,12px);text-align:center}
+.qr-section{padding:clamp(8px,1vw,16px);margin-top:auto;flex-shrink:0;overflow:hidden}
+.qr-inner{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,0.6vw,10px);text-align:center;overflow:hidden}
 .qr-box{background:#fff;padding:clamp(6px,0.7vw,12px);border-radius:clamp(8px,0.8vw,14px)}
-.qr-box canvas{width:clamp(90px,10vw,160px)!important;height:clamp(90px,10vw,160px)!important;image-rendering:crisp-edges}
-.qr-text{font-size:clamp(9px,0.85vw,13px);color:rgba(255,255,255,0.45);line-height:1.6}
-.qr-text strong{color:rgba(255,255,255,0.8);display:block;font-size:clamp(10px,0.95vw,14px);margin-bottom:2px}
+.qr-box img{width:clamp(90px,10vw,160px)!important;height:clamp(90px,10vw,160px)!important;image-rendering:pixelated;display:block}
+.qr-text{font-size:clamp(9px,0.85vw,12px);color:rgba(255,255,255,0.45);line-height:1.4;overflow:hidden}
+.qr-text strong{color:rgba(255,255,255,0.8);display:block;font-size:clamp(9px,0.9vw,13px);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* MESSAGE BUBBLE OVERLAY */
 @keyframes bubbleIn{from{transform:scale(0.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
@@ -231,7 +231,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
     <div class="ws-inner">
       <div class="ws-title" id="ws-title">Bienvenidos</div>
       <div class="ws-subtitle" id="ws-subtitle">Escaneá el código y participá en tiempo real</div>
-      <div class="ws-qr-box"><canvas id="ws-qr-canvas" width="220" height="220"></canvas></div>
+      <div class="ws-qr-box"><img id="ws-qr-img" width="220" height="220" style="display:block"/></div>
       <div class="ws-qr-label">📸 Subí fotos · 💬 Enviá mensajes · 🥂 Dejá un deseo</div>
       <div class="ws-countdown" id="ws-countdown"></div>
     </div>
@@ -275,7 +275,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
       <div class="msg-strip" id="msg-strip"></div>
       <div class="qr-section">
         <div class="qr-inner">
-          <div class="qr-box"><canvas id="qr-canvas" width="120" height="120"></canvas></div>
+          <div class="qr-box"><img id="qr-img" width="120" height="120" style="display:block"/></div>
           <div class="qr-text"><strong>Escaneá para participar</strong>Subí fotos y mensajes<br>en tiempo real</div>
         </div>
       </div>
@@ -286,41 +286,16 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 <!-- hidden for internal tracking -->
 <div id="photo-strip" style="display:none"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-// Renderiza un QR en un canvas existente por id, usando el canvas que genera qrcodejs directamente
-function renderQR(text, canvasId, size){
-  const target=document.getElementById(canvasId);
+// Renderiza un QR como <img> usando api.qrserver.com — funciona en toda plataforma
+function renderQR(text, imgId, size){
+  const target=document.getElementById(imgId);
   if(!target) return;
-  const tmp=document.createElement('div');
-  tmp.style.cssText='position:absolute;left:-9999px;top:-9999px;';
-  document.body.appendChild(tmp);
-  try{
-    new QRCode(tmp,{text,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});
-    // qrcodejs renderiza el canvas síncronamente; la img es opcional
-    const src=tmp.querySelector('canvas');
-    if(src){
-      target.width=size;target.height=size;
-      target.getContext('2d').drawImage(src,0,0,size,size);
-      tmp.remove();return;
-    }
-    // fallback: esperar img (browsers que bloquean canvas cross-origin)
-    const img=tmp.querySelector('img');
-    if(img){
-      const poll=setInterval(()=>{
-        if(img.complete&&img.naturalWidth){
-          clearInterval(poll);
-          const i=new Image();
-          i.onload=()=>{target.width=size;target.height=size;target.getContext('2d').drawImage(i,0,0,size,size);};
-          i.src=img.src;
-          tmp.remove();
-        }
-      },50);
-      setTimeout(()=>{clearInterval(poll);tmp.remove();},3000);
-      return;
-    }
-  }catch(e){}
-  tmp.remove();
+  const encoded=encodeURIComponent(text);
+  const px=size*2; // retina
+  target.width=size; target.height=size;
+  target.style.width=size+'px'; target.style.height=size+'px';
+  target.src=`https://api.qrserver.com/v1/create-qr-code/?size=${px}x${px}&data=${encoded}&ecc=M&margin=0`;
 }
 
 const SUPABASE_URL='https://jxqwrbmnfmnzddkcimrm.supabase.co';
@@ -427,8 +402,8 @@ function applyTheme(design){
 
   // QR size
   const qrSize=parseInt(design.qrSize)||120;
-  const qrCanvas=document.getElementById('qr-canvas');
-  if(qrCanvas){qrCanvas.width=qrSize;qrCanvas.height=qrSize;qrCanvas.style.width=qrSize+'px';qrCanvas.style.height=qrSize+'px';}
+  const qrImg=document.getElementById('qr-img');
+  if(qrImg){qrImg.width=qrSize;qrImg.height=qrSize;qrImg.style.width=qrSize+'px';qrImg.style.height=qrSize+'px';}
   const qrSection=document.querySelector('.qr-section');
   if(qrSection) qrSection.style.display=(qrSize===0)?'none':'block';
 
@@ -1037,7 +1012,7 @@ async function init(){
   const saved=localStorage.getItem('ew_design_'+eventId);
   // QR
   const guestUrl=location.origin+'/guest.html?event='+eventId;
-  renderQR(guestUrl, 'qr-canvas', 120);
+  renderQR(guestUrl, 'qr-img', 120);
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   // Apply theme AFTER app is visible so DOM queries work
@@ -1050,7 +1025,6 @@ async function init(){
   clearInterval(rotateTimer);
   rotateTimer=setInterval(rotateFeatured,cfg.interval);
   setInterval(pollPosts,3000);
-  setInterval(()=>{if(currentFeaturedPostId) loadReactions();},4000);
   setInterval(pollWishes,5000);
   setInterval(pollMessages,3500);
   setInterval(pollForPolls,4000);
@@ -1070,7 +1044,7 @@ function showWaitingScreen(eventId, ev){
   document.getElementById('ws-subtitle').textContent=subtitle;
   // Big QR
   const guestUrl=location.origin+'/guest.html?event='+(ev.custom_code||eventId);
-  renderQR(guestUrl, 'ws-qr-canvas', 220);
+  renderQR(guestUrl, 'ws-qr-img', 220);
   // Countdown
   startWaitCountdown();
 }
