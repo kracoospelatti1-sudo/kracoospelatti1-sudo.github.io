@@ -127,6 +127,11 @@ input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1p
 .tpl-wedding{background:linear-gradient(135deg,#1a0f0f,#2d1515)}
 .tpl-cyber{background:linear-gradient(135deg,#050010,#0a0020)}
 .tpl-luxury{background:linear-gradient(135deg,#080600,#1a1200)}
+.tpl-xv{background:linear-gradient(135deg,#1a0030,#300050)}
+.tpl-corporate{background:linear-gradient(135deg,#0a1628,#0f2040)}
+.tpl-birthday{background:linear-gradient(135deg,#1a0010,#200020)}
+.tpl-boho{background:linear-gradient(135deg,#1a1208,#2d2010)}
+.tpl-sunset{background:linear-gradient(135deg,#1a0808,#2d1008)}
 
 .print-sheet{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px;margin-top:16px}
 .print-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:12px;break-inside:avoid}
@@ -513,6 +518,26 @@ input[type=range]{accent-color:var(--pink)}
               <div class="tpl-card tpl-luxury" onclick="applyTemplate('luxury',this)">
                 <div class="tpl-preview" style="background:#080600;border:2px solid #c9a84c;display:flex;align-items:center;justify-content:center;font-size:16px">👑</div>
                 <div class="tpl-name">Lujo</div>
+              </div>
+              <div class="tpl-card tpl-xv" onclick="applyTemplate('xv',this)">
+                <div class="tpl-preview" style="background:#1a0030;border:2px solid #e040fb;display:flex;align-items:center;justify-content:center;font-size:16px">🌸</div>
+                <div class="tpl-name">XV Años</div>
+              </div>
+              <div class="tpl-card tpl-corporate" onclick="applyTemplate('corporate',this)">
+                <div class="tpl-preview" style="background:#0a1628;border:2px solid #3b82f6;display:flex;align-items:center;justify-content:center;font-size:16px">🏢</div>
+                <div class="tpl-name">Corporativo</div>
+              </div>
+              <div class="tpl-card tpl-birthday" onclick="applyTemplate('birthday',this)">
+                <div class="tpl-preview" style="background:#1a0010;border:2px solid #f472b6;display:flex;align-items:center;justify-content:center;font-size:16px">🎂</div>
+                <div class="tpl-name">Cumpleaños</div>
+              </div>
+              <div class="tpl-card tpl-boho" onclick="applyTemplate('boho',this)">
+                <div class="tpl-preview" style="background:#1a1208;border:2px solid #a8825c;display:flex;align-items:center;justify-content:center;font-size:16px">🌿</div>
+                <div class="tpl-name">Boho</div>
+              </div>
+              <div class="tpl-card tpl-sunset" onclick="applyTemplate('sunset',this)">
+                <div class="tpl-preview" style="background:#1a0808;border:2px solid #fb923c;display:flex;align-items:center;justify-content:center;font-size:16px">🌅</div>
+                <div class="tpl-name">Sunset</div>
               </div>
             </div>
           </div>
@@ -1999,7 +2024,12 @@ const TEMPLATES = {
   fiesta: {bg:'#0d0020',header:'#150030',accent:'#ff6b35',text:'#ffffff',bubble:'#ff6b35',bubbleText:'#ffffff',fontTitle:'Boogaloo',fontBody:'Nunito',bgEffect:'confetti'},
   wedding:{bg:'#1a0f0f',header:'#261515',accent:'#d4af8c',text:'#fff5ee',bubble:'#fff5ee',bubbleText:'#1a0f0f',fontTitle:'Great Vibes',fontBody:'Lato',bgEffect:'petals'},
   cyber:  {bg:'#050010',header:'#0a0020',accent:'#a855f7',text:'#e0d0ff',bubble:'#1a0040',bubbleText:'#e0d0ff',fontTitle:'Bebas Neue',fontBody:'Inter',bgEffect:'neon'},
-  luxury: {bg:'#080600',header:'#100900',accent:'#c9a84c',text:'#f5e6c8',bubble:'#1a1400',bubbleText:'#f5e6c8',fontTitle:'Cormorant Garamond',fontBody:'Lato',bgEffect:'gold'},
+  luxury:    {bg:'#080600',header:'#100900',accent:'#c9a84c',text:'#f5e6c8',bubble:'#1a1400',bubbleText:'#f5e6c8',fontTitle:'Cormorant Garamond',fontBody:'Lato',bgEffect:'gold'},
+  xv:        {bg:'#1a0030',header:'#220040',accent:'#e040fb',text:'#f8e6ff',bubble:'#2d0050',bubbleText:'#f8e6ff',fontTitle:'Great Vibes',fontBody:'Nunito',bgEffect:'stars'},
+  corporate: {bg:'#0a1628',header:'#0f2040',accent:'#3b82f6',text:'#e0f0ff',bubble:'#0c2040',bubbleText:'#e0f0ff',fontTitle:'Raleway',fontBody:'Inter',bgEffect:'none'},
+  birthday:  {bg:'#1a0010',header:'#22001a',accent:'#f472b6',text:'#fff0f8',bubble:'#2d0020',bubbleText:'#fff0f8',fontTitle:'Boogaloo',fontBody:'Nunito',bgEffect:'confetti'},
+  boho:      {bg:'#1a1208',header:'#221a0a',accent:'#a8825c',text:'#f5ead8',bubble:'#2d2010',bubbleText:'#f5ead8',fontTitle:'Playfair Display',fontBody:'Lato',bgEffect:'none'},
+  sunset:    {bg:'#1a0808',header:'#220a08',accent:'#fb923c',text:'#fff0e8',bubble:'#2d1008',bubbleText:'#fff0e8',fontTitle:'Syne',fontBody:'DM Sans',bgEffect:'none'},
 };
 
 function showDesign(){
@@ -2210,7 +2240,12 @@ function applyTemplate(name, el){
     fiesta: {bg:'#0d0020',accent:'#ff6b35',text:'#ffffff',bubble:'#ff6b35',bubbleText:'#ffffff',header:'#150030'},
     wedding:{bg:'#1a0f0f',accent:'#d4af8c',text:'#fff5ee',bubble:'#fff5ee',bubbleText:'#1a0f0f',header:'#261515'},
     cyber:  {bg:'#050010',accent:'#a855f7',text:'#e0d0ff',bubble:'#1a0040',bubbleText:'#e0d0ff',header:'#0a0020'},
-    luxury: {bg:'#080600',accent:'#c9a84c',text:'#f5e6c8',bubble:'#1a1400',bubbleText:'#f5e6c8',header:'#100900'},
+    luxury:    {bg:'#080600',accent:'#c9a84c',text:'#f5e6c8',bubble:'#1a1400',bubbleText:'#f5e6c8',header:'#100900'},
+    xv:        {bg:'#1a0030',accent:'#e040fb',text:'#f8e6ff',bubble:'#2d0050',bubbleText:'#f8e6ff',header:'#220040'},
+    corporate: {bg:'#0a1628',accent:'#3b82f6',text:'#e0f0ff',bubble:'#0c2040',bubbleText:'#e0f0ff',header:'#0f2040'},
+    birthday:  {bg:'#1a0010',accent:'#f472b6',text:'#fff0f8',bubble:'#2d0020',bubbleText:'#fff0f8',header:'#22001a'},
+    boho:      {bg:'#1a1208',accent:'#a8825c',text:'#f5ead8',bubble:'#2d2010',bubbleText:'#f5ead8',header:'#221a0a'},
+    sunset:    {bg:'#1a0808',accent:'#fb923c',text:'#fff0e8',bubble:'#2d1008',bubbleText:'#fff0e8',header:'#220a08'},
   };
   const t=templates[name];
   if(!t) return;
