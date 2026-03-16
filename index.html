@@ -136,6 +136,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
@@ -768,11 +769,23 @@ footer p{font-size:13px;color:var(--muted)}
 @keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
 @keyframes bounceIn{0%{opacity:0;transform:scale(0.5)}70%{transform:scale(1.1)}100%{opacity:1;transform:scale(1)}}
 
-.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.7s ease,transform 0.7s ease}
-.reveal.visible{opacity:1;transform:none}
-.reveal-delay-1{transition-delay:0.1s}
-.reveal-delay-2{transition-delay:0.2s}
-.reveal-delay-3{transition-delay:0.3s}
+/* reveal delays used by AOS via data-aos-delay */
+.reveal-delay-1{}
+.reveal-delay-2{}
+.reveal-delay-3{}
+
+/* ─── MARQUEE ──────────────────────────────────── */
+.marquee-outer{
+  flex:1;overflow:hidden;
+  -webkit-mask:linear-gradient(to right,transparent 0%,#000 12%,#000 88%,transparent 100%);
+  mask:linear-gradient(to right,transparent 0%,#000 12%,#000 88%,transparent 100%);
+}
+.marquee-track{
+  display:flex;width:max-content;gap:10px;
+  animation:marquee-scroll 28s linear infinite;
+}
+.marquee-outer:hover .marquee-track{animation-play-state:paused}
+@keyframes marquee-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ─── RESPONSIVE ────────────────────────────────── */
 @media(max-width:900px){
@@ -1167,13 +1180,28 @@ footer p{font-size:13px;color:var(--muted)}
   <div class="proof-inner">
     <span class="proof-label">Ideal para</span>
     <div class="proof-sep"></div>
-    <div class="proof-tags">
-      <span class="proof-tag">💍 Bodas</span>
-      <span class="proof-tag">🎂 Cumpleaños</span>
-      <span class="proof-tag">🎓 Graduaciones</span>
-      <span class="proof-tag">🏢 Corporativos</span>
-      <span class="proof-tag">🎉 Fiestas de 15</span>
-      <span class="proof-tag">🎤 Shows</span>
+    <div class="marquee-outer">
+      <div class="marquee-track">
+        <span class="proof-tag">💍 Bodas</span>
+        <span class="proof-tag">🎂 Cumpleaños</span>
+        <span class="proof-tag">🎓 Graduaciones</span>
+        <span class="proof-tag">🏢 Corporativos</span>
+        <span class="proof-tag">🎉 Fiestas de 15</span>
+        <span class="proof-tag">🎤 Shows</span>
+        <span class="proof-tag">💑 Aniversarios</span>
+        <span class="proof-tag">🏆 Premiaciones</span>
+        <span class="proof-tag">🎭 Teatros</span>
+        <!-- duplicate for seamless loop -->
+        <span class="proof-tag">💍 Bodas</span>
+        <span class="proof-tag">🎂 Cumpleaños</span>
+        <span class="proof-tag">🎓 Graduaciones</span>
+        <span class="proof-tag">🏢 Corporativos</span>
+        <span class="proof-tag">🎉 Fiestas de 15</span>
+        <span class="proof-tag">🎤 Shows</span>
+        <span class="proof-tag">💑 Aniversarios</span>
+        <span class="proof-tag">🏆 Premiaciones</span>
+        <span class="proof-tag">🎭 Teatros</span>
+      </div>
     </div>
   </div>
 </div>
@@ -1357,10 +1385,10 @@ footer p{font-size:13px;color:var(--muted)}
         <h3>Votaciones interactivas</h3>
         <p>Encuestas en vivo para todos los invitados. ¿Cuál es la mejor foto? ¿Qué canción piden?</p>
       </div>
-      <div class="feat reveal reveal-delay-2">
+      <div class="feat reveal-delay-2" data-aos="fade-up" data-aos-delay="200">
         <div class="feat-ico">📧</div>
-        <h3>Álbum automático por email</h3>
-        <p>Al terminar el evento, todas las fotos y mensajes se envían automáticamente al email del organizador.</p>
+        <h3>Álbum + PDF por email</h3>
+        <p>Al terminar el evento, todas las fotos, mensajes y deseos se envían automáticamente con un PDF descargable del resumen del evento.</p>
       </div>
       <div class="feat reveal reveal-delay-1">
         <div class="feat-ico">🎨</div>
@@ -1485,7 +1513,7 @@ footer p{font-size:13px;color:var(--muted)}
           <li><span class="ok">✓</span> Votaciones interactivas</li>
           <li><span class="ok">✓</span> QR personalizado</li>
           <li><span class="ok">✓</span> Diseño personalizado</li>
-          <li><span class="ok">✓</span> Álbum automático por email</li>
+          <li><span class="ok">✓</span> Álbum + PDF automático por email</li>
           <li><span class="ok">✓</span> Soporte durante el evento</li>
         </ul>
 
@@ -1557,7 +1585,7 @@ footer p{font-size:13px;color:var(--muted)}
           ¿Cómo recibo las fotos del evento?
           <div class="faq-icon">+</div>
         </button>
-        <div class="faq-a">Al terminar el evento, el álbum completo con todas las fotos, mensajes y deseos se envía automáticamente al email que nos indicás. También podés descargarlo manualmente desde el panel de administración en cualquier momento.</div>
+        <div class="faq-a">Al terminar el evento, el álbum completo con todas las fotos, mensajes y deseos se envía automáticamente al email que nos indicás, junto con un <strong>PDF descargable</strong> con el resumen de la noche. También podés descargarlo manualmente desde el panel de administración en cualquier momento.</div>
       </div>
 
       <div class="faq-item">
@@ -1718,11 +1746,13 @@ function toggleFaq(btn){
 const nav=document.getElementById('navbar');
 window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
 
-// Reveal on scroll
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});
-},{threshold:0.12});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+// AOS: apply to legacy .reveal elements then init
+document.querySelectorAll('.reveal').forEach(el=>{
+  if(!el.hasAttribute('data-aos')) el.setAttribute('data-aos','fade-up');
+  if(el.classList.contains('reveal-delay-1')) el.setAttribute('data-aos-delay','100');
+  else if(el.classList.contains('reveal-delay-2')) el.setAttribute('data-aos-delay','200');
+  else if(el.classList.contains('reveal-delay-3')) el.setAttribute('data-aos-delay','300');
+});
 
 // Hero particles
 (function(){
@@ -1768,6 +1798,9 @@ const spObserver=new IntersectionObserver(entries=>{
 },{threshold:0.3});
 const spInner=document.getElementById('sp-inner');
 if(spInner)spObserver.observe(spInner);
+
+// AOS init
+AOS.init({duration:750,easing:'ease-out-cubic',once:true,offset:60});
 
 // CTA sticky
 const ctaSticky=document.getElementById('cta-sticky');
@@ -1818,5 +1851,6 @@ if(spGrid){
   spObs.observe(spGrid);
 }
 </script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 </body>
 </html>
