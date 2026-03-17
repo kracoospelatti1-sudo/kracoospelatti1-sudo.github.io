@@ -338,6 +338,7 @@ input[type=range]{accent-color:var(--pink)}
     <button class="nav-btn" onclick="goNav('guest-design')">📱 Vista invitado</button>
     <button class="nav-btn" onclick="goNav('moments')">🎬 Momentos</button>
     <button class="nav-btn" onclick="goNav('settings')">⚙️ Configuración</button>
+    <button class="nav-btn" onclick="goNav('help')">❓ Ayuda</button>
     <div style="margin-top:auto">
       <div class="sidebar-event-badge">
         <div class="lbl">Evento activo</div>
@@ -1540,6 +1541,119 @@ input[type=range]{accent-color:var(--pink)}
           <div><label>PIN nuevo</label><input type="password" id="pin-new" placeholder="••••••••" maxlength="20"/></div>
         </div>
         <button class="btn-pink" onclick="changePin()">Cambiar PIN →</button>
+      </div>
+    </div>
+
+    <div class="page" id="page-help">
+      <div class="page-title">❓ Ayuda</div>
+      <div class="page-sub">Guía rápida para configurar un evento desde cero</div>
+
+      <style>
+        .help-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+        .help-step{display:flex;gap:16px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;transition:border-color 0.2s}
+        .help-step:hover{border-color:rgba(240,23,111,0.35)}
+        .help-step-num{width:32px;height:32px;border-radius:50%;background:var(--pink-dim);border:1px solid rgba(240,23,111,0.35);color:var(--pink);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Syne',sans-serif}
+        .help-step-body{flex:1}
+        .help-step-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px}
+        .help-step-desc{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:10px}
+        .help-step-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--pink);background:var(--pink-dim);border:1px solid rgba(240,23,111,0.25);border-radius:8px;padding:5px 12px;cursor:pointer;transition:all 0.2s}
+        .help-step-link:hover{background:rgba(240,23,111,0.2)}
+        .help-tip{background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.25);border-radius:12px;padding:14px 18px;font-size:13px;color:#f5a623;line-height:1.6;margin-bottom:12px}
+        .help-tip strong{color:#f5c155}
+        .help-section-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;margin-top:4px}
+      </style>
+
+      <div class="help-tip">
+        <strong>Antes de empezar:</strong> Seleccioná un evento desde la pantalla principal. Todas las secciones del panel funcionan sobre el evento activo que se muestra abajo a la izquierda.
+      </div>
+
+      <div class="help-section-title">Pasos esenciales</div>
+      <div class="help-steps">
+
+        <div class="help-step">
+          <div class="help-step-num">1</div>
+          <div class="help-step-body">
+            <div class="help-step-title">Crear el evento</div>
+            <div class="help-step-desc">Ingresá el nombre, la fecha y el PIN que usarán los invitados para acceder. Podés agregar un código personalizado (ej: <code style="background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:12px">boda-caro</code>) para que la URL sea más fácil de compartir.</div>
+            <span class="help-step-link" onclick="goNav('new-event')">➕ Ir a Nuevo evento</span>
+          </div>
+        </div>
+
+        <div class="help-step">
+          <div class="help-step-num">2</div>
+          <div class="help-step-body">
+            <div class="help-step-title">Compartir el link con los invitados</div>
+            <div class="help-step-desc">En Links & QR encontrás la URL del invitado y el código QR para imprimir o proyectar. Compartilo antes del evento para que los invitados puedan ingresar sin problemas.</div>
+            <span class="help-step-link" onclick="goNav('links')">🔗 Ir a Links & QR</span>
+          </div>
+        </div>
+
+        <div class="help-step">
+          <div class="help-step-num">3</div>
+          <div class="help-step-body">
+            <div class="help-step-title">Abrir la pantalla en el TV</div>
+            <div class="help-step-desc">Copiá la URL de la pantalla y abrila en el navegador del TV o la computadora conectada al proyector. La pantalla se actualiza sola sin necesidad de recargar.</div>
+            <span class="help-step-link" onclick="goNav('links')">📺 Ver URL de pantalla</span>
+          </div>
+        </div>
+
+        <div class="help-step">
+          <div class="help-step-num">4</div>
+          <div class="help-step-body">
+            <div class="help-step-title">Moderar el contenido</div>
+            <div class="help-step-desc">Desde Contenido podés ver todas las fotos, mensajes y deseos enviados. Aprobá o eliminá los que no correspondan. El contenido eliminado desaparece de la pantalla al instante.</div>
+            <span class="help-step-link" onclick="goNav('messages')">💬 Ir a Contenido</span>
+          </div>
+        </div>
+
+        <div class="help-step">
+          <div class="help-step-num">5</div>
+          <div class="help-step-body">
+            <div class="help-step-title">Enviar el álbum al finalizar</div>
+            <div class="help-step-desc">Al terminar el evento podés enviar todas las fotos al cliente por email en formato ZIP + PDF. También podés descargar el álbum directamente desde el panel.</div>
+            <span class="help-step-link" onclick="goNav('album')">📥 Ir a Álbum</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="help-section-title">Personalización (opcional)</div>
+      <div class="help-steps">
+
+        <div class="help-step">
+          <div class="help-step-num" style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.3);color:#818cf8">🎨</div>
+          <div class="help-step-body">
+            <div class="help-step-title">Diseño de la pantalla</div>
+            <div class="help-step-desc">Cambiá colores, fuentes, plantilla, imagen de fondo, ticker, transiciones y más. Podés usar una de las plantillas prediseñadas (Boda, XV Años, Corporativo, etc.) como punto de partida.</div>
+            <span class="help-step-link" onclick="goNav('design')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">🎨 Ir a Diseño</span>
+          </div>
+        </div>
+
+        <div class="help-step">
+          <div class="help-step-num" style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.3);color:#818cf8">📱</div>
+          <div class="help-step-body">
+            <div class="help-step-title">Vista del invitado</div>
+            <div class="help-step-desc">Configurá qué funciones están disponibles para los invitados: reacciones, personalización de fotos, borrar fotos propias, marca de agua. También podés cambiar colores y fuentes de la app del invitado.</div>
+            <span class="help-step-link" onclick="goNav('guest-design')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">📱 Ir a Vista invitado</span>
+          </div>
+        </div>
+
+        <div class="help-step">
+          <div class="help-step-num" style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.3);color:#818cf8">🗳</div>
+          <div class="help-step-body">
+            <div class="help-step-title">Votaciones y momentos</div>
+            <div class="help-step-desc">Creá encuestas en tiempo real que los invitados responden desde su celular y se muestran en la pantalla. Los momentos permiten compartir videos o imágenes especiales en momentos clave del evento.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span class="help-step-link" onclick="goNav('polls')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">🗳 Votaciones</span>
+              <span class="help-step-link" onclick="goNav('moments')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">🎬 Momentos</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="help-tip" style="background:rgba(34,197,94,0.07);border-color:rgba(34,197,94,0.25);color:#22c55e">
+        <strong>Tip:</strong> El evento activo se muestra abajo a la izquierda. Si no ves datos en las secciones, asegurate de tener un evento seleccionado desde <span style="cursor:pointer;text-decoration:underline" onclick="goNav('events')">🗓 Eventos</span>.
       </div>
     </div>
 
