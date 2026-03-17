@@ -181,6 +181,14 @@ body{
   -webkit-overflow-scrolling:touch;scrollbar-width:none;
 }
 .frames-row::-webkit-scrollbar,.filter-row::-webkit-scrollbar{display:none}
+.frame-cats{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.frame-cat{
+  padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;
+  border:1.5px solid var(--border);background:var(--surface2);
+  color:var(--muted);cursor:pointer;transition:all 0.18s;white-space:nowrap;
+  -webkit-appearance:none;
+}
+.frame-cat.active{background:var(--pink);border-color:var(--pink);color:#fff}
 .frame-card{
   flex-shrink:0;display:flex;flex-direction:column;align-items:center;
   gap:4px;cursor:pointer;
@@ -692,6 +700,7 @@ body{
       <!-- FRAMES -->
       <div class="picker-section" id="frame-picker">
         <div class="picker-title">🖼 Marco</div>
+        <div class="frame-cats" id="frame-cats"></div>
         <div class="frames-row" id="frames-row"></div>
       </div>
 
@@ -1034,10 +1043,10 @@ function ensureNotExpired(errorId){
 
 // ── FRAMES ───────────────────────────────────────────────────
 const FRAMES=[
-  {id:'none', name:'Sin marco', draw:null},
+  {id:'none', name:'Sin marco', cat:'todos', draw:null},
 
   // ── DECORATIVOS ───────────────────────────────────────────
-  {id:'stars', name:'⭐ Estrellas', draw:(ctx,w,h)=>{
+  {id:'stars', name:'⭐ Estrellas', cat:'deco', draw:(ctx,w,h)=>{
     const stars=['⭐','✨','💫','⭐','✨'];
     const sz=Math.floor(w*0.09);ctx.font=sz+'px serif';
     [[0.03,0.1],[0.88,0.07],[0.05,0.88],[0.87,0.85],[0.45,0.04],[0.45,0.93],[0.01,0.48],[0.93,0.48]].forEach(([x,y],i)=>{
@@ -1045,7 +1054,7 @@ const FRAMES=[
       ctx.fillText(stars[i%stars.length],0,0);ctx.restore();
     });
   }},
-  {id:'flowers', name:'🌸 Flores', draw:(ctx,w,h)=>{
+  {id:'flowers', name:'🌸 Flores', cat:'deco', draw:(ctx,w,h)=>{
     const items=['🌸','🌺','🌼','🌸','🌺'];
     const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
     [[0.02,0.12],[0.86,0.08],[0.03,0.9],[0.85,0.88],[0.43,0.05],[0.43,0.95],[0.0,0.5],[0.91,0.5]].forEach(([x,y],i)=>{
@@ -1053,7 +1062,7 @@ const FRAMES=[
       ctx.fillText(items[i%items.length],0,0);ctx.restore();
     });
   }},
-  {id:'hearts_deco', name:'💕 Corazones', draw:(ctx,w,h)=>{
+  {id:'hearts_deco', name:'💕 Corazones', cat:'deco', draw:(ctx,w,h)=>{
     const items=['💕','❤️','💗','💖','💓'];
     const sz=Math.floor(w*0.09);ctx.font=sz+'px serif';
     [[0.02,0.11],[0.87,0.08],[0.03,0.91],[0.86,0.88],[0.44,0.05],[0.44,0.95],[0.0,0.49],[0.92,0.5]].forEach(([x,y],i)=>{
@@ -1061,7 +1070,7 @@ const FRAMES=[
       ctx.fillText(items[i%items.length],0,0);ctx.restore();
     });
   }},
-  {id:'balloons', name:'🎈 Globos', draw:(ctx,w,h)=>{
+  {id:'balloons', name:'🎈 Globos', cat:'deco', draw:(ctx,w,h)=>{
     const items=['🎈','🎉','🎊','🎈','🎉'];
     const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
     [[0.02,0.13],[0.86,0.09],[0.03,0.91],[0.85,0.87],[0.43,0.06],[0.43,0.96]].forEach(([x,y],i)=>{
@@ -1071,19 +1080,15 @@ const FRAMES=[
   }},
 
   // ── TEMÁTICOS ─────────────────────────────────────────────
-  {id:'gold_frame', name:'✨ Dorado', draw:(ctx,w,h)=>{
+  {id:'gold_frame', name:'✨ Dorado', cat:'borde', draw:(ctx,w,h)=>{
     const lw=Math.max(w*0.025,6);
-    // Outer gold border
     const grad=ctx.createLinearGradient(0,0,w,h);
     grad.addColorStop(0,'#f5d060');grad.addColorStop(0.3,'#c9a84c');
     grad.addColorStop(0.6,'#f5d060');grad.addColorStop(1,'#a07820');
     ctx.strokeStyle=grad;ctx.lineWidth=lw;
     ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
-    // Inner thin line
     ctx.strokeStyle='rgba(245,208,96,0.5)';ctx.lineWidth=lw*0.3;
     ctx.strokeRect(lw*1.8,lw*1.8,w-lw*3.6,h-lw*3.6);
-    // Corner ornaments
-    const cs=lw*3;
     [[0,0],[w,0],[0,h],[w,h]].forEach(([x,y])=>{
       ctx.save();ctx.translate(x,y);
       const rot=(x===0&&y===0)?0:(x===w&&y===0)?Math.PI/2:(x===0&&y===h)?-Math.PI/2:Math.PI;
@@ -1093,44 +1098,36 @@ const FRAMES=[
       ctx.restore();
     });
   }},
-  {id:'neon_frame', name:'⚡ Neón', draw:(ctx,w,h)=>{
+  {id:'neon_frame', name:'⚡ Neón', cat:'borde', draw:(ctx,w,h)=>{
     const lw=Math.max(w*0.02,5);
-    // Cyan neon glow
     ctx.shadowColor='#00f5ff';ctx.shadowBlur=lw*3;
     ctx.strokeStyle='#00f5ff';ctx.lineWidth=lw;
     ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
-    // Pink inner neon
     ctx.shadowColor='#f0176f';ctx.shadowBlur=lw*2;
     ctx.strokeStyle='#f0176f';ctx.lineWidth=lw*0.5;
     ctx.strokeRect(lw*2,lw*2,w-lw*4,h-lw*4);
     ctx.shadowBlur=0;
   }},
-  {id:'romantic', name:'💒 Romántico', draw:(ctx,w,h)=>{
+  {id:'romantic', name:'💒 Romántico', cat:'borde', draw:(ctx,w,h)=>{
     const lw=Math.max(w*0.025,6);
-    // Rose gradient border
     const grad=ctx.createLinearGradient(0,0,w,h);
     grad.addColorStop(0,'rgba(255,107,157,0.9)');
     grad.addColorStop(0.5,'rgba(255,182,193,0.7)');
     grad.addColorStop(1,'rgba(255,107,157,0.9)');
     ctx.strokeStyle=grad;ctx.lineWidth=lw;
     ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
-    // Soft vignette
     const vg=ctx.createRadialGradient(w/2,h/2,h*0.3,w/2,h/2,h*0.8);
     vg.addColorStop(0,'rgba(0,0,0,0)');
     vg.addColorStop(1,'rgba(180,0,60,0.25)');
     ctx.fillStyle=vg;ctx.fillRect(0,0,w,h);
-    // Corner roses
     const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
     const rosePos=[[0.01,0.12],[0.86,0.09],[0.01,0.92],[0.86,0.92]];
-    ['🌹','🌹','🌹','🌹'].forEach((e,i)=>{
-      ctx.fillText(e,rosePos[i][0]*w,rosePos[i][1]*h);
-    });
+    ['🌹','🌹','🌹','🌹'].forEach((e,i)=>{ctx.fillText(e,rosePos[i][0]*w,rosePos[i][1]*h);});
   }},
 
   // ── TEMPORADA ─────────────────────────────────────────────
-  {id:'birthday', name:'🎂 Cumpleaños', draw:(ctx,w,h)=>{
+  {id:'birthday', name:'🎂 Cumpleaños', cat:'borde', draw:(ctx,w,h)=>{
     const lw=Math.max(w*0.022,5);
-    // Colorful dashed border
     const colors=['#f0176f','#ffd700','#00f5ff','#a855f7','#4ade80'];
     const dash=lw*2;
     colors.forEach((col,ci)=>{
@@ -1140,7 +1137,6 @@ const FRAMES=[
       ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
     });
     ctx.setLineDash([]);
-    // Emojis
     const items=['🎂','🎈','🎉','🎊','🥳'];
     const sz=Math.floor(w*0.1);ctx.font=sz+'px serif';
     [[0.02,0.13],[0.87,0.1],[0.44,0.06],[0.03,0.92],[0.86,0.9]].forEach(([x,y],i)=>{
@@ -1148,14 +1144,12 @@ const FRAMES=[
       ctx.fillText(items[i],0,0);ctx.restore();
     });
   }},
-  {id:'wedding', name:'💍 Boda', draw:(ctx,w,h)=>{
+  {id:'wedding', name:'💍 Boda', cat:'borde', draw:(ctx,w,h)=>{
     const lw=Math.max(w*0.022,5);
-    // White/gold elegant border
     ctx.strokeStyle='rgba(255,255,255,0.9)';ctx.lineWidth=lw;
     ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
     ctx.strokeStyle='rgba(201,168,76,0.6)';ctx.lineWidth=lw*0.4;
     ctx.strokeRect(lw*2,lw*2,w-lw*4,h-lw*4);
-    // Corner decoration
     const sz=Math.floor(w*0.09);ctx.font=sz+'px serif';
     ['💍','💐','🕊️','💒'].forEach((e,i)=>{
       const positions=[[0.02,0.12],[0.86,0.1],[0.03,0.91],[0.85,0.9]];
@@ -1163,7 +1157,6 @@ const FRAMES=[
       ctx.rotate([0.1,-0.1,0.15,-0.15][i]);
       ctx.fillText(e,0,0);ctx.restore();
     });
-    // Soft white vignette edges
     ['top','bottom','left','right'].forEach(side=>{
       const g=side==='top'?ctx.createLinearGradient(0,0,0,h*0.15):
                side==='bottom'?ctx.createLinearGradient(0,h,0,h*0.85):
@@ -1174,9 +1167,8 @@ const FRAMES=[
       ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
     });
   }},
-  {id:'graduation', name:'🎓 Graduación', draw:(ctx,w,h)=>{
+  {id:'graduation', name:'🎓 Graduación', cat:'borde', draw:(ctx,w,h)=>{
     const lw=Math.max(w*0.022,5);
-    // Navy/gold border
     ctx.strokeStyle='#1a237e';ctx.lineWidth=lw*1.5;
     ctx.strokeRect(lw/2,lw/2,w-lw,h-lw);
     const grad=ctx.createLinearGradient(0,0,w,0);
@@ -1192,66 +1184,201 @@ const FRAMES=[
   }},
 
   // ── CON NOMBRE DEL EVENTO ──────────────────────────────────
-  {id:'event_name', name:'📛 Nombre evento', draw:(ctx,w,h)=>{
-    // Bottom banner with event name
+  {id:'event_name', name:'📛 Nombre evento', cat:'borde', draw:(ctx,w,h)=>{
     const bh=Math.floor(h*0.12);
     const grad=ctx.createLinearGradient(0,h-bh,0,h);
     grad.addColorStop(0,'rgba(0,0,0,0)');
     grad.addColorStop(0.4,'rgba(7,7,15,0.85)');
     grad.addColorStop(1,'rgba(7,7,15,0.95)');
     ctx.fillStyle=grad;ctx.fillRect(0,h-bh,w,bh);
-    // Event name text
     const evName=document.getElementById('ev-name')?.textContent||'EventWall';
     const fs=Math.floor(h*0.055);
     ctx.font='700 '+fs+'px "DM Sans",sans-serif';
     ctx.fillStyle='#ffffff';ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(evName,w/2,h-bh*0.45);
-    // Pink accent line
     const lh=Math.max(h*0.005,2);
     ctx.fillStyle='#f0176f';ctx.fillRect(0,h-bh,w,lh);
     ctx.textAlign='left';
   }},
-  {id:'event_polaroid', name:'📷 Polaroid', draw:(ctx,w,h)=>{
-    // Polaroid style white border
-    const bl=Math.floor(w*0.04);
-    const bb=Math.floor(h*0.18);
-    // White frame
-    ctx.fillStyle='#ffffff';
-    ctx.fillRect(0,0,w,bl); // top
-    ctx.fillRect(0,0,bl,h); // left
-    ctx.fillRect(w-bl,0,bl,h); // right
-    ctx.fillRect(0,h-bb,w,bb); // bottom (wider)
-    // Shadow inside
-    ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.lineWidth=1;
-    ctx.strokeRect(bl,bl,w-bl*2,h-bb-bl);
-    // Event name in polaroid strip
-    const evName=document.getElementById('ev-name')?.textContent||'EventWall';
-    const fs=Math.floor(h*0.06);
-    ctx.font='italic '+fs+'px "Playfair Display",Georgia,serif';
-    ctx.fillStyle='#333333';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(evName,w/2,h-bb*0.45);
-    ctx.textAlign='left';
-  }},
+
+  // ── POLAROID (fondo) ─────────────────────────────────────
+  // bg frames: bg=fill color, padH=lateral%, padT=top%, padB=bottom%
+  // draw(ctx, cW, cH, pX, pY, pW, pH) = called on final canvas after bg fill and photo paste
+  {id:'pol_white', name:'⬜ Blanco', cat:'polaroid',
+    bg:'#ffffff', padH:0.06, padT:0.06, padB:0.20,
+    draw:(ctx,cW,cH,pX,pY,pW,pH)=>{
+      // Thin shadow inside photo
+      ctx.strokeStyle='rgba(0,0,0,0.07)';ctx.lineWidth=2;
+      ctx.strokeRect(pX,pY,pW,pH);
+      // Event name in strip
+      const evName=document.getElementById('ev-name')?.textContent||'EventWall';
+      const stripY=pY+pH; const stripH=cH-stripY;
+      const fs=Math.max(Math.floor(stripH*0.38),12);
+      ctx.font='italic '+fs+'px Georgia,serif';
+      ctx.fillStyle='#444';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(evName,cW/2,stripY+stripH*0.5);
+      ctx.textAlign='left';
+    }
+  },
+  {id:'pol_dark', name:'⬛ Negro', cat:'polaroid',
+    bg:'#1a1a1a', padH:0.06, padT:0.06, padB:0.20,
+    draw:(ctx,cW,cH,pX,pY,pW,pH)=>{
+      ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=2;
+      ctx.strokeRect(pX,pY,pW,pH);
+      const evName=document.getElementById('ev-name')?.textContent||'EventWall';
+      const stripY=pY+pH; const stripH=cH-stripY;
+      const fs=Math.max(Math.floor(stripH*0.38),12);
+      ctx.font='italic '+fs+'px Georgia,serif';
+      ctx.fillStyle='rgba(255,255,255,0.8)';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(evName,cW/2,stripY+stripH*0.5);
+      ctx.textAlign='left';
+    }
+  },
+  {id:'pol_rose', name:'🩷 Rosa', cat:'polaroid',
+    bg:'#ffe8f0', padH:0.06, padT:0.06, padB:0.20,
+    draw:(ctx,cW,cH,pX,pY,pW,pH)=>{
+      ctx.strokeStyle='rgba(240,23,111,0.1)';ctx.lineWidth=2;
+      ctx.strokeRect(pX,pY,pW,pH);
+      const evName=document.getElementById('ev-name')?.textContent||'EventWall';
+      const stripY=pY+pH; const stripH=cH-stripY;
+      const fs=Math.max(Math.floor(stripH*0.38),12);
+      ctx.font='italic '+fs+'px Georgia,serif';
+      ctx.fillStyle='#c0185a';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(evName,cW/2,stripY+stripH*0.5);
+      // small hearts
+      const sz2=Math.max(Math.floor(stripH*0.35),10);
+      ctx.font=sz2+'px serif';
+      ctx.fillText('🌸',pX+pW*0.08,stripY+stripH*0.5);
+      ctx.fillText('🌸',pX+pW*0.82,stripY+stripH*0.5);
+      ctx.textAlign='left';
+    }
+  },
+  {id:'pol_boda', name:'💍 Boda', cat:'polaroid',
+    bg:'#faf7f2', padH:0.06, padT:0.06, padB:0.20,
+    draw:(ctx,cW,cH,pX,pY,pW,pH)=>{
+      // Gold border around photo
+      const grad=ctx.createLinearGradient(pX,pY,pX+pW,pY+pH);
+      grad.addColorStop(0,'rgba(201,168,76,0.6)');grad.addColorStop(1,'rgba(245,208,96,0.5)');
+      ctx.strokeStyle=grad;ctx.lineWidth=Math.max(pW*0.008,2);
+      ctx.strokeRect(pX,pY,pW,pH);
+      const evName=document.getElementById('ev-name')?.textContent||'EventWall';
+      const stripY=pY+pH; const stripH=cH-stripY;
+      const fs=Math.max(Math.floor(stripH*0.34),12);
+      ctx.font='italic '+fs+'px "Playfair Display",Georgia,serif';
+      ctx.fillStyle='#7a6030';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(evName,cW/2,stripY+stripH*0.5);
+      const sz2=Math.max(Math.floor(stripH*0.35),10);
+      ctx.font=sz2+'px serif';
+      ctx.fillText('💍',pX+pW*0.08,stripY+stripH*0.5);
+      ctx.fillText('🕊️',pX+pW*0.82,stripY+stripH*0.5);
+      ctx.textAlign='left';
+    }
+  },
+  {id:'pol_xv', name:'👑 XV Años', cat:'polaroid',
+    bg:'#fef0f8', padH:0.06, padT:0.06, padB:0.20,
+    draw:(ctx,cW,cH,pX,pY,pW,pH)=>{
+      const lw=Math.max(pW*0.007,2);
+      ctx.strokeStyle='#d4a0c0';ctx.lineWidth=lw;
+      ctx.strokeRect(pX,pY,pW,pH);
+      const evName=document.getElementById('ev-name')?.textContent||'EventWall';
+      const stripY=pY+pH; const stripH=cH-stripY;
+      const fs=Math.max(Math.floor(stripH*0.34),12);
+      ctx.font='italic '+fs+'px Georgia,serif';
+      ctx.fillStyle='#9b3070';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(evName,cW/2,stripY+stripH*0.5);
+      const sz2=Math.max(Math.floor(stripH*0.35),10);
+      ctx.font=sz2+'px serif';
+      ctx.fillText('👑',pX+pW*0.08,stripY+stripH*0.5);
+      ctx.fillText('🌷',pX+pW*0.82,stripY+stripH*0.5);
+      ctx.textAlign='left';
+    }
+  },
+  {id:'pol_cumple', name:'🎉 Cumple', cat:'polaroid',
+    bg:'#fff8e1', padH:0.06, padT:0.06, padB:0.20,
+    draw:(ctx,cW,cH,pX,pY,pW,pH)=>{
+      const lw=Math.max(pW*0.007,2);
+      ctx.strokeStyle='#ffd700';ctx.lineWidth=lw;
+      ctx.strokeRect(pX,pY,pW,pH);
+      const evName=document.getElementById('ev-name')?.textContent||'EventWall';
+      const stripY=pY+pH; const stripH=cH-stripY;
+      const fs=Math.max(Math.floor(stripH*0.34),12);
+      ctx.font='700 '+fs+'px "DM Sans",sans-serif';
+      ctx.fillStyle='#b06000';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(evName,cW/2,stripY+stripH*0.5);
+      const sz2=Math.max(Math.floor(stripH*0.35),10);
+      ctx.font=sz2+'px serif';
+      ctx.fillText('🎂',pX+pW*0.08,stripY+stripH*0.5);
+      ctx.fillText('🎉',pX+pW*0.82,stripY+stripH*0.5);
+      ctx.textAlign='left';
+    }
+  },
+  {id:'pol_clean', name:'🔲 Limpio', cat:'polaroid',
+    bg:'#f5f5f5', padH:0.05, padT:0.05, padB:0.14,
+    draw:(ctx,cW,cH,pX,pY,pW,pH)=>{
+      ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.lineWidth=1;
+      ctx.strokeRect(pX,pY,pW,pH);
+      const evName=document.getElementById('ev-name')?.textContent||'EventWall';
+      const stripY=pY+pH; const stripH=cH-stripY;
+      const fs=Math.max(Math.floor(stripH*0.36),10);
+      ctx.font='600 '+fs+'px "DM Sans",sans-serif';
+      ctx.fillStyle='#555';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(evName,cW/2,stripY+stripH*0.5);
+      ctx.textAlign='left';
+    }
+  },
 ];
 
+const FRAME_CATS=[
+  {id:'todos',    label:'Todos'},
+  {id:'polaroid', label:'📷 Polaroid'},
+  {id:'deco',     label:'🎨 Deco'},
+  {id:'borde',    label:'🖼 Borde'},
+];
+let selectedFrameCat='todos';
+
 function buildFramePicker(){
+  // Build category tabs
+  const catsEl=document.getElementById('frame-cats');
+  catsEl.innerHTML='';
+  FRAME_CATS.forEach(cat=>{
+    const btn=document.createElement('button');
+    btn.className='frame-cat'+(cat.id===selectedFrameCat?' active':'');
+    btn.textContent=cat.label;
+    btn.onclick=()=>{selectedFrameCat=cat.id;buildFramePicker();};
+    catsEl.appendChild(btn);
+  });
+
   const row=document.getElementById('frames-row');
   row.innerHTML='';
-  FRAMES.forEach(f=>{
+  const visible=selectedFrameCat==='todos'?FRAMES:FRAMES.filter(f=>f.cat===selectedFrameCat||f.id==='none');
+  visible.forEach(f=>{
+    const isBg=f.bg!==undefined;
     const div=document.createElement('div');
     div.className='frame-opt'+(f.id===selectedFrame?' active':'');
     div.onclick=()=>selectFrame(f.id);
-    const c=document.createElement('canvas');c.width=72;c.height=72;
-    if(originalImage&&f.draw){
-      const ctx=c.getContext('2d');
-      ctx.drawImage(originalImage,0,0,72,72);
-      f.draw(ctx,72,72);
+    // Thumbnail: bg frames use a taller aspect ratio preview (4:5)
+    const TW=isBg?58:72, TH=isBg?72:72;
+    const c=document.createElement('canvas');c.width=TW;c.height=TH;
+    c.style.width='64px';c.style.height='64px';c.style.borderRadius='8px';
+    const ctx=c.getContext('2d');
+    if(isBg){
+      // Simulate polaroid thumb: fill bg, draw scaled photo, then frame decorations
+      const imgW=isBg?Math.round(TW*(1-f.padH*2)):TW;
+      const imgH=Math.round(TH*(1-f.padT-f.padB));
+      const imgX=Math.round((TW-imgW)/2);
+      const imgY=Math.round(TH*f.padT);
+      ctx.fillStyle=f.bg;ctx.fillRect(0,0,TW,TH);
+      if(originalImage) ctx.drawImage(originalImage,imgX,imgY,imgW,imgH);
+      else{ctx.fillStyle='#ccc';ctx.fillRect(imgX,imgY,imgW,imgH);}
+      if(f.draw) f.draw(ctx,TW,TH,imgX,imgY,imgW,imgH);
+    } else if(originalImage&&f.draw){
+      ctx.drawImage(originalImage,0,0,TW,TH);
+      f.draw(ctx,TW,TH);
     } else if(originalImage){
-      const ctx=c.getContext('2d');ctx.drawImage(originalImage,0,0,72,72);
+      ctx.drawImage(originalImage,0,0,TW,TH);
     } else {
-      const ctx=c.getContext('2d');
-      ctx.fillStyle='#f0ede8';ctx.fillRect(0,0,72,72);
-      if(f.draw) f.draw(ctx,72,72);
+      ctx.fillStyle='#f0ede8';ctx.fillRect(0,0,TW,TH);
+      if(f.draw) f.draw(ctx,TW,TH);
       else{ctx.fillStyle='#ccc';ctx.font='28px serif';ctx.fillText('🖼',22,46);}
     }
     div.appendChild(c);
@@ -1264,7 +1391,8 @@ function buildFramePicker(){
 function selectFrame(id){
   selectedFrame=id;
   document.querySelectorAll('.frame-opt').forEach(el=>el.classList.remove('active'));
-  const idx=FRAMES.findIndex(f=>f.id===id);
+  const visible=selectedFrameCat==='todos'?FRAMES:FRAMES.filter(f=>f.cat===selectedFrameCat||f.id==='none');
+  const idx=visible.findIndex(f=>f.id===id);
   document.querySelectorAll('.frame-opt')[idx]?.classList.add('active');
   renderPreviewCanvas();
 }
@@ -1273,53 +1401,102 @@ function renderPreviewCanvas(){
   if(!originalImage) return;
   const canvas=document.getElementById('preview-canvas');
   const MAX_DIM=1920;
-  let W=originalImage.naturalWidth||originalImage.width;
-  let H=originalImage.naturalHeight||originalImage.height;
-  if(W>MAX_DIM||H>MAX_DIM){
-    if(W>=H){H=Math.round(H*MAX_DIM/W);W=MAX_DIM;}
-    else{W=Math.round(W*MAX_DIM/H);H=MAX_DIM;}
+  let imgW=originalImage.naturalWidth||originalImage.width;
+  let imgH=originalImage.naturalHeight||originalImage.height;
+  if(imgW>MAX_DIM||imgH>MAX_DIM){
+    if(imgW>=imgH){imgH=Math.round(imgH*MAX_DIM/imgW);imgW=MAX_DIM;}
+    else{imgW=Math.round(imgW*MAX_DIM/imgH);imgH=MAX_DIM;}
   }
-  canvas.width=W;canvas.height=H;
-  const ctx=canvas.getContext('2d');
-  // Apply CSS filter
-  const filter=FILTERS.find(f=>f.id===selectedFilter);
-  ctx.filter=(filter&&filter.css&&filter.css!=='none')?filter.css:'none';
-  ctx.drawImage(originalImage,0,0,W,H);
-  ctx.filter='none';
-  // Apply canvas-based filter effect (grain, vignette, flares, etc.)
-  if(filter&&filter.canvas) filter.canvas(ctx,W,H);
-  // Apply frame
+  const W=imgW, H=imgH;
   const frame=FRAMES.find(f=>f.id===selectedFrame);
-  if(frame&&frame.draw) frame.draw(ctx,W,H);
-  // Apply stickers
-  if(selectedStickers.length){
-    const sz=Math.floor(W*0.13);
-    ctx.font=sz+'px serif';
-    const positions=[
-      [W*0.05,H*0.13],[W*0.82,H*0.1],[W*0.5,H*0.06],
-      [W*0.08,H*0.82],[W*0.78,H*0.85]
-    ];
-    selectedStickers.forEach((emoji,i)=>{
-      const [x,y]=positions[i%positions.length];
-      ctx.save();ctx.translate(x,y);
-      ctx.rotate([-0.3,0.2,-0.15,0.25,-0.1][i%5]);
-      ctx.fillText(emoji,0,0);ctx.restore();
-    });
-  }
-  // Apply watermark
-  if(_wmImage && gdFlags.wmUrl){
-    const wmW=Math.round(W*(gdFlags.wmSize/100));
-    const wmH=Math.round(wmW*(_wmImage.naturalHeight/_wmImage.naturalWidth));
-    const pad=Math.round(W*0.02);
-    const pos=gdFlags.wmPos;
-    let x=pad, y=pad;
-    if(pos==='br'||pos==='tr') x=W-wmW-pad;
-    if(pos==='br'||pos==='bl') y=H-wmH-pad;
-    if(pos==='center'){x=Math.round((W-wmW)/2);y=Math.round((H-wmH)/2);}
-    ctx.save();
-    ctx.globalAlpha=gdFlags.wmOpacity/100;
-    ctx.drawImage(_wmImage,x,y,wmW,wmH);
-    ctx.restore();
+  const filter=FILTERS.find(f=>f.id===selectedFilter);
+  const isBgFrame=frame&&frame.bg!==undefined;
+
+  // Step 1: render photo + filter + non-bg frame onto a temp canvas
+  const tmp=document.createElement('canvas');
+  tmp.width=W;tmp.height=H;
+  const tc=tmp.getContext('2d');
+  tc.filter=(filter&&filter.css&&filter.css!=='none')?filter.css:'none';
+  tc.drawImage(originalImage,0,0,W,H);
+  tc.filter='none';
+  if(filter&&filter.canvas) filter.canvas(tc,W,H);
+  if(!isBgFrame&&frame&&frame.draw) frame.draw(tc,W,H);
+
+  // Step 2: composite onto final canvas
+  let cW, cH, pX, pY;
+  if(isBgFrame){
+    const px=Math.round(W*(frame.padH||0.06));
+    const pt=Math.round(H*(frame.padT||0.06));
+    const pb=Math.round(H*(frame.padB||0.20));
+    cW=W+px*2; cH=H+pt+pb;
+    pX=px; pY=pt;
+    canvas.width=cW; canvas.height=cH;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle=frame.bg; ctx.fillRect(0,0,cW,cH);
+    ctx.drawImage(tmp,pX,pY);
+    if(frame.draw) frame.draw(ctx,cW,cH,pX,pY,W,H);
+    // stickers inside the photo area
+    if(selectedStickers.length){
+      const sz=Math.floor(W*0.13);
+      ctx.font=sz+'px serif';
+      const positions=[
+        [pX+W*0.05,pY+H*0.13],[pX+W*0.82,pY+H*0.1],[pX+W*0.5,pY+H*0.06],
+        [pX+W*0.08,pY+H*0.82],[pX+W*0.78,pY+H*0.85]
+      ];
+      selectedStickers.forEach((emoji,i)=>{
+        const [x,y]=positions[i%positions.length];
+        ctx.save();ctx.translate(x,y);
+        ctx.rotate([-0.3,0.2,-0.15,0.25,-0.1][i%5]);
+        ctx.fillText(emoji,0,0);ctx.restore();
+      });
+    }
+    // watermark inside photo area
+    if(_wmImage&&gdFlags.wmUrl){
+      const wmW=Math.round(W*(gdFlags.wmSize/100));
+      const wmH=Math.round(wmW*(_wmImage.naturalHeight/_wmImage.naturalWidth));
+      const pad=Math.round(W*0.02);
+      const pos=gdFlags.wmPos;
+      let x=pX+pad, y=pY+pad;
+      if(pos==='br'||pos==='tr') x=pX+W-wmW-pad;
+      if(pos==='br'||pos==='bl') y=pY+H-wmH-pad;
+      if(pos==='center'){x=pX+Math.round((W-wmW)/2);y=pY+Math.round((H-wmH)/2);}
+      ctx.save();ctx.globalAlpha=gdFlags.wmOpacity/100;
+      ctx.drawImage(_wmImage,x,y,wmW,wmH);
+      ctx.restore();
+    }
+  } else {
+    canvas.width=W; canvas.height=H;
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(tmp,0,0);
+    // stickers
+    if(selectedStickers.length){
+      const sz=Math.floor(W*0.13);
+      ctx.font=sz+'px serif';
+      const positions=[
+        [W*0.05,H*0.13],[W*0.82,H*0.1],[W*0.5,H*0.06],
+        [W*0.08,H*0.82],[W*0.78,H*0.85]
+      ];
+      selectedStickers.forEach((emoji,i)=>{
+        const [x,y]=positions[i%positions.length];
+        ctx.save();ctx.translate(x,y);
+        ctx.rotate([-0.3,0.2,-0.15,0.25,-0.1][i%5]);
+        ctx.fillText(emoji,0,0);ctx.restore();
+      });
+    }
+    // watermark
+    if(_wmImage&&gdFlags.wmUrl){
+      const wmW=Math.round(W*(gdFlags.wmSize/100));
+      const wmH=Math.round(wmW*(_wmImage.naturalHeight/_wmImage.naturalWidth));
+      const pad=Math.round(W*0.02);
+      const pos=gdFlags.wmPos;
+      let x=pad, y=pad;
+      if(pos==='br'||pos==='tr') x=W-wmW-pad;
+      if(pos==='br'||pos==='bl') y=H-wmH-pad;
+      if(pos==='center'){x=Math.round((W-wmW)/2);y=Math.round((H-wmH)/2);}
+      ctx.save();ctx.globalAlpha=gdFlags.wmOpacity/100;
+      ctx.drawImage(_wmImage,x,y,wmW,wmH);
+      ctx.restore();
+    }
   }
 }
 
