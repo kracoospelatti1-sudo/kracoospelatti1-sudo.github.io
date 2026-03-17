@@ -1874,7 +1874,7 @@ async function applyGuestDesign(ev){
 
   // Vote button
   const voteBtn=document.getElementById('vote-btn');
-  if(voteBtn) voteBtn.style.display='none';
+  if(voteBtn) voteBtn.style.display=d.showVote!==false?'':'none';
 
   // Save flags globally for use in photo handler
   gdFlags.showReactions=d.showReactions!==false;
@@ -1947,7 +1947,6 @@ async function init(){
       showAppAfterSplash();
     }
     initTabsHint();
-    buildFramePicker();
     await applyGuestDesign(ev);
     // Start expiry polling so open pages also lock when PIN expires
     if(!expiryCheckInterval){
@@ -1977,12 +1976,17 @@ async function init(){
     setInterval(()=>updateWishBtn(true),60000);
     // Check for active polls every 4s and lock screen if one is running
     setInterval(checkActivePoll,4000);
-    // Re-apply design every 15s so admin changes reflect live
+    // Re-apply design every 15s only if updated_at changed
+    let _lastDesignTs='';
     setInterval(async()=>{
       try{
         const res=await apiRest('event_settings?event_id=eq.'+eventId+'&select=guest_design,updated_at');
         if(Array.isArray(res)&&res[0]?.guest_design){
-          await applyGuestDesign(null);
+          const ts=res[0].updated_at||'';
+          if(ts!==_lastDesignTs){
+            _lastDesignTs=ts;
+            await applyGuestDesign(null);
+          }
         }
       }catch(e){}
     },15000);
@@ -2264,7 +2268,7 @@ function updateMsgPreview(){
   textEl.style.wordBreak='break-word';
   textEl.style.overflowWrap='break-word';
   textEl.style.fontFamily=msgFont?("'"+msgFont+"',sans-serif"):"'Syne',sans-serif";
-  textEl.style.fontWeight=msgBold?'800':'800';
+  textEl.style.fontWeight=msgBold?'800':'400';
   textEl.style.fontStyle=msgItalic?'italic':'normal';
   textEl.style.textDecoration=msgUnderline?'underline':'none';
   textEl.style.textShadow=msgShadow?'2px 2px 8px rgba(0,0,0,0.4)':'none';
@@ -2276,10 +2280,13 @@ function updateMsgPreview(){
   if(replayBtn) replayBtn.style.display=msgAnimation!=='none'?'':'none';
 }
 
+let _typewriterInterval=null;
 function applyPreviewAnimation(text){
   const textEl=document.getElementById('msg-preview-text');
   const bubble=document.getElementById('msg-preview-bubble');
   if(!textEl||!bubble) return;
+  // Clear any running typewriter interval
+  if(_typewriterInterval){clearInterval(_typewriterInterval);_typewriterInterval=null;}
   // Remove all animation classes
   textEl.classList.remove('msg-anim-bounce','msg-anim-fade','msg-anim-wave','msg-anim-slide','msg-anim-zoom');
   bubble.style.animation='';
@@ -2292,9 +2299,9 @@ function applyPreviewAnimation(text){
     textEl.style.borderRight='2px solid '+msgTextColor;
     let i=0;
     const chars=[...text];
-    const interval=setInterval(()=>{
+    _typewriterInterval=setInterval(()=>{
       if(i<chars.length){textEl.textContent+=chars[i];i++;}
-      else{clearInterval(interval);textEl.style.borderRight='none';}
+      else{clearInterval(_typewriterInterval);_typewriterInterval=null;textEl.style.borderRight='none';}
     },50);
   } else if(msgAnimation==='bounce'){
     textEl.textContent=text;
@@ -2370,9 +2377,9 @@ async function sendMessage(){
   if(!text){showFormError('msg-error','Escribí un mensaje primero');return;}
   if(!checkCooldown('message')) return;
   showSending();setProgress(50,'Enviando mensaje...');
+  const _msgSizes={small:20,medium:32,large:48,xlarge:60};
+  const frameData=JSON.stringify({emoji:msgEmoji==='none'?'':msgEmoji,bgColor:msgBgColor,bgGradient:msgBgGradient,textColor:msgTextColor,fontSize:_msgSizes[msgSize]||32,bubbleStyle:msgBubbleStyle,font:msgFont||'Syne',bold:msgBold,italic:msgItalic,underline:msgUnderline,shadow:msgShadow,outline:msgOutline,animation:msgAnimation||'none'});
   try{
-    const sizes={small:20,medium:32,large:48,xlarge:60};
-    const frameData=JSON.stringify({emoji:msgEmoji==='none'?'':msgEmoji,bgColor:msgBgColor,bgGradient:msgBgGradient,textColor:msgTextColor,fontSize:sizes[msgSize]||32,bubbleStyle:msgBubbleStyle,font:msgFont||'Syne',bold:msgBold,italic:msgItalic,underline:msgUnderline,shadow:msgShadow,outline:msgOutline,animation:msgAnimation||'none'});
     await apiRest('posts',{method:'POST',body:JSON.stringify({
       event_id:eventId,type:'message',author:name,content:text,approved:true,frame:frameData
     })});
@@ -2380,8 +2387,6 @@ async function sendMessage(){
   }catch(e){
     hideSending();
     if(isNetworkError(e)){
-      const sizes={small:20,medium:32,large:48,xlarge:60};
-      const frameData=JSON.stringify({emoji:msgEmoji==='none'?'':msgEmoji,bgColor:msgBgColor,bgGradient:msgBgGradient,textColor:msgTextColor,fontSize:sizes[msgSize]||32,bubbleStyle:msgBubbleStyle,font:msgFont||'Syne',bold:msgBold,italic:msgItalic,underline:msgUnderline,shadow:msgShadow,outline:msgOutline,animation:msgAnimation||'none'});
       enqueuePost({event_id:eventId,type:'message',author:name,content:text,approved:true,frame:frameData});
       showFormError('msg-error','📶 Sin señal — tu mensaje se enviará cuando vuelvas a conectarte');
     }else{showFormError('msg-error','Error: '+e.message);}
@@ -2399,6 +2404,7 @@ async function toggleRecording(){
     mediaRecorder.ondataavailable=e=>{if(e.data.size>0) audioChunks.push(e.data);};
     mediaRecorder.onstop=()=>{
       audioBlob=new Blob(audioChunks,{type:mimeType});
+      if(audioUrl) URL.revokeObjectURL(audioUrl);
       audioUrl=URL.createObjectURL(audioBlob);
       stream.getTracks().forEach(t=>t.stop());
       document.getElementById('record-btn').textContent='🔁';
@@ -2544,7 +2550,7 @@ function resetForm(){
   const wishEl=document.getElementById('wish-text');
   if(wishEl){wishEl.value='';document.getElementById('wish-count').textContent='0';}
   removePhoto();
-  audioBlob=null;audioUrl=null;
+  audioBlob=null;if(audioUrl){URL.revokeObjectURL(audioUrl);audioUrl=null;}recSecs=0;
   document.getElementById('audio-ready').style.display='none';
   document.getElementById('record-btn').textContent='🎤';
   document.getElementById('record-btn').classList.remove('recording');
@@ -2552,11 +2558,11 @@ function resetForm(){
   document.getElementById('record-timer').style.display='none';
   document.getElementById('waveform').style.display='none';
   ['photo-error','msg-error','audio-error','wish-error'].forEach(id=>hideFormError(id));
-  // Reset to photo tab
+  // Reset to first visible tab
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.tab-btn')[0]?.classList.add('active');
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('section-photo')?.classList.add('active');
+  const firstVisibleTab=Array.from(document.querySelectorAll('.type-tabs .tab-btn')).find(b=>b.style.display!=='none');
+  if(firstVisibleTab) firstVisibleTab.click();
 }
 // ── POLLS / VOTING ───────────────────────────────────────────
 let votedPolls = {}; // pollId -> optionIdx
@@ -2684,7 +2690,11 @@ function startGuestPollTimer(pollId, endsAt){
 // ── POLL LOCK ─────────────────────────────────────────────────
 let activePollId=null;
 let pollLockTimer=null;
-let guestVotedPolls={};
+// guestVotedPolls shares the same localStorage key as votedPolls so both views stay in sync
+const guestVotedPolls=new Proxy({},{
+  get(_,k){ try{return JSON.parse(localStorage.getItem('ew_voted_'+eventId)||'{}')[k];}catch{return undefined;} },
+  set(_,k,v){ try{const o=JSON.parse(localStorage.getItem('ew_voted_'+eventId)||'{}');o[k]=v;localStorage.setItem('ew_voted_'+eventId,JSON.stringify(o));}catch{} return true; }
+});
 
 async function checkActivePoll(){
   if(checkPinExpiry()) return;
@@ -3037,8 +3047,9 @@ function showRxnPopover(e,btn,emoji){
   const names=btn.dataset.rxnNames?JSON.parse(decodeURIComponent(btn.dataset.rxnNames)):[];
   if(!names.length) return;
   const pop=getRxnPopover();
-  pop.innerHTML='<div class="rxn-popover-title">'+emoji+' '+names.length+'</div>'
-    +'<div class="rxn-popover-names">'+names.join(', ')+'</div>';
+  pop.innerHTML='<div class="rxn-popover-title"></div><div class="rxn-popover-names"></div>';
+  pop.querySelector('.rxn-popover-title').textContent=emoji+' '+names.length;
+  pop.querySelector('.rxn-popover-names').textContent=names.join(', ');
   // Position near button
   const r=btn.getBoundingClientRect();
   pop.style.left=Math.min(r.left,window.innerWidth-210)+'px';
@@ -3119,9 +3130,10 @@ function renderGalleryCard(post,counts){
       +'</button>';
   }).join('');
   const whoBtn=hasAnyRxn?'<button class="rxn-who-btn" title="Ver quién reaccionó">👁</button>':'';
-  card.innerHTML='<img class="gallery-img" src="'+post.content+'" loading="lazy" alt="'+post.author+'"/>'
-    +'<div class="gallery-author">'+post.author+'</div>'
+  card.innerHTML='<img class="gallery-img" src="'+post.content+'" loading="lazy"/>'
+    +'<div class="gallery-author"></div>'
     +(gdFlags.showReactions?'<div class="gallery-reactions">'+btns+whoBtn+'</div>':'');
+  card.querySelector('.gallery-author').textContent=post.author;
   if(hasAnyRxn){
     const wb=card.querySelector('.rxn-who-btn');
     if(wb) wb.addEventListener('click',e=>{e.stopPropagation();window._showRxnSheet(rxnData);});

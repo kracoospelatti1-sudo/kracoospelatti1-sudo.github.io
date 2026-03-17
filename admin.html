@@ -2205,13 +2205,18 @@ async function _doDeleteEvent(ev){
   localStorage.removeItem('ew_album_sent_'+ev.id);
 
   // Delete all related data first (order matters for foreign keys)
-  await api('poll_votes?event_id=eq.'+ev.id,{method:'DELETE'});
-  await api('reactions?event_id=eq.'+ev.id,{method:'DELETE'});
-  await api('posts?event_id=eq.'+ev.id,{method:'DELETE'});
-  await api('polls?event_id=eq.'+ev.id,{method:'DELETE'});
-  await api('moments?event_id=eq.'+ev.id,{method:'DELETE'});
-  await api('event_settings?event_id=eq.'+ev.id,{method:'DELETE'});
-  await api('events?id=eq.'+ev.id,{method:'DELETE'});
+  try{
+    await api('poll_votes?event_id=eq.'+ev.id,{method:'DELETE'});
+    await api('reactions?event_id=eq.'+ev.id,{method:'DELETE'});
+    await api('posts?event_id=eq.'+ev.id,{method:'DELETE'});
+    await api('polls?event_id=eq.'+ev.id,{method:'DELETE'});
+    await api('moments?event_id=eq.'+ev.id,{method:'DELETE'});
+    await api('event_settings?event_id=eq.'+ev.id,{method:'DELETE'});
+    await api('events?id=eq.'+ev.id,{method:'DELETE'});
+  }catch(e){
+    toast('❌ Error al eliminar el evento: '+e.message);
+    return;
+  }
 
   if(selectedEvent?.id===ev.id){
     selectedEvent=null;
