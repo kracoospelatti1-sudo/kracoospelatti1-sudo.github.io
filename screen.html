@@ -754,18 +754,21 @@ function showNextBubble(){
     avatarEl.textContent=(msg.author||'?')[0].toUpperCase();
     avatarEl.style.display=msg.author?'flex':'none';
   }
+  // Reset text styles que pueden quedar de burbuja anterior
+  textEl.style.width='';textEl.style.whiteSpace='';textEl.style.overflow='';textEl.style.animation='';textEl.style.borderRight='';
   // Apply custom style
   const card=document.getElementById('msg-bubble-card');
   const tail=document.getElementById('bubble-tail');
-  const bgColor=custom.bgColor||'var(--bubble-bg)';
+  const bgColor=custom.bgGradient||custom.bgColor||'var(--bubble-bg)';
   const txtColor=custom.textColor||'var(--bubble-txt)';
   const bubbleStyle=custom.bubbleStyle||'bubble';
   // Apply background
+  const solidBg=custom.bgColor||'var(--bubble-bg)'; // color sólido para borders
   const styleMap={
-    bubble:{borderRadius:'var(--bubble-radius)',background:bgColor,boxShadow:'0 40px 100px rgba(0,0,0,0.55)',border:'none',padding:'clamp(28px,4vh,48px) clamp(28px,4vw,52px)'},
-    card:{borderRadius:'16px',background:bgColor,boxShadow:'0 8px 40px rgba(0,0,0,0.3)',border:'4px solid '+bgColor,padding:'32px 40px'},
+    bubble:{borderRadius:'var(--bubble-radius)',background:bgColor,boxShadow:'0 40px 100px rgba(0,0,0,0.55)',border:'none',padding:'clamp(28px,4vh,48px) clamp(28px,4vw,52px)',maxWidth:'min(700px,88%)'},
+    card:{borderRadius:'16px',background:bgColor,boxShadow:'0 8px 40px rgba(0,0,0,0.3)',border:'4px solid '+solidBg,padding:'32px 40px',maxWidth:'min(700px,88%)'},
     banner:{borderRadius:'8px',background:bgColor,boxShadow:'0 4px 32px rgba(0,0,0,0.4)',border:'none',padding:'28px 60px',maxWidth:'92vw'},
-    minimal:{borderRadius:'0',background:'transparent',boxShadow:'none',border:'none',borderBottom:'4px solid '+bgColor,padding:'24px 40px'},
+    minimal:{borderRadius:'0',background:'transparent',boxShadow:'none',border:'none',borderBottom:'4px solid '+solidBg,padding:'24px 40px',maxWidth:'min(700px,88%)'},
   };
   const st=styleMap[bubbleStyle]||styleMap.bubble;
   Object.assign(card.style,st);
