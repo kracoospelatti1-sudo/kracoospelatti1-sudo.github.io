@@ -3102,41 +3102,112 @@ async function downloadSinglePhoto(url,author,originalUrl){
 }
 
 async function downloadAlbum(){
-  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=eq.photo&approved=eq.true');
-  const photos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
-  if(!photos.length){toast('No hay fotos para descargar');return;}
-
+  if(!selectedEvent){toast('Seleccioná un evento primero');return;}
   const btn=document.querySelector('[onclick="downloadAlbum()"]');
   const origText=btn?btn.textContent:'';
-  if(btn){btn.disabled=true;btn.textContent='⏳ Preparando ZIP...';}
-
+  if(btn){btn.disabled=true;btn.textContent='⏳ Cargando...';}
   try{
+    // Fetch all approved posts
+    const allPosts=await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.true&order=created_at.asc');
+    const posts=Array.isArray(allPosts)?allPosts:[];
+    const photos=posts.filter(p=>p.type==='photo'&&p.content?.startsWith('http'));
+    const messages=posts.filter(p=>p.type==='message');
+    const wishes=posts.filter(p=>p.type==='wish');
+    const audios=posts.filter(p=>p.type==='audio'&&p.content?.startsWith('http'));
+
+    if(!posts.length){toast('No hay contenido para descargar');if(btn){btn.disabled=false;btn.textContent=origText;}return;}
+
     const zip=new JSZip();
-    const folder=zip.folder(selectedEvent.name||'fotos');
-    let ok=0;
-    for(let i=0;i<photos.length;i++){
-      if(btn) btn.textContent=`⏳ ${i+1}/${photos.length} fotos...`;
-      try{
-        const url=photos[i].original_url||photos[i].content;
-        const res=await fetch(url);
-        if(!res.ok) continue;
-        const blob=await res.blob();
-        const ext=blob.type.includes('png')?'png':'jpg';
-        const author=(photos[i].author||'invitado').replace(/[^a-z0-9]/gi,'_').slice(0,30);
-        folder.file(`foto_${String(i+1).padStart(3,'0')}_${author}.${ext}`,blob);
-        ok++;
-      }catch(e){}
+    const evName=selectedEvent.name||'evento';
+    const safeName=evName.replace(/[^a-z0-9]/gi,'-').toLowerCase();
+    const total=photos.length+audios.length;
+    let done=0;
+
+    // ── FOTOS ──────────────────────────────────────────────────
+    if(photos.length){
+      const folder=zip.folder('fotos');
+      for(let i=0;i<photos.length;i++){
+        done++;
+        if(btn) btn.textContent=`⏳ Fotos ${done}/${total}...`;
+        try{
+          const url=photos[i].original_url||photos[i].content;
+          const res=await fetch(url);if(!res.ok) continue;
+          const blob=await res.blob();
+          const ext=blob.type.includes('png')?'png':'jpg';
+          const author=(photos[i].author||'invitado').replace(/[^a-z0-9áéíóúñ]/gi,'_').slice(0,30);
+          const caption=photos[i].content_text?'_'+photos[i].content_text.replace(/[^a-z0-9áéíóúñ ]/gi,'').slice(0,20).trim():'';
+          folder.file(`foto_${String(i+1).padStart(3,'0')}_${author}${caption}.${ext}`,blob);
+        }catch(e){}
+      }
     }
-    if(!ok){toast('No se pudieron descargar las fotos');return;}
+
+    // ── AUDIOS ─────────────────────────────────────────────────
+    if(audios.length){
+      const folder=zip.folder('audios');
+      for(let i=0;i<audios.length;i++){
+        done++;
+        if(btn) btn.textContent=`⏳ Audios ${done}/${total}...`;
+        try{
+          const res=await fetch(audios[i].content);if(!res.ok) continue;
+          const blob=await res.blob();
+          const ext=blob.type.includes('mp4')?'mp4':'webm';
+          const author=(audios[i].author||'invitado').replace(/[^a-z0-9áéíóúñ]/gi,'_').slice(0,30);
+          folder.file(`audio_${String(i+1).padStart(3,'0')}_${author}.${ext}`,blob);
+        }catch(e){}
+      }
+    }
+
+    // ── MENSAJES + DESEOS como TXT ─────────────────────────────
+    const lines=[];
+    const fmt=d=>d?new Date(d).toLocaleString('es-AR',{dateStyle:'short',timeStyle:'short'}):'';
+    if(messages.length){
+      lines.push('═══════════════════════════════');
+      lines.push('  MENSAJES ('+messages.length+')');
+      lines.push('═══════════════════════════════\n');
+      messages.forEach((m,i)=>{
+        lines.push(`[${i+1}] ${m.author||'Anónimo'}  —  ${fmt(m.created_at)}`);
+        lines.push(m.content);
+        lines.push('');
+      });
+    }
+    if(wishes.length){
+      lines.push('═══════════════════════════════');
+      lines.push('  DESEOS ESPECIALES ('+wishes.length+')');
+      lines.push('═══════════════════════════════\n');
+      wishes.forEach((w,i)=>{
+        lines.push(`[${i+1}] ${w.author||'Anónimo'}  —  ${fmt(w.created_at)}`);
+        lines.push(w.content);
+        lines.push('');
+      });
+    }
+    if(lines.length){
+      zip.file('mensajes.txt','\uFEFF'+lines.join('\n')); // BOM for Excel/Notepad UTF-8
+    }
+
+    // ── README ─────────────────────────────────────────────────
+    const readme=[
+      'ÁLBUM: '+evName,
+      'Fecha: '+(selectedEvent.date||'—'),
+      'Generado: '+new Date().toLocaleString('es-AR'),
+      '',
+      'Contenido:',
+      '  📷 '+photos.length+' foto'+(photos.length!==1?'s':''),
+      '  💬 '+messages.length+' mensaje'+(messages.length!==1?'s':''),
+      '  💌 '+wishes.length+' deseo'+(wishes.length!==1?'s':''),
+      '  🎤 '+audios.length+' audio'+(audios.length!==1?'s':''),
+      '',
+      'Generado con EventWall',
+    ].join('\n');
+    zip.file('README.txt',readme);
+
     if(btn) btn.textContent='⏳ Generando ZIP...';
-    const zipBlob=await zip.generateAsync({type:'blob',compression:'STORE'});
+    const zipBlob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(zipBlob);
-    const safeName=(selectedEvent.name||'evento').replace(/[^a-z0-9]/gi,'-').toLowerCase();
-    a.download=`fotos-${safeName}.zip`;
+    a.download=`album-${safeName}.zip`;
     a.click();
     URL.revokeObjectURL(a.href);
-    toast(`✅ ZIP con ${ok} fotos descargado`);
+    toast(`✅ ZIP descargado — ${photos.length} fotos, ${messages.length} mensajes, ${wishes.length} deseos, ${audios.length} audios`);
   }catch(e){
     toast('Error generando ZIP: '+e.message);
   }finally{
