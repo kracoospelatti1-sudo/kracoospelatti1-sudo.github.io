@@ -1961,6 +1961,9 @@ async function sendPhoto(){
       const caption=document.getElementById('photo-caption')?.value.trim();
       enqueuePost({event_id:eventId,type:'photo',author:name,content:uploadedUrl,content_text:caption||null,frame:selectedFrame,approved:true});
       showFormError('photo-error','📶 Sin señal — tu foto se enviará cuando vuelvas a conectarte');
+    }else if(!uploadedUrl&&isNetworkError(e)){
+      // Upload itself failed — photo still selected, user can retry
+      showFormError('photo-error','📶 Sin señal — tu foto sigue seleccionada, tocá "Enviar" de nuevo cuando tengas señal');
     }else{
       showFormError('photo-error','Error: '+e.message);
     }

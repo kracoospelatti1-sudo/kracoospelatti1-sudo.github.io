@@ -2186,15 +2186,21 @@ async function deleteEvent(ev){
 }
 async function _doDeleteEvent(ev){
   const hasEmail=ev.client_email&&ev.client_email.trim();
-  // Fetch all posts before deleting
-  const posts=await api('posts?event_id=eq.'+ev.id+'&order=created_at.asc');
+  // Fetch approved posts before deleting
+  const posts=await api('posts?event_id=eq.'+ev.id+'&approved=eq.true&order=created_at.asc');
   const approvedPosts=Array.isArray(posts)?posts:[];
 
-  // Send email if client has email and not already sent on PIN expiry
-  const alreadySent=localStorage.getItem('ew_album_sent_'+ev.id);
-  if(hasEmail && approvedPosts.length>0 && !alreadySent){
-    toast('📧 Enviando álbum por email...');
-    await sendAlbumEmail(ev, approvedPosts);
+  // Send email if client has email and not already sent
+  if(hasEmail && approvedPosts.length>0){
+    const alreadySent=await checkAlbumSent(ev.id);
+    if(!alreadySent){
+      toast('📧 Enviando álbum por email...');
+      const ok=await sendAlbumEmail(ev, approvedPosts);
+      if(!ok){
+        toast('⚠️ No se pudo enviar el álbum. El evento NO fue eliminado — reintentá desde la pestaña Álbum.');
+        return; // Abort deletion to protect data
+      }
+    }
   }
   localStorage.removeItem('ew_album_sent_'+ev.id);
 
@@ -2213,6 +2219,15 @@ async function _doDeleteEvent(ev){
   }
   toast('🗑 Evento "'+ev.name+'" eliminado');
   loadEvents();
+}
+
+async function checkAlbumSent(eventId){
+  try{
+    const res=await api('cron_sent_emails?event_id=eq.'+eventId);
+    return Array.isArray(res)&&res.length>0;
+  }catch(e){
+    return !!localStorage.getItem('ew_album_sent_'+eventId);
+  }
 }
 
 async function sendAlbumEmail(ev, posts){
@@ -2234,6 +2249,7 @@ async function sendAlbumEmail(ev, posts){
           'apikey':SUPABASE_KEY,
         },
         body:JSON.stringify({
+          eventId: ev.id,
           eventName: ev.name,
           eventDate: ev.date,
           clientEmail: ev.client_email,
@@ -2245,12 +2261,14 @@ async function sendAlbumEmail(ev, posts){
     const data=await res.json();
     if(data.success){
       toast('✅ Álbum enviado a '+ev.client_email+' 📧');
+      return true;
     } else {
       throw new Error(data.error||'Error desconocido');
     }
   }catch(e){
     console.error('Email error:',e);
     toast('⚠️ Error al enviar email: '+e.message);
+    return false;
   }
 }
 
@@ -2894,7 +2912,8 @@ async function sendAlbumManual(){
   confirm2('Se enviará el álbum completo a '+selectedEvent.client_email+'.', async()=>{
     const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.true&order=created_at.asc');
     if(!Array.isArray(posts)||!posts.length){toast('No hay contenido para enviar');return;}
-    await sendAlbumEmail(selectedEvent, posts);
+    const ok=await sendAlbumEmail(selectedEvent, posts);
+    if(ok) localStorage.setItem('ew_album_sent_'+selectedEvent.id,'1');
   },{title:'¿Enviar álbum?',ico:'📧',danger:false});
 }
 
@@ -3610,22 +3629,17 @@ if(sessionStorage.getItem('ew_unlocked')==='1'){
         const expired=await api('events?pin_expires_at=lt.'+now+'&client_email=not.is.null&select=*');
         if(!Array.isArray(expired)||!expired.length) return;
         for(const ev of expired){
-          // Check if we already sent the email (use localStorage to track)
+          // Fast cache check (localStorage) — real dedup is server-side via cron_sent_emails
           const sentKey='ew_album_sent_'+ev.id;
           if(localStorage.getItem(sentKey)) continue;
-          // Mark as sent first to avoid duplicates
-          localStorage.setItem(sentKey,'1');
-          // Fetch posts and send email
+          // Fetch posts first — only proceed if there are approved posts
           try{
             const posts=await api('posts?event_id=eq.'+ev.id+'&approved=eq.true&order=created_at.asc');
-            if(Array.isArray(posts)&&posts.length>0){
-              toast('📧 Enviando álbum de "'+ev.name+'" a '+ev.client_email+'...',6000);
-              await sendAlbumEmail(ev, posts);
-            }
-          }catch(e){
-            // Remove sent flag so it retries next check
-            localStorage.removeItem(sentKey);
-          }
+            if(!Array.isArray(posts)||!posts.length) continue; // no posts yet, don't mark as sent
+            toast('📧 Enviando álbum de "'+ev.name+'" a '+ev.client_email+'...',6000);
+            const ok=await sendAlbumEmail(ev, posts);
+            if(ok) localStorage.setItem(sentKey,'1'); // mark only after successful send
+          }catch(e){ /* retry next check */ }
         }
       }catch(e){}
     }
