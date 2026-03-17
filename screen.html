@@ -1046,19 +1046,26 @@ async function pollPosts(){
   if(newItems.length){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
-        photoPosts.unshift(p);
-        if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
-        buildStrip();
         if(!currentFeaturedPostId){
+          // No photo yet — show immediately
+          photoPosts.unshift(p);
+          if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
+          buildStrip();
           hideWaitingScreen();
           featuredIdx=0;
           showFeatured(photoPosts[0],0);
           clearInterval(rotateTimer);
           rotateTimer=setInterval(rotateFeatured,cfg.interval);
         } else {
-          // Keep featuredIdx pointing to the photo currently on screen
-          const cur=photoPosts.findIndex(p=>p.id===currentFeaturedPostId);
-          if(cur>=0) featuredIdx=cur;
+          // Insert new photo right after the currently displayed one
+          const cur=photoPosts.findIndex(q=>q.id===currentFeaturedPostId);
+          const insertAt=(cur>=0?cur:featuredIdx)+1;
+          photoPosts.splice(insertAt,0,p);
+          if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
+          // Re-find current after splice (index may have shifted if limit trimmed)
+          const newCur=photoPosts.findIndex(q=>q.id===currentFeaturedPostId);
+          if(newCur>=0) featuredIdx=newCur;
+          buildStrip();
         }
       }
       if(p.type==='audio'&&p.content&&!getPlayedAudioIds().has(p.id)){
