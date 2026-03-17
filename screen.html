@@ -83,8 +83,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .qr-text strong{color:rgba(255,255,255,0.85);display:block;font-size:clamp(9px,0.85vw,13px);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* MESSAGE BUBBLE OVERLAY */
-@keyframes bubbleIn{from{transform:scale(0.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
-@keyframes bubbleOut{from{transform:scale(1);opacity:1}to{transform:scale(0.8) translateY(-20px);opacity:0}}
+@keyframes bubbleIn{
+  from{transform:scale(0.65) translateY(48px);opacity:0;filter:blur(8px)}
+  to{transform:scale(1) translateY(0);opacity:1;filter:blur(0)}
+}
+@keyframes bubbleOut{
+  from{transform:scale(1) translateY(0);opacity:1;filter:blur(0)}
+  to{transform:scale(0.82) translateY(-32px);opacity:0;filter:blur(6px)}
+}
+.bubble-quote{position:absolute;top:-10px;left:20px;font-size:clamp(60px,8vw,110px);line-height:1;font-family:Georgia,serif;color:var(--accent,#f0176f);opacity:0.18;pointer-events:none;user-select:none}
+.bubble-avatar{width:clamp(32px,3.5vw,48px);height:clamp(32px,3.5vw,48px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:clamp(13px,1.6vw,20px);color:#fff;flex-shrink:0}
+.bubble-author-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:clamp(14px,1.8vh,22px)}
+.bubble-accent-bar{position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--bubble-radius,28px) var(--bubble-radius,28px) 0 0;background:linear-gradient(90deg,var(--accent,#f0176f),#a855f7)}
 
 /* WISH OVERLAY */
 @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
@@ -336,11 +346,16 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
   <div class="grid">
     <div class="featured-side" id="featured-side">
       <div id="msg-bubble-overlay" style="position:absolute;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
-        <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:36px 44px;max-width:min(680px,88%);width:fit-content;min-width:180px;text-align:center;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.5);overflow:hidden;word-break:break-word">
+        <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:clamp(28px,4vh,48px) clamp(28px,4vw,52px);max-width:min(700px,88%);width:fit-content;min-width:200px;text-align:center;position:relative;box-shadow:0 40px 100px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.08);overflow:hidden;word-break:break-word">
+          <div class="bubble-accent-bar"></div>
+          <div class="bubble-quote">❝</div>
           <div id="bubble-tail" style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;"></div>
-          <div id="msg-bubble-icon" style="font-size:clamp(24px,4vw,48px);margin-bottom:10px"></div>
-          <div id="msg-bubble-text" style="font-family:var(--font-title);font-weight:800;line-height:1.25;word-break:break-word;overflow-wrap:break-word;max-width:100%"></div>
-          <div id="msg-bubble-author" style="font-size:clamp(12px,1.5vw,18px);opacity:0.6;margin-top:12px"></div>
+          <div id="msg-bubble-icon" style="font-size:clamp(28px,4.5vw,56px);margin-bottom:12px"></div>
+          <div id="msg-bubble-text" style="font-family:var(--font-title);font-weight:800;line-height:1.3;word-break:break-word;overflow-wrap:break-word;max-width:100%"></div>
+          <div class="bubble-author-row">
+            <div class="bubble-avatar" id="msg-bubble-avatar"></div>
+            <div id="msg-bubble-author" style="font-size:clamp(13px,1.5vw,19px);font-weight:700;opacity:0.75"></div>
+          </div>
         </div>
       </div>
       <div class="new-badge" id="new-badge">¡Nuevo contenido! 🎉</div>
@@ -729,7 +744,16 @@ function showNextBubble(){
     textEl.style.width='0';
     textEl.style.animation='msgTypewriter '+(msg.content.length*0.06)+'s steps('+msg.content.length+') forwards';
   }
-  document.getElementById('msg-bubble-author').textContent='— '+msg.author;
+  document.getElementById('msg-bubble-author').textContent=msg.author;
+  // Avatar con inicial coloreada
+  const avatarEl=document.getElementById('msg-bubble-avatar');
+  if(avatarEl){
+    const palette=['#f0176f','#7c3aed','#0891b2','#059669','#d97706','#e11d48','#9333ea','#0284c7'];
+    let h=0;for(const c of(msg.author||''))h=(h*31+c.charCodeAt(0))>>>0;
+    avatarEl.style.background=palette[h%palette.length];
+    avatarEl.textContent=(msg.author||'?')[0].toUpperCase();
+    avatarEl.style.display=msg.author?'flex':'none';
+  }
   // Apply custom style
   const card=document.getElementById('msg-bubble-card');
   const tail=document.getElementById('bubble-tail');
@@ -738,9 +762,9 @@ function showNextBubble(){
   const bubbleStyle=custom.bubbleStyle||'bubble';
   // Apply background
   const styleMap={
-    bubble:{borderRadius:'var(--bubble-radius)',background:bgColor,boxShadow:'0 32px 80px rgba(0,0,0,0.5)',border:'none',padding:'36px 44px'},
-    card:{borderRadius:'12px',background:bgColor,boxShadow:'0 8px 32px rgba(0,0,0,0.3)',border:'4px solid '+bgColor,padding:'32px 40px'},
-    banner:{borderRadius:'6px',background:bgColor,boxShadow:'0 4px 24px rgba(0,0,0,0.4)',border:'none',padding:'28px 60px',maxWidth:'90vw'},
+    bubble:{borderRadius:'var(--bubble-radius)',background:bgColor,boxShadow:'0 40px 100px rgba(0,0,0,0.55)',border:'none',padding:'clamp(28px,4vh,48px) clamp(28px,4vw,52px)'},
+    card:{borderRadius:'16px',background:bgColor,boxShadow:'0 8px 40px rgba(0,0,0,0.3)',border:'4px solid '+bgColor,padding:'32px 40px'},
+    banner:{borderRadius:'8px',background:bgColor,boxShadow:'0 4px 32px rgba(0,0,0,0.4)',border:'none',padding:'28px 60px',maxWidth:'92vw'},
     minimal:{borderRadius:'0',background:'transparent',boxShadow:'none',border:'none',borderBottom:'4px solid '+bgColor,padding:'24px 40px'},
   };
   const st=styleMap[bubbleStyle]||styleMap.bubble;
