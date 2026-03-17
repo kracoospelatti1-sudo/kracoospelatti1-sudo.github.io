@@ -375,7 +375,6 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 <!-- hidden for internal tracking -->
 <div id="photo-strip" style="display:none"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // Renderiza un QR como <img> usando api.qrserver.com — funciona en toda plataforma
 function renderQR(text, imgId, size){
@@ -1193,13 +1192,17 @@ async function init(){
   if(mosaicParam==='1') startMosaic();
   clearInterval(rotateTimer);
   rotateTimer=setInterval(rotateFeatured,cfg.interval);
-  setInterval(pollPosts,30000);
-  setInterval(pollWishes,30000);
-  setInterval(pollMessages,30000);
-  setInterval(pollForPolls,30000);
-  setInterval(pollMoments,30000);
-  setInterval(()=>{if(currentFeaturedPostId)updateFeaturedReactions(currentFeaturedPostId);},30000);
-  initRealtime();
+  setInterval(pollPosts,5000);
+  setInterval(pollWishes,7000);
+  setInterval(pollMessages,6000);
+  setInterval(pollForPolls,5000);
+  setInterval(pollMoments,5000);
+  setInterval(()=>{if(currentFeaturedPostId)updateFeaturedReactions(currentFeaturedPostId);},7000);
+  // Cargar supabase-js async — no bloquea init(), Realtime llega en ~1s
+  const _sbScript=document.createElement('script');
+  _sbScript.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  _sbScript.onload=initRealtime;
+  document.head.appendChild(_sbScript);
 }
 
 async function updateFeaturedReactions(postId){
