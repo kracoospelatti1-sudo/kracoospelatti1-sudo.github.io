@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>EventWall · Pantalla</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&family=Dancing+Script:wght@700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;font-family:'DM Sans',sans-serif}
@@ -195,6 +195,50 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
   .grid{grid-template-columns:1fr}
   .sidebar{display:none}
 }
+
+/* ── POLAROID ─────────────────────────────────────────────────*/
+@keyframes polaroidFall{
+  0%{transform:translateY(-130%) rotate(var(--pol-rot)) scale(0.85);opacity:0}
+  55%{transform:translateY(0) rotate(var(--pol-rot)) scale(1.03);opacity:1}
+  72%{transform:translateY(-10px) rotate(var(--pol-rot)) scale(1.03)}
+  85%{transform:translateY(2px) rotate(var(--pol-rot)) scale(1)}
+  100%{transform:translateY(0) rotate(var(--pol-rot)) scale(1);opacity:1}
+}
+@keyframes polaroidReveal{
+  0%{filter:brightness(2.5) blur(10px);opacity:0.5}
+  40%{filter:brightness(1.6) blur(4px);opacity:0.8}
+  100%{filter:brightness(1) blur(0px);opacity:1}
+}
+@keyframes polaroidExit{
+  0%{transform:translateY(0) rotate(var(--pol-rot)) scale(1);opacity:1}
+  100%{transform:translateY(-40px) rotate(calc(var(--pol-rot) + 8deg)) scale(0.1);opacity:0}
+}
+.polaroid-overlay{
+  position:absolute;inset:0;z-index:60;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(2px);
+}
+.polaroid-card{
+  background:#fff;
+  padding:clamp(10px,1.8vw,22px);
+  padding-bottom:clamp(36px,5.5vw,72px);
+  border-radius:3px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6),0 6px 20px rgba(0,0,0,0.4);
+  max-width:min(360px,48%);width:min(360px,48%);
+  --pol-rot:2deg;
+  animation:polaroidFall 0.85s cubic-bezier(0.175,0.885,0.32,1.275) forwards;
+  position:relative;
+}
+.polaroid-card.exiting{animation:polaroidExit 0.55s ease-in forwards;}
+.polaroid-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;animation:polaroidReveal 2.8s ease forwards;}
+.polaroid-name{
+  position:absolute;bottom:0;left:0;right:0;text-align:center;
+  padding:clamp(6px,1vw,14px) clamp(8px,1.2vw,18px);
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(14px,2vw,26px);
+  color:#2a2a2a;font-weight:700;line-height:1.2;
+}
 </style>
 </head>
 <body>
@@ -307,6 +351,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
       </div>
       <img id="featured-img" class="featured-img" src="" alt="" style="display:none"/>
       <img id="screen-wm" src="" alt="" style="display:none;position:absolute;z-index:5;pointer-events:none;max-width:35%"/>
+      <div class="polaroid-overlay" id="polaroid-overlay" style="display:none"></div>
       <div class="featured-overlay" id="featured-overlay">
         <div class="featured-caption" id="featured-caption"></div>
         <div class="featured-author" id="featured-author"></div>
@@ -1058,6 +1103,7 @@ async function pollPosts(){
   if(newItems.length){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
+        showPolaroid(p);
         if(!currentFeaturedPostId){
           // No photo yet — show immediately
           photoPosts.unshift(p);
@@ -1796,6 +1842,32 @@ function hideMoment(){
 }
 
 init();
+
+// ── POLAROID ──────────────────────────────────────────────────
+let _polaroidActive=false;
+function showPolaroid(post){
+  if(_polaroidActive) return;
+  _polaroidActive=true;
+  const overlay=document.getElementById('polaroid-overlay');
+  const rot=(Math.random()*6-3).toFixed(1)+'deg';
+  const card=document.createElement('div');
+  card.className='polaroid-card';
+  card.style.setProperty('--pol-rot',rot);
+  card.innerHTML='<img class="polaroid-img" src="'+post.content+'" alt=""/>'
+    +'<div class="polaroid-name">'+post.author+'</div>';
+  overlay.innerHTML='';
+  overlay.appendChild(card);
+  overlay.style.display='flex';
+  // Exit after 5.5s
+  setTimeout(()=>{
+    card.classList.add('exiting');
+    setTimeout(()=>{
+      overlay.style.display='none';
+      overlay.innerHTML='';
+      _polaroidActive=false;
+    },560);
+  },5500);
+}
 </script>
 </body>
 </html>
