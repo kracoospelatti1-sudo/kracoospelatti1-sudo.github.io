@@ -447,7 +447,7 @@ input[type=range]{accent-color:var(--pink)}
         <div class="card dash-qr-card">
           <div class="card-title" style="text-align:center">QR invitados</div>
           <div class="dash-qr-box"><div id="dash-qr"></div></div>
-          <button class="dash-copy-btn secondary" onclick="downloadQRDash()">⬇ Descargar QR</button>
+          <button class="dash-copy-btn secondary" onclick="downloadQR('#dash-qr img')">⬇ Descargar QR</button>
         </div>
         <!-- Links + Stats -->
         <div>
@@ -455,14 +455,14 @@ input[type=range]{accent-color:var(--pink)}
             <div class="dash-link-block">
               <div class="dash-link-label">📺 Pantalla (TV)</div>
               <span id="dash-screen-url" class="dash-link-url">—</span>
-              <button class="dash-copy-btn" onclick="copyDashLink('dash-screen-url')">Copiar URL pantalla</button>
+              <button class="dash-copy-btn" onclick="copyLink('dash-screen-url')">Copiar URL pantalla</button>
             </div>
           </div>
           <div class="card" style="margin-top:12px">
             <div class="dash-link-block">
               <div class="dash-link-label">📱 Link para invitados</div>
               <span id="dash-guest-url" class="dash-link-url">—</span>
-              <button class="dash-copy-btn" onclick="copyDashLink('dash-guest-url')">Copiar link invitados</button>
+              <button class="dash-copy-btn" onclick="copyLink('dash-guest-url')">Copiar link invitados</button>
             </div>
           </div>
           <div class="dash-stats" id="dash-stats">
@@ -1969,7 +1969,7 @@ function goNav(page){
   if(page==='dashboard'){
     const db=document.getElementById('nav-btn-dashboard');if(db) db.classList.add('active');
   } else {
-    const map={events:0,'new-event':1,links:3,design:4,album:5,messages:6,print:7,polls:8,'guest-design':9,moments:10,settings:11};
+    const map={events:0,'new-event':1,links:3,design:4,album:5,messages:6,print:7,polls:8,'guest-design':9,moments:10,settings:11,help:12};
     const btns=document.querySelectorAll('.nav-btn');
     if(map[page]!==undefined) btns[map[page]].classList.add('active');
   }
@@ -2364,7 +2364,7 @@ async function showDashboard(){
   if(!selectedEvent){goNav('events');return;}
   const ev=selectedEvent;
   const evCode=ev.custom_code||ev.id;
-  const base=location.origin+location.pathname.replace(/[^/]*$/,'');
+  const base=location.origin+'/';
   const screenUrl=base+'screen.html?event='+evCode;
   const guestUrl=base+'guest.html?event='+evCode;
   // Fill header
@@ -2373,10 +2373,13 @@ async function showDashboard(){
   // Fill URLs
   document.getElementById('dash-screen-url').textContent=screenUrl;
   document.getElementById('dash-guest-url').textContent=guestUrl;
-  // QR
+  // QR — only regenerate if event changed
   const qrDiv=document.getElementById('dash-qr');
-  qrDiv.innerHTML='';
-  try{new QRCode(qrDiv,{text:guestUrl,width:160,height:160,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
+  if(qrDiv._cachedUrl!==guestUrl){
+    qrDiv.innerHTML='';
+    try{new QRCode(qrDiv,{text:guestUrl,width:160,height:160,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
+    qrDiv._cachedUrl=guestUrl;
+  }
   // Stats
   try{
     const posts=await api('posts?event_id=eq.'+ev.id+'&approved=eq.true&select=type');
@@ -2386,15 +2389,6 @@ async function showDashboard(){
       document.getElementById('dash-cnt-wishes').textContent=posts.filter(p=>p.type==='wish').length;
     }
   }catch(e){}
-}
-function copyDashLink(id){
-  const txt=document.getElementById(id).textContent;
-  navigator.clipboard.writeText(txt).then(()=>toast('📋 Copiado'));
-}
-function downloadQRDash(){
-  const img=document.querySelector('#dash-qr img');
-  if(!img){toast('Generando QR...');return;}
-  const a=document.createElement('a');a.download='qr-evento.png';a.href=img.src;a.click();
 }
 
 function showLinks(){
@@ -2417,8 +2411,8 @@ function showLinks(){
 }
 function copyLink(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>toast('📋 Copiado'));}
 function copyText(text){navigator.clipboard.writeText(text).then(()=>toast('📋 Copiado'));}
-function downloadQR(){
-  const img=document.querySelector('#qr-container img');
+function downloadQR(selector='#qr-container img'){
+  const img=document.querySelector(selector);
   if(!img){toast('Generando QR...');return;}
   const a=document.createElement('a');a.download='qr-evento.png';a.href=img.src;a.click();
 }
