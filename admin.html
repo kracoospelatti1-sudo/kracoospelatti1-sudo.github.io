@@ -728,7 +728,7 @@ input[type=range]{accent-color:var(--pink)}
                 <label>Ajuste de foto</label>
                 <select id="cfg-fit">
                   <option value="contain">Completa (contain)</option>
-                  <option value="cover">Recortada (cover)</option>
+                  <option value="cover" selected>Recortada (cover)</option>
                 </select>
               </div>
               <div class="design-field">
@@ -752,7 +752,7 @@ input[type=range]{accent-color:var(--pink)}
                 <label>Texto bajo el QR</label>
                 <input type="text" id="cfg-qr-text" placeholder="Escaneá para participar"/>
               </div>
-              <div class="design-field">
+              <div class="design-field" style="display:none">
                 <label>Mostrar contadores</label>
                 <select id="cfg-show-counters">
                   <option value="yes">Visibles</option>
@@ -808,7 +808,7 @@ input[type=range]{accent-color:var(--pink)}
                 <select id="cfg-sound">
                   <option value="chime">Campanita 🔔</option>
                   <option value="pop">Pop suave 💫</option>
-                  <option value="none">Sin sonido</option>
+                  <option value="none" selected>Sin sonido</option>
                 </select>
               </div>
             </div>
@@ -2446,7 +2446,7 @@ function showDesign(){
   setVal('f-title',saved.fontTitle||'Syne');
   setVal('f-body',saved.fontBody||'DM Sans');
   setVal('cfg-interval',saved.interval||6);
-  setVal('cfg-sound',saved.sound||'chime');
+  setVal('cfg-sound',saved.sound||'none');
   if(saved.fsTitle){setVal('fs-title',saved.fsTitle);document.getElementById('fs-title-val').textContent=saved.fsTitle+'px';}
   if(saved.fsBubble){setVal('fs-bubble',saved.fsBubble);document.getElementById('fs-bubble-val').textContent=saved.fsBubble+'px';}
   if(saved.overlay){setVal('cfg-overlay',saved.overlay);document.getElementById('cfg-overlay-val').textContent=saved.overlay+'%';}
@@ -2455,7 +2455,7 @@ function showDesign(){
   setVal('cfg-transition',saved.transition||'fade');
   setVal('cfg-ken-burns',saved.kenBurns||'no');
   setVal('cfg-polaroid',saved.polaroid||'no');
-  setVal('cfg-fit',saved.fit||'contain');
+  setVal('cfg-fit',saved.fit||'cover');
   setVal('cfg-wait-title',saved.waitTitle||'');
   setVal('cfg-wait-subtitle',saved.waitSubtitle||'');
   setVal('cfg-wait-start',saved.waitStart||'');
@@ -2766,7 +2766,7 @@ function saveDesign(){
     transition:getV('cfg-transition')||'fade',
     kenBurns:getV('cfg-ken-burns')||'no',
     polaroid:getV('cfg-polaroid')||'no',
-    fit:getV('cfg-fit')||'contain',
+    fit:getV('cfg-fit')||'cover',
     waitTitle:getV('cfg-wait-title')||'',
     waitSubtitle:getV('cfg-wait-subtitle')||'',
     waitStart:getV('cfg-wait-start')||'',
