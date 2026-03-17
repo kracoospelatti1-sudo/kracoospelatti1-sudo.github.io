@@ -998,6 +998,15 @@ let eventId=params.get('event');
 let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
 let gdFlags={showReactions:true,showPhotoEdit:true,showDeletePhoto:true,wmUrl:'',wmPos:'br',wmSize:20,wmOpacity:70};
 let _wmImage=null; // cached watermark image
+const _frameImgCache={}; // cached PNG frame images keyed by frame id
+function preloadFrameImg(frame){
+  if(!frame.imgUrl||_frameImgCache[frame.id]) return;
+  const img=new Image();img.crossOrigin='anonymous';
+  img.onload=()=>{_frameImgCache[frame.id]=img;if(originalImage)renderPreviewCanvas();};
+  img.onerror=()=>{_frameImgCache[frame.id]=null;};
+  img.src=frame.imgUrl;
+  _frameImgCache[frame.id]='loading';
+}
 
 function formatDateES(str){
   if(!str) return '';
@@ -1201,6 +1210,15 @@ const FRAMES=[
     ctx.textAlign='left';
   }},
 
+  // ── CANVA FRAMES (PNG overlay) ────────────────────────────
+  {id:'canva_wedding', name:'💐 Boda Canva', cat:'canva',
+    imgUrl:'https://jxqwrbmnfmnzddkcimrm.supabase.co/storage/v1/object/public/eventwall/frames/canva_wedding.png',
+    draw:(ctx,w,h)=>{
+      const img=_frameImgCache['canva_wedding'];
+      if(img&&img!=='loading') ctx.drawImage(img,0,0,w,h);
+    }
+  },
+
   // ── POLAROID (fondo) ─────────────────────────────────────
   // bg frames: bg=fill color, padH=lateral%, padT=top%, padB=bottom%
   // draw(ctx, cW, cH, pX, pY, pW, pH) = called on final canvas after bg fill and photo paste
@@ -1330,6 +1348,7 @@ const FRAMES=[
 
 const FRAME_CATS=[
   {id:'todos',    label:'Todos'},
+  {id:'canva',    label:'✨ Canva'},
   {id:'polaroid', label:'📷 Polaroid'},
   {id:'deco',     label:'🎨 Deco'},
   {id:'borde',    label:'🖼 Borde'},
@@ -1351,6 +1370,8 @@ function buildFramePicker(){
   const row=document.getElementById('frames-row');
   row.innerHTML='';
   const visible=selectedFrameCat==='todos'?FRAMES:FRAMES.filter(f=>f.cat===selectedFrameCat||f.id==='none');
+  // Preload all visible Canva frame images
+  visible.forEach(f=>{if(f.imgUrl) preloadFrameImg(f);});
   visible.forEach(f=>{
     const isBg=f.bg!==undefined;
     const div=document.createElement('div');
@@ -1371,6 +1392,13 @@ function buildFramePicker(){
       if(originalImage) ctx.drawImage(originalImage,imgX,imgY,imgW,imgH);
       else{ctx.fillStyle='#ccc';ctx.fillRect(imgX,imgY,imgW,imgH);}
       if(f.draw) f.draw(ctx,TW,TH,imgX,imgY,imgW,imgH);
+    } else if(f.imgUrl){
+      // Canva PNG overlay frame
+      if(originalImage) ctx.drawImage(originalImage,0,0,TW,TH);
+      else{ctx.fillStyle='#f0ede8';ctx.fillRect(0,0,TW,TH);}
+      const cached=_frameImgCache[f.id];
+      if(cached&&cached!=='loading') ctx.drawImage(cached,0,0,TW,TH);
+      // If still loading, it will re-render once loaded via preloadFrameImg callback
     } else if(originalImage&&f.draw){
       ctx.drawImage(originalImage,0,0,TW,TH);
       f.draw(ctx,TW,TH);
@@ -1394,6 +1422,8 @@ function selectFrame(id){
   const visible=selectedFrameCat==='todos'?FRAMES:FRAMES.filter(f=>f.cat===selectedFrameCat||f.id==='none');
   const idx=visible.findIndex(f=>f.id===id);
   document.querySelectorAll('.frame-opt')[idx]?.classList.add('active');
+  const frame=FRAMES.find(f=>f.id===id);
+  if(frame?.imgUrl) preloadFrameImg(frame);
   renderPreviewCanvas();
 }
 
