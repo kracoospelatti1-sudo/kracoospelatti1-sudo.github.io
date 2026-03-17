@@ -81,6 +81,26 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .copy-btn{padding:7px 14px;background:var(--pink-dim);border:1px solid rgba(240,23,111,0.3);color:var(--pink);border-radius:8px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .copy-btn:hover{background:var(--pink);color:#fff}
 .qr-wrap{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+/* DASHBOARD */
+.dash-grid{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start}
+@media(max-width:640px){.dash-grid{grid-template-columns:1fr}}
+.dash-qr-card{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.dash-qr-box{background:#fff;padding:14px;border-radius:16px;display:inline-block}
+.dash-link-block{margin-bottom:12px}
+.dash-link-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+.dash-link-url{font-family:monospace;font-size:12px;color:var(--muted);word-break:break-all;background:var(--surface2);padding:8px 10px;border-radius:8px;margin-bottom:8px;line-height:1.5;display:block}
+.dash-copy-btn{width:100%;padding:12px;border-radius:10px;border:none;background:var(--pink);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s}
+.dash-copy-btn:hover{opacity:0.85}
+.dash-copy-btn.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.dash-copy-btn.secondary:hover{border-color:var(--pink);color:var(--pink);opacity:1}
+.dash-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.dash-stat{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;flex:1;text-align:center;min-width:72px}
+.dash-stat-num{font-size:24px;font-weight:800;color:var(--pink);display:block;line-height:1}
+.dash-stat-lbl{font-size:11px;color:var(--muted);margin-top:4px;display:block}
+.dash-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.dash-action-btn{padding:16px 10px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all 0.2s}
+.dash-action-btn:hover{border-color:var(--pink);background:var(--pink-dim);color:var(--pink)}
+.dash-action-ico{font-size:24px}
 .qr-box{background:#fff;padding:14px;border-radius:12px}
 .toast.show{display:block;animation:toastIn 0.3s ease}
 @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -328,6 +348,7 @@ input[type=range]{accent-color:var(--pink)}
     <button class="nav-btn" onclick="goNav('new-event')">➕ Nuevo evento</button>
     <div class="nav-sep"></div>
     <div class="nav-section">Evento</div>
+    <button class="nav-btn" id="nav-btn-dashboard" onclick="goNav('dashboard')" style="display:none">🏠 Inicio rápido</button>
     <button class="nav-btn" onclick="goNav('links')">🔗 Links & QR</button>
     <button class="nav-btn" onclick="goNav('design')">🎨 Diseño</button>
     <button class="nav-btn" onclick="goNav('album')">📥 Álbum</button>
@@ -408,7 +429,49 @@ input[type=range]{accent-color:var(--pink)}
       </div>
     </div>
 
-
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="page-title" id="dash-ev-name">—</div>
+      <div class="page-sub" id="dash-ev-sub"></div>
+      <div class="dash-grid">
+        <!-- QR -->
+        <div class="card dash-qr-card">
+          <div class="card-title" style="text-align:center">QR invitados</div>
+          <div class="dash-qr-box"><div id="dash-qr"></div></div>
+          <button class="dash-copy-btn secondary" onclick="downloadQRDash()">⬇ Descargar QR</button>
+        </div>
+        <!-- Links + Stats -->
+        <div>
+          <div class="card">
+            <div class="dash-link-block">
+              <div class="dash-link-label">📺 Pantalla (TV)</div>
+              <span id="dash-screen-url" class="dash-link-url">—</span>
+              <button class="dash-copy-btn" onclick="copyDashLink('dash-screen-url')">Copiar URL pantalla</button>
+            </div>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <div class="dash-link-block">
+              <div class="dash-link-label">📱 Link para invitados</div>
+              <span id="dash-guest-url" class="dash-link-url">—</span>
+              <button class="dash-copy-btn" onclick="copyDashLink('dash-guest-url')">Copiar link invitados</button>
+            </div>
+          </div>
+          <div class="dash-stats" id="dash-stats">
+            <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-photos">—</span><span class="dash-stat-lbl">fotos</span></div>
+            <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-msgs">—</span><span class="dash-stat-lbl">mensajes</span></div>
+            <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-wishes">—</span><span class="dash-stat-lbl">deseos</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dash-actions">
+        <button class="dash-action-btn" onclick="goNav('messages')"><span class="dash-action-ico">💬</span>Ver contenido</button>
+        <button class="dash-action-btn" onclick="goNav('links')"><span class="dash-action-ico">🔗</span>Links & QR</button>
+        <button class="dash-action-btn" onclick="goNav('design')"><span class="dash-action-ico">🎨</span>Diseño pantalla</button>
+        <button class="dash-action-btn" onclick="goNav('guest-design')"><span class="dash-action-ico">📱</span>Vista invitado</button>
+        <button class="dash-action-btn" onclick="goNav('album')"><span class="dash-action-ico">📥</span>Álbum</button>
+        <button class="dash-action-btn" onclick="goNav('moments')"><span class="dash-action-ico">🎬</span>Momentos</button>
+      </div>
+    </div>
 
     <!-- LINKS -->
     <div class="page" id="page-links">
@@ -1889,10 +1952,15 @@ function goNav(page){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   closeSidebar(); // close on mobile after nav
-  const map={events:0,'new-event':1,links:2,design:3,album:4,messages:5,print:6,polls:7,'guest-design':8,moments:9,settings:10};
-  const btns=document.querySelectorAll('.nav-btn');
-  if(map[page]!==undefined) btns[map[page]].classList.add('active');
+  if(page==='dashboard'){
+    const db=document.getElementById('nav-btn-dashboard');if(db) db.classList.add('active');
+  } else {
+    const map={events:0,'new-event':1,links:3,design:4,album:5,messages:6,print:7,polls:8,'guest-design':9,moments:10,settings:11};
+    const btns=document.querySelectorAll('.nav-btn');
+    if(map[page]!==undefined) btns[map[page]].classList.add('active');
+  }
   if(page==='events') loadEvents();
+  if(page==='dashboard') showDashboard();
   if(page==='links') showLinks();
   if(page==='design') showDesign();
   if(page==='album') showAlbum();
@@ -2219,9 +2287,12 @@ function selectEvent(ev,cardEl){
   if(mob) mob.textContent=ev.name;
   document.querySelectorAll('.event-card').forEach(c=>c.classList.remove('selected'));
   cardEl.classList.add('selected');
-
+  // Show dashboard nav button
+  const dashBtn=document.getElementById('nav-btn-dashboard');
+  if(dashBtn) dashBtn.style.display='';
   toast('✓ "'+ev.name+'" seleccionado');
   startCountdown();
+  goNav('dashboard');
 }
 
 async function evCreate(){
@@ -2273,6 +2344,43 @@ function openMosaicMode(){
   if(!selectedEvent){toast('⚠️ Seleccioná un evento primero');return;}
   const url=location.origin+'/screen.html?event='+selectedEvent.id+'&mosaic=1';
   window.open(url,'_blank');
+}
+
+async function showDashboard(){
+  if(!selectedEvent){goNav('events');return;}
+  const ev=selectedEvent;
+  const evCode=ev.custom_code||ev.id;
+  const base=location.origin+location.pathname.replace(/[^/]*$/,'');
+  const screenUrl=base+'screen.html?event='+evCode;
+  const guestUrl=base+'guest.html?event='+evCode;
+  // Fill header
+  document.getElementById('dash-ev-name').textContent=ev.name;
+  document.getElementById('dash-ev-sub').textContent=ev.date?formatDateES(ev.date):(ev.subtitle||'');
+  // Fill URLs
+  document.getElementById('dash-screen-url').textContent=screenUrl;
+  document.getElementById('dash-guest-url').textContent=guestUrl;
+  // QR
+  const qrDiv=document.getElementById('dash-qr');
+  qrDiv.innerHTML='';
+  try{new QRCode(qrDiv,{text:guestUrl,width:160,height:160,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
+  // Stats
+  try{
+    const posts=await api('posts?event_id=eq.'+ev.id+'&approved=eq.true&select=type');
+    if(Array.isArray(posts)){
+      document.getElementById('dash-cnt-photos').textContent=posts.filter(p=>p.type==='photo').length;
+      document.getElementById('dash-cnt-msgs').textContent=posts.filter(p=>p.type==='message'||p.type==='audio').length;
+      document.getElementById('dash-cnt-wishes').textContent=posts.filter(p=>p.type==='wish').length;
+    }
+  }catch(e){}
+}
+function copyDashLink(id){
+  const txt=document.getElementById(id).textContent;
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 Copiado'));
+}
+function downloadQRDash(){
+  const img=document.querySelector('#dash-qr img');
+  if(!img){toast('Generando QR...');return;}
+  const a=document.createElement('a');a.download='qr-evento.png';a.href=img.src;a.click();
 }
 
 function showLinks(){
