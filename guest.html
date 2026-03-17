@@ -996,7 +996,7 @@ const params=new URLSearchParams(location.search);
 let eventId=params.get('event');
 
 let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
-let gdFlags={showReactions:true,showPhotoEdit:true,showDeletePhoto:true,allowVerticalPhoto:false,wmUrl:'',wmPos:'br',wmSize:20,wmOpacity:70};
+let gdFlags={showReactions:true,showPhotoEdit:true,showDeletePhoto:true,wmUrl:'',wmPos:'br',wmSize:20,wmOpacity:70};
 let _wmImage=null; // cached watermark image
 
 function formatDateES(str){
@@ -1880,7 +1880,6 @@ async function applyGuestDesign(ev){
   gdFlags.showReactions=d.showReactions!==false;
   gdFlags.showPhotoEdit=d.showPhotoEdit!==false;
   gdFlags.showDeletePhoto=d.showDeletePhoto!==false;
-  gdFlags.allowVerticalPhoto=d.allowVerticalPhoto===true;
   gdFlags.wmUrl=d.wmUrl||'';
   gdFlags.wmPos=d.wmPos||'br';
   gdFlags.wmSize=d.wmSize||20;
@@ -2054,7 +2053,7 @@ function handleFileSelect(input){
     const img=new Image();
     img.onload=()=>{
       const isVertical=img.naturalHeight>img.naturalWidth;
-      if(isVertical&&!gdFlags.allowVerticalPhoto){
+      if(isVertical){
         document.getElementById('orient-warn').classList.add('show');
         selectedFile=null;
         document.getElementById('file-input').value='';

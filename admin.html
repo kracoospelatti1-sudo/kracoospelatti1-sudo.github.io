@@ -1532,7 +1532,6 @@ input[type=range]{accent-color:var(--pink)}
               <label class="toggle-label" onclick="toggleGDOption('reactions')"><div class="opt-toggle on" id="tog-show-reactions"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">❤️ Reacciones en fotos</div><div style="font-size:12px;color:var(--muted)">❤️🎉😍🔥 en la galería de invitados</div></div></label>
               <label class="toggle-label" onclick="toggleGDOption('photoEdit')"><div class="opt-toggle on" id="tog-show-photoEdit"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🎨 Personalización de foto</div><div style="font-size:12px;color:var(--muted)">Marcos, filtros y stickers</div></div></label>
               <label class="toggle-label" onclick="toggleGDOption('deletePhoto')"><div class="opt-toggle on" id="tog-show-deletePhoto"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗑 Borrar fotos propias</div><div style="font-size:12px;color:var(--muted)">El invitado puede eliminar sus fotos</div></div></label>
-              <label class="toggle-label" onclick="toggleGDOption('verticalPhoto')"><div class="opt-toggle" id="tog-show-verticalPhoto"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">📱 Fotos verticales</div><div style="font-size:12px;color:var(--muted)">Permitir fotos en modo retrato</div></div></label>
             </div>
           </div>
           </div><!-- /design-advanced-inner -->
@@ -3388,7 +3387,7 @@ async function showGuestDesign(){
   setV2('gd-show-logo',d.showLogo||'yes');
   if(d.fontSize){setV2('gd-font-size',d.fontSize);const fv=document.getElementById('gd-font-size-val');if(fv)fv.textContent=d.fontSize+'px';}
   // toggles
-  ['photo','message','audio','wish','vote','reactions','photoEdit','deletePhoto','verticalPhoto'].forEach(k=>{
+  ['photo','message','audio','wish','vote','reactions','photoEdit','deletePhoto'].forEach(k=>{
     const on=d['show'+k.charAt(0).toUpperCase()+k.slice(1)];
     const tog=document.getElementById('tog-show-'+k);
     if(tog) tog.classList.toggle('on',on);
@@ -3552,7 +3551,6 @@ async function saveGuestDesign(btn){
     showReactions:getGDToggle('reactions'),
     showPhotoEdit:getGDToggle('photoEdit'),
     showDeletePhoto:getGDToggle('deletePhoto'),
-    allowVerticalPhoto:getGDToggle('verticalPhoto'),
     wmUrl:getV('gd-wm-url')||'',
     wmPos:getV('gd-wm-pos')||'br',
     wmSize:parseInt(getV('gd-wm-size')||'20'),
