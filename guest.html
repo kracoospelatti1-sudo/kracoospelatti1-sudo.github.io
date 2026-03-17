@@ -455,13 +455,28 @@ body{
 .rxn-emoji{font-size:17px;line-height:1}
 .rxn-count{font-size:10px;font-weight:700;color:var(--muted);min-height:13px}
 .rxn-btn.reacted .rxn-count{color:var(--pink)}
+.rxn-who-btn{flex-shrink:0;padding:5px 9px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;font-size:16px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.15s;line-height:1}
 .rxn-popover{position:fixed;z-index:999;background:#1a1a2e;border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:12px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,0.5);max-width:200px;pointer-events:none;opacity:0;transition:opacity 0.15s}
 .rxn-popover.show{opacity:1}
 .rxn-popover-title{font-size:13px;font-weight:700;margin-bottom:6px}
 .rxn-popover-names{color:rgba(255,255,255,0.75);line-height:1.6}
 
 .my-photo-card{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:#000;cursor:pointer;width:100%;max-width:100%}
-.my-photo-rxn{position:absolute;top:8px;right:8px;z-index:3;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);border-radius:20px;padding:3px 8px;font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;gap:3px;pointer-events:none}
+.my-photo-rxn{position:absolute;top:8px;right:8px;z-index:3;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;gap:4px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+/* Reactions bottom sheet */
+.rxn-sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1100;opacity:0;transition:opacity 0.25s;pointer-events:none}
+.rxn-sheet-backdrop.show{opacity:1;pointer-events:all}
+.rxn-sheet{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-radius:20px 20px 0 0;padding:0 0 env(safe-area-inset-bottom,0);z-index:1101;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);max-height:70vh;display:flex;flex-direction:column}
+.rxn-sheet.show{transform:translateY(0)}
+.rxn-sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:10px auto 0}
+.rxn-sheet-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);padding:14px 20px 12px;border-bottom:1px solid var(--border)}
+.rxn-sheet-body{overflow-y:auto;padding:12px 20px 20px;flex:1}
+.rxn-sheet-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.rxn-sheet-row:last-child{border-bottom:none}
+.rxn-sheet-emoji{font-size:24px;line-height:1;flex-shrink:0;margin-top:2px}
+.rxn-sheet-names{font-size:14px;color:var(--text);line-height:1.6}
+.rxn-sheet-count{font-size:12px;color:var(--muted);margin-top:1px}
+.rxn-sheet-empty{font-size:14px;color:var(--muted);text-align:center;padding:24px 0}
 .my-photo-card img{width:100%;height:100%;object-fit:cover;display:block}
 .my-photo-overlay{position:absolute;inset:0;background:linear-gradient(transparent 50%,rgba(0,0,0,0.7));display:flex;flex-direction:column;justify-content:flex-end;padding:8px;opacity:0;transition:opacity 0.2s}
 .my-photo-card:hover .my-photo-overlay,.my-photo-card:active .my-photo-overlay{opacity:1}
@@ -2446,10 +2461,22 @@ function renderMyPhotoCards(posts,rxnMap,grid){
     const card=document.createElement('div');
     card.className='my-photo-card';
     const counts=rxnMap[p.id]||{};
-    const pills=['❤️','🎉','😍','🔥'].filter(e=>counts[e]).map(e=>'<span>'+e+' '+counts[e]+'</span>').join('');
-    const rxnBadge=pills?'<div class="my-photo-rxn">'+pills+'</div>':'';
+    // Build rxnData with names for sheet
+    const rxnData={};
+    ['❤️','🎉','😍','🔥'].forEach(e=>{
+      if(counts[e]&&counts[e].count) rxnData[e]=counts[e].names||[];
+    });
+    const pills=['❤️','🎉','😍','🔥'].filter(e=>rxnData[e]&&rxnData[e].length)
+      .map(e=>'<span>'+e+' '+rxnData[e].length+'</span>').join('');
+    const rxnBadge=pills?'<div class="my-photo-rxn" title="Ver reacciones">'+pills+' 👁</div>':'';
     const delBtn=gdFlags.showDeletePhoto?'<button class="my-photo-del" onclick="deleteMyPhoto(\''+p.id+'\',this.closest(\'.my-photo-card\'))">🗑 Eliminar</button>':'';
     card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/>'+rxnBadge+(delBtn?'<div class="my-photo-overlay">'+delBtn+'</div>':'');
+    if(pills){
+      card.querySelector('.my-photo-rxn').addEventListener('click',e=>{
+        e.stopPropagation();
+        window._showRxnSheet(rxnData);
+      });
+    }
     if(delBtn){
       card.addEventListener('touchstart',()=>card.querySelector('.my-photo-overlay').style.opacity='1');
       card.addEventListener('touchend',()=>setTimeout(()=>card.querySelector('.my-photo-overlay').style.opacity='0',2000));
@@ -2492,10 +2519,12 @@ async function loadMyPhotos(){
     let rxnMap={};
     if(orFilter){
       try{
-        const rxns=await apiRest('reactions?or=('+orFilter+')&select=post_id,emoji');
+        const rxns=await apiRest('reactions?or=('+orFilter+')&select=post_id,emoji,guest_name');
         rxns.forEach(r=>{
           if(!rxnMap[r.post_id]) rxnMap[r.post_id]={};
-          rxnMap[r.post_id][r.emoji]=(rxnMap[r.post_id][r.emoji]||0)+1;
+          if(!rxnMap[r.post_id][r.emoji]) rxnMap[r.post_id][r.emoji]={count:0,names:[]};
+          rxnMap[r.post_id][r.emoji].count++;
+          if(r.guest_name) rxnMap[r.post_id][r.emoji].names.push(r.guest_name);
         });
       }catch(e){}
     }
@@ -2636,27 +2665,27 @@ function renderGalleryCard(post,counts){
   const card=document.createElement('div');
   card.className='gallery-card';
   card.dataset.postId=post.id;
+  // Build rxnData for sheet
+  const rxnData={};
+  REACTION_EMOJIS.forEach(e=>{const d=counts[e];if(d&&d.count) rxnData[e]=d.names||[];});
+  const hasAnyRxn=Object.keys(rxnData).length>0;
   const btns=REACTION_EMOJIS.map(e=>{
     const data=counts[e]||{count:0,names:[]};
     const c=data.count;
     const active=myReactions[post.id]===e?' reacted':'';
-    const namesAttr=c?'data-rxn-names="'+encodeURIComponent(JSON.stringify(data.names))+'"':'';
-    return '<button class="rxn-btn'+active+'" onclick="toggleReaction(\''+post.id+'\',\''+e+'\',this)" '
-      +namesAttr+' oncontextmenu="showRxnPopover(event,this,\''+e+'\');return false">'
+    return '<button class="rxn-btn'+active+'" onclick="toggleReaction(\''+post.id+'\',\''+e+'\',this)">'
       +'<span class="rxn-emoji">'+e+'</span>'
       +'<span class="rxn-count">'+(c||'')+'</span>'
       +'</button>';
   }).join('');
+  const whoBtn=hasAnyRxn?'<button class="rxn-who-btn" title="Ver quién reaccionó">👁</button>':'';
   card.innerHTML='<img class="gallery-img" src="'+post.content+'" loading="lazy" alt="'+post.author+'"/>'
     +'<div class="gallery-author">'+post.author+'</div>'
-    +(gdFlags.showReactions?'<div class="gallery-reactions">'+btns+'</div>':'');
-  // Long-press on rxn buttons to show who reacted (mobile)
-  card.querySelectorAll('.rxn-btn[data-rxn-names]').forEach(btn=>{
-    let lt;
-    btn.addEventListener('touchstart',()=>{lt=setTimeout(()=>showRxnPopover({preventDefault:()=>{}},btn,btn.querySelector('.rxn-emoji').textContent),500)},{passive:true});
-    btn.addEventListener('touchend',()=>clearTimeout(lt),{passive:true});
-    btn.addEventListener('touchmove',()=>clearTimeout(lt),{passive:true});
-  });
+    +(gdFlags.showReactions?'<div class="gallery-reactions">'+btns+whoBtn+'</div>':'');
+  if(hasAnyRxn){
+    const wb=card.querySelector('.rxn-who-btn');
+    if(wb) wb.addEventListener('click',e=>{e.stopPropagation();window._showRxnSheet(rxnData);});
+  }
   grid.appendChild(card);
 }
 
@@ -2706,6 +2735,38 @@ async function toggleReaction(postId,emoji,btn){
     loadGallery();
   }
 }
+
+// ── REACTIONS BOTTOM SHEET ────────────────────────────────────
+(function(){
+  const backdrop=document.createElement('div');
+  backdrop.className='rxn-sheet-backdrop';
+  const sheet=document.createElement('div');
+  sheet.className='rxn-sheet';
+  sheet.innerHTML='<div class="rxn-sheet-handle"></div>'
+    +'<div class="rxn-sheet-title" id="rxn-sheet-title">Reacciones</div>'
+    +'<div class="rxn-sheet-body" id="rxn-sheet-body"></div>';
+  document.body.appendChild(backdrop);
+  document.body.appendChild(sheet);
+  function close(){sheet.classList.remove('show');backdrop.classList.remove('show');}
+  backdrop.addEventListener('click',close);
+  sheet.querySelector('.rxn-sheet-handle').addEventListener('click',close);
+  window._showRxnSheet=function(rxnData){
+    // rxnData: { '❤️': ['Juan','María'], '🎉': ['Pedro'] }
+    const body=document.getElementById('rxn-sheet-body');
+    const EMOJIS=['❤️','🎉','😍','🔥'];
+    const rows=EMOJIS.filter(e=>rxnData[e]&&rxnData[e].length).map(e=>{
+      const names=rxnData[e];
+      return '<div class="rxn-sheet-row">'
+        +'<div class="rxn-sheet-emoji">'+e+'</div>'
+        +'<div><div class="rxn-sheet-names">'+names.join(', ')+'</div>'
+        +'<div class="rxn-sheet-count">'+names.length+' persona'+(names.length!==1?'s':'')+'</div></div>'
+        +'</div>';
+    }).join('');
+    body.innerHTML=rows||'<div class="rxn-sheet-empty">Nadie reaccionó todavía</div>';
+    sheet.classList.add('show');
+    backdrop.classList.add('show');
+  };
+})();
 </script>
 </body>
 </html>
