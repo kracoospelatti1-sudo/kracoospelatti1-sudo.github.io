@@ -1785,6 +1785,8 @@ async function sendPhoto(){
       frame:selectedFrame,
       approved:true
     })});
+    // Invalidate gallery cache so next visit shows new photo
+    try{localStorage.removeItem('ew_gallery_'+eventId);localStorage.removeItem('ew_myphotos_'+eventId+'_'+name);}catch(e){}
     setProgress(100,'¡Listo!');
     setLastSent('photo');
     setTimeout(()=>{hideSending();showSuccess();},400);
@@ -2439,20 +2441,49 @@ function toast(msg){
 }
 
 // ── MY PHOTOS ────────────────────────────────────────────────
+function renderMyPhotoCards(posts,rxnMap,grid){
+  posts.forEach(p=>{
+    const card=document.createElement('div');
+    card.className='my-photo-card';
+    const counts=rxnMap[p.id]||{};
+    const pills=['❤️','🎉','😍','🔥'].filter(e=>counts[e]).map(e=>'<span>'+e+' '+counts[e]+'</span>').join('');
+    const rxnBadge=pills?'<div class="my-photo-rxn">'+pills+'</div>':'';
+    const delBtn=gdFlags.showDeletePhoto?'<button class="my-photo-del" onclick="deleteMyPhoto(\''+p.id+'\',this.closest(\'.my-photo-card\'))">🗑 Eliminar</button>':'';
+    card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/>'+rxnBadge+(delBtn?'<div class="my-photo-overlay">'+delBtn+'</div>':'');
+    if(delBtn){
+      card.addEventListener('touchstart',()=>card.querySelector('.my-photo-overlay').style.opacity='1');
+      card.addEventListener('touchend',()=>setTimeout(()=>card.querySelector('.my-photo-overlay').style.opacity='0',2000));
+    }
+    grid.appendChild(card);
+  });
+}
+
 async function loadMyPhotos(){
   const name=document.getElementById('guest-name').value.trim();
   const loading=document.getElementById('my-photos-loading');
   const empty=document.getElementById('my-photos-empty');
   const grid=document.getElementById('my-photos-grid');
-  loading.style.display='block';empty.style.display='none';grid.innerHTML='';
+  empty.style.display='none';
   if(!name){
     loading.style.display='none';
     empty.style.display='block';
     empty.innerHTML='<div style="font-size:36px;margin-bottom:10px">👤</div><p style="font-size:15px;font-weight:600">Ingresá tu nombre primero</p>';
     return;
   }
+  // Show cached photos immediately
+  const cacheKey='ew_myphotos_'+eventId+'_'+name;
+  const cached=localStorage.getItem(cacheKey);
+  if(cached){
+    try{
+      const cachedPosts=JSON.parse(cached);
+      if(cachedPosts.length){grid.innerHTML='';loading.style.display='none';renderMyPhotoCards(cachedPosts,{},grid);}
+    }catch(e){}
+  } else {
+    loading.style.display='block';grid.innerHTML='';
+  }
   try{
     const posts=await apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&author=eq.'+encodeURIComponent(name)+'&order=created_at.desc');
+    try{localStorage.setItem(cacheKey,JSON.stringify(posts));}catch(e){}
     loading.style.display='none';
     if(!posts.length){empty.style.display='block';return;}
 
@@ -2469,21 +2500,12 @@ async function loadMyPhotos(){
       }catch(e){}
     }
 
-    posts.forEach(p=>{
-      const card=document.createElement('div');
-      card.className='my-photo-card';
-      const counts=rxnMap[p.id]||{};
-      const pills=['❤️','🎉','😍','🔥'].filter(e=>counts[e]).map(e=>'<span>'+e+' '+counts[e]+'</span>').join('');
-      const rxnBadge=pills?'<div class="my-photo-rxn">'+pills+'</div>':'';
-      const delBtn=gdFlags.showDeletePhoto?'<button class="my-photo-del" onclick="deleteMyPhoto(\''+p.id+'\',this.closest(\'.my-photo-card\'))">🗑 Eliminar</button>':'';
-      card.innerHTML='<img src="'+p.content+'" alt="Mi foto" loading="lazy"/>'+rxnBadge+(delBtn?'<div class="my-photo-overlay">'+delBtn+'</div>':'');
-      card.addEventListener('touchstart',()=>card.querySelector('.my-photo-overlay').style.opacity='1');
-      card.addEventListener('touchend',()=>setTimeout(()=>card.querySelector('.my-photo-overlay').style.opacity='0',2000));
-      grid.appendChild(card);
-    });
-  }catch(e){
     loading.style.display='none';
-    grid.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px">Error al cargar fotos</p>';
+    grid.innerHTML='';
+    if(!posts.length){empty.style.display='block';return;}
+    renderMyPhotoCards(posts,rxnMap,grid);
+  }catch(e){
+    if(!cached){loading.style.display='none';grid.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px">Error al cargar fotos</p>';}
   }
 }
 
@@ -2511,6 +2533,9 @@ async function deleteMyPhoto(id, cardEl){
   if(!confirm('¿Eliminar esta foto? No se puede deshacer.')) return;
   try{
     await apiRest('posts?id=eq.'+id,{method:'DELETE'});
+    // Invalidate caches
+    const name=document.getElementById('guest-name').value.trim();
+    try{localStorage.removeItem('ew_gallery_'+eventId);localStorage.removeItem('ew_myphotos_'+eventId+'_'+name);}catch(e){}
     cardEl.style.transition='all 0.3s';
     cardEl.style.opacity='0';cardEl.style.transform='scale(0.8)';
     setTimeout(()=>cardEl.remove(),300);
@@ -2562,19 +2587,34 @@ async function loadGallery(){
   const grid=document.getElementById('gallery-grid');
   const loading=document.getElementById('gallery-loading');
   const empty=document.getElementById('gallery-empty');
-  loading.style.display='block';
   empty.style.display='none';
-  grid.innerHTML='';
+  // Show cached photos immediately
+  const cacheKey='ew_gallery_'+eventId;
+  const cached=localStorage.getItem(cacheKey);
+  if(cached){
+    try{
+      const cachedPhotos=JSON.parse(cached);
+      if(cachedPhotos.length){
+        grid.innerHTML='';
+        loading.style.display='none';
+        cachedPhotos.forEach(p=>renderGalleryCard(p,{}));
+      }
+    }catch(e){}
+  } else {
+    loading.style.display='block';
+    grid.innerHTML='';
+  }
   try{
     const name=document.getElementById('guest-name').value.trim();
     const photos=await apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&approved=eq.true&order=created_at.desc&limit=60');
+    // Update cache (metadata only, no reactions)
+    try{localStorage.setItem(cacheKey,JSON.stringify(photos));}catch(e){}
     loading.style.display='none';
-    if(!photos.length){empty.style.display='block';return;}
+    if(!photos.length){grid.innerHTML='';empty.style.display='block';return;}
     const orFilter=photos.map(p=>'post_id.eq.'+p.id).join(',');
     const reactions=orFilter
       ? await apiRest('reactions?or=('+orFilter+')&select=post_id,emoji,guest_name')
       : [];
-    // aggregate counts and names per emoji per post
     const rxnMap={};
     myReactions={};
     reactions.forEach(r=>{
@@ -2584,9 +2624,10 @@ async function loadGallery(){
       if(r.guest_name) rxnMap[r.post_id][r.emoji].names.push(r.guest_name);
       if(name && r.guest_name===name) myReactions[r.post_id]=r.emoji;
     });
+    grid.innerHTML='';
     photos.forEach(p=>renderGalleryCard(p,rxnMap[p.id]||{}));
   }catch(e){
-    loading.innerHTML='<p style="color:var(--muted)">⚠️ Error al cargar fotos</p>';
+    if(!cached) loading.innerHTML='<p style="color:var(--muted)">⚠️ Error al cargar fotos</p>';
   }
 }
 
