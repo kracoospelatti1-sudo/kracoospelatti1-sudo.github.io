@@ -295,6 +295,7 @@ input[type=range]{accent-color:var(--pink)}
 .sidebar-event-badge .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px}
 .sidebar-event-badge .val{font-size:13px;color:var(--pink);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
 
@@ -2872,20 +2873,42 @@ async function downloadAlbum(){
   const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&type=eq.photo&approved=eq.true');
   const photos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
   if(!photos.length){toast('No hay fotos para descargar');return;}
-  toast('⬇ Descargando '+photos.length+' fotos sin marco...');
-  for(let i=0;i<photos.length;i++){
-    try{
-      // Use original_url if available (no frame), fallback to content
-      const downloadUrl=photos[i].original_url||photos[i].content;
-      const res=await fetch(downloadUrl);
-      const blob=await res.blob();
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');
-      a.href=url;a.download='foto_'+(i+1)+'_'+photos[i].author.replace(/\s/g,'_')+'.jpg';
-      a.click();
-      URL.revokeObjectURL(url);
-      await new Promise(r=>setTimeout(r,400));
-    }catch(e){}
+
+  const btn=document.querySelector('[onclick="downloadAlbum()"]');
+  const origText=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='⏳ Preparando ZIP...';}
+
+  try{
+    const zip=new JSZip();
+    const folder=zip.folder(selectedEvent.name||'fotos');
+    let ok=0;
+    for(let i=0;i<photos.length;i++){
+      if(btn) btn.textContent=`⏳ ${i+1}/${photos.length} fotos...`;
+      try{
+        const url=photos[i].original_url||photos[i].content;
+        const res=await fetch(url);
+        if(!res.ok) continue;
+        const blob=await res.blob();
+        const ext=blob.type.includes('png')?'png':'jpg';
+        const author=(photos[i].author||'invitado').replace(/[^a-z0-9]/gi,'_').slice(0,30);
+        folder.file(`foto_${String(i+1).padStart(3,'0')}_${author}.${ext}`,blob);
+        ok++;
+      }catch(e){}
+    }
+    if(!ok){toast('No se pudieron descargar las fotos');return;}
+    if(btn) btn.textContent='⏳ Generando ZIP...';
+    const zipBlob=await zip.generateAsync({type:'blob',compression:'STORE'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(zipBlob);
+    const safeName=(selectedEvent.name||'evento').replace(/[^a-z0-9]/gi,'-').toLowerCase();
+    a.download=`fotos-${safeName}.zip`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast(`✅ ZIP con ${ok} fotos descargado`);
+  }catch(e){
+    toast('Error generando ZIP: '+e.message);
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent=origText;}
   }
 }
 
