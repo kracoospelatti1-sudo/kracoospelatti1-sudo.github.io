@@ -162,27 +162,27 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .color-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
 .color-row label{margin:0;width:120px;flex-shrink:0}
 input[type=color]{width:44px;height:36px;padding:2px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);cursor:pointer}
-.template-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.tpl-card{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.2s;aspect-ratio:16/9;position:relative}
-.tpl-card:hover{border-color:var(--muted)}
-.tpl-card.active{border-color:var(--pink)}
-.tpl-card .tpl-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.7);color:#fff;font-size:11px;font-weight:600;padding:5px 8px;text-align:center}
-/* template preview backgrounds */
-.tpl-dark{background:linear-gradient(135deg,#07070f,#1a1a2e)}
-.tpl-light{background:linear-gradient(135deg,#f8f4ef,#ede8e0)}
-.tpl-neon{background:linear-gradient(135deg,#000,#0d0d2b)}
-.tpl-floral{background:linear-gradient(135deg,#1a0a14,#2d1020)}
-.tpl-gold{background:linear-gradient(135deg,#1a1200,#2d2000)}
-.tpl-ocean{background:linear-gradient(135deg,#021020,#041830)}
-.tpl-fiesta{background:linear-gradient(135deg,#0d0020,#1a0040)}
-.tpl-wedding{background:linear-gradient(135deg,#1a0f0f,#2d1515)}
-.tpl-cyber{background:linear-gradient(135deg,#050010,#0a0020)}
-.tpl-luxury{background:linear-gradient(135deg,#080600,#1a1200)}
-.tpl-xv{background:linear-gradient(135deg,#1a0030,#300050)}
-.tpl-corporate{background:linear-gradient(135deg,#0a1628,#0f2040)}
-.tpl-birthday{background:linear-gradient(135deg,#1a0010,#200020)}
-.tpl-boho{background:linear-gradient(135deg,#1a1208,#2d2010)}
-.tpl-sunset{background:linear-gradient(135deg,#1a0808,#2d1008)}
+.template-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.tpl-card{
+  border:2px solid var(--border);border-radius:12px;overflow:hidden;
+  cursor:pointer;transition:all 0.18s;position:relative;
+  display:flex;flex-direction:column;
+}
+.tpl-card:hover{border-color:var(--muted);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.15)}
+.tpl-card.active{border-color:var(--pink);box-shadow:0 0 0 2px var(--pink-light)}
+/* mini mockup */
+.tpl-mock{flex:1;padding:8px 7px 6px;display:flex;flex-direction:column;gap:4px;min-height:90px}
+.tpl-mock-hero{border-radius:5px;height:22px;display:flex;align-items:center;padding:0 6px;gap:4px;margin-bottom:2px}
+.tpl-mock-dot{width:5px;height:5px;border-radius:50%;opacity:0.9}
+.tpl-mock-line{border-radius:3px;height:5px;opacity:0.35}
+.tpl-mock-line.w100{width:100%}
+.tpl-mock-line.w70{width:70%}
+.tpl-mock-line.w50{width:50%}
+.tpl-mock-btn{border-radius:4px;height:14px;width:100%;margin-top:auto;opacity:0.9}
+.tpl-name{
+  font-size:11px;font-weight:700;text-align:center;padding:5px 4px 6px;
+  letter-spacing:0.3px;
+}
 
 .print-sheet{background:#fff;border-radius:12px;border:1px solid var(--border);padding:20px;margin-top:16px}
 .print-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:12px;break-inside:avoid}
@@ -304,7 +304,7 @@ input[type=range]{accent-color:var(--pink)}
   .stat-row{grid-template-columns:1fr 1fr !important}
   .events-grid{grid-template-columns:1fr !important}
   .posts-grid{grid-template-columns:1fr !important}
-  .template-grid{grid-template-columns:1fr 1fr !important}
+  .template-grid{grid-template-columns:repeat(3,1fr) !important}
   .seb{flex-direction:column;gap:10px;align-items:flex-start}
   .seb > div:last-child{width:100%;justify-content:flex-start}
   .link-row{flex-wrap:wrap}
@@ -574,66 +574,157 @@ input[type=range]{accent-color:var(--pink)}
             <div class="card-title">🎨 Plantillas rápidas</div>
             <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Empezá con una plantilla y luego personalizá los detalles</p>
             <div class="template-grid">
-              <div class="tpl-card tpl-dark" onclick="applyTemplate('dark',this)">
-                <div class="tpl-preview" style="background:#07070f;border:2px solid #f0176f"></div>
-                <div class="tpl-name">Dark</div>
+
+              <div class="tpl-card" onclick="applyTemplate('dark',this)" style="background:#09090f">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#0f0f1a"><div class="tpl-mock-dot" style="background:#f0176f"></div><div class="tpl-mock-line w70" style="background:#fff"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#fff"></div>
+                  <div class="tpl-mock-line w50" style="background:#fff"></div>
+                  <div class="tpl-mock-btn" style="background:#f0176f"></div>
+                </div>
+                <div class="tpl-name" style="background:#0f0f1a;color:#fff">🌑 Dark</div>
               </div>
-              <div class="tpl-card tpl-light" onclick="applyTemplate('light',this)">
-                <div class="tpl-preview" style="background:#f5f5f0;border:2px solid #e91e8c"></div>
-                <div class="tpl-name">Light</div>
+
+              <div class="tpl-card" onclick="applyTemplate('light',this)" style="background:#f8f4ef">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#f0ede8"><div class="tpl-mock-dot" style="background:#e91e8c"></div><div class="tpl-mock-line w70" style="background:#333"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#333"></div>
+                  <div class="tpl-mock-line w50" style="background:#333"></div>
+                  <div class="tpl-mock-btn" style="background:#e91e8c"></div>
+                </div>
+                <div class="tpl-name" style="background:#f0ede8;color:#1a1a1a">☀️ Light</div>
               </div>
-              <div class="tpl-card tpl-neon" onclick="applyTemplate('neon',this)">
-                <div class="tpl-preview" style="background:#0a0015;border:2px solid #a855f7"></div>
-                <div class="tpl-name">Neon</div>
+
+              <div class="tpl-card" onclick="applyTemplate('neon',this)" style="background:#06000f">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#0d0020"><div class="tpl-mock-dot" style="background:#a855f7"></div><div class="tpl-mock-line w70" style="background:#e0d0ff"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#e0d0ff"></div>
+                  <div class="tpl-mock-line w50" style="background:#e0d0ff"></div>
+                  <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#a855f7,#ec4899)"></div>
+                </div>
+                <div class="tpl-name" style="background:#0d0020;color:#e0d0ff">⚡ Neon</div>
               </div>
-              <div class="tpl-card tpl-floral" onclick="applyTemplate('floral',this)">
-                <div class="tpl-preview" style="background:#1a0a14;border:2px solid #ff6b9d"></div>
-                <div class="tpl-name">Floral</div>
+
+              <div class="tpl-card" onclick="applyTemplate('floral',this)" style="background:#1a0a14">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#2d1020"><div class="tpl-mock-dot" style="background:#ff6b9d"></div><div class="tpl-mock-line w70" style="background:#ffd0e8"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#ffd0e8"></div>
+                  <div class="tpl-mock-line w50" style="background:#ffd0e8"></div>
+                  <div class="tpl-mock-btn" style="background:#ff6b9d"></div>
+                </div>
+                <div class="tpl-name" style="background:#2d1020;color:#ffd0e8">🌸 Floral</div>
               </div>
-              <div class="tpl-card tpl-gold" onclick="applyTemplate('gold',this)">
-                <div class="tpl-preview" style="background:#0d0900;border:2px solid #f5a623"></div>
-                <div class="tpl-name">Gold</div>
+
+              <div class="tpl-card" onclick="applyTemplate('gold',this)" style="background:#0d0900">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#1a1000"><div class="tpl-mock-dot" style="background:#f5a623"></div><div class="tpl-mock-line w70" style="background:#f5d060"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#f5d060"></div>
+                  <div class="tpl-mock-line w50" style="background:#f5d060"></div>
+                  <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#f5a623,#c9a84c)"></div>
+                </div>
+                <div class="tpl-name" style="background:#1a1000;color:#f5d060">✨ Gold</div>
               </div>
-              <div class="tpl-card tpl-ocean" onclick="applyTemplate('ocean',this)">
-                <div class="tpl-preview" style="background:#0a1628;border:2px solid #60a5fa"></div>
-                <div class="tpl-name">Ocean</div>
+
+              <div class="tpl-card" onclick="applyTemplate('ocean',this)" style="background:#021020">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#041830"><div class="tpl-mock-dot" style="background:#60a5fa"></div><div class="tpl-mock-line w70" style="background:#bfdbfe"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#bfdbfe"></div>
+                  <div class="tpl-mock-line w50" style="background:#bfdbfe"></div>
+                  <div class="tpl-mock-btn" style="background:#60a5fa"></div>
+                </div>
+                <div class="tpl-name" style="background:#041830;color:#bfdbfe">🌊 Ocean</div>
               </div>
-              <div class="tpl-card tpl-fiesta" onclick="applyTemplate('fiesta',this)">
-                <div class="tpl-preview" style="background:#0d0020;border:2px solid #ff6b35;display:flex;align-items:center;justify-content:center;font-size:16px">🎉</div>
-                <div class="tpl-name">Fiesta</div>
+
+              <div class="tpl-card" onclick="applyTemplate('fiesta',this)" style="background:#0d0020">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#1a0040"><div class="tpl-mock-dot" style="background:#ff6b35"></div><div class="tpl-mock-line w70" style="background:#ffd0b0"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#ffd0b0"></div>
+                  <div class="tpl-mock-line w50" style="background:#ffd0b0"></div>
+                  <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#ff6b35,#f0176f)"></div>
+                </div>
+                <div class="tpl-name" style="background:#1a0040;color:#ffd0b0">🎉 Fiesta</div>
               </div>
-              <div class="tpl-card tpl-wedding" onclick="applyTemplate('wedding',this)">
-                <div class="tpl-preview" style="background:#1a0f0f;border:2px solid #d4af8c;display:flex;align-items:center;justify-content:center;font-size:16px">💒</div>
-                <div class="tpl-name">Boda</div>
+
+              <div class="tpl-card" onclick="applyTemplate('wedding',this)" style="background:#1a0f0f">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#2d1515"><div class="tpl-mock-dot" style="background:#d4af8c"></div><div class="tpl-mock-line w70" style="background:#f5e6d0"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#f5e6d0"></div>
+                  <div class="tpl-mock-line w50" style="background:#f5e6d0"></div>
+                  <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#d4af8c,#c9a06a)"></div>
+                </div>
+                <div class="tpl-name" style="background:#2d1515;color:#f5e6d0">💒 Boda</div>
               </div>
-              <div class="tpl-card tpl-cyber" onclick="applyTemplate('cyber',this)">
-                <div class="tpl-preview" style="background:#050010;border:2px solid #a855f7;display:flex;align-items:center;justify-content:center;font-size:16px">⚡</div>
-                <div class="tpl-name">Cyber</div>
+
+              <div class="tpl-card" onclick="applyTemplate('cyber',this)" style="background:#050010">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#0a0020"><div class="tpl-mock-dot" style="background:#00f5ff"></div><div class="tpl-mock-line w70" style="background:#b0f0ff"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#b0f0ff"></div>
+                  <div class="tpl-mock-line w50" style="background:#b0f0ff"></div>
+                  <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#00f5ff,#a855f7)"></div>
+                </div>
+                <div class="tpl-name" style="background:#0a0020;color:#b0f0ff">🤖 Cyber</div>
               </div>
-              <div class="tpl-card tpl-luxury" onclick="applyTemplate('luxury',this)">
-                <div class="tpl-preview" style="background:#080600;border:2px solid #c9a84c;display:flex;align-items:center;justify-content:center;font-size:16px">👑</div>
-                <div class="tpl-name">Lujo</div>
+
+              <div class="tpl-card" onclick="applyTemplate('luxury',this)" style="background:#080600">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#120e00"><div class="tpl-mock-dot" style="background:#c9a84c"></div><div class="tpl-mock-line w70" style="background:#f5d060"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#f5d060"></div>
+                  <div class="tpl-mock-line w50" style="background:#f5d060"></div>
+                  <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#c9a84c,#f5d060)"></div>
+                </div>
+                <div class="tpl-name" style="background:#120e00;color:#f5d060">👑 Lujo</div>
               </div>
-              <div class="tpl-card tpl-xv" onclick="applyTemplate('xv',this)">
-                <div class="tpl-preview" style="background:#1a0030;border:2px solid #e040fb;display:flex;align-items:center;justify-content:center;font-size:16px">🌸</div>
-                <div class="tpl-name">XV Años</div>
+
+              <div class="tpl-card" onclick="applyTemplate('xv',this)" style="background:#1a0030">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#2a0050"><div class="tpl-mock-dot" style="background:#e040fb"></div><div class="tpl-mock-line w70" style="background:#f0d0ff"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#f0d0ff"></div>
+                  <div class="tpl-mock-line w50" style="background:#f0d0ff"></div>
+                  <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#e040fb,#f48fb1)"></div>
+                </div>
+                <div class="tpl-name" style="background:#2a0050;color:#f0d0ff">🌸 XV Años</div>
               </div>
-              <div class="tpl-card tpl-corporate" onclick="applyTemplate('corporate',this)">
-                <div class="tpl-preview" style="background:#0a1628;border:2px solid #3b82f6;display:flex;align-items:center;justify-content:center;font-size:16px">🏢</div>
-                <div class="tpl-name">Corporativo</div>
+
+              <div class="tpl-card" onclick="applyTemplate('corporate',this)" style="background:#0a1628">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#0f2040"><div class="tpl-mock-dot" style="background:#3b82f6"></div><div class="tpl-mock-line w70" style="background:#bfdbfe"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#bfdbfe"></div>
+                  <div class="tpl-mock-line w50" style="background:#bfdbfe"></div>
+                  <div class="tpl-mock-btn" style="background:#3b82f6"></div>
+                </div>
+                <div class="tpl-name" style="background:#0f2040;color:#bfdbfe">🏢 Corp</div>
               </div>
-              <div class="tpl-card tpl-birthday" onclick="applyTemplate('birthday',this)">
-                <div class="tpl-preview" style="background:#1a0010;border:2px solid #f472b6;display:flex;align-items:center;justify-content:center;font-size:16px">🎂</div>
-                <div class="tpl-name">Cumpleaños</div>
+
+              <div class="tpl-card" onclick="applyTemplate('birthday',this)" style="background:#1a0010">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#280020"><div class="tpl-mock-dot" style="background:#f472b6"></div><div class="tpl-mock-line w70" style="background:#ffd0ee"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#ffd0ee"></div>
+                  <div class="tpl-mock-line w50" style="background:#ffd0ee"></div>
+                  <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#f472b6,#fb923c)"></div>
+                </div>
+                <div class="tpl-name" style="background:#280020;color:#ffd0ee">🎂 Cumple</div>
               </div>
-              <div class="tpl-card tpl-boho" onclick="applyTemplate('boho',this)">
-                <div class="tpl-preview" style="background:#1a1208;border:2px solid #a8825c;display:flex;align-items:center;justify-content:center;font-size:16px">🌿</div>
-                <div class="tpl-name">Boho</div>
+
+              <div class="tpl-card" onclick="applyTemplate('boho',this)" style="background:#1a1208">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#2d2010"><div class="tpl-mock-dot" style="background:#a8825c"></div><div class="tpl-mock-line w70" style="background:#e8d5b8"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#e8d5b8"></div>
+                  <div class="tpl-mock-line w50" style="background:#e8d5b8"></div>
+                  <div class="tpl-mock-btn" style="background:#a8825c"></div>
+                </div>
+                <div class="tpl-name" style="background:#2d2010;color:#e8d5b8">🌿 Boho</div>
               </div>
-              <div class="tpl-card tpl-sunset" onclick="applyTemplate('sunset',this)">
-                <div class="tpl-preview" style="background:#1a0808;border:2px solid #fb923c;display:flex;align-items:center;justify-content:center;font-size:16px">🌅</div>
-                <div class="tpl-name">Sunset</div>
+
+              <div class="tpl-card" onclick="applyTemplate('sunset',this)" style="background:#1a0808">
+                <div class="tpl-mock">
+                  <div class="tpl-mock-hero" style="background:#2d1008"><div class="tpl-mock-dot" style="background:#fb923c"></div><div class="tpl-mock-line w70" style="background:#fed7aa"></div></div>
+                  <div class="tpl-mock-line w100" style="background:#fed7aa"></div>
+                  <div class="tpl-mock-line w50" style="background:#fed7aa"></div>
+                  <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#fb923c,#f0176f)"></div>
+                </div>
+                <div class="tpl-name" style="background:#2d1008;color:#fed7aa">🌅 Sunset</div>
               </div>
+
             </div>
           </div>
         </div>
