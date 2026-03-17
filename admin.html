@@ -101,6 +101,15 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .dash-action-btn{padding:16px 10px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all 0.2s}
 .dash-action-btn:hover{border-color:var(--pink);background:var(--pink-dim);color:var(--pink)}
 .dash-action-ico{font-size:24px}
+/* DESIGN ADVANCED ACCORDION */
+.design-advanced{border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.design-advanced summary{list-style:none;cursor:pointer;padding:14px 16px;font-size:14px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:8px;user-select:none;transition:color 0.2s}
+.design-advanced summary::-webkit-details-marker{display:none}
+.design-advanced summary::after{content:'▸';margin-left:auto;transition:transform 0.2s;font-size:12px}
+.design-advanced[open] summary{color:var(--text);border-bottom:1px solid var(--border)}
+.design-advanced[open] summary::after{transform:rotate(90deg)}
+.design-advanced summary:hover{color:var(--text)}
+.design-advanced-inner{padding:14px}
 .qr-box{background:#fff;padding:14px;border-radius:12px}
 .toast.show{display:block;animation:toastIn 0.3s ease}
 @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -527,19 +536,8 @@ input[type=range]{accent-color:var(--pink)}
 
       <!-- LEFT: TABBED EDITOR -->
       <div>
-        <!-- TAB BUTTONS -->
-        <div style="display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="dtab active" onclick="switchDesignTab('plantillas',this)">🎨 Plantillas</button>
-          <button class="dtab" onclick="switchDesignTab('colores',this)">🖌 Colores</button>
-          <button class="dtab" onclick="switchDesignTab('tipografia',this)">🔤 Tipografía</button>
-          <button class="dtab" onclick="switchDesignTab('layout',this)">📐 Layout</button>
-          <button class="dtab" onclick="switchDesignTab('burbuja',this)">💬 Burbuja</button>
-          <button class="dtab" onclick="switchDesignTab('extras',this)">✨ Extras</button>
-          <button class="dtab" onclick="switchDesignTab('espera',this)">⏳ Espera</button>
-        </div>
-
-        <!-- TAB: PLANTILLAS -->
-        <div class="dtab-panel active" id="dtab-plantillas">
+        <!-- PLANTILLAS - siempre visible -->
+        <div id="dtab-plantillas">
           <div class="card">
             <div class="card-title">🎨 Plantillas rápidas</div>
             <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Empezá con una plantilla y luego personalizá los detalles</p>
@@ -608,8 +606,21 @@ input[type=range]{accent-color:var(--pink)}
           </div>
         </div>
 
+        <!-- PERSONALIZACIÓN AVANZADA -->
+        <details class="design-advanced" id="design-advanced">
+          <summary>⚙️ Personalización avanzada</summary>
+          <div class="design-advanced-inner">
+            <div style="display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap">
+              <button class="dtab active" onclick="switchDesignTab('colores',this)">🖌 Colores</button>
+              <button class="dtab" onclick="switchDesignTab('tipografia',this)">🔤 Tipografía</button>
+              <button class="dtab" onclick="switchDesignTab('layout',this)">📐 Layout</button>
+              <button class="dtab" onclick="switchDesignTab('burbuja',this)">💬 Burbuja</button>
+              <button class="dtab" onclick="switchDesignTab('extras',this)">✨ Extras</button>
+              <button class="dtab" onclick="switchDesignTab('espera',this)">⏳ Espera</button>
+            </div>
+
         <!-- TAB: COLORES -->
-        <div class="dtab-panel" id="dtab-colores">
+        <div class="dtab-panel active" id="dtab-colores">
           <div class="card">
             <div class="card-title">🖌 Colores</div>
             <div class="design-grid">
@@ -940,6 +951,9 @@ input[type=range]{accent-color:var(--pink)}
             </div>
           </div>
         </div>
+
+          </div><!-- /design-advanced-inner -->
+        </details><!-- /design-advanced -->
 
         <!-- SAVE BUTTONS - always visible -->
         <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
@@ -2747,8 +2761,9 @@ function resetGuestDesign(){
 }
 
 function switchDesignTab(tab, btn){
-  document.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.dtab-panel').forEach(p=>p.classList.remove('active'));
+  const adv=document.getElementById('design-advanced');
+  adv.querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
+  adv.querySelectorAll('.dtab-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('dtab-'+tab).classList.add('active');
 }
