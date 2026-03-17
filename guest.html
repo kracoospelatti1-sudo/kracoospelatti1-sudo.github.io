@@ -500,6 +500,57 @@ body{
 .msg-anim-slide{animation:msgSlideLeft 0.5s ease both}
 .msg-anim-zoom{animation:msgZoomIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both}
 .msg-preview-playing #msg-preview-bubble{animation:msgBounce 0.7s cubic-bezier(0.175,0.885,0.32,1.275) both}
+
+/* ── WELCOME SPLASH ─────────────────────────────────────────── */
+#welcome-splash{
+  position:fixed;inset:0;z-index:500;
+  background:var(--dark,#09090f);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 28px;text-align:center;
+  transition:opacity 0.5s ease,transform 0.5s ease;
+}
+#welcome-splash.hiding{opacity:0;transform:scale(1.04);pointer-events:none}
+.ws-glow{
+  position:absolute;top:-100px;left:50%;transform:translateX(-50%);
+  width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(240,23,111,0.22) 0%,transparent 70%);
+  pointer-events:none;
+}
+.ws-glow2{
+  position:absolute;bottom:-120px;right:-80px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(240,23,111,0.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+.ws-logo{
+  font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--pink,#f0176f);margin-bottom:40px;opacity:0.8;
+}
+.ws-event-name{
+  font-family:'Syne',sans-serif;font-size:clamp(32px,10vw,56px);font-weight:800;
+  color:#fff;line-height:1.1;margin-bottom:14px;
+  animation:wsFadeUp 0.7s ease both;
+}
+.ws-event-sub{
+  font-size:16px;color:rgba(255,255,255,0.5);margin-bottom:48px;
+  animation:wsFadeUp 0.7s 0.1s ease both;
+}
+.ws-enter-btn{
+  background:var(--pink,#f0176f);color:#fff;border:none;
+  padding:16px 44px;border-radius:100px;
+  font-size:17px;font-weight:700;font-family:'DM Sans',sans-serif;
+  cursor:pointer;letter-spacing:0.3px;
+  box-shadow:0 8px 32px rgba(240,23,111,0.4);
+  animation:wsFadeUp 0.7s 0.2s ease both;
+  transition:transform 0.15s,box-shadow 0.15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.ws-enter-btn:active{transform:scale(0.96);box-shadow:0 4px 16px rgba(240,23,111,0.35)}
+.ws-photo-count{
+  margin-top:24px;font-size:13px;color:rgba(255,255,255,0.3);
+  animation:wsFadeUp 0.7s 0.3s ease both;
+}
+@keyframes wsFadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -508,6 +559,17 @@ body{
 <div id="page-loading" class="page-loading">
   <div class="spinner"></div>
   <p>Cargando evento...</p>
+</div>
+
+<!-- WELCOME SPLASH -->
+<div id="welcome-splash" style="display:none">
+  <div class="ws-glow"></div>
+  <div class="ws-glow2"></div>
+  <div class="ws-logo">EventWall</div>
+  <div class="ws-event-name" id="ws-event-name"></div>
+  <div class="ws-event-sub" id="ws-event-sub"></div>
+  <button class="ws-enter-btn" onclick="enterFromSplash()">Participar →</button>
+  <div class="ws-photo-count" id="ws-photo-count"></div>
 </div>
 
 <!-- EXPIRED ACCESS -->
@@ -1621,7 +1683,21 @@ async function init(){
     document.getElementById('ev-name').textContent=ev.name;
     document.getElementById('ev-sub').textContent=[formatDateES(ev.date),ev.subtitle].filter(Boolean).join(' · ');
     document.getElementById('page-loading').style.display='none';
-    document.getElementById('app').style.display='block';
+    // Show welcome splash (only once per session)
+    const splashKey='ew_splash_'+eventId;
+    if(!sessionStorage.getItem(splashKey)){
+      document.getElementById('ws-event-name').textContent=ev.name;
+      document.getElementById('ws-event-sub').textContent=[formatDateES(ev.date),ev.subtitle].filter(Boolean).join(' · ');
+      // Show photo count hint
+      try{
+        const stats=await apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&approved=eq.true&select=id');
+        const n=stats.length;
+        if(n>0) document.getElementById('ws-photo-count').textContent=n+' foto'+(n!==1?'s':'')+' compartida'+(n!==1?'s':'')+' · Sumá la tuya';
+      }catch(e){}
+      document.getElementById('welcome-splash').style.display='flex';
+    } else {
+      showAppAfterSplash();
+    }
     initTabsHint();
     buildFramePicker();
     await applyGuestDesign(ev);
@@ -2735,6 +2811,17 @@ async function toggleReaction(postId,emoji,btn){
     // Revert on error by reloading gallery
     loadGallery();
   }
+}
+
+// ── WELCOME SPLASH ────────────────────────────────────────────
+function showAppAfterSplash(){
+  document.getElementById('app').style.display='block';
+}
+function enterFromSplash(){
+  const splash=document.getElementById('welcome-splash');
+  sessionStorage.setItem('ew_splash_'+eventId,'1');
+  splash.classList.add('hiding');
+  setTimeout(()=>{splash.style.display='none';showAppAfterSplash();},500);
 }
 
 // ── REACTIONS BOTTOM SHEET ────────────────────────────────────
