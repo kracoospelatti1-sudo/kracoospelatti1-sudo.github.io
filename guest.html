@@ -1765,6 +1765,8 @@ async function sendPhoto(){
   if(!checkCooldown('photo')) return;
   showSending();
   try{
+    // Ensure watermark is applied before uploading
+    renderPreviewCanvas();
     // Moderate photo with AI before uploading
     const canvas=document.getElementById('preview-canvas');
     const dataUrl=canvas.toDataURL('image/jpeg',0.82);

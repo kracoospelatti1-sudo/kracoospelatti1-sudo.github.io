@@ -294,6 +294,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
         <p style="font-size:13px">Los invitados están escaneando el QR</p>
       </div>
       <img id="featured-img" class="featured-img" src="" alt="" style="display:none"/>
+      <img id="screen-wm" src="" alt="" style="display:none;position:absolute;z-index:5;pointer-events:none;max-width:35%"/>
       <div class="featured-overlay" id="featured-overlay">
         <div class="featured-caption" id="featured-caption"></div>
         <div class="featured-author" id="featured-author"></div>
@@ -397,6 +398,27 @@ function loadScreenFont(font){
   link.id=id;link.rel='stylesheet';
   link.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(font)+':wght@400;700;800&display=swap';
   document.head.appendChild(link);
+}
+
+// ── WATERMARK OVERLAY ─────────────────────────────────────────
+function applyScreenWatermark(gd){
+  const el=document.getElementById('screen-wm');
+  if(!el) return;
+  const url=gd&&gd.wmUrl;
+  if(!url){el.style.display='none';return;}
+  const size=(gd.wmSize||20);
+  const opacity=(gd.wmOpacity||70)/100;
+  const pos=gd.wmPos||'br';
+  el.style.width=size+'%';
+  el.style.opacity=opacity;
+  // Position
+  const pad='1.5%';
+  el.style.top='';el.style.bottom='';el.style.left='';el.style.right='';
+  if(pos==='tl'||pos==='tr') el.style.top=pad; else el.style.bottom=pad;
+  if(pos==='tl'||pos==='bl') el.style.left=pad; else el.style.right=pad;
+  if(pos==='center'){el.style.top='50%';el.style.left='50%';el.style.transform='translate(-50%,-50%)';}
+  el.src=url;
+  el.style.display='block';
 }
 
 // ── THEME ─────────────────────────────────────────────────────
@@ -1089,6 +1111,14 @@ async function init(){
   document.getElementById('app').style.display='block';
   // Apply theme AFTER app is visible so DOM queries work
   if(saved) try{applyTheme(JSON.parse(saved));}catch(e){console.error('applyTheme:',e);}
+  // Load guest design for watermark
+  try{
+    const gds=await api('guest_design?event_id=eq.'+eventId+'&select=design&limit=1');
+    if(gds&&gds[0]){
+      const gd=typeof gds[0].design==='string'?JSON.parse(gds[0].design):gds[0].design;
+      applyScreenWatermark(gd);
+    }
+  }catch(e){console.error('watermark:',e);}
   await loadPosts();
   // Show waiting screen if no photos yet
   if(!photoPosts.length) showWaitingScreen(eventId, ev);
