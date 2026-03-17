@@ -68,6 +68,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
   background:#fff;
   padding:clamp(5px,0.6vw,10px);
   border-radius:clamp(8px,0.8vw,12px);
+  box-shadow:0 0 0 1px rgba(255,255,255,0.1),0 0 clamp(12px,1.5vw,24px) rgba(240,23,111,0.25);
   position:relative;overflow:hidden;
 }
 .qr-box::after{
@@ -76,11 +77,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
   animation:qrScan 2.5s ease-in-out infinite;top:0;
 }
 @keyframes qrScan{0%{top:0;opacity:1}100%{top:100%;opacity:0.6}}
-@keyframes qrPulse{
-  0%,100%{transform:scale(1);box-shadow:0 0 0 1px rgba(255,255,255,0.1),0 0 clamp(12px,1.5vw,24px) rgba(240,23,111,0.25);}
-  50%{transform:scale(1.04);box-shadow:0 0 0 1px rgba(255,255,255,0.15),0 0 clamp(20px,2.5vw,40px) rgba(240,23,111,0.55),0 0 clamp(30px,4vw,60px) rgba(240,23,111,0.2);}
-}
-.qr-box{animation:qrPulse 3s ease-in-out infinite;}
 .qr-box img{width:clamp(80px,9vw,150px)!important;height:clamp(80px,9vw,150px)!important;image-rendering:pixelated;display:block}
 .qr-text{font-size:clamp(9px,0.8vw,12px);color:rgba(255,255,255,0.4);line-height:1.5;overflow:hidden}
 .qr-text strong{color:rgba(255,255,255,0.85);display:block;font-size:clamp(9px,0.85vw,13px);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
