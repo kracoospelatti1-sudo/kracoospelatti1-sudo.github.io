@@ -110,6 +110,28 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .design-advanced[open] summary::after{transform:rotate(90deg)}
 .design-advanced summary:hover{color:var(--text)}
 .design-advanced-inner{padding:14px}
+/* CUSTOM CONFIRM MODAL */
+.cmodal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.cmodal-overlay.show{opacity:1;pointer-events:all}
+.cmodal{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px 24px;max-width:380px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,0.5);transform:translateY(12px) scale(0.97);transition:transform 0.2s}
+.cmodal-overlay.show .cmodal{transform:translateY(0) scale(1)}
+.cmodal-ico{font-size:36px;text-align:center;margin-bottom:12px}
+.cmodal-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;text-align:center;margin-bottom:8px}
+.cmodal-msg{font-size:13px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:22px}
+.cmodal-btns{display:flex;gap:10px}
+.cmodal-cancel{flex:1;padding:11px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.cmodal-confirm{flex:1;padding:11px;border-radius:10px;border:none;background:#ef4444;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s}
+.cmodal-confirm:hover{opacity:0.85}
+.cmodal-confirm.safe{background:var(--pink)}
+/* SKELETON LOADER */
+.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,var(--surface) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:10px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+/* SAVE BUTTON FEEDBACK */
+.btn-saved{background:#16a34a!important;border-color:#16a34a!important;color:#fff!important;pointer-events:none}
+/* MOBILE ACTIVE EVENT BANNER */
+.mob-event-banner{display:none;background:var(--pink-dim);border-bottom:1px solid var(--pink-border);padding:7px 20px;font-size:12px;font-weight:600;color:var(--pink);align-items:center;gap:8px;position:sticky;top:57px;z-index:199}
+@media(max-width:768px){.mob-event-banner.visible{display:flex}}
 .qr-box{background:#fff;padding:14px;border-radius:12px}
 .toast.show{display:block;animation:toastIn 0.3s ease}
 @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -349,6 +371,12 @@ input[type=range]{accent-color:var(--pink)}
     <button class="hamburger" onclick="toggleSidebar()">☰</button>
   </div>
 </div>
+<!-- MOBILE ACTIVE EVENT BANNER -->
+<div class="mob-event-banner" id="mob-event-banner">
+  <span style="width:7px;height:7px;border-radius:50%;background:var(--pink);flex-shrink:0"></span>
+  <span id="mob-event-banner-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+  <button onclick="goNav('dashboard')" style="margin-left:auto;background:var(--pink);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">Inicio</button>
+</div>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div class="shell">
   <nav class="sidebar">
@@ -471,6 +499,10 @@ input[type=range]{accent-color:var(--pink)}
             <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-wishes">—</span><span class="dash-stat-lbl">deseos</span></div>
           </div>
         </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+        <button class="btn-pink" style="flex:1;justify-content:center;display:flex;align-items:center;gap:8px" onclick="openScreenDash()">📺 Abrir pantalla</button>
+        <button class="btn-ghost" style="flex:1;justify-content:center;display:flex;align-items:center;gap:8px" onclick="copyLink('dash-screen-url')">🔗 Copiar URL</button>
       </div>
       <div class="dash-actions">
         <button class="dash-action-btn" onclick="goNav('messages')"><span class="dash-action-ico">💬</span>Ver contenido</button>
@@ -957,7 +989,7 @@ input[type=range]{accent-color:var(--pink)}
 
         <!-- SAVE BUTTONS - always visible -->
         <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
-          <button class="btn-pink" onclick="saveDesign()">💾 Guardar diseño</button>
+          <button class="btn-pink" id="btn-save-design" onclick="saveDesign(this)">💾 Guardar diseño</button>
           <button class="btn-ghost" onclick="resetDesign()">↺ Resetear</button>
         </div>
       </div>
@@ -1150,18 +1182,10 @@ input[type=range]{accent-color:var(--pink)}
 
       <!-- LEFT: TABBED EDITOR -->
       <div>
-        <!-- TABS -->
-        <div style="display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:0;flex-wrap:wrap">
-          <button class="dtab active" onclick="switchGDTab('plantillas',this)">🎨 Plantillas</button>
-          <button class="dtab" onclick="switchGDTab('textos',this)">✏️ Textos</button>
-          <button class="dtab" onclick="switchGDTab('colores',this)">🎨 Colores</button>
-          <button class="dtab" onclick="switchGDTab('estilo',this)">🔤 Estilo</button>
-          <button class="dtab" onclick="switchGDTab('opciones',this)">⚙️ Funciones</button>
-        </div>
-        <div style="height:1px;background:var(--border);margin-bottom:16px"></div>
-
-        <!-- TAB: PLANTILLAS -->
-        <div class="dtab-panel active" id="gdtab-plantillas">
+        <!-- ACCORDION: PLANTILLAS -->
+        <details class="design-advanced" open id="gdtab-plantillas">
+          <summary>🎨 Plantillas de diseño</summary>
+          <div class="design-advanced-inner">
           <div class="card">
             <div class="card-title">🎨 Plantillas de diseño</div>
             <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Elegí una plantilla para aplicar colores y tipografía de un solo click</p>
@@ -1279,10 +1303,13 @@ input[type=range]{accent-color:var(--pink)}
 
             </div>
           </div>
-        </div>
+          </div><!-- /design-advanced-inner -->
+        </details><!-- /gdtab-plantillas -->
 
-        <!-- TAB: TEXTOS -->
-        <div class="dtab-panel" id="gdtab-textos">
+        <!-- ACCORDION: TEXTOS -->
+        <details class="design-advanced" id="gdtab-textos">
+          <summary>✏️ Textos</summary>
+          <div class="design-advanced-inner">
           <div class="card">
             <div class="card-title">✏️ Textos</div>
             <div style="display:flex;flex-direction:column;gap:12px">
@@ -1312,10 +1339,13 @@ input[type=range]{accent-color:var(--pink)}
               </div>
             </div>
           </div>
-        </div>
+          </div><!-- /design-advanced-inner -->
+        </details><!-- /gdtab-textos -->
 
-        <!-- TAB: COLORES -->
-        <div class="dtab-panel" id="gdtab-colores">
+        <!-- ACCORDION: COLORES -->
+        <details class="design-advanced" id="gdtab-colores">
+          <summary>🎨 Colores</summary>
+          <div class="design-advanced-inner">
           <div class="card">
             <div class="card-title">🎨 Colores</div>
             <!-- QUICK PALETTES -->
@@ -1375,10 +1405,13 @@ input[type=range]{accent-color:var(--pink)}
               </div>
             </div>
           </div>
-        </div>
+          </div><!-- /design-advanced-inner -->
+        </details><!-- /gdtab-colores -->
 
-        <!-- TAB: ESTILO -->
-        <div class="dtab-panel" id="gdtab-estilo">
+        <!-- ACCORDION: ESTILO -->
+        <details class="design-advanced" id="gdtab-estilo">
+          <summary>🔤 Tipografía y estilo</summary>
+          <div class="design-advanced-inner">
           <div class="card">
             <div class="card-title">🔤 Tipografía y estilo</div>
             <div class="design-grid">
@@ -1480,10 +1513,13 @@ input[type=range]{accent-color:var(--pink)}
               </div>
             </div>
           </div>
-        </div>
+          </div><!-- /design-advanced-inner -->
+        </details><!-- /gdtab-estilo -->
 
-        <!-- TAB: OPCIONES -->
-        <div class="dtab-panel" id="gdtab-opciones">
+        <!-- ACCORDION: OPCIONES -->
+        <details class="design-advanced" id="gdtab-opciones">
+          <summary>⚙️ Funciones habilitadas</summary>
+          <div class="design-advanced-inner">
           <div class="card">
             <div class="card-title">⚙️ Funciones habilitadas</div>
             <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Elegí qué pueden hacer los invitados</p>
@@ -1498,11 +1534,12 @@ input[type=range]{accent-color:var(--pink)}
               <label class="toggle-label" onclick="toggleGDOption('deletePhoto')"><div class="opt-toggle on" id="tog-show-deletePhoto"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗑 Borrar fotos propias</div><div style="font-size:12px;color:var(--muted)">El invitado puede eliminar sus fotos</div></div></label>
             </div>
           </div>
-        </div>
+          </div><!-- /design-advanced-inner -->
+        </details><!-- /gdtab-opciones -->
 
         <!-- SAVE -->
         <div style="margin-top:12px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button class="btn-pink" onclick="saveGuestDesign()">💾 Guardar y aplicar</button>
+          <button class="btn-pink" id="btn-save-gd" onclick="saveGuestDesign(this)">💾 Guardar y aplicar</button>
           <button class="btn-ghost" onclick="resetGuestDesign()">↺ Resetear</button>
           <button class="btn-ghost" onclick="document.getElementById('gd-main-grid').lastElementChild.scrollIntoView({behavior:'smooth'})" style="display:none" id="btn-preview-scroll">👁 Ver preview</button>
         </div>
@@ -1791,7 +1828,7 @@ input[type=range]{accent-color:var(--pink)}
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-top:20px">
-      <button class="btn-pink" onclick="saveEditEvent()" style="flex:1">💾 Guardar cambios</button>
+      <button class="btn-pink" onclick="saveEditEvent(this)" style="flex:1">💾 Guardar cambios</button>
       <button class="btn-ghost" onclick="closeEditModal()">Cancelar</button>
     </div>
   </div>
@@ -1817,9 +1854,9 @@ async function syncPinFromSupabase(){
   }catch(e){}
 }
 function logout(){
-  if(!confirm('¿Cerrar sesión?')) return;
-  sessionStorage.clear();
-  location.reload();
+  confirm2('Tu sesión se cerrará y vas a tener que volver a ingresar el PIN.',()=>{
+    sessionStorage.clear();location.reload();
+  },{title:'¿Cerrar sesión?',ico:'🚪',danger:false});
 }
 
 function startGlobalPoller(){
@@ -1991,6 +2028,36 @@ function goNav(page){
   }
 }
 
+// ── CONFIRM MODAL ─────────────────────────────────
+let _cmodalCb=null;
+function confirm2(msg,onConfirm,{title='¿Estás seguro?',ico='⚠️',danger=true}={}){
+  document.getElementById('cmodal-ico').textContent=ico;
+  document.getElementById('cmodal-title').textContent=title;
+  document.getElementById('cmodal-msg').textContent=msg;
+  const btn=document.getElementById('cmodal-confirm-btn');
+  btn.textContent=danger?'Eliminar':'Confirmar';
+  btn.className='cmodal-confirm'+(danger?'':' safe');
+  _cmodalCb=onConfirm;
+  document.getElementById('cmodal-overlay').classList.add('show');
+}
+function cmodalClose(){document.getElementById('cmodal-overlay').classList.remove('show');_cmodalCb=null;}
+function cmodalConfirm(){const cb=_cmodalCb;cmodalClose();if(cb) cb();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') cmodalClose();});
+
+// ── SAVE BUTTON FEEDBACK ──────────────────────────
+function btnSaved(btn){
+  const orig=btn.innerHTML;
+  btn.innerHTML='✓ Guardado';
+  btn.classList.add('btn-saved');
+  setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove('btn-saved');},2000);
+}
+
+// ── OPEN SCREEN ───────────────────────────────────
+function openScreenDash(){
+  const url=document.getElementById('dash-screen-url')?.textContent;
+  if(url&&url!=='—') window.open(url,'_blank');
+}
+
 function toast(msg,dur=3000){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
@@ -2025,7 +2092,7 @@ function closeEditModal(){
   editingEventId = null;
 }
 
-async function saveEditEvent(){
+async function saveEditEvent(btn){
   if(!editingEventId) return;
   if(sessionStorage.getItem('ew_restricted_event')){toast('❌ No tenés permiso para editar eventos');return;}
   const name = document.getElementById('edit-ev-name').value.trim();
@@ -2054,6 +2121,7 @@ async function saveEditEvent(){
   });
 
   if(res !== null){
+    if(btn) btnSaved(btn);
     toast('✅ Evento actualizado');
     closeEditModal();
     loadEvents();
@@ -2113,9 +2181,11 @@ async function launchMoment(){
 async function deleteEvent(ev){
   if(sessionStorage.getItem('ew_restricted_event')) return;
   const hasEmail=ev.client_email&&ev.client_email.trim();
-  const confirmMsg='¿Seguro que querés eliminar "'+ev.name+'"?\n'+(hasEmail?'Se enviará el álbum al mail del cliente antes de borrar.\n':'')+'Esta acción no se puede deshacer.';
-  if(!confirm(confirmMsg)) return;
-
+  const confirmMsg='Se eliminará "'+ev.name+'" y todo su contenido.'+(hasEmail?' Se enviará el álbum al mail del cliente antes de borrar.':'')+' Esta acción no se puede deshacer.';
+  confirm2(confirmMsg, async()=>{await _doDeleteEvent(ev);},{title:'¿Eliminar evento?',ico:'🗑'});
+}
+async function _doDeleteEvent(ev){
+  const hasEmail=ev.client_email&&ev.client_email.trim();
   // Fetch all posts before deleting
   const posts=await api('posts?event_id=eq.'+ev.id+'&order=created_at.asc');
   const approvedPosts=Array.isArray(posts)?posts:[];
@@ -2196,7 +2266,7 @@ async function loadEvents(restrictedId=null){
   const settingsBtn=document.querySelector('.nav-btn[onclick*="settings"]');
   if(settingsBtn) settingsBtn.style.display=restricted?'none':'';
   const grid=document.getElementById('events-list');
-  grid.innerHTML='<div class="empty"><div class="empty-ico">⏳</div><div class="empty-txt">Conectando...</div></div>';
+  grid.innerHTML=Array(3).fill('<div class="skel-card"><div class="skeleton" style="height:14px;width:60%;border-radius:6px"></div><div class="skeleton" style="height:11px;width:40%;border-radius:6px"></div><div class="skeleton" style="height:11px;width:80%;border-radius:6px;margin-top:4px"></div></div>').join('');
   const query=restricted?'events?id=eq.'+restricted:'events?order=created_at.desc';
   const events=await api(query);
   if(!Array.isArray(events)||!events.length){
@@ -2299,6 +2369,11 @@ function selectEvent(ev,cardEl){
   document.getElementById('sidebar-event').textContent=ev.name;
   const mob=document.getElementById('mob-event-badge');
   if(mob) mob.textContent=ev.name;
+  const banner=document.getElementById('mob-event-banner');
+  if(banner){
+    document.getElementById('mob-event-banner-name').textContent=ev.name;
+    banner.classList.add('visible');
+  }
   document.querySelectorAll('.event-card').forEach(c=>c.classList.remove('selected'));
   cardEl.classList.add('selected');
   // Show dashboard nav button
@@ -2748,10 +2823,10 @@ function removeWatermark(){
 }
 
 function resetGuestDesign(){
-  if(!confirm('¿Resetear el diseño del invitado?')) return;
-  localStorage.removeItem('ew_guest_design_'+(selectedEvent?.id||''));
-  showGuestDesign();
-  toast('Diseño reseteado');
+  confirm2('Se perderán todos los cambios de diseño del invitado.',()=>{
+    localStorage.removeItem('ew_guest_design_'+(selectedEvent?.id||''));
+    showGuestDesign();toast('Diseño reseteado');
+  },{title:'¿Resetear diseño?',ico:'↺',danger:false});
 }
 
 function switchDesignTab(tab, btn){
@@ -2762,7 +2837,7 @@ function switchDesignTab(tab, btn){
   document.getElementById('dtab-'+tab).classList.add('active');
 }
 
-function saveDesign(){
+function saveDesign(btn){
   if(!selectedEvent){toast('Seleccioná un evento primero');return;}
   const design={
     bg:getV('c-bg'), accent:getV('c-accent'), text:getV('c-text'),
@@ -2798,6 +2873,7 @@ function saveDesign(){
     template:document.querySelector('.tpl-card.active')?.className.match(/tpl-(\w+)/)?.[1]||'dark'
   };
   localStorage.setItem('ew_design_'+selectedEvent.id,JSON.stringify(design));
+  if(btn) btnSaved(btn);
   toast('✅ Diseño guardado — recargá la pantalla del evento para verlo');
 }
 
@@ -2806,19 +2882,20 @@ function saveDesign(){
 
 
 function resetDesign(){
-  if(!confirm('¿Resetear el diseño al tema oscuro por defecto?')) return;
-  localStorage.removeItem('ew_design_'+selectedEvent?.id);
-  showDesign();
-  toast('↺ Diseño reseteado');
+  confirm2('Se perderán todos los cambios de diseño de pantalla.',()=>{
+    localStorage.removeItem('ew_design_'+selectedEvent?.id);
+    showDesign();toast('↺ Diseño reseteado');
+  },{title:'¿Resetear diseño?',ico:'↺',danger:false});
 }
 
 // ── ALBUM ────────────────────────────────────────────────────
 async function sendAlbumManual(){
   if(!selectedEvent||!selectedEvent.client_email){toast('⚠️ Este evento no tiene email del cliente');return;}
-  if(!confirm('¿Enviar el álbum completo a '+selectedEvent.client_email+'?')) return;
-  const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.true&order=created_at.asc');
-  if(!Array.isArray(posts)||!posts.length){toast('No hay contenido para enviar');return;}
-  await sendAlbumEmail(selectedEvent, posts);
+  confirm2('Se enviará el álbum completo a '+selectedEvent.client_email+'.', async()=>{
+    const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.true&order=created_at.asc');
+    if(!Array.isArray(posts)||!posts.length){toast('No hay contenido para enviar');return;}
+    await sendAlbumEmail(selectedEvent, posts);
+  },{title:'¿Enviar álbum?',ico:'📧',danger:false});
 }
 
 async function showAlbum(){
@@ -2881,10 +2958,10 @@ function openPhotoModal(p){
 }
 
 async function deleteAlbumPhoto(id){
-  if(!confirm('¿Eliminar esta foto?')) return;
-  await api('posts?id=eq.'+id,{method:'DELETE'});
-  toast('🗑 Foto eliminada');
-  showAlbum();
+  confirm2('Esta foto se eliminará del álbum y no se puede recuperar.',async()=>{
+    await api('posts?id=eq.'+id,{method:'DELETE'});
+    toast('🗑 Foto eliminada');showAlbum();
+  },{title:'¿Eliminar foto?',ico:'🖼'});
 }
 
 // ── MESSAGES ─────────────────────────────────────────────────
@@ -2913,7 +2990,21 @@ async function loadMessages(){
     (pending?' · '+pending+' pendiente'+(pending!==1?'s':''):'');
   const list=document.getElementById('messages-list');
   if(!posts.length){
-    list.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)"><div style="font-size:48px;margin-bottom:16px">📭</div><div style="font-size:15px;font-weight:600">No hay publicaciones aún</div></div>';
+    const guestUrl=selectedEvent?(selectedEvent.custom_code||selectedEvent.id):'';
+    const guestLink=guestUrl?`${location.origin}${location.pathname.replace('admin.html','guest.html')}?event=${guestUrl}`:'';
+    list.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted)">
+      <div style="font-size:48px;margin-bottom:12px">📭</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px">Todavía no hay publicaciones</div>
+      <div style="font-size:13px;margin-bottom:20px">Compartí el link con los invitados para empezar</div>
+      ${guestLink?`<div id="empty-qr-wrap" style="display:inline-flex;flex-direction:column;align-items:center;gap:12px">
+        <div id="empty-state-qr" style="background:#fff;padding:10px;border-radius:12px;width:120px;height:120px"></div>
+        <button class="btn-pink" style="font-size:13px;padding:8px 18px" onclick="navigator.clipboard.writeText('${guestLink}').then(()=>toast('✓ Link copiado'))">🔗 Copiar link</button>
+      </div>`:''}
+    </div>`;
+    if(guestLink){
+      const qrEl=document.getElementById('empty-state-qr');
+      if(qrEl&&window.QRCode) new QRCode(qrEl,{text:guestLink,width:100,height:100,colorDark:'#000',colorLight:'#fff'});
+    }
     return;
   }
   list.innerHTML='';
@@ -2961,10 +3052,10 @@ async function loadMessages(){
 }
 
 async function deleteMsgPost(id){
-  if(!confirm('¿Eliminar esta publicación? No se puede deshacer.')) return;
-  await api('posts?id=eq.'+id,{method:'DELETE'});
-  toast('🗑 Publicación eliminada');
-  await loadMessages();
+  confirm2('Esta publicación se eliminará y no se puede recuperar.',async()=>{
+    await api('posts?id=eq.'+id,{method:'DELETE'});
+    toast('🗑 Publicación eliminada');await loadMessages();
+  },{title:'¿Eliminar publicación?',ico:'🗑'});
 }
 
 async function approveMsgPost(id){
@@ -3235,11 +3326,11 @@ async function togglePoll(id,isActive){
 }
 
 async function deletePoll(id){
-  if(!confirm('¿Eliminar esta votación y todos sus votos?')) return;
-  await api('poll_votes?poll_id=eq.'+id,{method:'DELETE'});
-  await api('polls?id=eq.'+id,{method:'DELETE'});
-  toast('🗑 Votación eliminada');
-  loadPolls();
+  confirm2('Se eliminará la votación y todos sus votos.',async()=>{
+    await api('poll_votes?poll_id=eq.'+id,{method:'DELETE'});
+    await api('polls?id=eq.'+id,{method:'DELETE'});
+    toast('🗑 Votación eliminada');loadPolls();
+  },{title:'¿Eliminar votación?',ico:'🗳'});
 }
 
 // ── GUEST DESIGN ─────────────────────────────────────────────
@@ -3414,7 +3505,7 @@ function updateGuestPreview(){
 }
 
 
-async function saveGuestDesign(){
+async function saveGuestDesign(btn){
   if(!selectedEvent){toast('Seleccioná un evento primero');return;}
   const design={
     title:document.getElementById('gd-title').value,
@@ -3468,6 +3559,7 @@ async function saveGuestDesign(){
       toast('❌ Error al guardar: ' + text.slice(0,80));
       return;
     }
+    if(btn) btnSaved(btn);
     toast('✅ Configuración guardada — se aplica en los celulares al instante');
   } catch(e) {
     toast('❌ Error de red: ' + e.message);
@@ -3542,5 +3634,18 @@ if(sessionStorage.getItem('ew_unlocked')==='1'){
 // Save session on unlock
 
 </script>
+
+<!-- CUSTOM CONFIRM MODAL -->
+<div class="cmodal-overlay" id="cmodal-overlay">
+  <div class="cmodal">
+    <div class="cmodal-ico" id="cmodal-ico">⚠️</div>
+    <div class="cmodal-title" id="cmodal-title">¿Estás seguro?</div>
+    <div class="cmodal-msg" id="cmodal-msg"></div>
+    <div class="cmodal-btns">
+      <button class="cmodal-cancel" onclick="cmodalClose()">Cancelar</button>
+      <button class="cmodal-confirm" id="cmodal-confirm-btn" onclick="cmodalConfirm()">Confirmar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
