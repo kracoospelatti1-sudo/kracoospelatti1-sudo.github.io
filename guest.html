@@ -1903,12 +1903,12 @@ async function sendPhoto(){
     renderPreviewCanvas();
     // Moderate photo with AI before uploading
     const canvas=document.getElementById('preview-canvas');
-    const dataUrl=canvas.toDataURL('image/jpeg',0.82);
+    const dataUrl=canvas.toDataURL('image/jpeg',0.95);
     setProgress(15,'Verificando foto...');
     const mod=await moderatePhotoWithAI(dataUrl);
     if(!mod.safe){hideSending();showFormError('photo-error','❌ La foto no es apropiada para este evento'+(mod.reason?' ('+mod.reason+')':'')+'.'); return;}
     // Upload photo with frame/filter/stickers
-    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.82));
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.95));
     const file=new File([blob],'photo.jpg',{type:'image/jpeg'});
     setProgress(30,'Subiendo foto...');
     const url=await uploadFile(file,'photos');
