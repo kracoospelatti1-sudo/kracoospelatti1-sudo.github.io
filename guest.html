@@ -258,6 +258,7 @@ body{
   font-family:'DM Sans',sans-serif;
 }
 .size-opt.active{border-color:var(--pink);background:var(--pink-light);color:var(--pink)}
+.fmt-opt{padding:6px 10px;min-width:36px;text-align:center}
 .style-row{display:flex;gap:6px}
 .bubble-style-btn{
   flex:1;padding:9px 4px;border-radius:8px;
@@ -722,12 +723,12 @@ body{
           </div>
           <div style="flex:1;min-width:120px">
             <span class="custom-label">Formato</span>
-            <div style="display:flex;gap:6px">
-              <button class="size-opt" id="tog-bold" onclick="toggleMsgStyle('bold',this)" style="font-weight:800">B</button>
-              <button class="size-opt" id="tog-italic" onclick="toggleMsgStyle('italic',this)" style="font-style:italic">I</button>
-              <button class="size-opt" id="tog-underline" onclick="toggleMsgStyle('underline',this)" style="text-decoration:underline">U</button>
-              <button class="size-opt" id="tog-shadow" onclick="toggleMsgStyle('shadow',this)" style="text-shadow:1px 1px 3px rgba(0,0,0,0.4)">S</button>
-              <button class="size-opt" id="tog-outline" onclick="toggleMsgStyle('outline',this);" style="-webkit-text-stroke:1px #f0176f;color:transparent">O</button>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <button class="size-opt fmt-opt" id="tog-bold" onclick="toggleMsgStyle('bold',this)" style="font-weight:800">B</button>
+              <button class="size-opt fmt-opt" id="tog-italic" onclick="toggleMsgStyle('italic',this)" style="font-style:italic">I</button>
+              <button class="size-opt fmt-opt" id="tog-underline" onclick="toggleMsgStyle('underline',this)" style="text-decoration:underline">U</button>
+              <button class="size-opt fmt-opt" id="tog-shadow" onclick="toggleMsgStyle('shadow',this)" style="text-shadow:1px 1px 3px rgba(0,0,0,0.4)">S</button>
+              <button class="size-opt fmt-opt" id="tog-outline" onclick="toggleMsgStyle('outline',this);" style="-webkit-text-stroke:1px #f0176f;color:transparent">O</button>
             </div>
           </div>
         </div>
