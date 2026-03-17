@@ -2082,6 +2082,7 @@ async function sendAlbumEmail(ev, posts){
         },
         body:JSON.stringify({
           eventName: ev.name,
+          eventDate: ev.date,
           clientEmail: ev.client_email,
           photos, messages, wishes, audios
         })
