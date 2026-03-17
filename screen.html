@@ -411,7 +411,7 @@ const mosaicParam=params.get('mosaic');
 let eventName='';
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
 let currentFeaturedPostId=null;
-let cfg={interval:6000,sound:'none',fsBubble:32,carouselLimit:5,transition:'fade',kenBurns:'no',waitTitle:'',waitSubtitle:'',waitStart:'',waitCountdown:'yes'};
+let cfg={interval:6000,sound:'none',fsBubble:32,carouselLimit:5,transition:'fade',kenBurns:'no',polaroid:'no',waitTitle:'',waitSubtitle:'',waitStart:'',waitCountdown:'yes'};
 
 function formatDateES(str){
   if(!str) return '';
@@ -500,6 +500,7 @@ function applyTheme(design){
   if(design.interval) cfg.interval=parseInt(design.interval)*1000;
   if(design.sound) cfg.sound=design.sound;
   if(design.kenBurns) cfg.kenBurns=design.kenBurns;
+  if(design.polaroid) cfg.polaroid=design.polaroid;
   if(design.waitTitle) cfg.waitTitle=design.waitTitle;
   if(design.waitSubtitle) cfg.waitSubtitle=design.waitSubtitle;
   if(design.waitStart) cfg.waitStart=design.waitStart;
@@ -1103,7 +1104,7 @@ async function pollPosts(){
   if(newItems.length){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
-        showPolaroid(p);
+        if(cfg.polaroid==='yes') showPolaroid(p);
         if(!currentFeaturedPostId){
           // No photo yet — show immediately
           photoPosts.unshift(p);

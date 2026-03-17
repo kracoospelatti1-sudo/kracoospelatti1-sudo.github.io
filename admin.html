@@ -733,6 +733,13 @@ input[type=range]{accent-color:var(--pink)}
                 </select>
               </div>
               <div class="design-field">
+                <label>Polaroid digital 📸</label>
+                <select id="cfg-polaroid">
+                  <option value="no">Desactivado</option>
+                  <option value="yes">Activado (aparece al llegar foto nueva)</option>
+                </select>
+              </div>
+              <div class="design-field">
                 <label>Sonido al recibir contenido</label>
                 <select id="cfg-sound">
                   <option value="chime">Campanita 🔔</option>
@@ -2337,6 +2344,7 @@ function showDesign(){
   setVal('cfg-carousel-limit',saved.carouselLimit||'5');
   setVal('cfg-transition',saved.transition||'fade');
   setVal('cfg-ken-burns',saved.kenBurns||'no');
+  setVal('cfg-polaroid',saved.polaroid||'no');
   setVal('cfg-fit',saved.fit||'contain');
   setVal('cfg-wait-title',saved.waitTitle||'');
   setVal('cfg-wait-subtitle',saved.waitSubtitle||'');
@@ -2647,6 +2655,7 @@ function saveDesign(){
     carouselLimit:getV('cfg-carousel-limit')||'5',
     transition:getV('cfg-transition')||'fade',
     kenBurns:getV('cfg-ken-burns')||'no',
+    polaroid:getV('cfg-polaroid')||'no',
     fit:getV('cfg-fit')||'contain',
     waitTitle:getV('cfg-wait-title')||'',
     waitSubtitle:getV('cfg-wait-subtitle')||'',
