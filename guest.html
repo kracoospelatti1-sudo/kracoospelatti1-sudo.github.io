@@ -1560,10 +1560,12 @@ async function applyGuestDesign(ev){
   gdFlags.wmOpacity=d.wmOpacity||70;
   // Preload watermark image
   if(gdFlags.wmUrl){
-    const img=new Image();img.crossOrigin='anonymous';
-    img.onload=()=>{_wmImage=img;};
-    img.onerror=()=>{_wmImage=null;};
-    img.src=gdFlags.wmUrl;
+    if(!_wmImage||_wmImage.src!==gdFlags.wmUrl){
+      const img=new Image();img.crossOrigin='anonymous';
+      img.onload=()=>{_wmImage=img;if(originalImage)renderPreviewCanvas();};
+      img.onerror=()=>{_wmImage=null;};
+      img.src=gdFlags.wmUrl;
+    }
   } else { _wmImage=null; }
 
   // Reactions — hide all gallery-reactions divs
