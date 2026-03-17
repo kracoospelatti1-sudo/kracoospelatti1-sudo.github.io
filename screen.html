@@ -1192,17 +1192,12 @@ async function init(){
   if(mosaicParam==='1') startMosaic();
   clearInterval(rotateTimer);
   rotateTimer=setInterval(rotateFeatured,cfg.interval);
-  setInterval(pollPosts,5000);
-  setInterval(pollWishes,7000);
-  setInterval(pollMessages,6000);
-  setInterval(pollForPolls,5000);
-  setInterval(pollMoments,5000);
-  setInterval(()=>{if(currentFeaturedPostId)updateFeaturedReactions(currentFeaturedPostId);},7000);
-  // Cargar supabase-js async — no bloquea init(), Realtime llega en ~1s
-  const _sbScript=document.createElement('script');
-  _sbScript.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-  _sbScript.onload=initRealtime;
-  document.head.appendChild(_sbScript);
+  setInterval(pollPosts,3000);
+  setInterval(pollWishes,5000);
+  setInterval(pollMessages,3500);
+  setInterval(pollForPolls,4000);
+  setInterval(pollMoments,3000);
+  setInterval(()=>{if(currentFeaturedPostId)updateFeaturedReactions(currentFeaturedPostId);},5000);
 }
 
 async function updateFeaturedReactions(postId){
@@ -1875,35 +1870,7 @@ function showPolaroid(post){
   },5500);
 }
 
-// ── SUPABASE REALTIME ──────────────────────────────────────────
-function initRealtime(){
-  try{
-    const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-    // Posts: fotos, mensajes, deseos, audio
-    sb.channel('ew-posts-'+eventId)
-      .on('postgres_changes',{event:'*',schema:'public',table:'posts',filter:'event_id=eq.'+eventId},
-        ()=>{pollPosts();pollMessages();pollWishes();})
-      .subscribe();
-    // Reacciones en foto featured
-    sb.channel('ew-reactions-'+eventId)
-      .on('postgres_changes',{event:'*',schema:'public',table:'reactions',filter:'event_id=eq.'+eventId},
-        ()=>{if(currentFeaturedPostId)updateFeaturedReactions(currentFeaturedPostId);})
-      .subscribe();
-    // Votaciones
-    sb.channel('ew-polls-'+eventId)
-      .on('postgres_changes',{event:'*',schema:'public',table:'polls',filter:'event_id=eq.'+eventId},
-        ()=>{pollForPolls();})
-      .subscribe();
-    // Momentos especiales
-    sb.channel('ew-moments-'+eventId)
-      .on('postgres_changes',{event:'*',schema:'public',table:'moments',filter:'event_id=eq.'+eventId},
-        ()=>{pollMoments();})
-      .subscribe();
-    console.log('[EventWall] Realtime conectado');
-  }catch(e){
-    console.warn('[EventWall] Realtime no disponible, usando polling:',e);
-  }
-}
+
 </script>
 </body>
 </html>
