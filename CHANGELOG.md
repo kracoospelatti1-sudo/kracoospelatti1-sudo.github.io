@@ -302,3 +302,16 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Sidebar configurable en screen (ancho, visibilidad)
 - EliminaciÃ³n instantÃ¡nea de mensajes/deseos en screen al moderar desde admin
 
+---
+
+### 2026-03-18 â€” SesiÃ³n 11
+
+**Favicon y Ã­conos de pestaÃ±a**
+
+*Assets:*
+- Nuevo `favicon.ico` para la pestaÃ±a del navegador
+- Nuevos `favicon-192.png` y `apple-touch-icon.png` para navegadores y accesos directos
+
+*HTML:*
+- `index.html`, `admin.html`, `guest.html` y `screen.html` ahora referencian el favicon y el icono touch
+
