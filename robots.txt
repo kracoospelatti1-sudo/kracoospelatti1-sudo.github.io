@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kracoospelatti1-sudo.github.io/sitemap.xml
+Sitemap: https://darkblue-swallow-842981.hostingersite.com/sitemap.xml

@@ -113,6 +113,14 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 
 ---
 
+### 2026-03-18 - Sesion 14
+
+**Migracion SEO a Hostinger**
+- `index.html` ahora usa `darkblue-swallow-842981.hostingersite.com` en `canonical`, `hreflang`, Open Graph, Twitter y schemas
+- `robots.txt` y `sitemap.xml` se actualizaron para apuntar al dominio de Hostinger en lugar de GitHub Pages
+
+---
+
 ---
 
 ### 2026-03-18 - Sesion 7
