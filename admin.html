@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>EventWall Â· Admin</title>
+<title>EventWall · Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -105,7 +105,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--pink)}
 .design-advanced{border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden}
 .design-advanced summary{list-style:none;cursor:pointer;padding:14px 16px;font-size:14px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:8px;user-select:none;transition:color 0.2s}
 .design-advanced summary::-webkit-details-marker{display:none}
-.design-advanced summary::after{content:'â–¸';margin-left:auto;transition:transform 0.2s;font-size:12px}
+.design-advanced summary::after{content:'▸';margin-left:auto;transition:transform 0.2s;font-size:12px}
 .design-advanced[open] summary{color:var(--text);border-bottom:1px solid var(--border)}
 .design-advanced[open] summary::after{transform:rotate(90deg)}
 .design-advanced summary:hover{color:var(--text)}
@@ -255,7 +255,7 @@ input[type=range]{accent-color:var(--pink)}
 .album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
 .album-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
 
-/* â”€â”€ RESPONSIVE â”€â”€ */
+/* ── RESPONSIVE ── */
 .mobile-header{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
 .mobile-header .logo{margin:0;font-size:18px}
 .hamburger{background:transparent;border:1px solid var(--border);border-radius:8px;padding:7px 10px;cursor:pointer;color:var(--text);font-size:16px;line-height:1}
@@ -353,12 +353,12 @@ input[type=range]{accent-color:var(--pink)}
 <!-- PIN LOCK -->
 <div class="pin-lock" id="pin-lock">
   <div class="pin-card">
-    <div style="font-size:40px">ðŸ”’</div>
+    <div style="font-size:40px">🔒</div>
     <h2>EventWall Admin</h2>
-    <p>IngresÃ¡ el PIN de acceso</p>
-    <input type="password" class="pin-input" id="pin-input" maxlength="20" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" onkeydown="if(event.key==='Enter')submitPin()"/>
-    <button onclick="submitPin()" style="background:var(--pink);color:#fff;border:none;padding:12px 32px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:4px;box-shadow:0 4px 14px rgba(240,23,111,0.25)">Ingresar â†’</button>
-    <div class="pin-error" id="pin-error">PIN incorrecto. IntentÃ¡ de nuevo.</div>
+    <p>Ingresá el PIN de acceso</p>
+    <input type="password" class="pin-input" id="pin-input" maxlength="20" placeholder="••••••••" onkeydown="if(event.key==='Enter')submitPin()"/>
+    <button onclick="submitPin()" style="background:var(--pink);color:#fff;border:none;padding:12px 32px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif;margin-top:4px;box-shadow:0 4px 14px rgba(240,23,111,0.25)">Ingresar →</button>
+    <div class="pin-error" id="pin-error">PIN incorrecto. Intentá de nuevo.</div>
   </div>
 </div>
 
@@ -368,7 +368,7 @@ input[type=range]{accent-color:var(--pink)}
   <div class="logo">Event<span>Wall</span></div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="mob-event-badge" style="font-size:11px;color:var(--pink);font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
-    <button class="hamburger" onclick="toggleSidebar()">â˜°</button>
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
   </div>
 </div>
 <!-- MOBILE ACTIVE EVENT BANNER -->
@@ -381,29 +381,29 @@ input[type=range]{accent-color:var(--pink)}
 <div class="shell">
   <nav class="sidebar">
     <div class="logo">Event<span>Wall</span></div>
-    <button class="nav-btn active" onclick="goNav('events')">ðŸ—“ Eventos</button>
-    <button class="nav-btn" onclick="goNav('new-event')">âž• Nuevo evento</button>
+    <button class="nav-btn active" onclick="goNav('events')">🗓 Eventos</button>
+    <button class="nav-btn" onclick="goNav('new-event')">➕ Nuevo evento</button>
     <div class="nav-sep"></div>
     <div class="nav-section">Evento</div>
-    <button class="nav-btn" id="nav-btn-dashboard" onclick="goNav('dashboard')" style="display:none">ðŸ  Inicio rÃ¡pido</button>
-    <button class="nav-btn" onclick="goNav('links')">ðŸ”— Links & QR</button>
-    <button class="nav-btn" onclick="goNav('design')">ðŸŽ¨ DiseÃ±o</button>
-    <button class="nav-btn" onclick="goNav('album')">ðŸ“¥ Ãlbum</button>
-    <button class="nav-btn" onclick="goNav('messages')">ðŸ’¬ Contenido</button>
+    <button class="nav-btn" id="nav-btn-dashboard" onclick="goNav('dashboard')" style="display:none">🏠 Inicio rápido</button>
+    <button class="nav-btn" onclick="goNav('links')">🔗 Links & QR</button>
+    <button class="nav-btn" onclick="goNav('design')">🎨 Diseño</button>
+    <button class="nav-btn" onclick="goNav('album')">📥 Álbum</button>
+    <button class="nav-btn" onclick="goNav('messages')">💬 Contenido</button>
     <div class="nav-sep"></div>
     <div class="nav-section">Herramientas</div>
-    <button class="nav-btn" onclick="goNav('print')">ðŸ–¨ Modo impresiÃ³n</button>
-    <button class="nav-btn" onclick="goNav('polls')">ðŸ—³ Votaciones</button>
-    <button class="nav-btn" onclick="goNav('guest-design')">ðŸ“± Vista invitado</button>
-    <button class="nav-btn" onclick="goNav('moments')">ðŸŽ¬ Momentos</button>
-    <button class="nav-btn" onclick="goNav('settings')">âš™ï¸ ConfiguraciÃ³n</button>
-    <button class="nav-btn" onclick="goNav('help')">â“ Ayuda</button>
+    <button class="nav-btn" onclick="goNav('print')">🖨 Modo impresión</button>
+    <button class="nav-btn" onclick="goNav('polls')">🗳 Votaciones</button>
+    <button class="nav-btn" onclick="goNav('guest-design')">📱 Vista invitado</button>
+    <button class="nav-btn" onclick="goNav('moments')">🎬 Momentos</button>
+    <button class="nav-btn" onclick="goNav('settings')">⚙️ Configuración</button>
+    <button class="nav-btn" onclick="goNav('help')">❓ Ayuda</button>
     <div style="margin-top:auto">
       <div class="sidebar-event-badge">
         <div class="lbl">Evento activo</div>
         <div class="val" id="sidebar-event">Ninguno</div>
       </div>
-      <button onclick="logout()" style="display:block;width:100%;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left;transition:all 0.2s;margin-bottom:8px" onmouseenter="this.style.borderColor='#ef4444';this.style.color='#ef4444'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">ðŸšª Cerrar sesiÃ³n</button>
+      <button onclick="logout()" style="display:block;width:100%;padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left;transition:all 0.2s;margin-bottom:8px" onmouseenter="this.style.borderColor='#ef4444';this.style.color='#ef4444'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">🚪 Cerrar sesión</button>
     </div>
   </nav>
   <main class="main">
@@ -411,27 +411,27 @@ input[type=range]{accent-color:var(--pink)}
     <!-- EVENTS -->
     <div class="page active" id="page-events">
       <div class="page-title">Mis eventos</div>
-      <div class="page-sub">SeleccionÃ¡ un evento para trabajar con Ã©l</div>
+      <div class="page-sub">Seleccioná un evento para trabajar con él</div>
       <button class="btn-pink" onclick="goNav('new-event')" style="margin-bottom:20px">+ Crear nuevo evento</button>
-      <div class="events-grid" id="events-list"><div class="empty"><div class="empty-ico">â³</div><div class="empty-txt">Cargando...</div></div></div>
+      <div class="events-grid" id="events-list"><div class="empty"><div class="empty-ico">⏳</div><div class="empty-txt">Cargando...</div></div></div>
     </div>
 
     <!-- NEW EVENT -->
     <div class="page" id="page-new-event">
       <div class="page-title">Crear evento</div>
-      <div class="page-sub">CompletÃ¡ los datos del evento</div>
+      <div class="page-sub">Completá los datos del evento</div>
       <div class="card">
         <div class="card-title">Datos del evento</div>
         <div class="fg"><div><label>Nombre *</label><input type="text" id="ev-name" placeholder="Boda de Caro & Pablo"/></div><div><label>Fecha</label><input type="date" id="ev-date"/></div></div>
-        <div class="fg full"><div><label>SubtÃ­tulo</label><input type="text" id="ev-subtitle" placeholder="SalÃ³n La ArmonÃ­a Â· 20hs"/></div></div>
-        <div class="fg full"><div><label>ðŸ”— CÃ³digo personalizado (opcional)</label><input type="text" id="ev-custom-code" placeholder="ej: boda-caro-pablo" style="text-transform:lowercase"/><div style="font-size:11px;color:var(--muted);margin-top:4px">Se usa en la URL en lugar del ID. Solo letras, nÃºmeros y guiones.</div></div></div>
+        <div class="fg full"><div><label>Subtítulo</label><input type="text" id="ev-subtitle" placeholder="Salón La Armonía · 20hs"/></div></div>
+        <div class="fg full"><div><label>🔗 Código personalizado (opcional)</label><input type="text" id="ev-custom-code" placeholder="ej: boda-caro-pablo" style="text-transform:lowercase"/><div style="font-size:11px;color:var(--muted);margin-top:4px">Se usa en la URL en lugar del ID. Solo letras, números y guiones.</div></div></div>
         <div class="fg full" style="margin-bottom:0">
           <div>
-            <label>ðŸ“§ Email del cliente</label>
+            <label>📧 Email del cliente</label>
             <input type="email" id="ev-email" placeholder="cliente@email.com"/>
             <div style="display:flex;align-items:center;gap:8px;margin-top:8px;background:rgba(240,23,111,0.08);border:1px solid rgba(240,23,111,0.25);border-radius:8px;padding:8px 12px">
-              <span style="font-size:16px">ðŸ“¬</span>
-              <span style="font-size:12px;color:#f0176f">Al eliminar el evento se enviarÃ¡ automÃ¡ticamente el Ã¡lbum completo con fotos, mensajes y deseos a este email.</span>
+              <span style="font-size:16px">📬</span>
+              <span style="font-size:12px;color:#f0176f">Al eliminar el evento se enviará automáticamente el álbum completo con fotos, mensajes y deseos a este email.</span>
             </div>
           </div>
         </div>
@@ -440,12 +440,12 @@ input[type=range]{accent-color:var(--pink)}
             <label>PIN del cliente</label>
             <div style="display:flex;gap:8px">
               <input type="text" id="ev-pin" placeholder="Ej: 4892" maxlength="20" style="flex:1"/>
-              <button type="button" onclick="generatePin()" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0 14px;cursor:pointer;color:var(--muted);font-size:13px;white-space:nowrap">ðŸŽ² Auto</button>
+              <button type="button" onclick="generatePin()" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:0 14px;cursor:pointer;color:var(--muted);font-size:13px;white-space:nowrap">🎲 Auto</button>
             </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">El cliente usa este PIN. Vos usÃ¡s tu PIN maestro.</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">El cliente usa este PIN. Vos usás tu PIN maestro.</div>
           </div>
           <div>
-            <label>DuraciÃ³n del acceso</label>
+            <label>Duración del acceso</label>
             <select id="ev-pin-duration">
               <option value="0">Sin vencimiento</option>
               <option value="0.033">2 minutos (prueba)</option>
@@ -458,79 +458,79 @@ input[type=range]{accent-color:var(--pink)}
               <option value="12" selected>12 horas</option>
               <option value="24">24 horas</option>
               <option value="48">48 horas</option>
-              <option value="72">72 horas (3 dÃ­as)</option>
+              <option value="72">72 horas (3 días)</option>
             </select>
           </div>
         </div>
-        <button class="btn-pink" id="create-btn" onclick="evCreate()">Crear evento â†’</button>
+        <button class="btn-pink" id="create-btn" onclick="evCreate()">Crear evento →</button>
       </div>
     </div>
 
     <!-- DASHBOARD -->
     <div class="page" id="page-dashboard">
-      <div class="page-title" id="dash-ev-name">â€”</div>
+      <div class="page-title" id="dash-ev-name">—</div>
       <div class="page-sub" id="dash-ev-sub"></div>
       <div class="dash-grid">
         <!-- QR -->
         <div class="card dash-qr-card">
           <div class="card-title" style="text-align:center">QR invitados</div>
           <div class="dash-qr-box"><div id="dash-qr"></div></div>
-          <button class="dash-copy-btn secondary" onclick="downloadQR('#dash-qr img')">â¬‡ Descargar QR</button>
+          <button class="dash-copy-btn secondary" onclick="downloadQR('#dash-qr img')">⬇ Descargar QR</button>
         </div>
         <!-- Links + Stats -->
         <div>
           <div class="card">
             <div class="dash-link-block">
-              <div class="dash-link-label">ðŸ“º Pantalla (TV)</div>
-              <span id="dash-screen-url" class="dash-link-url">â€”</span>
+              <div class="dash-link-label">📺 Pantalla (TV)</div>
+              <span id="dash-screen-url" class="dash-link-url">—</span>
               <button class="dash-copy-btn" onclick="copyLink('dash-screen-url')">Copiar URL pantalla</button>
             </div>
           </div>
           <div class="card" style="margin-top:12px">
             <div class="dash-link-block">
-              <div class="dash-link-label">ðŸ“± Link para invitados</div>
-              <span id="dash-guest-url" class="dash-link-url">â€”</span>
+              <div class="dash-link-label">📱 Link para invitados</div>
+              <span id="dash-guest-url" class="dash-link-url">—</span>
               <button class="dash-copy-btn" onclick="copyLink('dash-guest-url')">Copiar link invitados</button>
             </div>
           </div>
           <div class="dash-stats" id="dash-stats">
-            <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-photos">â€”</span><span class="dash-stat-lbl">fotos</span></div>
-            <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-msgs">â€”</span><span class="dash-stat-lbl">mensajes</span></div>
-            <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-wishes">â€”</span><span class="dash-stat-lbl">deseos</span></div>
+            <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-photos">—</span><span class="dash-stat-lbl">fotos</span></div>
+            <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-msgs">—</span><span class="dash-stat-lbl">mensajes</span></div>
+            <div class="dash-stat"><span class="dash-stat-num" id="dash-cnt-wishes">—</span><span class="dash-stat-lbl">deseos</span></div>
           </div>
         </div>
       </div>
       <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
-        <button class="btn-pink" style="flex:1;justify-content:center;display:flex;align-items:center;gap:8px" onclick="openScreenDash()">ðŸ“º Abrir pantalla</button>
-        <button class="btn-ghost" style="flex:1;justify-content:center;display:flex;align-items:center;gap:8px" onclick="copyLink('dash-screen-url')">ðŸ”— Copiar URL</button>
+        <button class="btn-pink" style="flex:1;justify-content:center;display:flex;align-items:center;gap:8px" onclick="openScreenDash()">📺 Abrir pantalla</button>
+        <button class="btn-ghost" style="flex:1;justify-content:center;display:flex;align-items:center;gap:8px" onclick="copyLink('dash-screen-url')">🔗 Copiar URL</button>
       </div>
       <div class="dash-actions">
-        <button class="dash-action-btn" onclick="goNav('messages')"><span class="dash-action-ico">ðŸ’¬</span>Ver contenido</button>
-        <button class="dash-action-btn" onclick="goNav('links')"><span class="dash-action-ico">ðŸ”—</span>Links & QR</button>
-        <button class="dash-action-btn" onclick="goNav('design')"><span class="dash-action-ico">ðŸŽ¨</span>DiseÃ±o pantalla</button>
-        <button class="dash-action-btn" onclick="goNav('guest-design')"><span class="dash-action-ico">ðŸ“±</span>Vista invitado</button>
-        <button class="dash-action-btn" onclick="goNav('album')"><span class="dash-action-ico">ðŸ“¥</span>Ãlbum</button>
-        <button class="dash-action-btn" onclick="goNav('moments')"><span class="dash-action-ico">ðŸŽ¬</span>Momentos</button>
+        <button class="dash-action-btn" onclick="goNav('messages')"><span class="dash-action-ico">💬</span>Ver contenido</button>
+        <button class="dash-action-btn" onclick="goNav('links')"><span class="dash-action-ico">🔗</span>Links & QR</button>
+        <button class="dash-action-btn" onclick="goNav('design')"><span class="dash-action-ico">🎨</span>Diseño pantalla</button>
+        <button class="dash-action-btn" onclick="goNav('guest-design')"><span class="dash-action-ico">📱</span>Vista invitado</button>
+        <button class="dash-action-btn" onclick="goNav('album')"><span class="dash-action-ico">📥</span>Álbum</button>
+        <button class="dash-action-btn" onclick="goNav('moments')"><span class="dash-action-ico">🎬</span>Momentos</button>
       </div>
     </div>
 
     <!-- LINKS -->
     <div class="page" id="page-links">
       <div class="page-title">Links & QR</div>
-      <div class="page-sub">CompartÃ­ con tu equipo e invitados</div>
-      <div class="notice" id="links-notice">âš ï¸ SeleccionÃ¡ un evento primero</div>
+      <div class="page-sub">Compartí con tu equipo e invitados</div>
+      <div class="notice" id="links-notice">⚠️ Seleccioná un evento primero</div>
       <div id="links-content" style="display:none">
         <div class="card">
-          <div class="card-title">CÃ³digo del evento</div>
+          <div class="card-title">Código del evento</div>
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:20px;margin-bottom:20px;padding:20px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)">
             <div style="text-align:center;flex-shrink:0">
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">CÃ³digo</div>
-              <div id="event-code-display" style="font-family:monospace;font-size:clamp(28px,5vw,52px);font-weight:800;color:var(--pink);letter-spacing:4px;line-height:1">â€”</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:8px">EscribÃ­ este cÃ³digo en el TV</div>
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Código</div>
+              <div id="event-code-display" style="font-family:monospace;font-size:clamp(28px,5vw,52px);font-weight:800;color:var(--pink);letter-spacing:4px;line-height:1">—</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:8px">Escribí este código en el TV</div>
             </div>
             <div style="flex:1;min-width:180px;border-left:1px solid var(--border);padding-left:20px">
               <div style="font-size:13px;color:var(--muted);line-height:1.8">
-                En el televisor abrÃ­ el navegador y escribÃ­:<br>
+                En el televisor abrí el navegador y escribí:<br>
                 <span id="screen-short-url" style="font-family:monospace;font-size:13px;color:var(--text);background:var(--surface);padding:4px 10px;border-radius:6px;display:block;margin-top:6px;word-break:break-all;overflow-wrap:anywhere"></span>
               </div>
               <button class="copy-btn" style="margin-top:12px;white-space:nowrap" onclick="copyText(document.getElementById('link-screen').textContent)">Copiar URL pantalla</button>
@@ -539,16 +539,16 @@ input[type=range]{accent-color:var(--pink)}
         </div>
         <div class="card">
           <div class="card-title">URLs del evento</div>
-          <div class="link-row"><span class="link-label">ðŸ“º Pantalla</span><div class="link-box" id="link-screen">â€”</div><button class="copy-btn" onclick="copyLink('link-screen')">Copiar</button><button class="copy-btn" onclick="openMosaicMode()" style="background:var(--pink-dim);color:var(--pink);margin-left:4px">ðŸ§© Mosaico</button></div>
-          <div class="link-row"><span class="link-label">ðŸ“± Invitados</span><div class="link-box" id="link-guest">â€”</div><button class="copy-btn" onclick="copyLink('link-guest')">Copiar</button></div>
+          <div class="link-row"><span class="link-label">📺 Pantalla</span><div class="link-box" id="link-screen">—</div><button class="copy-btn" onclick="copyLink('link-screen')">Copiar</button><button class="copy-btn" onclick="openMosaicMode()" style="background:var(--pink-dim);color:var(--pink);margin-left:4px">🧩 Mosaico</button></div>
+          <div class="link-row"><span class="link-label">📱 Invitados</span><div class="link-box" id="link-guest">—</div><button class="copy-btn" onclick="copyLink('link-guest')">Copiar</button></div>
         </div>
         <div class="card">
           <div class="card-title">QR para imprimir</div>
           <div class="qr-wrap">
             <div class="qr-box"><div id="qr-container"></div></div>
             <div>
-              <p style="font-size:13px;color:var(--muted);line-height:1.7;max-width:300px">PonÃ© este QR en cada mesa. Los invitados lo escanean y participan al instante.</p>
-              <button class="btn-pink" style="margin-top:14px" onclick="downloadQR()">â¬‡ Descargar QR</button>
+              <p style="font-size:13px;color:var(--muted);line-height:1.7;max-width:300px">Poné este QR en cada mesa. Los invitados lo escanean y participan al instante.</p>
+              <button class="btn-pink" style="margin-top:14px" onclick="downloadQR()">⬇ Descargar QR</button>
             </div>
           </div>
         </div>
@@ -557,9 +557,9 @@ input[type=range]{accent-color:var(--pink)}
 
     <!-- DESIGN -->
     <div class="page" id="page-design">
-  <div class="page-title">DiseÃ±o de pantalla</div>
-  <div class="page-sub">PersonalizÃ¡ cÃ³mo se ve la pantalla del evento</div>
-  <div class="notice" id="design-notice">âš ï¸ SeleccionÃ¡ un evento primero</div>
+  <div class="page-title">Diseño de pantalla</div>
+  <div class="page-sub">Personalizá cómo se ve la pantalla del evento</div>
+  <div class="notice" id="design-notice">⚠️ Seleccioná un evento primero</div>
 
   <div id="design-content" style="display:none">
 
@@ -571,8 +571,8 @@ input[type=range]{accent-color:var(--pink)}
         <!-- PLANTILLAS - siempre visible -->
         <div id="dtab-plantillas">
           <div class="card">
-            <div class="card-title">ðŸŽ¨ Plantillas rÃ¡pidas</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">EmpezÃ¡ con una plantilla y luego personalizÃ¡ los detalles</p>
+            <div class="card-title">🎨 Plantillas rápidas</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Empezá con una plantilla y luego personalizá los detalles</p>
             <div class="template-grid">
 
               <div class="tpl-card" onclick="applyTemplate('dark',this)" style="background:#09090f">
@@ -582,7 +582,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#fff"></div>
                   <div class="tpl-mock-btn" style="background:#f0176f"></div>
                 </div>
-                <div class="tpl-name" style="background:#0f0f1a;color:#fff">ðŸŒ‘ Dark</div>
+                <div class="tpl-name" style="background:#0f0f1a;color:#fff">🌑 Dark</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('light',this)" style="background:#f8f4ef">
@@ -592,7 +592,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#333"></div>
                   <div class="tpl-mock-btn" style="background:#e91e8c"></div>
                 </div>
-                <div class="tpl-name" style="background:#f0ede8;color:#1a1a1a">â˜€ï¸ Light</div>
+                <div class="tpl-name" style="background:#f0ede8;color:#1a1a1a">☀️ Light</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('neon',this)" style="background:#06000f">
@@ -602,7 +602,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#e0d0ff"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#a855f7,#ec4899)"></div>
                 </div>
-                <div class="tpl-name" style="background:#0d0020;color:#e0d0ff">âš¡ Neon</div>
+                <div class="tpl-name" style="background:#0d0020;color:#e0d0ff">⚡ Neon</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('floral',this)" style="background:#1a0a14">
@@ -612,7 +612,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#ffd0e8"></div>
                   <div class="tpl-mock-btn" style="background:#ff6b9d"></div>
                 </div>
-                <div class="tpl-name" style="background:#2d1020;color:#ffd0e8">ðŸŒ¸ Floral</div>
+                <div class="tpl-name" style="background:#2d1020;color:#ffd0e8">🌸 Floral</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('gold',this)" style="background:#0d0900">
@@ -622,7 +622,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#f5d060"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#f5a623,#c9a84c)"></div>
                 </div>
-                <div class="tpl-name" style="background:#1a1000;color:#f5d060">âœ¨ Gold</div>
+                <div class="tpl-name" style="background:#1a1000;color:#f5d060">✨ Gold</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('ocean',this)" style="background:#021020">
@@ -632,7 +632,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#bfdbfe"></div>
                   <div class="tpl-mock-btn" style="background:#60a5fa"></div>
                 </div>
-                <div class="tpl-name" style="background:#041830;color:#bfdbfe">ðŸŒŠ Ocean</div>
+                <div class="tpl-name" style="background:#041830;color:#bfdbfe">🌊 Ocean</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('fiesta',this)" style="background:#0d0020">
@@ -642,7 +642,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#ffd0b0"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#ff6b35,#f0176f)"></div>
                 </div>
-                <div class="tpl-name" style="background:#1a0040;color:#ffd0b0">ðŸŽ‰ Fiesta</div>
+                <div class="tpl-name" style="background:#1a0040;color:#ffd0b0">🎉 Fiesta</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('wedding',this)" style="background:#1a0f0f">
@@ -652,7 +652,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#f5e6d0"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#d4af8c,#c9a06a)"></div>
                 </div>
-                <div class="tpl-name" style="background:#2d1515;color:#f5e6d0">ðŸ’’ Boda</div>
+                <div class="tpl-name" style="background:#2d1515;color:#f5e6d0">💒 Boda</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('cyber',this)" style="background:#050010">
@@ -662,7 +662,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#b0f0ff"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#00f5ff,#a855f7)"></div>
                 </div>
-                <div class="tpl-name" style="background:#0a0020;color:#b0f0ff">ðŸ¤– Cyber</div>
+                <div class="tpl-name" style="background:#0a0020;color:#b0f0ff">🤖 Cyber</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('luxury',this)" style="background:#080600">
@@ -672,7 +672,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#f5d060"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#c9a84c,#f5d060)"></div>
                 </div>
-                <div class="tpl-name" style="background:#120e00;color:#f5d060">ðŸ‘‘ Lujo</div>
+                <div class="tpl-name" style="background:#120e00;color:#f5d060">👑 Lujo</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('xv',this)" style="background:#1a0030">
@@ -682,7 +682,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#f0d0ff"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#e040fb,#f48fb1)"></div>
                 </div>
-                <div class="tpl-name" style="background:#2a0050;color:#f0d0ff">ðŸŒ¸ XV AÃ±os</div>
+                <div class="tpl-name" style="background:#2a0050;color:#f0d0ff">🌸 XV Años</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('corporate',this)" style="background:#0a1628">
@@ -692,7 +692,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#bfdbfe"></div>
                   <div class="tpl-mock-btn" style="background:#3b82f6"></div>
                 </div>
-                <div class="tpl-name" style="background:#0f2040;color:#bfdbfe">ðŸ¢ Corp</div>
+                <div class="tpl-name" style="background:#0f2040;color:#bfdbfe">🏢 Corp</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('birthday',this)" style="background:#1a0010">
@@ -702,7 +702,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#ffd0ee"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#f472b6,#fb923c)"></div>
                 </div>
-                <div class="tpl-name" style="background:#280020;color:#ffd0ee">ðŸŽ‚ Cumple</div>
+                <div class="tpl-name" style="background:#280020;color:#ffd0ee">🎂 Cumple</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('boho',this)" style="background:#1a1208">
@@ -712,7 +712,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#e8d5b8"></div>
                   <div class="tpl-mock-btn" style="background:#a8825c"></div>
                 </div>
-                <div class="tpl-name" style="background:#2d2010;color:#e8d5b8">ðŸŒ¿ Boho</div>
+                <div class="tpl-name" style="background:#2d2010;color:#e8d5b8">🌿 Boho</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('sunset',this)" style="background:#1a0808">
@@ -722,7 +722,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#fed7aa"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#fb923c,#f0176f)"></div>
                 </div>
-                <div class="tpl-name" style="background:#2d1008;color:#fed7aa">ðŸŒ… Sunset</div>
+                <div class="tpl-name" style="background:#2d1008;color:#fed7aa">🌅 Sunset</div>
               </div>
 
               <div class="tpl-card" onclick="applyTemplate('roseclaro',this)" style="background:#fff0f5">
@@ -732,30 +732,30 @@ input[type=range]{accent-color:var(--pink)}
                   <div class="tpl-mock-line w50" style="background:#6b2040"></div>
                   <div class="tpl-mock-btn" style="background:linear-gradient(90deg,#e91e8c,#f472b6)"></div>
                 </div>
-                <div class="tpl-name" style="background:#ffe0ec;color:#6b2040">ðŸŒ· Rosa</div>
+                <div class="tpl-name" style="background:#ffe0ec;color:#6b2040">🌷 Rosa</div>
               </div>
 
             </div>
           </div>
         </div>
 
-        <!-- PERSONALIZACIÃ“N AVANZADA -->
+        <!-- PERSONALIZACIÓN AVANZADA -->
         <details class="design-advanced" id="design-advanced">
-          <summary>âš™ï¸ PersonalizaciÃ³n avanzada</summary>
+          <summary>⚙️ Personalización avanzada</summary>
           <div class="design-advanced-inner">
             <div style="display:flex;gap:4px;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;flex-wrap:wrap">
-              <button class="dtab active" onclick="switchDesignTab('colores',this)">ðŸ–Œ Colores</button>
-              <button class="dtab" onclick="switchDesignTab('tipografia',this)">ðŸ”¤ TipografÃ­a</button>
-              <button class="dtab" onclick="switchDesignTab('layout',this)">ðŸ“ Layout</button>
-              <button class="dtab" onclick="switchDesignTab('burbuja',this)">ðŸ’¬ Burbuja</button>
-              <button class="dtab" onclick="switchDesignTab('extras',this)">âœ¨ Extras</button>
-              <button class="dtab" onclick="switchDesignTab('espera',this)">â³ Espera</button>
+              <button class="dtab active" onclick="switchDesignTab('colores',this)">🖌 Colores</button>
+              <button class="dtab" onclick="switchDesignTab('tipografia',this)">🔤 Tipografía</button>
+              <button class="dtab" onclick="switchDesignTab('layout',this)">📐 Layout</button>
+              <button class="dtab" onclick="switchDesignTab('burbuja',this)">💬 Burbuja</button>
+              <button class="dtab" onclick="switchDesignTab('extras',this)">✨ Extras</button>
+              <button class="dtab" onclick="switchDesignTab('espera',this)">⏳ Espera</button>
             </div>
 
         <!-- TAB: COLORES -->
         <div class="dtab-panel active" id="dtab-colores">
           <div class="card">
-            <div class="card-title">ðŸ–Œ Colores</div>
+            <div class="card-title">🖌 Colores</div>
             <div class="design-grid">
               <div class="design-field">
                 <label>Fondo de pantalla</label>
@@ -806,10 +806,10 @@ input[type=range]{accent-color:var(--pink)}
         <!-- TAB: TIPOGRAFIA -->
         <div class="dtab-panel" id="dtab-tipografia">
           <div class="card">
-            <div class="card-title">ðŸ”¤ TipografÃ­a</div>
+            <div class="card-title">🔤 Tipografía</div>
             <div class="design-grid">
               <div class="design-field">
-                <label>Fuente de tÃ­tulos</label>
+                <label>Fuente de títulos</label>
                 <select id="f-title" onchange="previewTheme();loadGoogleFont(this.value)">
                   <option value="Syne">Syne</option>
                   <option value="Playfair Display">Playfair Display</option>
@@ -839,14 +839,14 @@ input[type=range]{accent-color:var(--pink)}
                 </select>
               </div>
               <div class="design-field">
-                <label>TamaÃ±o nombre del evento</label>
+                <label>Tamaño nombre del evento</label>
                 <div style="display:flex;align-items:center;gap:10px">
                   <input type="range" id="fs-title" min="14" max="40" value="22" oninput="previewTheme();document.getElementById('fs-title-val').textContent=this.value+'px'" style="flex:1"/>
                   <span id="fs-title-val" style="font-size:12px;color:var(--muted);min-width:36px">22px</span>
                 </div>
               </div>
               <div class="design-field">
-                <label>TamaÃ±o texto burbuja</label>
+                <label>Tamaño texto burbuja</label>
                 <div style="display:flex;align-items:center;gap:10px">
                   <input type="range" id="fs-bubble" min="16" max="60" value="32" oninput="document.getElementById('fs-bubble-val').textContent=this.value+'px'" style="flex:1"/>
                   <span id="fs-bubble-val" style="font-size:12px;color:var(--muted);min-width:36px">32px</span>
@@ -859,7 +859,7 @@ input[type=range]{accent-color:var(--pink)}
         <!-- TAB: LAYOUT -->
         <div class="dtab-panel" id="dtab-layout">
           <div class="card">
-            <div class="card-title">ðŸ“ Layout</div>
+            <div class="card-title">📐 Layout</div>
             <div class="design-grid">
               <div class="design-field">
                 <label>Mostrar header</label>
@@ -884,17 +884,17 @@ input[type=range]{accent-color:var(--pink)}
                 </select>
               </div>
               <div class="design-field">
-                <label>TamaÃ±o del QR</label>
+                <label>Tamaño del QR</label>
                 <select id="cfg-qr-size">
                   <option value="120">Grande (120px)</option>
                   <option value="80">Mediano (80px)</option>
-                  <option value="60">PequeÃ±o (60px)</option>
+                  <option value="60">Pequeño (60px)</option>
                   <option value="0">Ocultar QR</option>
                 </select>
               </div>
               <div class="design-field">
                 <label>Texto bajo el QR</label>
-                <input type="text" id="cfg-qr-text" placeholder="EscaneÃ¡ para participar"/>
+                <input type="text" id="cfg-qr-text" placeholder="Escaneá para participar"/>
               </div>
               <div class="design-field" style="display:none">
                 <label>Mostrar contadores</label>
@@ -913,10 +913,10 @@ input[type=range]{accent-color:var(--pink)}
               <div class="design-field">
                 <label>Fotos en el carrusel</label>
                 <select id="cfg-carousel-limit">
-                  <option value="3">Ãšltimas 3 fotos</option>
-                  <option value="5" selected>Ãšltimas 5 fotos</option>
-                  <option value="10">Ãšltimas 10 fotos</option>
-                  <option value="20">Ãšltimas 20 fotos</option>
+                  <option value="3">Últimas 3 fotos</option>
+                  <option value="5" selected>Últimas 5 fotos</option>
+                  <option value="10">Últimas 10 fotos</option>
+                  <option value="20">Últimas 20 fotos</option>
                   <option value="999">Todas las fotos</option>
                 </select>
               </div>
@@ -925,23 +925,23 @@ input[type=range]{accent-color:var(--pink)}
                 <input type="number" id="cfg-interval" value="6" min="3" max="60"/>
               </div>
               <div class="design-field">
-                <label>TransiciÃ³n entre fotos</label>
+                <label>Transición entre fotos</label>
                 <select id="cfg-transition">
                   <option value="fade">Fade suave</option>
                   <option value="slide">Deslizar</option>
                   <option value="zoom">Zoom</option>
-                  <option value="none">Sin transiciÃ³n</option>
+                  <option value="none">Sin transición</option>
                 </select>
               </div>
               <div class="design-field">
-                <label>Efecto Ken Burns ðŸŽ¬</label>
+                <label>Efecto Ken Burns 🎬</label>
                 <select id="cfg-ken-burns">
                   <option value="no">Desactivado</option>
                   <option value="yes">Activado (zoom + paneo)</option>
                 </select>
               </div>
               <div class="design-field">
-                <label>Polaroid digital ðŸ“¸</label>
+                <label>Polaroid digital 📸</label>
                 <select id="cfg-polaroid">
                   <option value="no">Desactivado</option>
                   <option value="yes">Activado (aparece al llegar foto nueva)</option>
@@ -950,8 +950,8 @@ input[type=range]{accent-color:var(--pink)}
               <div class="design-field">
                 <label>Sonido al recibir contenido</label>
                 <select id="cfg-sound">
-                  <option value="chime">Campanita ðŸ””</option>
-                  <option value="pop">Pop suave ðŸ’«</option>
+                  <option value="chime">Campanita 🔔</option>
+                  <option value="pop">Pop suave 💫</option>
                   <option value="none" selected>Sin sonido</option>
                 </select>
               </div>
@@ -962,7 +962,7 @@ input[type=range]{accent-color:var(--pink)}
         <!-- TAB: BURBUJA -->
         <div class="dtab-panel" id="dtab-burbuja">
           <div class="card">
-            <div class="card-title">ðŸ’¬ Estilo de burbuja</div>
+            <div class="card-title">💬 Estilo de burbuja</div>
             <div class="design-grid">
               <div class="design-field">
                 <label>Radio de burbuja</label>
@@ -987,7 +987,7 @@ input[type=range]{accent-color:var(--pink)}
                 </select>
               </div>
               <div class="design-field">
-                <label>PosiciÃ³n de burbuja</label>
+                <label>Posición de burbuja</label>
                 <select id="cfg-bubble-pos">
                   <option value="center">Centro</option>
                   <option value="bottom">Abajo</option>
@@ -997,16 +997,16 @@ input[type=range]{accent-color:var(--pink)}
               <div class="design-field">
                 <label>Mostrar cola de burbuja</label>
                 <select id="cfg-bubble-tail">
-                  <option value="yes">SÃ­</option>
+                  <option value="yes">Sí</option>
                   <option value="no">No</option>
                 </select>
               </div>
               <div class="design-field">
-                <label>Ãcono de burbuja</label>
+                <label>Ícono de burbuja</label>
                 <select id="cfg-bubble-icon">
-                  <option value="random">Aleatorio ðŸŽ²</option>
-                  <option value="fixed">Fijo ðŸ’¬</option>
-                  <option value="none">Sin Ã­cono</option>
+                  <option value="random">Aleatorio 🎲</option>
+                  <option value="fixed">Fijo 💬</option>
+                  <option value="none">Sin ícono</option>
                 </select>
               </div>
             </div>
@@ -1016,11 +1016,11 @@ input[type=range]{accent-color:var(--pink)}
         <!-- TAB: EXTRAS -->
         <div class="dtab-panel" id="dtab-extras">
           <div class="card">
-            <div class="card-title">âœ¨ Extras visuales</div>
+            <div class="card-title">✨ Extras visuales</div>
             <div class="design-grid">
               <div class="design-field">
                 <label>Ticker inferior</label>
-                <input type="text" id="cfg-ticker" placeholder="Texto desplazante... (vacÃ­o = oculto)"/>
+                <input type="text" id="cfg-ticker" placeholder="Texto desplazante... (vacío = oculto)"/>
               </div>
               <div class="design-field">
                 <label>Color del ticker</label>
@@ -1030,15 +1030,15 @@ input[type=range]{accent-color:var(--pink)}
                 </div>
               </div>
               <div class="design-field">
-                <label>âœ¨ Efecto de fondo animado</label>
+                <label>✨ Efecto de fondo animado</label>
                 <select id="cfg-bg-effect" onchange="previewTheme()" style="width:100%;padding:10px 12px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit">
                   <option value="none">Sin efecto</option>
-                  <option value="confetti">ðŸŽ‰ Confetti (Fiesta)</option>
-                  <option value="petals">ðŸŒ¸ PÃ©talos (RomÃ¡ntico / Boda)</option>
-                  <option value="neon">âš¡ Grilla neÃ³n (Futurista / Cyber)</option>
-                  <option value="gold">âœ¨ Polvo dorado (Elegante / Lujo)</option>
-                  <option value="stars">â­ Estrellas</option>
-                  <option value="bubbles">ðŸ«§ Burbujas</option>
+                  <option value="confetti">🎉 Confetti (Fiesta)</option>
+                  <option value="petals">🌸 Pétalos (Romántico / Boda)</option>
+                  <option value="neon">⚡ Grilla neón (Futurista / Cyber)</option>
+                  <option value="gold">✨ Polvo dorado (Elegante / Lujo)</option>
+                  <option value="stars">⭐ Estrellas</option>
+                  <option value="bubbles">🫧 Burbujas</option>
                 </select>
               </div>
               <div class="design-field">
@@ -1059,16 +1059,16 @@ input[type=range]{accent-color:var(--pink)}
         <!-- TAB: ESPERA -->
         <div class="dtab-panel" id="dtab-espera">
           <div class="card">
-            <div class="card-title">â³ Pantalla de espera</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Se muestra con el QR grande mientras no hay fotos. Desaparece automÃ¡ticamente cuando llega la primera foto.</p>
+            <div class="card-title">⏳ Pantalla de espera</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Se muestra con el QR grande mientras no hay fotos. Desaparece automáticamente cuando llega la primera foto.</p>
             <div class="design-grid">
               <div class="design-field">
-                <label>TÃ­tulo de bienvenida</label>
-                <input type="text" id="cfg-wait-title" placeholder="Ej: Â¡Bienvenidos a nuestra boda!"/>
+                <label>Título de bienvenida</label>
+                <input type="text" id="cfg-wait-title" placeholder="Ej: ¡Bienvenidos a nuestra boda!"/>
               </div>
               <div class="design-field">
-                <label>SubtÃ­tulo / instrucciÃ³n</label>
-                <input type="text" id="cfg-wait-subtitle" placeholder="Ej: EscaneÃ¡ y participÃ¡ en tiempo real"/>
+                <label>Subtítulo / instrucción</label>
+                <input type="text" id="cfg-wait-subtitle" placeholder="Ej: Escaneá y participá en tiempo real"/>
               </div>
               <div class="design-field">
                 <label>Hora de inicio del evento</label>
@@ -1077,7 +1077,7 @@ input[type=range]{accent-color:var(--pink)}
               <div class="design-field">
                 <label>Mostrar countdown</label>
                 <select id="cfg-wait-countdown">
-                  <option value="yes">SÃ­ â€” mostrar cuenta regresiva</option>
+                  <option value="yes">Sí — mostrar cuenta regresiva</option>
                   <option value="no">No</option>
                 </select>
               </div>
@@ -1090,8 +1090,8 @@ input[type=range]{accent-color:var(--pink)}
 
         <!-- SAVE BUTTONS - always visible -->
         <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
-          <button class="btn-pink" id="btn-save-design" onclick="saveDesign(this)">ðŸ’¾ Guardar diseÃ±o</button>
-          <button class="btn-ghost" onclick="resetDesign()">â†º Resetear</button>
+          <button class="btn-pink" id="btn-save-design" onclick="saveDesign(this)">💾 Guardar diseño</button>
+          <button class="btn-ghost" onclick="resetDesign()">↺ Resetear</button>
         </div>
       </div>
 
@@ -1104,7 +1104,7 @@ input[type=range]{accent-color:var(--pink)}
           <div id="prev-header" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#0c0c14;border-bottom:1px solid rgba(255,255,255,0.06)">
             <div>
               <div id="prev-ev-name" style="font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff">Nombre del evento</div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.4)">Fecha Â· Lugar</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.4)">Fecha · Lugar</div>
             </div>
             <div id="prev-live" style="display:flex;align-items:center;gap:3px;background:rgba(240,23,111,0.15);border:1px solid rgba(240,23,111,0.35);padding:3px 7px;border-radius:10px;font-size:7px;font-weight:700;color:#f0176f;letter-spacing:1px">
               <div style="width:4px;height:4px;background:#f0176f;border-radius:50%"></div>EN VIVO
@@ -1113,12 +1113,12 @@ input[type=range]{accent-color:var(--pink)}
           <!-- main area -->
           <div style="display:grid;grid-template-columns:1fr 50px;height:calc(100% - 36px)">
             <div style="background:#111;position:relative;display:flex;align-items:center;justify-content:center">
-              <div style="color:rgba(255,255,255,0.15);font-size:24px">ðŸ“¸</div>
+              <div style="color:rgba(255,255,255,0.15);font-size:24px">📸</div>
               <!-- Sample bubble preview -->
               <div id="prev-bubble" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:#fff;border-radius:16px;padding:8px 14px;max-width:80%;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.4)">
-                <div style="font-size:10px;margin-bottom:3px">ðŸ’¬</div>
-                <div id="prev-bubble-text" style="font-size:9px;font-weight:800;color:#1a1a1a;font-family:'Syne',sans-serif">Â¡Vivan los novios! ðŸŽ‰</div>
-                <div style="font-size:7px;color:#888;margin-top:2px">â€” MarÃ­a</div>
+                <div style="font-size:10px;margin-bottom:3px">💬</div>
+                <div id="prev-bubble-text" style="font-size:9px;font-weight:800;color:#1a1a1a;font-family:'Syne',sans-serif">¡Vivan los novios! 🎉</div>
+                <div style="font-size:7px;color:#888;margin-top:2px">— María</div>
               </div>
             </div>
             <!-- sidebar preview -->
@@ -1145,20 +1145,20 @@ input[type=range]{accent-color:var(--pink)}
 
     <!-- ALBUM -->
     <div class="page" id="page-album">
-      <div class="page-title">Ãlbum de fotos</div>
+      <div class="page-title">Álbum de fotos</div>
       <div class="page-sub">Todas las fotos aprobadas del evento</div>
-      <div class="notice" id="album-notice">âš ï¸ SeleccionÃ¡ un evento primero</div>
+      <div class="notice" id="album-notice">⚠️ Seleccioná un evento primero</div>
       <div id="album-content" style="display:none">
         <div class="card" style="margin-bottom:16px">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
-              <div id="album-ev-name" style="font-size:18px;font-weight:700;color:var(--text)">â€”</div>
-              <div id="album-ev-sub" style="font-size:13px;color:var(--muted)">â€”</div>
+              <div id="album-ev-name" style="font-size:18px;font-weight:700;color:var(--text)">—</div>
+              <div id="album-ev-sub" style="font-size:13px;color:var(--muted)">—</div>
             </div>
             <div style="display:flex;align-items:center;gap:12px">
               <span id="album-count" style="font-size:13px;color:var(--muted)">0 fotos</span>
-              <button class="btn-pink" onclick="downloadAlbum()">â¬‡ Descargar todas</button>
-              <button class="btn-ghost" onclick="sendAlbumManual()" id="btn-send-email" style="display:none">ðŸ“§ Enviar por email</button>
+              <button class="btn-pink" onclick="downloadAlbum()">⬇ Descargar todas</button>
+              <button class="btn-ghost" onclick="sendAlbumManual()" id="btn-send-email" style="display:none">📧 Enviar por email</button>
             </div>
           </div>
         </div>
@@ -1171,13 +1171,13 @@ input[type=range]{accent-color:var(--pink)}
     <!-- MESSAGES -->
     <div class="page" id="page-messages">
       <div class="page-title">Contenido</div>
-      <div class="page-sub">Todas las publicaciones del evento â€” aprobÃ¡ o eliminÃ¡</div>
-      <div class="notice" id="messages-notice">âš ï¸ SeleccionÃ¡ un evento primero</div>
+      <div class="page-sub">Todas las publicaciones del evento — aprobá o eliminá</div>
+      <div class="notice" id="messages-notice">⚠️ Seleccioná un evento primero</div>
       <div id="messages-content" style="display:none">
         <div class="card" style="margin-bottom:16px">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
-              <div id="messages-ev-name" style="font-size:18px;font-weight:700;color:var(--text)">â€”</div>
+              <div id="messages-ev-name" style="font-size:18px;font-weight:700;color:var(--text)">—</div>
               <div id="messages-count" style="font-size:13px;color:var(--muted);margin-top:2px">0 publicaciones</div>
             </div>
             <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
@@ -1192,19 +1192,19 @@ input[type=range]{accent-color:var(--pink)}
 
     <!-- PRINT -->
     <div class="page" id="page-print">
-      <div class="page-title">Modo impresiÃ³n</div>
-      <div class="page-sub">GenerÃ¡ hojas para imprimir con el QR del evento</div>
-      <div class="notice" id="print-notice">âš ï¸ SeleccionÃ¡ un evento primero</div>
+      <div class="page-title">Modo impresión</div>
+      <div class="page-sub">Generá hojas para imprimir con el QR del evento</div>
+      <div class="notice" id="print-notice">⚠️ Seleccioná un evento primero</div>
       <div id="print-content" style="display:none">
         <div class="card" style="margin-bottom:16px">
-          <div class="card-title">âš™ï¸ Opciones de impresiÃ³n</div>
+          <div class="card-title">⚙️ Opciones de impresión</div>
           <div class="fg">
             <div>
               <label>Estilo</label>
               <select id="print-style">
                 <option value="qr-only">Solo QR</option>
-                <option value="with-title">QR + tÃ­tulo del evento</option>
-                <option value="full" selected>QR + tÃ­tulo + instrucciones</option>
+                <option value="with-title">QR + título del evento</option>
+                <option value="full" selected>QR + título + instrucciones</option>
                 <option value="table">Para mesa (compacto)</option>
               </select>
             </div>
@@ -1219,17 +1219,17 @@ input[type=range]{accent-color:var(--pink)}
           </div>
           <div style="margin-top:12px">
             <label>Mensaje personalizado (opcional)</label>
-            <input type="text" id="print-msg" placeholder="Ej: EscaneÃ¡ y subÃ­ tu foto al mural ðŸ“¸"/>
+            <input type="text" id="print-msg" placeholder="Ej: Escaneá y subí tu foto al mural 📸"/>
           </div>
           <div style="display:flex;gap:10px;margin-top:16px">
-            <button class="btn-pink" onclick="doPrint()">ðŸ–¨ Imprimir</button>
-            <button class="btn-ghost" onclick="previewPrint()">ðŸ‘ Vista previa</button>
+            <button class="btn-pink" onclick="doPrint()">🖨 Imprimir</button>
+            <button class="btn-ghost" onclick="previewPrint()">👁 Vista previa</button>
           </div>
         </div>
         <div class="card">
           <div class="card-title">Vista previa</div>
           <div id="print-preview-area" style="background:#f5f5f0;border-radius:10px;padding:20px;min-height:200px;display:flex;align-items:center;justify-content:center;color:#aaa">
-            <div style="text-align:center"><div style="font-size:32px;margin-bottom:8px">ðŸ–¨</div>HacÃ© click en "Vista previa" para ver el resultado</div>
+            <div style="text-align:center"><div style="font-size:32px;margin-bottom:8px">🖨</div>Hacé click en "Vista previa" para ver el resultado</div>
           </div>
           <div id="print-sub" style="font-size:12px;color:var(--muted);margin-top:10px"></div>
         </div>
@@ -1239,16 +1239,16 @@ input[type=range]{accent-color:var(--pink)}
     <!-- POLLS -->
     <div class="page" id="page-polls">
       <div class="page-title">Votaciones</div>
-      <div class="page-sub">CreÃ¡ y gestionÃ¡ votaciones en tiempo real</div>
-      <div class="notice" id="polls-notice">âš ï¸ SeleccionÃ¡ un evento primero</div>
+      <div class="page-sub">Creá y gestioná votaciones en tiempo real</div>
+      <div class="notice" id="polls-notice">⚠️ Seleccioná un evento primero</div>
       <div id="polls-content" style="display:none">
         <div class="card" style="margin-bottom:16px">
-          <div class="card-title">Nueva votaciÃ³n</div>
+          <div class="card-title">Nueva votación</div>
           <div class="fg" style="margin-bottom:12px">
-            <div><label>Pregunta</label><input type="text" id="poll-question" placeholder="Ej: Â¿CuÃ¡l es tu canciÃ³n favorita de la noche?"/></div>
-            <div><label>DuraciÃ³n</label>
+            <div><label>Pregunta</label><input type="text" id="poll-question" placeholder="Ej: ¿Cuál es tu canción favorita de la noche?"/></div>
+            <div><label>Duración</label>
               <select id="poll-duration">
-                <option value="0">Sin lÃ­mite de tiempo</option>
+                <option value="0">Sin límite de tiempo</option>
                 <option value="30">30 segundos</option>
                 <option value="60">1 minuto</option>
                 <option value="120">2 minutos</option>
@@ -1258,14 +1258,14 @@ input[type=range]{accent-color:var(--pink)}
               </select>
             </div>
           </div>
-          <label style="margin-bottom:8px;display:block">Opciones (mÃ­nimo 2)</label>
+          <label style="margin-bottom:8px;display:block">Opciones (mínimo 2)</label>
           <div id="poll-options-list">
-            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="OpciÃ³n 1"/></div>
-            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="OpciÃ³n 2"/></div>
+            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="Opción 1"/></div>
+            <div class="poll-opt-row"><input type="text" class="field poll-opt-input" placeholder="Opción 2"/></div>
           </div>
           <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
-            <button class="btn-ghost" onclick="addPollOption()">+ OpciÃ³n</button>
-            <button class="btn-pink" id="create-poll-btn" onclick="createPoll()">ðŸ—³ Crear votaciÃ³n</button>
+            <button class="btn-ghost" onclick="addPollOption()">+ Opción</button>
+            <button class="btn-pink" id="create-poll-btn" onclick="createPoll()">🗳 Crear votación</button>
           </div>
         </div>
         <div id="polls-list"></div>
@@ -1275,8 +1275,8 @@ input[type=range]{accent-color:var(--pink)}
     <!-- GUEST DESIGN -->
     <div class="page" id="page-guest-design">
   <div class="page-title">Vista del invitado</div>
-  <div class="page-sub">PersonalizÃ¡ cÃ³mo ven la app los invitados en su celular</div>
-  <div class="notice" id="gd-notice">âš ï¸ SeleccionÃ¡ un evento primero</div>
+  <div class="page-sub">Personalizá cómo ven la app los invitados en su celular</div>
+  <div class="notice" id="gd-notice">⚠️ Seleccioná un evento primero</div>
 
   <div id="gd-content" style="display:none">
     <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start" id="gd-main-grid">
@@ -1285,11 +1285,11 @@ input[type=range]{accent-color:var(--pink)}
       <div>
         <!-- ACCORDION: PLANTILLAS -->
         <details class="design-advanced" open id="gdtab-plantillas">
-          <summary>ðŸŽ¨ Plantillas de diseÃ±o</summary>
+          <summary>🎨 Plantillas de diseño</summary>
           <div class="design-advanced-inner">
           <div class="card">
-            <div class="card-title">ðŸŽ¨ Plantillas de diseÃ±o</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">ElegÃ­ una plantilla para aplicar colores y tipografÃ­a de un solo click</p>
+            <div class="card-title">🎨 Plantillas de diseño</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Elegí una plantilla para aplicar colores y tipografía de un solo click</p>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 
               <div onclick="applyGDTemplate('clasico')" style="cursor:pointer;border-radius:12px;overflow:hidden;border:2px solid var(--border);transition:border-color 0.2s" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='var(--border)'">
@@ -1298,7 +1298,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div style="font-size:11px;font-weight:800;color:#ffffff">Nombre</div>
                 </div>
                 <div style="background:#faf8f6;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
-                  <div style="font-size:10px;color:#1a1a1a">ClÃ¡sico</div>
+                  <div style="font-size:10px;color:#1a1a1a">Clásico</div>
                   <div style="width:10px;height:10px;border-radius:50%;background:#f0176f"></div>
                 </div>
               </div>
@@ -1342,7 +1342,7 @@ input[type=range]{accent-color:var(--pink)}
                   <div style="font-size:11px;font-weight:800;color:#f8e6ff">Nombre</div>
                 </div>
                 <div style="background:#f8f0ff;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">
-                  <div style="font-size:10px;color:#2d0060">XV AÃ±os</div>
+                  <div style="font-size:10px;color:#2d0060">XV Años</div>
                   <div style="width:10px;height:10px;border-radius:50%;background:#9333ea"></div>
                 </div>
               </div>
@@ -1409,27 +1409,27 @@ input[type=range]{accent-color:var(--pink)}
 
         <!-- ACCORDION: TEXTOS -->
         <details class="design-advanced" id="gdtab-textos">
-          <summary>âœï¸ Textos</summary>
+          <summary>✏️ Textos</summary>
           <div class="design-advanced-inner">
           <div class="card">
-            <div class="card-title">âœï¸ Textos</div>
+            <div class="card-title">✏️ Textos</div>
             <div style="display:flex;flex-direction:column;gap:12px">
               <div>
-                <label>TÃ­tulo del evento</label>
+                <label>Título del evento</label>
                 <input type="text" id="gd-title" placeholder="Se usa el nombre del evento por defecto" oninput="updateGuestPreview()"/>
-                <div style="font-size:11px;color:var(--muted);margin-top:4px">DejÃ¡ vacÃ­o para usar el nombre del evento automÃ¡ticamente</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:4px">Dejá vacío para usar el nombre del evento automáticamente</div>
               </div>
               <div>
-                <label>SubtÃ­tulo</label>
-                <input type="text" id="gd-subtitle" placeholder="Fecha y lugar (automÃ¡tico)" oninput="updateGuestPreview()"/>
+                <label>Subtítulo</label>
+                <input type="text" id="gd-subtitle" placeholder="Fecha y lugar (automático)" oninput="updateGuestPreview()"/>
               </div>
               <div>
                 <label>Mensaje de bienvenida</label>
-                <input type="text" id="gd-welcome" placeholder="CompartÃ­ tu momento con todos ðŸ“·" oninput="updateGuestPreview()"/>
+                <input type="text" id="gd-welcome" placeholder="Compartí tu momento con todos 📷" oninput="updateGuestPreview()"/>
               </div>
               <div>
-                <label>Texto del botÃ³n de envÃ­o</label>
-                <input type="text" id="gd-btn-text" placeholder="Enviar a la pantalla âœ¨" oninput="updateGuestPreview()"/>
+                <label>Texto del botón de envío</label>
+                <input type="text" id="gd-btn-text" placeholder="Enviar a la pantalla ✨" oninput="updateGuestPreview()"/>
               </div>
               <div>
                 <label>Mostrar logo "EventWall"</label>
@@ -1445,13 +1445,13 @@ input[type=range]{accent-color:var(--pink)}
 
         <!-- ACCORDION: COLORES -->
         <details class="design-advanced" id="gdtab-colores">
-          <summary>ðŸŽ¨ Colores</summary>
+          <summary>🎨 Colores</summary>
           <div class="design-advanced-inner">
           <div class="card">
-            <div class="card-title">ðŸŽ¨ Colores</div>
+            <div class="card-title">🎨 Colores</div>
             <!-- QUICK PALETTES -->
             <div style="margin-bottom:16px">
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Paletas rÃ¡pidas</div>
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Paletas rápidas</div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button onclick="applyGDPalette('dark')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#07070f;color:#f0176f;font-size:12px;cursor:pointer;font-family:inherit">Dark</button>
                 <button onclick="applyGDPalette('light')" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#faf8f6;color:#e91e8c;font-size:12px;cursor:pointer;font-family:inherit">Light</button>
@@ -1511,13 +1511,13 @@ input[type=range]{accent-color:var(--pink)}
 
         <!-- ACCORDION: ESTILO -->
         <details class="design-advanced" id="gdtab-estilo">
-          <summary>ðŸ”¤ TipografÃ­a y estilo</summary>
+          <summary>🔤 Tipografía y estilo</summary>
           <div class="design-advanced-inner">
           <div class="card">
-            <div class="card-title">ðŸ”¤ TipografÃ­a y estilo</div>
+            <div class="card-title">🔤 Tipografía y estilo</div>
             <div class="design-grid">
               <div class="design-field">
-                <label>Fuente de tÃ­tulos</label>
+                <label>Fuente de títulos</label>
                 <select id="gd-font-title" onchange="updateGuestPreview()">
                   <option value="Syne">Syne</option>
                   <option value="Playfair Display">Playfair Display</option>
@@ -1546,7 +1546,7 @@ input[type=range]{accent-color:var(--pink)}
                 <label>Forma de botones</label>
                 <select id="gd-btn-radius" onchange="updateGuestPreview()">
                   <option value="14">Redondeado</option>
-                  <option value="50">PÃ­ldora</option>
+                  <option value="50">Píldora</option>
                   <option value="4">Levemente redondeado</option>
                   <option value="0">Cuadrado</option>
                 </select>
@@ -1561,7 +1561,7 @@ input[type=range]{accent-color:var(--pink)}
                 </select>
               </div>
               <div class="design-field">
-                <label>TamaÃ±o base del texto</label>
+                <label>Tamaño base del texto</label>
                 <div style="display:flex;align-items:center;gap:10px">
                   <input type="range" id="gd-font-size" min="12" max="18" value="15" oninput="updateGuestPreview();document.getElementById('gd-font-size-val').textContent=this.value+'px'" style="flex:1"/>
                   <span id="gd-font-size-val" style="font-size:12px;color:var(--muted);min-width:36px">15px</span>
@@ -1570,25 +1570,25 @@ input[type=range]{accent-color:var(--pink)}
             </div>
           </div>
           <div class="card" style="margin-top:12px">
-            <div class="card-title">ðŸ–¼ Marca de agua en fotos</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Se aplica automÃ¡ticamente a cada foto que sube un invitado (PNG con transparencia recomendado)</p>
+            <div class="card-title">🖼 Marca de agua en fotos</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Se aplica automáticamente a cada foto que sube un invitado (PNG con transparencia recomendado)</p>
             <div style="display:flex;flex-direction:column;gap:12px">
               <div>
                 <label>Imagen PNG</label>
                 <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
                   <input type="file" id="gd-wm-file" accept="image/png,image/svg+xml,image/webp" style="display:none" onchange="uploadWatermark(this)"/>
-                  <button class="btn-ghost" onclick="document.getElementById('gd-wm-file').click()">ðŸ“ Elegir PNG</button>
+                  <button class="btn-ghost" onclick="document.getElementById('gd-wm-file').click()">📁 Elegir PNG</button>
                   <span id="gd-wm-status" style="font-size:12px;color:var(--muted)">Sin marca de agua</span>
                 </div>
                 <div id="gd-wm-preview" style="display:none;margin-top:10px">
                   <img id="gd-wm-img" style="max-height:60px;max-width:160px;border-radius:6px;border:1px solid var(--border);background:repeating-conic-gradient(#aaa 0% 25%,#fff 0% 50%) 0/12px 12px;padding:4px" alt="watermark"/>
-                  <button onclick="removeWatermark()" style="display:block;margin-top:6px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-align:left;padding:0">âœ• Quitar marca de agua</button>
+                  <button onclick="removeWatermark()" style="display:block;margin-top:6px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-align:left;padding:0">✕ Quitar marca de agua</button>
                 </div>
                 <input type="hidden" id="gd-wm-url" value=""/>
               </div>
               <div class="design-grid">
                 <div class="design-field">
-                  <label>PosiciÃ³n</label>
+                  <label>Posición</label>
                   <select id="gd-wm-pos">
                     <option value="br">Inferior derecha</option>
                     <option value="bl">Inferior izquierda</option>
@@ -1598,7 +1598,7 @@ input[type=range]{accent-color:var(--pink)}
                   </select>
                 </div>
                 <div class="design-field">
-                  <label>TamaÃ±o (% del ancho)</label>
+                  <label>Tamaño (% del ancho)</label>
                   <div style="display:flex;align-items:center;gap:10px">
                     <input type="range" id="gd-wm-size" min="5" max="50" value="20" style="flex:1" oninput="document.getElementById('gd-wm-size-val').textContent=this.value+'%'"/>
                     <span id="gd-wm-size-val" style="font-size:12px;color:var(--muted);min-width:36px">20%</span>
@@ -1619,20 +1619,20 @@ input[type=range]{accent-color:var(--pink)}
 
         <!-- ACCORDION: OPCIONES -->
         <details class="design-advanced" id="gdtab-opciones">
-          <summary>âš™ï¸ Funciones habilitadas</summary>
+          <summary>⚙️ Funciones habilitadas</summary>
           <div class="design-advanced-inner">
           <div class="card">
-            <div class="card-title">âš™ï¸ Funciones habilitadas</div>
-            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">ElegÃ­ quÃ© pueden hacer los invitados</p>
+            <div class="card-title">⚙️ Funciones habilitadas</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Elegí qué pueden hacer los invitados</p>
             <div style="display:flex;flex-direction:column;gap:10px">
-              <label class="toggle-label" onclick="toggleGDOption('photo')"><div class="opt-toggle on" id="tog-show-photo"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">ðŸ“· Subir fotos</div><div style="font-size:12px;color:var(--muted)">Con marcos, filtros y stickers</div></div></label>
-              <label class="toggle-label" onclick="toggleGDOption('message')"><div class="opt-toggle on" id="tog-show-message"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">ðŸ’¬ Enviar mensajes</div><div style="font-size:12px;color:var(--muted)">Burbujas personalizadas en pantalla</div></div></label>
-              <label class="toggle-label" onclick="toggleGDOption('audio')"><div class="opt-toggle on" id="tog-show-audio"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">ðŸŽ¤ Grabar audios</div><div style="font-size:12px;color:var(--muted)">Mensajes de voz en el Ã¡lbum</div></div></label>
-              <label class="toggle-label" onclick="toggleGDOption('wish')"><div class="opt-toggle on" id="tog-show-wish"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">ðŸ’Œ Mensajes especiales</div><div style="font-size:12px;color:var(--muted)">Pantalla completa con animaciÃ³n</div></div></label>
-              <label class="toggle-label" onclick="toggleGDOption('vote')"><div class="opt-toggle on" id="tog-show-vote"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">ðŸ—³ Votaciones</div><div style="font-size:12px;color:var(--muted)">Participar en encuestas</div></div></label>
-              <label class="toggle-label" onclick="toggleGDOption('reactions')"><div class="opt-toggle on" id="tog-show-reactions"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">â¤ï¸ Reacciones en fotos</div><div style="font-size:12px;color:var(--muted)">â¤ï¸ðŸŽ‰ðŸ˜ðŸ”¥ en la galerÃ­a de invitados</div></div></label>
-              <label class="toggle-label" onclick="toggleGDOption('photoEdit')"><div class="opt-toggle on" id="tog-show-photoEdit"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">ðŸŽ¨ PersonalizaciÃ³n de foto</div><div style="font-size:12px;color:var(--muted)">Marcos, filtros y stickers</div></div></label>
-              <label class="toggle-label" onclick="toggleGDOption('deletePhoto')"><div class="opt-toggle on" id="tog-show-deletePhoto"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">ðŸ—‘ Borrar fotos propias</div><div style="font-size:12px;color:var(--muted)">El invitado puede eliminar sus fotos</div></div></label>
+              <label class="toggle-label" onclick="toggleGDOption('photo')"><div class="opt-toggle on" id="tog-show-photo"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">📷 Subir fotos</div><div style="font-size:12px;color:var(--muted)">Con marcos, filtros y stickers</div></div></label>
+              <label class="toggle-label" onclick="toggleGDOption('message')"><div class="opt-toggle on" id="tog-show-message"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💬 Enviar mensajes</div><div style="font-size:12px;color:var(--muted)">Burbujas personalizadas en pantalla</div></div></label>
+              <label class="toggle-label" onclick="toggleGDOption('audio')"><div class="opt-toggle on" id="tog-show-audio"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🎤 Grabar audios</div><div style="font-size:12px;color:var(--muted)">Mensajes de voz en el álbum</div></div></label>
+              <label class="toggle-label" onclick="toggleGDOption('wish')"><div class="opt-toggle on" id="tog-show-wish"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">💌 Mensajes especiales</div><div style="font-size:12px;color:var(--muted)">Pantalla completa con animación</div></div></label>
+              <label class="toggle-label" onclick="toggleGDOption('vote')"><div class="opt-toggle on" id="tog-show-vote"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗳 Votaciones</div><div style="font-size:12px;color:var(--muted)">Participar en encuestas</div></div></label>
+              <label class="toggle-label" onclick="toggleGDOption('reactions')"><div class="opt-toggle on" id="tog-show-reactions"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">❤️ Reacciones en fotos</div><div style="font-size:12px;color:var(--muted)">❤️🎉😍🔥 en la galería de invitados</div></div></label>
+              <label class="toggle-label" onclick="toggleGDOption('photoEdit')"><div class="opt-toggle on" id="tog-show-photoEdit"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🎨 Personalización de foto</div><div style="font-size:12px;color:var(--muted)">Marcos, filtros y stickers</div></div></label>
+              <label class="toggle-label" onclick="toggleGDOption('deletePhoto')"><div class="opt-toggle on" id="tog-show-deletePhoto"><div class="opt-track"><div class="opt-thumb"></div></div></div><div><div style="font-weight:500;color:var(--text)">🗑 Borrar fotos propias</div><div style="font-size:12px;color:var(--muted)">El invitado puede eliminar sus fotos</div></div></label>
             </div>
           </div>
           </div><!-- /design-advanced-inner -->
@@ -1640,9 +1640,9 @@ input[type=range]{accent-color:var(--pink)}
 
         <!-- SAVE -->
         <div style="margin-top:12px;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button class="btn-pink" id="btn-save-gd" onclick="saveGuestDesign(this)">ðŸ’¾ Guardar y aplicar</button>
-          <button class="btn-ghost" onclick="resetGuestDesign()">â†º Resetear</button>
-          <button class="btn-ghost" onclick="document.getElementById('gd-main-grid').lastElementChild.scrollIntoView({behavior:'smooth'})" style="display:none" id="btn-preview-scroll">ðŸ‘ Ver preview</button>
+          <button class="btn-pink" id="btn-save-gd" onclick="saveGuestDesign(this)">💾 Guardar y aplicar</button>
+          <button class="btn-ghost" onclick="resetGuestDesign()">↺ Resetear</button>
+          <button class="btn-ghost" onclick="document.getElementById('gd-main-grid').lastElementChild.scrollIntoView({behavior:'smooth'})" style="display:none" id="btn-preview-scroll">👁 Ver preview</button>
         </div>
       </div>
 
@@ -1658,8 +1658,8 @@ input[type=range]{accent-color:var(--pink)}
               <div id="gd-prev-hero" style="background:#0c0c0f;padding:16px 14px 12px">
                 <div id="gd-prev-logo" style="font-size:8px;font-weight:700;letter-spacing:2px;color:#f0176f;margin-bottom:8px">EVENTWALL</div>
                 <div id="gd-prev-title" style="font-size:14px;font-weight:800;color:#fff;margin-bottom:2px;font-family:'Syne',sans-serif">Nombre del evento</div>
-                <div id="gd-prev-sub" style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:10px">Fecha Â· Lugar</div>
-                <div id="gd-prev-welcome" style="display:inline-flex;align-items:center;gap:4px;background:rgba(240,23,111,0.18);border:1px solid rgba(240,23,111,0.35);padding:4px 8px;border-radius:12px;font-size:8px;color:rgba(255,255,255,0.8)">ðŸ“· CompartÃ­ tu momento</div>
+                <div id="gd-prev-sub" style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:10px">Fecha · Lugar</div>
+                <div id="gd-prev-welcome" style="display:inline-flex;align-items:center;gap:4px;background:rgba(240,23,111,0.18);border:1px solid rgba(240,23,111,0.35);padding:4px 8px;border-radius:12px;font-size:8px;color:rgba(255,255,255,0.8)">📷 Compartí tu momento</div>
               </div>
               <!-- stats -->
               <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid #ece8e3" id="gd-prev-stats">
@@ -1670,11 +1670,11 @@ input[type=range]{accent-color:var(--pink)}
               <!-- body -->
               <div id="gd-prev-body" style="background:#faf8f6;padding:10px">
                 <div style="font-size:7px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Tu nombre</div>
-                <div class="prev-name-field" style="background:#fff;border:1.5px solid #ece8e3;border-radius:8px;padding:6px 8px;font-size:9px;color:#aaa;margin-bottom:8px">Ej: Valentina GarcÃ­a</div>
-                <div style="font-size:7px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Â¿QuÃ© querÃ©s compartir?</div>
+                <div class="prev-name-field" style="background:#fff;border:1.5px solid #ece8e3;border-radius:8px;padding:6px 8px;font-size:9px;color:#aaa;margin-bottom:8px">Ej: Valentina García</div>
+                <div style="font-size:7px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">¿Qué querés compartir?</div>
                 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:6px" id="gd-prev-btns"></div>
                 <div id="gd-prev-extra-btns"></div>
-                <div id="gd-prev-send-btn" style="background:#f0176f;color:#fff;border-radius:8px;padding:7px;text-align:center;font-size:9px;font-weight:700;margin-top:6px">Enviar a la pantalla âœ¨</div>
+                <div id="gd-prev-send-btn" style="background:#f0176f;color:#fff;border-radius:8px;padding:7px;text-align:center;font-size:9px;font-weight:700;margin-top:6px">Enviar a la pantalla ✨</div>
               </div>
             </div>
           </div>
@@ -1695,36 +1695,36 @@ input[type=range]{accent-color:var(--pink)}
 
     <!-- SETTINGS -->
     <div class="page" id="page-moments">
-      <div class="page-title">ðŸŽ¬ Momentos especiales</div>
-      <div class="page-sub">LanzÃ¡ un efecto en pantalla completa en tiempo real</div>
-      <div class="notice" id="moments-notice">âš ï¸ SeleccionÃ¡ un evento primero</div>
+      <div class="page-title">🎬 Momentos especiales</div>
+      <div class="page-sub">Lanzá un efecto en pantalla completa en tiempo real</div>
+      <div class="notice" id="moments-notice">⚠️ Seleccioná un evento primero</div>
       <div id="moments-content" style="display:none">
 
         <div class="card" style="margin-bottom:16px">
-          <div class="card-title">âœ¨ Lanzar momento</div>
+          <div class="card-title">✨ Lanzar momento</div>
           <div class="fg">
             <div>
               <label>Texto principal</label>
-              <input type="text" id="moment-text" placeholder="ej: Â¡Feliz CumpleaÃ±os! ðŸŽ‚" maxlength="60"/>
+              <input type="text" id="moment-text" placeholder="ej: ¡Feliz Cumpleaños! 🎂" maxlength="60"/>
             </div>
             <div>
               <label>Subtexto (opcional)</label>
-              <input type="text" id="moment-subtext" placeholder="ej: Â¡Brindemos todos!" maxlength="80"/>
+              <input type="text" id="moment-subtext" placeholder="ej: ¡Brindemos todos!" maxlength="80"/>
             </div>
           </div>
           <div class="fg" style="margin-top:12px">
             <div>
               <label>Efecto visual</label>
               <select id="moment-effect">
-                <option value="confetti">ðŸŽ‰ Confetti</option>
-                <option value="fireworks">ðŸŽ† Fuegos artificiales</option>
-                <option value="petals">ðŸŒ¸ PÃ©talos</option>
-                <option value="flash">âœ¨ Destello de luz</option>
-                <option value="all">ðŸŽŠ Todo a la vez</option>
+                <option value="confetti">🎉 Confetti</option>
+                <option value="fireworks">🎆 Fuegos artificiales</option>
+                <option value="petals">🌸 Pétalos</option>
+                <option value="flash">✨ Destello de luz</option>
+                <option value="all">🎊 Todo a la vez</option>
               </select>
             </div>
             <div>
-              <label>DuraciÃ³n</label>
+              <label>Duración</label>
               <select id="moment-duration">
                 <option value="8">8 segundos</option>
                 <option value="10" selected>10 segundos</option>
@@ -1735,19 +1735,19 @@ input[type=range]{accent-color:var(--pink)}
             </div>
           </div>
           <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn-pink" onclick="launchMoment()" id="launch-btn" style="font-size:16px;padding:14px 28px">ðŸš€ Â¡Lanzar ahora!</button>
+            <button class="btn-pink" onclick="launchMoment()" id="launch-btn" style="font-size:16px;padding:14px 28px">🚀 ¡Lanzar ahora!</button>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-title">ðŸ“‹ Momentos rÃ¡pidos</div>
+          <div class="card-title">📋 Momentos rápidos</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:8px" id="quick-moments">
-            <button class="btn-ghost" onclick="quickMoment('ðŸ¥‚ Â¡Brindis!','Â¡Salud a todos!','confetti')">ðŸ¥‚ Brindis</button>
-            <button class="btn-ghost" onclick="quickMoment('ðŸŽ‚ Â¡Feliz CumpleaÃ±os!','','fireworks')">ðŸŽ‚ CumpleaÃ±os</button>
-            <button class="btn-ghost" onclick="quickMoment('ðŸ’’ Â¡Felicidades!','A los novios ðŸ’•','petals')">ðŸ’’ Boda</button>
-            <button class="btn-ghost" onclick="quickMoment('ðŸŽ“ Â¡Felicitaciones!','Lo lograste ðŸŽ‰','confetti')">ðŸŽ“ GraduaciÃ³n</button>
-            <button class="btn-ghost" onclick="quickMoment('ðŸŽ‰ Â¡Sorpresa!','','all')">ðŸŽ‰ Sorpresa</button>
-            <button class="btn-ghost" onclick="quickMoment('ðŸ† Â¡Ganador!','','flash')">ðŸ† Premio</button>
+            <button class="btn-ghost" onclick="quickMoment('🥂 ¡Brindis!','¡Salud a todos!','confetti')">🥂 Brindis</button>
+            <button class="btn-ghost" onclick="quickMoment('🎂 ¡Feliz Cumpleaños!','','fireworks')">🎂 Cumpleaños</button>
+            <button class="btn-ghost" onclick="quickMoment('💒 ¡Felicidades!','A los novios 💕','petals')">💒 Boda</button>
+            <button class="btn-ghost" onclick="quickMoment('🎓 ¡Felicitaciones!','Lo lograste 🎉','confetti')">🎓 Graduación</button>
+            <button class="btn-ghost" onclick="quickMoment('🎉 ¡Sorpresa!','','all')">🎉 Sorpresa</button>
+            <button class="btn-ghost" onclick="quickMoment('🏆 ¡Ganador!','','flash')">🏆 Premio</button>
           </div>
         </div>
 
@@ -1755,21 +1755,21 @@ input[type=range]{accent-color:var(--pink)}
     </div>
 
     <div class="page" id="page-settings">
-      <div class="page-title">ConfiguraciÃ³n</div>
+      <div class="page-title">Configuración</div>
       <div class="page-sub">Ajustes generales del panel</div>
       <div class="card">
-        <div class="card-title">ðŸ”’ Cambiar PIN de acceso</div>
+        <div class="card-title">🔒 Cambiar PIN de acceso</div>
         <div class="fg">
-          <div><label>PIN actual</label><input type="password" id="pin-current" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" maxlength="20"/></div>
-          <div><label>PIN nuevo</label><input type="password" id="pin-new" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" maxlength="20"/></div>
+          <div><label>PIN actual</label><input type="password" id="pin-current" placeholder="••••••••" maxlength="20"/></div>
+          <div><label>PIN nuevo</label><input type="password" id="pin-new" placeholder="••••••••" maxlength="20"/></div>
         </div>
-        <button class="btn-pink" onclick="changePin()">Cambiar PIN â†’</button>
+        <button class="btn-pink" onclick="changePin()">Cambiar PIN →</button>
       </div>
     </div>
 
     <div class="page" id="page-help">
-      <div class="page-title">â“ Ayuda</div>
-      <div class="page-sub">GuÃ­a rÃ¡pida para configurar un evento desde cero</div>
+      <div class="page-title">❓ Ayuda</div>
+      <div class="page-sub">Guía rápida para configurar un evento desde cero</div>
 
       <style>
         .help-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
@@ -1787,7 +1787,7 @@ input[type=range]{accent-color:var(--pink)}
       </style>
 
       <div class="help-tip">
-        <strong>Antes de empezar:</strong> SeleccionÃ¡ un evento desde la pantalla principal. Todas las secciones del panel funcionan sobre el evento activo que se muestra abajo a la izquierda.
+        <strong>Antes de empezar:</strong> Seleccioná un evento desde la pantalla principal. Todas las secciones del panel funcionan sobre el evento activo que se muestra abajo a la izquierda.
       </div>
 
       <div class="help-section-title">Pasos esenciales</div>
@@ -1797,8 +1797,8 @@ input[type=range]{accent-color:var(--pink)}
           <div class="help-step-num">1</div>
           <div class="help-step-body">
             <div class="help-step-title">Compartir el link con los invitados</div>
-            <div class="help-step-desc">En Links & QR encontrÃ¡s la URL del invitado y el cÃ³digo QR para imprimir o proyectar. Compartilo antes del evento para que los invitados puedan ingresar sin problemas.</div>
-            <span class="help-step-link" onclick="goNav('links')">ðŸ”— Ir a Links & QR</span>
+            <div class="help-step-desc">En Links & QR encontrás la URL del invitado y el código QR para imprimir o proyectar. Compartilo antes del evento para que los invitados puedan ingresar sin problemas.</div>
+            <span class="help-step-link" onclick="goNav('links')">🔗 Ir a Links & QR</span>
           </div>
         </div>
 
@@ -1806,8 +1806,8 @@ input[type=range]{accent-color:var(--pink)}
           <div class="help-step-num">2</div>
           <div class="help-step-body">
             <div class="help-step-title">Abrir la pantalla en el TV</div>
-            <div class="help-step-desc">CopiÃ¡ la URL de la pantalla y abrila en el navegador del TV o la computadora conectada al proyector. La pantalla se actualiza sola sin necesidad de recargar.</div>
-            <span class="help-step-link" onclick="goNav('links')">ðŸ“º Ver URL de pantalla</span>
+            <div class="help-step-desc">Copiá la URL de la pantalla y abrila en el navegador del TV o la computadora conectada al proyector. La pantalla se actualiza sola sin necesidad de recargar.</div>
+            <span class="help-step-link" onclick="goNav('links')">📺 Ver URL de pantalla</span>
           </div>
         </div>
 
@@ -1815,51 +1815,51 @@ input[type=range]{accent-color:var(--pink)}
           <div class="help-step-num">3</div>
           <div class="help-step-body">
             <div class="help-step-title">Moderar el contenido</div>
-            <div class="help-step-desc">Desde Contenido podÃ©s ver todas las fotos, mensajes y deseos enviados. AprobÃ¡ o eliminÃ¡ los que no correspondan. El contenido eliminado desaparece de la pantalla al instante.</div>
-            <span class="help-step-link" onclick="goNav('messages')">ðŸ’¬ Ir a Contenido</span>
+            <div class="help-step-desc">Desde Contenido podés ver todas las fotos, mensajes y deseos enviados. Aprobá o eliminá los que no correspondan. El contenido eliminado desaparece de la pantalla al instante.</div>
+            <span class="help-step-link" onclick="goNav('messages')">💬 Ir a Contenido</span>
           </div>
         </div>
 
         <div class="help-step">
           <div class="help-step-num">4</div>
           <div class="help-step-body">
-            <div class="help-step-title">Enviar el Ã¡lbum al finalizar</div>
-            <div class="help-step-desc">Al terminar el evento podÃ©s enviar todas las fotos al cliente por email en formato ZIP + PDF. TambiÃ©n podÃ©s descargar el Ã¡lbum directamente desde el panel.</div>
-            <span class="help-step-link" onclick="goNav('album')">ðŸ“¥ Ir a Ãlbum</span>
+            <div class="help-step-title">Enviar el álbum al finalizar</div>
+            <div class="help-step-desc">Al terminar el evento podés enviar todas las fotos al cliente por email en formato ZIP + PDF. También podés descargar el álbum directamente desde el panel.</div>
+            <span class="help-step-link" onclick="goNav('album')">📥 Ir a Álbum</span>
           </div>
         </div>
 
       </div>
 
-      <div class="help-section-title">PersonalizaciÃ³n (opcional)</div>
+      <div class="help-section-title">Personalización (opcional)</div>
       <div class="help-steps">
 
         <div class="help-step">
-          <div class="help-step-num" style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.3);color:#818cf8">ðŸŽ¨</div>
+          <div class="help-step-num" style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.3);color:#818cf8">🎨</div>
           <div class="help-step-body">
-            <div class="help-step-title">DiseÃ±o de la pantalla</div>
-            <div class="help-step-desc">CambiÃ¡ colores, fuentes, plantilla, imagen de fondo, ticker, transiciones y mÃ¡s. PodÃ©s usar una de las plantillas prediseÃ±adas (Boda, XV AÃ±os, Corporativo, etc.) como punto de partida.</div>
-            <span class="help-step-link" onclick="goNav('design')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">ðŸŽ¨ Ir a DiseÃ±o</span>
+            <div class="help-step-title">Diseño de la pantalla</div>
+            <div class="help-step-desc">Cambiá colores, fuentes, plantilla, imagen de fondo, ticker, transiciones y más. Podés usar una de las plantillas prediseñadas (Boda, XV Años, Corporativo, etc.) como punto de partida.</div>
+            <span class="help-step-link" onclick="goNav('design')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">🎨 Ir a Diseño</span>
           </div>
         </div>
 
         <div class="help-step">
-          <div class="help-step-num" style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.3);color:#818cf8">ðŸ“±</div>
+          <div class="help-step-num" style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.3);color:#818cf8">📱</div>
           <div class="help-step-body">
             <div class="help-step-title">Vista del invitado</div>
-            <div class="help-step-desc">ConfigurÃ¡ quÃ© funciones estÃ¡n disponibles para los invitados: reacciones, personalizaciÃ³n de fotos, borrar fotos propias, marca de agua. TambiÃ©n podÃ©s cambiar colores y fuentes de la app del invitado.</div>
-            <span class="help-step-link" onclick="goNav('guest-design')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">ðŸ“± Ir a Vista invitado</span>
+            <div class="help-step-desc">Configurá qué funciones están disponibles para los invitados: reacciones, personalización de fotos, borrar fotos propias, marca de agua. También podés cambiar colores y fuentes de la app del invitado.</div>
+            <span class="help-step-link" onclick="goNav('guest-design')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">📱 Ir a Vista invitado</span>
           </div>
         </div>
 
         <div class="help-step">
-          <div class="help-step-num" style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.3);color:#818cf8">ðŸ—³</div>
+          <div class="help-step-num" style="background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.3);color:#818cf8">🗳</div>
           <div class="help-step-body">
             <div class="help-step-title">Votaciones y momentos</div>
-            <div class="help-step-desc">CreÃ¡ encuestas en tiempo real que los invitados responden desde su celular y se muestran en la pantalla. Los momentos permiten compartir videos o imÃ¡genes especiales en momentos clave del evento.</div>
+            <div class="help-step-desc">Creá encuestas en tiempo real que los invitados responden desde su celular y se muestran en la pantalla. Los momentos permiten compartir videos o imágenes especiales en momentos clave del evento.</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <span class="help-step-link" onclick="goNav('polls')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">ðŸ—³ Votaciones</span>
-              <span class="help-step-link" onclick="goNav('moments')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">ðŸŽ¬ Momentos</span>
+              <span class="help-step-link" onclick="goNav('polls')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">🗳 Votaciones</span>
+              <span class="help-step-link" onclick="goNav('moments')" style="color:#818cf8;background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.25)">🎬 Momentos</span>
             </div>
           </div>
         </div>
@@ -1867,7 +1867,7 @@ input[type=range]{accent-color:var(--pink)}
       </div>
 
       <div class="help-tip" style="background:rgba(34,197,94,0.07);border-color:rgba(34,197,94,0.25);color:#22c55e">
-        <strong>Tip:</strong> El evento activo se muestra abajo a la izquierda. Si no ves datos en las secciones, asegurate de tener un evento seleccionado desde <span style="cursor:pointer;text-decoration:underline" onclick="goNav('events')">ðŸ—“ Eventos</span>.
+        <strong>Tip:</strong> El evento activo se muestra abajo a la izquierda. Si no ves datos en las secciones, asegurate de tener un evento seleccionado desde <span style="cursor:pointer;text-decoration:underline" onclick="goNav('events')">🗓 Eventos</span>.
       </div>
     </div>
 
@@ -1881,8 +1881,8 @@ input[type=range]{accent-color:var(--pink)}
 <div id="edit-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px">
   <div style="background:var(--surface);border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,0.4)">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div style="font-size:18px;font-weight:800;color:var(--text)">âœï¸ Editar evento</div>
-      <button onclick="closeEditModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);padding:4px">âœ•</button>
+      <div style="font-size:18px;font-weight:800;color:var(--text)">✏️ Editar evento</div>
+      <button onclick="closeEditModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);padding:4px">✕</button>
     </div>
     <div class="fg">
       <div>
@@ -1894,13 +1894,13 @@ input[type=range]{accent-color:var(--pink)}
         <input type="text" id="edit-ev-date" placeholder="ej: 2024-12-31" class="field"/>
       </div>
       <div>
-        <label>SubtÃ­tulo</label>
-        <input type="text" id="edit-ev-subtitle" placeholder="ej: SalÃ³n Crystal Â· Buenos Aires" class="field"/>
+        <label>Subtítulo</label>
+        <input type="text" id="edit-ev-subtitle" placeholder="ej: Salón Crystal · Buenos Aires" class="field"/>
       </div>
       <div>
-        <label>ðŸ”— CÃ³digo personalizado</label>
+        <label>🔗 Código personalizado</label>
         <input type="text" id="edit-ev-custom-code" placeholder="ej: boda-caro-pablo" class="field" style="text-transform:lowercase"/>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">Solo letras, nÃºmeros y guiones. Deja vacÃ­o para usar el ID automÃ¡tico.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Solo letras, números y guiones. Deja vacío para usar el ID automático.</div>
       </div>
       <div>
         <label>Email del cliente</label>
@@ -1911,7 +1911,7 @@ input[type=range]{accent-color:var(--pink)}
         <input type="text" id="edit-ev-pin" placeholder="PIN actual o nuevo" class="field"/>
       </div>
       <div>
-        <label>DuraciÃ³n del PIN</label>
+        <label>Duración del PIN</label>
         <select id="edit-ev-pin-duration" class="field">
           <option value="0">Sin vencimiento</option>
           <option value="0.033">2 minutos (prueba)</option>
@@ -1929,7 +1929,7 @@ input[type=range]{accent-color:var(--pink)}
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-top:20px">
-      <button class="btn-pink" onclick="saveEditEvent(this)" style="flex:1">ðŸ’¾ Guardar cambios</button>
+      <button class="btn-pink" onclick="saveEditEvent(this)" style="flex:1">💾 Guardar cambios</button>
       <button class="btn-ghost" onclick="closeEditModal()">Cancelar</button>
     </div>
   </div>
@@ -1939,18 +1939,9 @@ input[type=range]{accent-color:var(--pink)}
 const SUPABASE_URL = 'https://jxqwrbmnfmnzddkcimrm.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 
-// â”€â”€ PIN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function escapeHtml(value){
-  return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-}
-function sanitizeUrl(url){
-  try{
-    const parsed=new URL(String(url??''),window.location.href);
-    return ['http:','https:','data:','blob:'].includes(parsed.protocol)?parsed.href:'';
-  }catch(e){
-    return '';
-  }
-}
+// ── PIN ──────────────────────────────────────────────────────
+function getPin(){ return sessionStorage.getItem('ew_master_pin_verified')||''; }
+
 async function fetchMasterPin(){
   try{
     const res=await fetch(SUPABASE_URL+'/rest/v1/app_config?key=eq.master_pin&select=value',{
@@ -1958,17 +1949,12 @@ async function fetchMasterPin(){
     });
     const data=await res.json();
     return Array.isArray(data)&&data[0]?.value?String(data[0].value):null;
-  }catch(e){
-    return null;
-  }
-}
-function getPin(){
-  return sessionStorage.getItem('ew_master_pin_verified')||'';
+  }catch(e){return null;}
 }
 function logout(){
-  confirm2('Tu sesiÃ³n se cerrarÃ¡ y vas a tener que volver a ingresar el PIN.',()=>{
+  confirm2('Tu sesión se cerrará y vas a tener que volver a ingresar el PIN.',()=>{
     sessionStorage.clear();location.reload();
-  },{title:'Â¿Cerrar sesiÃ³n?',ico:'ðŸšª',danger:false});
+  },{title:'¿Cerrar sesión?',ico:'🚪',danger:false});
 }
 
 function startGlobalPoller(){
@@ -1985,7 +1971,7 @@ function startGlobalPoller(){
           const hadPending=allPosts.filter(p=>p.approved!==true).length;
           const hasPending=fresh.filter(p=>p.approved!==true).length;
           if(fresh.length!==allPosts.length){allPosts=fresh;loadMessages();}
-          if(hasPending>hadPending) toast('ðŸ”” Nuevo contenido pendiente de aprobaciÃ³n');
+          if(hasPending>hadPending) toast('🔔 Nuevo contenido pendiente de aprobación');
         }
       }
     }catch(e){console.warn('globalPoller:',e);}
@@ -2038,18 +2024,18 @@ async function submitPin(){
       const ev=events[0];
       // Check expiry
       if(ev.pin_expires_at&&new Date(ev.pin_expires_at)<new Date()){
-        document.getElementById('pin-error').textContent='El acceso a este evento venciÃ³.';
+        document.getElementById('pin-error').textContent='El acceso a este evento venció.';
         document.getElementById('pin-error').classList.add('show');
         input.value='';
         setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),3000);
         return;
       }
-      // Valid event PIN â€” unlock but restrict to this event only
+      // Valid event PIN — unlock but restrict to this event only
       unlockAdmin(ev.id);
       return;
     }
   }catch(e){}
-  document.getElementById('pin-error').textContent='PIN incorrecto. IntentÃ¡ de nuevo.';
+  document.getElementById('pin-error').textContent='PIN incorrecto. Intentá de nuevo.';
   document.getElementById('pin-error').classList.add('show');
   input.value='';
   setTimeout(()=>document.getElementById('pin-error').classList.remove('show'),2000);
@@ -2071,9 +2057,8 @@ function checkPin(input){ if(event&&event.key==='Enter') submitPin(); }
 async function changePin(){
   const cur=document.getElementById('pin-current').value;
   const nw=document.getElementById('pin-new').value;
-  const masterPin=await fetchMasterPin();
-  if(!masterPin||cur!==masterPin){toast('PIN actual incorrecto');return;}
-  if(nw.length<4){toast('âŒ El PIN debe tener al menos 4 dÃ­gitos');return;}
+  if(cur!==getPin()){toast('❌ PIN actual incorrecto');return;}
+  if(nw.length<4){toast('❌ El PIN debe tener al menos 4 dígitos');return;}
   try{
     await fetch(SUPABASE_URL+'/rest/v1/app_config?key=eq.master_pin',{
       method:'PATCH',
@@ -2083,13 +2068,13 @@ async function changePin(){
     sessionStorage.setItem('ew_master_pin_verified',nw);
     document.getElementById('pin-current').value='';
     document.getElementById('pin-new').value='';
-    toast('âœ… PIN actualizado en todos los dispositivos');
+    toast('✅ PIN actualizado en todos los dispositivos');
   }catch(e){
-    toast('âŒ Error al guardar PIN');
+    toast('❌ Error al guardar PIN');
   }
 }
 
-// â”€â”€ API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── API ──────────────────────────────────────────────────────
 async function api(path, opts={}){
   const fetchOpts={method:opts.method||'GET',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
   if(opts.method==='DELETE') fetchOpts.headers['Prefer']='';
@@ -2097,15 +2082,15 @@ async function api(path, opts={}){
   try{
     const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,fetchOpts);
     const text=await res.text();
-    if(!res.ok){toast('âŒ Error: '+text.slice(0,100));return[];}
+    if(!res.ok){toast('❌ Error: '+text.slice(0,100));return[];}
     return text?JSON.parse(text):[];
-  }catch(e){toast('âŒ Red: '+e.message);return[];}
+  }catch(e){toast('❌ Red: '+e.message);return[];}
 }
 
-// â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── STATE ────────────────────────────────────────────────────
 let selectedEvent=null, allPosts=[];
 
-// â”€â”€ NAV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── NAV ──────────────────────────────────────────────────────
 function generatePin(){
   const pin=Math.floor(1000+Math.random()*9000).toString();
   document.getElementById('ev-pin').value=pin;
@@ -2137,14 +2122,14 @@ function goNav(page){
   if(page==='settings'&&sessionStorage.getItem('ew_restricted_event')){
     // Restricted users can't access settings
     goNav('events');
-    toast('âš ï¸ No tenÃ©s permiso para acceder a la configuraciÃ³n');
+    toast('⚠️ No tenés permiso para acceder a la configuración');
     return;
   }
 }
 
-// â”€â”€ CONFIRM MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── CONFIRM MODAL ─────────────────────────────────
 let _cmodalCb=null;
-function confirm2(msg,onConfirm,{title='Â¿EstÃ¡s seguro?',ico='âš ï¸',danger=true}={}){
+function confirm2(msg,onConfirm,{title='¿Estás seguro?',ico='⚠️',danger=true}={}){
   document.getElementById('cmodal-ico').textContent=ico;
   document.getElementById('cmodal-title').textContent=title;
   document.getElementById('cmodal-msg').textContent=msg;
@@ -2158,18 +2143,18 @@ function cmodalClose(){document.getElementById('cmodal-overlay').classList.remov
 function cmodalConfirm(){const cb=_cmodalCb;cmodalClose();if(cb) cb();}
 document.addEventListener('keydown',e=>{if(e.key==='Escape') cmodalClose();});
 
-// â”€â”€ SAVE BUTTON FEEDBACK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── SAVE BUTTON FEEDBACK ──────────────────────────
 function btnSaved(btn){
   const orig=btn.innerHTML;
-  btn.innerHTML='âœ“ Guardado';
+  btn.innerHTML='✓ Guardado';
   btn.classList.add('btn-saved');
   setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove('btn-saved');},2000);
 }
 
-// â”€â”€ OPEN SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── OPEN SCREEN ───────────────────────────────────
 function openScreenDash(){
   const url=document.getElementById('dash-screen-url')?.textContent;
-  if(url&&url!=='â€”') window.open(url,'_blank');
+  if(url&&url!=='—') window.open(url,'_blank');
 }
 
 function toast(msg,dur=3000){
@@ -2178,13 +2163,13 @@ function toast(msg,dur=3000){
   clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);
 }
 
-// â”€â”€ AUTO APPROVE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── AUTO APPROVE ─────────────────────────────────────────────
 let autoApprove=false;
 
 
 
 
-// â”€â”€ EDIT EVENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── EDIT EVENT ───────────────────────────────────────────────
 let editingEventId = null;
 
 function openEditEvent(ev){
@@ -2208,9 +2193,9 @@ function closeEditModal(){
 
 async function saveEditEvent(btn){
   if(!editingEventId) return;
-  if(sessionStorage.getItem('ew_restricted_event')){toast('âŒ No tenÃ©s permiso para editar eventos');return;}
+  if(sessionStorage.getItem('ew_restricted_event')){toast('❌ No tenés permiso para editar eventos');return;}
   const name = document.getElementById('edit-ev-name').value.trim();
-  if(!name){toast('âŒ El nombre es obligatorio');return;}
+  if(!name){toast('❌ El nombre es obligatorio');return;}
 
   const body = {
     name,
@@ -2236,7 +2221,7 @@ async function saveEditEvent(btn){
 
   if(res !== null){
     if(btn) btnSaved(btn);
-    toast('âœ… Evento actualizado');
+    toast('✅ Evento actualizado');
     closeEditModal();
     loadEvents();
     // Update selectedEvent if it's the one being edited
@@ -2252,7 +2237,7 @@ document.getElementById('edit-modal')?.addEventListener('click', function(e){
   if(e.target === this) closeEditModal();
 });
 
-// â”€â”€ MOMENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── MOMENTS ──────────────────────────────────────────────────
 function showMoments(){
   const notice=document.getElementById('moments-notice');
   const content=document.getElementById('moments-content');
@@ -2268,35 +2253,35 @@ function quickMoment(text, subtext, effect){
 }
 
 async function launchMoment(){
-  if(!selectedEvent){toast('âš ï¸ SeleccionÃ¡ un evento primero');return;}
+  if(!selectedEvent){toast('⚠️ Seleccioná un evento primero');return;}
   const text=document.getElementById('moment-text').value.trim();
-  if(!text){toast('âŒ EscribÃ­ un texto para el momento');return;}
+  if(!text){toast('❌ Escribí un texto para el momento');return;}
   const effect=document.getElementById('moment-effect').value;
   const duration=parseInt(document.getElementById('moment-duration').value)||10;
   const subtext=document.getElementById('moment-subtext').value.trim();
   const btn=document.getElementById('launch-btn');
-  btn.disabled=true;btn.textContent='ðŸš€ Lanzando...';
+  btn.disabled=true;btn.textContent='🚀 Lanzando...';
   try{
     await api('moments',{method:'POST',body:JSON.stringify({
       event_id:selectedEvent.id,
       text,
       effect:JSON.stringify({type:effect,duration,subtext})
     })});
-    toast('ðŸŽ¬ Â¡Momento lanzado en pantalla!');
-    btn.textContent='âœ… Â¡Lanzado!';
-    setTimeout(()=>{btn.disabled=false;btn.textContent='ðŸš€ Â¡Lanzar ahora!';},duration*1000);
+    toast('🎬 ¡Momento lanzado en pantalla!');
+    btn.textContent='✅ ¡Lanzado!';
+    setTimeout(()=>{btn.disabled=false;btn.textContent='🚀 ¡Lanzar ahora!';},duration*1000);
   }catch(e){
-    toast('âŒ Error al lanzar: '+e.message);
-    btn.disabled=false;btn.textContent='ðŸš€ Â¡Lanzar ahora!';
+    toast('❌ Error al lanzar: '+e.message);
+    btn.disabled=false;btn.textContent='🚀 ¡Lanzar ahora!';
   }
 }
 
-// â”€â”€ DELETE EVENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── DELETE EVENT ─────────────────────────────────────────────
 async function deleteEvent(ev){
   if(sessionStorage.getItem('ew_restricted_event')) return;
   const hasEmail=ev.client_email&&ev.client_email.trim();
-  const confirmMsg='Se eliminarÃ¡ "'+ev.name+'" y todo su contenido.'+(hasEmail?' Se enviarÃ¡ el Ã¡lbum al mail del cliente antes de borrar.':'')+' Esta acciÃ³n no se puede deshacer.';
-  confirm2(confirmMsg, async()=>{await _doDeleteEvent(ev);},{title:'Â¿Eliminar evento?',ico:'ðŸ—‘'});
+  const confirmMsg='Se eliminará "'+ev.name+'" y todo su contenido.'+(hasEmail?' Se enviará el álbum al mail del cliente antes de borrar.':'')+' Esta acción no se puede deshacer.';
+  confirm2(confirmMsg, async()=>{await _doDeleteEvent(ev);},{title:'¿Eliminar evento?',ico:'🗑'});
 }
 async function _doDeleteEvent(ev){
   const hasEmail=ev.client_email&&ev.client_email.trim();
@@ -2308,10 +2293,10 @@ async function _doDeleteEvent(ev){
   if(hasEmail && approvedPosts.length>0){
     const alreadySent=await checkAlbumSent(ev.id);
     if(!alreadySent){
-      toast('ðŸ“§ Enviando Ã¡lbum por email...');
+      toast('📧 Enviando álbum por email...');
       const ok=await sendAlbumEmail(ev, approvedPosts);
       if(!ok){
-        toast('âš ï¸ No se pudo enviar el Ã¡lbum. El evento NO fue eliminado â€” reintentÃ¡ desde la pestaÃ±a Ãlbum.');
+        toast('⚠️ No se pudo enviar el álbum. El evento NO fue eliminado — reintentá desde la pestaña Álbum.');
         return; // Abort deletion to protect data
       }
     }
@@ -2328,7 +2313,7 @@ async function _doDeleteEvent(ev){
     await api('event_settings?event_id=eq.'+ev.id,{method:'DELETE'});
     await api('events?id=eq.'+ev.id,{method:'DELETE'});
   }catch(e){
-    toast('âŒ Error al eliminar el evento: '+e.message);
+    toast('❌ Error al eliminar el evento: '+e.message);
     return;
   }
 
@@ -2336,7 +2321,7 @@ async function _doDeleteEvent(ev){
     selectedEvent=null;
     document.getElementById('sidebar-event').textContent='Ninguno';
   }
-  toast('ðŸ—‘ Evento "'+ev.name+'" eliminado');
+  toast('🗑 Evento "'+ev.name+'" eliminado');
   loadEvents();
 }
 
@@ -2356,7 +2341,7 @@ async function sendAlbumEmail(ev, posts){
     const audios   = posts.filter(p=>p.type==='audio');
     const wishes   = posts.filter(p=>p.type==='wish');
 
-    toast('ðŸ“§ Enviando Ã¡lbum a '+ev.client_email+'...',8000);
+    toast('📧 Enviando álbum a '+ev.client_email+'...',8000);
 
     const res=await fetch(
       'https://jxqwrbmnfmnzddkcimrm.supabase.co/functions/v1/send-album-email',
@@ -2379,19 +2364,19 @@ async function sendAlbumEmail(ev, posts){
 
     const data=await res.json();
     if(data.success){
-      toast('âœ… Ãlbum enviado a '+ev.client_email+' ðŸ“§');
+      toast('✅ Álbum enviado a '+ev.client_email+' 📧');
       return true;
     } else {
       throw new Error(data.error||'Error desconocido');
     }
   }catch(e){
     console.error('Email error:',e);
-    toast('âš ï¸ Error al enviar email: '+e.message);
+    toast('⚠️ Error al enviar email: '+e.message);
     return false;
   }
 }
 
-// â”€â”€ EVENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── EVENTS ───────────────────────────────────────────────────
 async function loadEvents(restrictedId=null){
   const restricted=restrictedId||sessionStorage.getItem('ew_restricted_event');
   // Hide create buttons if restricted
@@ -2407,7 +2392,7 @@ async function loadEvents(restrictedId=null){
   const query=restricted?'events?id=eq.'+restricted:'events?order=created_at.desc';
   const events=await api(query);
   if(!Array.isArray(events)||!events.length){
-    grid.innerHTML='<div class="empty"><div class="empty-ico">ðŸ“­</div><div class="empty-txt">No hay eventos. Â¡CreÃ¡ el primero!</div></div>';return;
+    grid.innerHTML='<div class="empty"><div class="empty-ico">📭</div><div class="empty-txt">No hay eventos. ¡Creá el primero!</div></div>';return;
   }
   const counts=await api('posts?select=event_id,approved');
   const sc=Array.isArray(counts)?counts:[];
@@ -2418,10 +2403,10 @@ async function loadEvents(restrictedId=null){
     const card=document.createElement('div');
     card.className='event-card'+(selectedEvent?.id===ev.id?' selected':'');
     card.innerHTML=
-      `<div class="event-name">${ev.name}</div><div class="event-date">${formatDateES(ev.date)}${ev.subtitle?' Â· '+ev.subtitle:''}</div>
+      `<div class="event-name">${ev.name}</div><div class="event-date">${formatDateES(ev.date)}${ev.subtitle?' · '+ev.subtitle:''}</div>
       ${ev.custom_code
-        ? `<div style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-family:monospace;font-size:12px;font-weight:700;background:var(--pink-dim);color:var(--pink);padding:3px 10px;border-radius:6px;letter-spacing:1px">ðŸ”— ${ev.custom_code}</div>`
-        : `<div style="display:inline-block;margin-top:6px;font-family:monospace;font-size:10px;font-weight:700;background:rgba(255,255,255,0.06);color:var(--muted);padding:3px 10px;border-radius:6px;letter-spacing:1px">${ev.id.slice(0,8)}â€¦</div>`
+        ? `<div style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-family:monospace;font-size:12px;font-weight:700;background:var(--pink-dim);color:var(--pink);padding:3px 10px;border-radius:6px;letter-spacing:1px">🔗 ${ev.custom_code}</div>`
+        : `<div style="display:inline-block;margin-top:6px;font-family:monospace;font-size:10px;font-weight:700;background:rgba(255,255,255,0.06);color:var(--muted);padding:3px 10px;border-radius:6px;letter-spacing:1px">${ev.id.slice(0,8)}…</div>`
       }
       <div class="event-stats"><div class="estat"><div class="estat-num">${posts.length}</div><div class="estat-lbl">Total</div></div>
       <div class="estat"><div class="estat-num">${approved}</div><div class="estat-lbl">Aprob.</div></div>
@@ -2431,7 +2416,7 @@ async function loadEvents(restrictedId=null){
     if(ev.client_email){
       const emailDiv=document.createElement('div');
       emailDiv.style.cssText='margin-top:6px;font-size:10px;color:var(--muted)';
-      emailDiv.textContent='ðŸ“§ '+ev.client_email;
+      emailDiv.textContent='📧 '+ev.client_email;
       card.appendChild(emailDiv);
     }
     if(ev.admin_pin){
@@ -2439,9 +2424,9 @@ async function loadEvents(restrictedId=null){
       const remaining=ev.pin_expires_at?(new Date(ev.pin_expires_at)-Date.now()):null;
       const isShort=remaining&&remaining>0&&remaining<3600000;
       const expStr=ev.pin_expires_at?
-        (expired?'<span style="color:var(--red);font-size:10px">ðŸ”’ PIN vencido</span>':
-        '<span class="pin-expiry-live" data-expiry="'+ev.pin_expires_at+'" data-pin="'+ev.admin_pin+'" style="color:var(--green);font-size:10px">ðŸ”‘ PIN: '+ev.admin_pin+' Â· vence '+formatExpiry(ev.pin_expires_at)+'</span>'):
-        '<span style="color:var(--muted);font-size:10px">ðŸ”‘ PIN: '+ev.admin_pin+' (sin vencimiento)</span>';
+        (expired?'<span style="color:var(--red);font-size:10px">🔒 PIN vencido</span>':
+        '<span class="pin-expiry-live" data-expiry="'+ev.pin_expires_at+'" data-pin="'+ev.admin_pin+'" style="color:var(--green);font-size:10px">🔑 PIN: '+ev.admin_pin+' · vence '+formatExpiry(ev.pin_expires_at)+'</span>'):
+        '<span style="color:var(--muted);font-size:10px">🔑 PIN: '+ev.admin_pin+' (sin vencimiento)</span>';
       const pinDiv=document.createElement('div');
       pinDiv.style.marginTop='8px';
       pinDiv.innerHTML=expStr;
@@ -2456,7 +2441,7 @@ async function loadEvents(restrictedId=null){
     if(!sessionStorage.getItem('ew_restricted_event')){
       const editBtn=document.createElement('button');
       editBtn.className='del-btn';
-      editBtn.innerHTML='âœï¸';
+      editBtn.innerHTML='✏️';
       editBtn.title='Editar evento';
       editBtn.style.cssText='position:absolute;top:12px;right:52px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#6366f1;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;transition:all 0.2s;';
       editBtn.onmouseenter=()=>editBtn.style.background='rgba(99,102,241,0.35)';
@@ -2466,7 +2451,7 @@ async function loadEvents(restrictedId=null){
 
       const delBtn=document.createElement('button');
       delBtn.className='del-btn';
-      delBtn.innerHTML='ðŸ—‘';
+      delBtn.innerHTML='🗑';
       delBtn.title='Eliminar evento';
       delBtn.style.cssText='position:absolute;top:12px;right:12px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:8px;padding:5px 9px;font-size:14px;cursor:pointer;transition:all 0.2s;';
       delBtn.onmouseenter=()=>delBtn.style.background='rgba(239,68,68,0.35)';
@@ -2490,12 +2475,12 @@ function startCountdown(){
       if(!isoStr) return;
       const remaining=new Date(isoStr)-Date.now();
       if(remaining<=0){
-        el.textContent='ðŸ”’ PIN vencido';
+        el.textContent='🔒 PIN vencido';
         el.style.color='var(--red)';
       } else if(remaining<3600000){
         const mins=Math.floor(remaining/60000);
         const secs=Math.floor((remaining%60000)/1000);
-        el.textContent='ðŸ”‘ PIN: '+el.dataset.pin+' Â· vence en '+mins+'m '+secs+'s';
+        el.textContent='🔑 PIN: '+el.dataset.pin+' · vence en '+mins+'m '+secs+'s';
       }
     });
   },1000);
@@ -2516,14 +2501,14 @@ function selectEvent(ev,cardEl){
   // Show dashboard nav button
   const dashBtn=document.getElementById('nav-btn-dashboard');
   if(dashBtn) dashBtn.style.display='';
-  toast('âœ“ "'+ev.name+'" seleccionado');
+  toast('✓ "'+ev.name+'" seleccionado');
   startCountdown();
   goNav('dashboard');
 }
 
 async function evCreate(){
   const name=document.getElementById('ev-name').value.trim();
-  if(!name){toast('âŒ El nombre es obligatorio');return;}
+  if(!name){toast('❌ El nombre es obligatorio');return;}
   const btn=document.getElementById('create-btn');
   btn.disabled=true;btn.textContent='Creando...';
   const body={name};
@@ -2549,9 +2534,9 @@ async function evCreate(){
     }
   }
   const res=await api('events',{method:'POST',body:JSON.stringify(body)});
-  btn.disabled=false;btn.textContent='Crear evento â†’';
+  btn.disabled=false;btn.textContent='Crear evento →';
   if(Array.isArray(res)&&res[0]?.id){
-    toast('ðŸŽ‰ Evento "'+res[0].name+'" creado!');
+    toast('🎉 Evento "'+res[0].name+'" creado!');
     document.getElementById('ev-name').value='';
     document.getElementById('ev-date').value='';
     document.getElementById('ev-subtitle').value='';
@@ -2565,9 +2550,9 @@ async function evCreate(){
 
 
 
-// â”€â”€ LINKS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── LINKS ────────────────────────────────────────────────────
 function openMosaicMode(){
-  if(!selectedEvent){toast('âš ï¸ SeleccionÃ¡ un evento primero');return;}
+  if(!selectedEvent){toast('⚠️ Seleccioná un evento primero');return;}
   const url=location.origin+'/screen.html?event='+selectedEvent.id+'&mosaic=1';
   window.open(url,'_blank');
 }
@@ -2585,7 +2570,7 @@ async function showDashboard(){
   // Fill URLs
   document.getElementById('dash-screen-url').textContent=screenUrl;
   document.getElementById('dash-guest-url').textContent=guestUrl;
-  // QR â€” only regenerate if event changed
+  // QR — only regenerate if event changed
   const qrDiv=document.getElementById('dash-qr');
   if(qrDiv._cachedUrl!==guestUrl){
     qrDiv.innerHTML='';
@@ -2621,15 +2606,15 @@ function showLinks(){
   qrDiv.innerHTML='';
   try{new QRCode(qrDiv,{text:guestUrl,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});}catch(e){}
 }
-function copyLink(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>toast('ðŸ“‹ Copiado'));}
-function copyText(text){navigator.clipboard.writeText(text).then(()=>toast('ðŸ“‹ Copiado'));}
+function copyLink(id){navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>toast('📋 Copiado'));}
+function copyText(text){navigator.clipboard.writeText(text).then(()=>toast('📋 Copiado'));}
 function downloadQR(selector='#qr-container img'){
   const img=document.querySelector(selector);
   if(!img){toast('Generando QR...');return;}
   const a=document.createElement('a');a.download='qr-evento.png';a.href=img.src;a.click();
 }
 
-// â”€â”€ DESIGN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── DESIGN ───────────────────────────────────────────────────
 const TEMPLATES = {
   dark:   {bg:'#07070f',header:'#0c0c14',accent:'#f0176f',text:'#ffffff',bubble:'#ffffff',bubbleText:'#1a1a1a',fontTitle:'Syne',fontBody:'DM Sans',bgEffect:'stars'},
   light:  {bg:'#f8f4ef',header:'#ede8e0',accent:'#e91e8c',text:'#1a1a1a',bubble:'#1a1a1a',bubbleText:'#ffffff',fontTitle:'Playfair Display',fontBody:'Lato',bgEffect:'none'},
@@ -2730,7 +2715,7 @@ function selectTemplate(name,el){
 
 function getV(id){return document.getElementById(id)?.value||'';}
 
-// â”€â”€ MINI PREVIEW CANVAS EFFECTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── MINI PREVIEW CANVAS EFFECTS ──────────────────────────────
 let prevBgAnimFrame=null;
 let prevParticles=[];
 
@@ -2930,9 +2915,9 @@ async function uploadWatermark(input){
     document.getElementById('gd-wm-url').value=url;
     document.getElementById('gd-wm-img').src=url;
     document.getElementById('gd-wm-preview').style.display='block';
-    status.textContent='âœ… '+file.name;
+    status.textContent='✅ '+file.name;
   }catch(e){
-    status.textContent='âŒ Error: '+e.message.slice(0,60);
+    status.textContent='❌ Error: '+e.message.slice(0,60);
   }
   input.value='';
 }
@@ -2944,10 +2929,10 @@ function removeWatermark(){
 }
 
 function resetGuestDesign(){
-  confirm2('Se perderÃ¡n todos los cambios de diseÃ±o del invitado.',()=>{
+  confirm2('Se perderán todos los cambios de diseño del invitado.',()=>{
     localStorage.removeItem('ew_guest_design_'+(selectedEvent?.id||''));
-    showGuestDesign();toast('DiseÃ±o reseteado');
-  },{title:'Â¿Resetear diseÃ±o?',ico:'â†º',danger:false});
+    showGuestDesign();toast('Diseño reseteado');
+  },{title:'¿Resetear diseño?',ico:'↺',danger:false});
 }
 
 function switchDesignTab(tab, btn){
@@ -2959,7 +2944,7 @@ function switchDesignTab(tab, btn){
 }
 
 function saveDesign(btn){
-  if(!selectedEvent){toast('SeleccionÃ¡ un evento primero');return;}
+  if(!selectedEvent){toast('Seleccioná un evento primero');return;}
   const design={
     bg:getV('c-bg'), accent:getV('c-accent'), text:getV('c-text'),
     bubble:getV('c-bubble'), bubbleText:getV('c-bubble-text'), header:getV('c-header'),
@@ -2982,7 +2967,7 @@ function saveDesign(btn){
     bubbleIcon:getV('cfg-bubble-icon')||'random',
     showHeader:getV('cfg-show-header')||'yes',
     qrSize:getV('cfg-qr-size')||'120',
-    qrText:getV('cfg-qr-text')||'EscaneÃ¡ para participar',
+    qrText:getV('cfg-qr-text')||'Escaneá para participar',
     sidebarWidth:getV('cfg-sidebar-width')||'240',
     showCounters:getV('cfg-show-counters')||'yes',
     showReactions:getV('cfg-show-reactions')||'yes',
@@ -2995,7 +2980,7 @@ function saveDesign(btn){
   };
   localStorage.setItem('ew_design_'+selectedEvent.id,JSON.stringify(design));
   if(btn) btnSaved(btn);
-  toast('âœ… DiseÃ±o guardado â€” recargÃ¡ la pantalla del evento para verlo');
+  toast('✅ Diseño guardado — recargá la pantalla del evento para verlo');
 }
 
 
@@ -3003,21 +2988,21 @@ function saveDesign(btn){
 
 
 function resetDesign(){
-  confirm2('Se perderÃ¡n todos los cambios de diseÃ±o de pantalla.',()=>{
+  confirm2('Se perderán todos los cambios de diseño de pantalla.',()=>{
     localStorage.removeItem('ew_design_'+selectedEvent?.id);
-    showDesign();toast('â†º DiseÃ±o reseteado');
-  },{title:'Â¿Resetear diseÃ±o?',ico:'â†º',danger:false});
+    showDesign();toast('↺ Diseño reseteado');
+  },{title:'¿Resetear diseño?',ico:'↺',danger:false});
 }
 
-// â”€â”€ ALBUM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── ALBUM ────────────────────────────────────────────────────
 async function sendAlbumManual(){
-  if(!selectedEvent||!selectedEvent.client_email){toast('âš ï¸ Este evento no tiene email del cliente');return;}
-  confirm2('Se enviarÃ¡ el Ã¡lbum completo a '+selectedEvent.client_email+'.', async()=>{
+  if(!selectedEvent||!selectedEvent.client_email){toast('⚠️ Este evento no tiene email del cliente');return;}
+  confirm2('Se enviará el álbum completo a '+selectedEvent.client_email+'.', async()=>{
     const posts=await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.true&order=created_at.asc');
     if(!Array.isArray(posts)||!posts.length){toast('No hay contenido para enviar');return;}
     const ok=await sendAlbumEmail(selectedEvent, posts);
     if(ok) localStorage.setItem('ew_album_sent_'+selectedEvent.id,'1');
-  },{title:'Â¿Enviar Ã¡lbum?',ico:'ðŸ“§',danger:false});
+  },{title:'¿Enviar álbum?',ico:'📧',danger:false});
 }
 
 async function showAlbum(){
@@ -3033,7 +3018,7 @@ async function showAlbum(){
   const photos=Array.isArray(posts)?posts.filter(p=>p.content&&p.content.startsWith('http')):[];
   document.getElementById('album-count').textContent=photos.length+' foto'+(photos.length!==1?'s':'');
   const grid=document.getElementById('album-grid');
-  if(!photos.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">ðŸ“·</div><div class="empty-txt">No hay fotos aprobadas aÃºn</div></div>';return;}
+  if(!photos.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-ico">📷</div><div class="empty-txt">No hay fotos aprobadas aún</div></div>';return;}
   grid.innerHTML='';
   photos.forEach(p=>{
     const card=document.createElement('div');
@@ -3041,10 +3026,10 @@ async function showAlbum(){
     card.innerHTML=`
       <img src="${p.content}" alt="${p.author}" loading="lazy"/>
       <div class="album-card-overlay">
-        <div class="album-card-author">ðŸ“· ${p.author}</div>
+        <div class="album-card-author">📷 ${p.author}</div>
         <div class="album-card-actions">
-          <button class="album-dl-btn" onclick="downloadSinglePhoto('${p.content}','${p.author}','${p.original_url||''}')" title="Descargar sin marco">â¬‡</button>
-          <button class="album-del-btn" onclick="deleteAlbumPhoto('${p.id}')" title="Eliminar">ðŸ—‘</button>
+          <button class="album-dl-btn" onclick="downloadSinglePhoto('${p.content}','${p.author}','${p.original_url||''}')" title="Descargar sin marco">⬇</button>
+          <button class="album-del-btn" onclick="deleteAlbumPhoto('${p.id}')" title="Eliminar">🗑</button>
         </div>
       </div>`;
     // Click to fullscreen
@@ -3065,28 +3050,28 @@ function openPhotoModal(p){
         <div id="photo-modal-info" style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.7);font-size:13px"></div>
       </div>
       <div style="position:absolute;top:16px;right:16px;display:flex;gap:10px">
-        <button id="photo-modal-dl" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">â¬‡ Descargar</button>
-        <button id="photo-modal-del" style="background:rgba(239,68,68,0.3);border:1px solid rgba(239,68,68,0.5);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">ðŸ—‘ Eliminar</button>
-        <button onclick="document.getElementById('photo-modal').style.display='none'" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">âœ• Cerrar</button>
+        <button id="photo-modal-dl" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">⬇ Descargar</button>
+        <button id="photo-modal-del" style="background:rgba(239,68,68,0.3);border:1px solid rgba(239,68,68,0.5);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">🗑 Eliminar</button>
+        <button onclick="document.getElementById('photo-modal').style.display='none'" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">✕ Cerrar</button>
       </div>`;
     modal.onclick=e=>{if(e.target===modal) modal.style.display='none';};
     document.body.appendChild(modal);
   }
   document.getElementById('photo-modal-img').src=p.content;
-  document.getElementById('photo-modal-info').textContent='ðŸ“· '+p.author+(p.content_text?' Â· "'+p.content_text+'"':'');
+  document.getElementById('photo-modal-info').textContent='📷 '+p.author+(p.content_text?' · "'+p.content_text+'"':'');
   document.getElementById('photo-modal-dl').onclick=()=>downloadSinglePhoto(p.content,p.author,p.original_url);
   document.getElementById('photo-modal-del').onclick=()=>{deleteAlbumPhoto(p.id);modal.style.display='none';};
   modal.style.display='flex';
 }
 
 async function deleteAlbumPhoto(id){
-  confirm2('Esta foto se eliminarÃ¡ del Ã¡lbum y no se puede recuperar.',async()=>{
+  confirm2('Esta foto se eliminará del álbum y no se puede recuperar.',async()=>{
     await api('posts?id=eq.'+id,{method:'DELETE'});
-    toast('ðŸ—‘ Foto eliminada');showAlbum();
-  },{title:'Â¿Eliminar foto?',ico:'ðŸ–¼'});
+    toast('🗑 Foto eliminada');showAlbum();
+  },{title:'¿Eliminar foto?',ico:'🖼'});
 }
 
-// â”€â”€ MESSAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── MESSAGES ─────────────────────────────────────────────────
 let messagesRefreshTimer=null;
 
 async function showMessages(){
@@ -3108,19 +3093,19 @@ async function loadMessages(){
   const total=posts.length;
   const pending=posts.filter(p=>p.approved!==true).length;
   document.getElementById('messages-count').textContent=
-    total+' publicaciÃ³n'+(total!==1?'es':'')+
-    (pending?' Â· '+pending+' pendiente'+(pending!==1?'s':''):'');
+    total+' publicación'+(total!==1?'es':'')+
+    (pending?' · '+pending+' pendiente'+(pending!==1?'s':''):'');
   const list=document.getElementById('messages-list');
   if(!posts.length){
     const guestUrl=selectedEvent?(selectedEvent.custom_code||selectedEvent.id):'';
     const guestLink=guestUrl?`${location.origin}${location.pathname.replace('admin.html','guest.html')}?event=${guestUrl}`:'';
     list.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted)">
-      <div style="font-size:48px;margin-bottom:12px">ðŸ“­</div>
-      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px">TodavÃ­a no hay publicaciones</div>
-      <div style="font-size:13px;margin-bottom:20px">CompartÃ­ el link con los invitados para empezar</div>
+      <div style="font-size:48px;margin-bottom:12px">📭</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px">Todavía no hay publicaciones</div>
+      <div style="font-size:13px;margin-bottom:20px">Compartí el link con los invitados para empezar</div>
       ${guestLink?`<div id="empty-qr-wrap" style="display:inline-flex;flex-direction:column;align-items:center;gap:12px">
         <div id="empty-state-qr" style="background:#fff;padding:10px;border-radius:12px;width:120px;height:120px"></div>
-        <button class="btn-pink" style="font-size:13px;padding:8px 18px" onclick="navigator.clipboard.writeText('${guestLink}').then(()=>toast('âœ“ Link copiado'))">ðŸ”— Copiar link</button>
+        <button class="btn-pink" style="font-size:13px;padding:8px 18px" onclick="navigator.clipboard.writeText('${guestLink}').then(()=>toast('✓ Link copiado'))">🔗 Copiar link</button>
       </div>`:''}
     </div>`;
     if(guestLink){
@@ -3130,7 +3115,7 @@ async function loadMessages(){
     return;
   }
   list.innerHTML='';
-  const typeIco={photo:'ðŸ“·',message:'ðŸ’¬',wish:'ðŸ’Œ',audio:'ðŸŽ¤'};
+  const typeIco={photo:'📷',message:'💬',wish:'💌',audio:'🎤'};
   const typeLbl={photo:'Foto',message:'Mensaje',wish:'Deseo',audio:'Audio'};
   const typeColor={photo:'#60a5fa',message:'#c084fc',wish:'#ff6b9d',audio:'#f59e0b'};
   posts.forEach(post=>{
@@ -3140,55 +3125,49 @@ async function loadMessages(){
     const time=d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
     const date=d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
     const color=typeColor[post.type]||'var(--muted)';
-    const statusLabel=post.approved?'Aprobado':'Pendiente';
-    const statusBadge=`<span class="post-status ${post.approved?'approved':'pending'}">${statusLabel}</span>`;
-    const safePostId=escapeHtml(post.id||'');
-    const safeAuthor=escapeHtml(post.author||'Anonimo');
-    const safeContent=escapeHtml(post.content||'');
-    const safeImgUrl=sanitizeUrl(post.content);
-    const previewText=safeContent.length>120?safeContent.slice(0,120)+'...':safeContent;
-    const approveBtn=!post.approved?`<button class="btn-approve-post" onclick="approveMsgPost('${safePostId}')">Aprobar</button>`:'';
+    const statusBadge=`<span class="post-status ${post.approved?'approved':'pending'}">${post.approved?'✓ Aprobado':'⏳ Pendiente'}</span>`;
+    const approveBtn=!post.approved?`<button class="btn-approve-post" onclick="approveMsgPost('${post.id}')">✓ Aprobar</button>`:'';
     let mediaHtml='';
-    if(post.type==='photo'&&safeImgUrl){
-      mediaHtml=`<div class="post-thumb"><img src="${safeImgUrl}" alt="foto" loading="lazy"/><div class="post-thumb-overlay"><span style="font-size:11px;font-weight:600;color:#fff">${safeAuthor}</span>${statusBadge}</div></div>`;
+    if(post.type==='photo'&&post.content){
+      mediaHtml=`<div class="post-thumb"><img src="${post.content}" alt="foto" loading="lazy"/><div class="post-thumb-overlay"><span style="font-size:11px;font-weight:600;color:#fff">👤 ${post.author||'Anónimo'}</span>${statusBadge}</div></div>`;
     }
     let contentPreview='';
     if(post.type==='audio'){
-      contentPreview=`<div class="post-content-preview" style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">Audio</span><span style="font-style:italic">Mensaje de voz</span></div>`;
+      contentPreview=`<div class="post-content-preview" style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">🎤</span><span style="font-style:italic">Mensaje de voz</span></div>`;
     } else if(post.type!=='photo'&&post.content){
-      contentPreview=`<div class="post-content-preview">${previewText}</div>`;
+      contentPreview=`<div class="post-content-preview">${post.content.substring(0,120)}${post.content.length>120?'…':''}</div>`;
     }
     card.innerHTML=`
       ${mediaHtml}
       <div class="post-body">
         <div class="post-meta">
           <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:16px">${typeIco[post.type]||'TXT'}</span>
+            <span style="font-size:16px">${typeIco[post.type]||'📝'}</span>
             <span style="font-size:11px;font-weight:700;color:${color}">${typeLbl[post.type]||post.type}</span>
           </div>
           ${post.type!=='photo'?statusBadge:''}
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <span class="post-author">${post.type!=='photo'?'Autor: ':''}${safeAuthor}</span>
+          <span class="post-author">${post.type!=='photo'?'👤 ':''} ${post.author||'Anónimo'}</span>
           <span class="post-time">${date} · ${time}</span>
         </div>
         ${contentPreview}
-        <div class="post-actions">${approveBtn}<button class="btn-delete-post" onclick="deleteMsgPost('${safePostId}')">Eliminar</button></div>
+        <div class="post-actions">${approveBtn}<button class="btn-delete-post" onclick="deleteMsgPost('${post.id}')">🗑 Eliminar</button></div>
       </div>`;
     list.appendChild(card);
   });
 }
 
 async function deleteMsgPost(id){
-  confirm2('Esta publicaciÃ³n se eliminarÃ¡ y no se puede recuperar.',async()=>{
+  confirm2('Esta publicación se eliminará y no se puede recuperar.',async()=>{
     await api('posts?id=eq.'+id,{method:'DELETE'});
-    toast('ðŸ—‘ PublicaciÃ³n eliminada');await loadMessages();
-  },{title:'Â¿Eliminar publicaciÃ³n?',ico:'ðŸ—‘'});
+    toast('🗑 Publicación eliminada');await loadMessages();
+  },{title:'¿Eliminar publicación?',ico:'🗑'});
 }
 
 async function approveMsgPost(id){
   await api('posts?id=eq.'+id,{method:'PATCH',body:JSON.stringify({approved:true})});
-  toast('âœ“ Post aprobado');
+  toast('✓ Post aprobado');
   await loadMessages();
 }
 
@@ -3206,10 +3185,10 @@ async function downloadSinglePhoto(url,author,originalUrl){
 }
 
 async function downloadAlbum(){
-  if(!selectedEvent){toast('SeleccionÃ¡ un evento primero');return;}
+  if(!selectedEvent){toast('Seleccioná un evento primero');return;}
   const btn=document.querySelector('[onclick="downloadAlbum()"]');
   const origText=btn?btn.textContent:'';
-  if(btn){btn.disabled=true;btn.textContent='â³ Cargando...';}
+  if(btn){btn.disabled=true;btn.textContent='⏳ Cargando...';}
   try{
     // Fetch all approved posts
     const allPosts=await api('posts?event_id=eq.'+selectedEvent.id+'&approved=eq.true&order=created_at.asc');
@@ -3227,59 +3206,59 @@ async function downloadAlbum(){
     const total=photos.length+audios.length;
     let done=0;
 
-    // â”€â”€ FOTOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── FOTOS ──────────────────────────────────────────────────
     if(photos.length){
       const folder=zip.folder('fotos');
       for(let i=0;i<photos.length;i++){
         done++;
-        if(btn) btn.textContent=`â³ Fotos ${done}/${total}...`;
+        if(btn) btn.textContent=`⏳ Fotos ${done}/${total}...`;
         try{
           const url=photos[i].original_url||photos[i].content;
           const res=await fetch(url);if(!res.ok) continue;
           const blob=await res.blob();
           const ext=blob.type.includes('png')?'png':'jpg';
-          const author=(photos[i].author||'invitado').replace(/[^a-z0-9Ã¡Ã©Ã­Ã³ÃºÃ±]/gi,'_').slice(0,30);
-          const caption=photos[i].content_text?'_'+photos[i].content_text.replace(/[^a-z0-9Ã¡Ã©Ã­Ã³ÃºÃ± ]/gi,'').slice(0,20).trim():'';
+          const author=(photos[i].author||'invitado').replace(/[^a-z0-9áéíóúñ]/gi,'_').slice(0,30);
+          const caption=photos[i].content_text?'_'+photos[i].content_text.replace(/[^a-z0-9áéíóúñ ]/gi,'').slice(0,20).trim():'';
           folder.file(`foto_${String(i+1).padStart(3,'0')}_${author}${caption}.${ext}`,blob);
         }catch(e){}
       }
     }
 
-    // â”€â”€ AUDIOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── AUDIOS ─────────────────────────────────────────────────
     if(audios.length){
       const folder=zip.folder('audios');
       for(let i=0;i<audios.length;i++){
         done++;
-        if(btn) btn.textContent=`â³ Audios ${done}/${total}...`;
+        if(btn) btn.textContent=`⏳ Audios ${done}/${total}...`;
         try{
           const res=await fetch(audios[i].content);if(!res.ok) continue;
           const blob=await res.blob();
           const ext=blob.type.includes('mp4')?'mp4':'webm';
-          const author=(audios[i].author||'invitado').replace(/[^a-z0-9Ã¡Ã©Ã­Ã³ÃºÃ±]/gi,'_').slice(0,30);
+          const author=(audios[i].author||'invitado').replace(/[^a-z0-9áéíóúñ]/gi,'_').slice(0,30);
           folder.file(`audio_${String(i+1).padStart(3,'0')}_${author}.${ext}`,blob);
         }catch(e){}
       }
     }
 
-    // â”€â”€ MENSAJES + DESEOS como TXT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── MENSAJES + DESEOS como TXT ─────────────────────────────
     const lines=[];
     const fmt=d=>d?new Date(d).toLocaleString('es-AR',{dateStyle:'short',timeStyle:'short'}):'';
     if(messages.length){
-      lines.push('â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•');
+      lines.push('═══════════════════════════════');
       lines.push('  MENSAJES ('+messages.length+')');
-      lines.push('â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n');
+      lines.push('═══════════════════════════════\n');
       messages.forEach((m,i)=>{
-        lines.push(`[${i+1}] ${m.author||'AnÃ³nimo'}  â€”  ${fmt(m.created_at)}`);
+        lines.push(`[${i+1}] ${m.author||'Anónimo'}  —  ${fmt(m.created_at)}`);
         lines.push(m.content);
         lines.push('');
       });
     }
     if(wishes.length){
-      lines.push('â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•');
+      lines.push('═══════════════════════════════');
       lines.push('  DESEOS ESPECIALES ('+wishes.length+')');
-      lines.push('â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•\n');
+      lines.push('═══════════════════════════════\n');
       wishes.forEach((w,i)=>{
-        lines.push(`[${i+1}] ${w.author||'AnÃ³nimo'}  â€”  ${fmt(w.created_at)}`);
+        lines.push(`[${i+1}] ${w.author||'Anónimo'}  —  ${fmt(w.created_at)}`);
         lines.push(w.content);
         lines.push('');
       });
@@ -3288,30 +3267,30 @@ async function downloadAlbum(){
       zip.file('mensajes.txt','\uFEFF'+lines.join('\n')); // BOM for Excel/Notepad UTF-8
     }
 
-    // â”€â”€ README â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── README ─────────────────────────────────────────────────
     const readme=[
-      'ÃLBUM: '+evName,
-      'Fecha: '+(selectedEvent.date||'â€”'),
+      'ÁLBUM: '+evName,
+      'Fecha: '+(selectedEvent.date||'—'),
       'Generado: '+new Date().toLocaleString('es-AR'),
       '',
       'Contenido:',
-      '  ðŸ“· '+photos.length+' foto'+(photos.length!==1?'s':''),
-      '  ðŸ’¬ '+messages.length+' mensaje'+(messages.length!==1?'s':''),
-      '  ðŸ’Œ '+wishes.length+' deseo'+(wishes.length!==1?'s':''),
-      '  ðŸŽ¤ '+audios.length+' audio'+(audios.length!==1?'s':''),
+      '  📷 '+photos.length+' foto'+(photos.length!==1?'s':''),
+      '  💬 '+messages.length+' mensaje'+(messages.length!==1?'s':''),
+      '  💌 '+wishes.length+' deseo'+(wishes.length!==1?'s':''),
+      '  🎤 '+audios.length+' audio'+(audios.length!==1?'s':''),
       '',
       'Generado con EventWall',
     ].join('\n');
     zip.file('README.txt',readme);
 
-    if(btn) btn.textContent='â³ Generando ZIP...';
+    if(btn) btn.textContent='⏳ Generando ZIP...';
     const zipBlob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(zipBlob);
     a.download=`album-${safeName}.zip`;
     a.click();
     URL.revokeObjectURL(a.href);
-    toast(`âœ… ZIP descargado â€” ${photos.length} fotos, ${messages.length} mensajes, ${wishes.length} deseos, ${audios.length} audios`);
+    toast(`✅ ZIP descargado — ${photos.length} fotos, ${messages.length} mensajes, ${wishes.length} deseos, ${audios.length} audios`);
   }catch(e){
     toast('Error generando ZIP: '+e.message);
   }finally{
@@ -3319,7 +3298,7 @@ async function downloadAlbum(){
   }
 }
 
-// â”€â”€ PRINT MODE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── PRINT MODE ───────────────────────────────────────────────
 function showPrint(){
   const notice=document.getElementById('print-notice');
   const content=document.getElementById('print-content');
@@ -3352,7 +3331,7 @@ function buildPrintCell(evName,msg,sub,qrDataUrl,style,size){
     <div style="font-size:${big?'13':'11'}px;color:${s.sub};max-width:260px;line-height:1.6">${sub}</div>
     <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
       <div style="width:8px;height:8px;border-radius:50%;background:${s.accent};animation:none"></div>
-      <span style="font-size:${big?'11':'9'}px;color:${s.sub};font-weight:600;letter-spacing:1px;text-transform:uppercase">EventWall Â· En vivo</span>
+      <span style="font-size:${big?'11':'9'}px;color:${s.sub};font-weight:600;letter-spacing:1px;text-transform:uppercase">EventWall · En vivo</span>
     </div>
   </div>`;
 }
@@ -3374,8 +3353,8 @@ async function getQRDataUrl(){
 async function previewPrint(){
   const area=document.getElementById('print-preview-area');
   area.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px">Generando vista previa...</div>';
-  const msg=document.getElementById('print-msg').value||'Â¡EscaneÃ¡ y participÃ¡!';
-  const sub='SubÃ­ fotos y mensajes en tiempo real';
+  const msg=document.getElementById('print-msg').value||'¡Escaneá y participá!';
+  const sub='Subí fotos y mensajes en tiempo real';
   const style=document.getElementById('print-style').value;
   const qty=parseInt(document.getElementById('print-qty').value);
   const qrDataUrl=await getQRDataUrl();
@@ -3386,7 +3365,7 @@ async function previewPrint(){
   const cols=qty===1?1:qty===2?2:2;
   area.innerHTML=`
     <div class="print-sheet">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Vista previa Â· Hoja A4</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Vista previa · Hoja A4</div>
       <div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:16px;background:#888;padding:16px;border-radius:8px">
         ${cells}
       </div>
@@ -3394,8 +3373,8 @@ async function previewPrint(){
 }
 
 async function doPrint(){
-  const msg=document.getElementById('print-msg').value||'Â¡EscaneÃ¡ y participÃ¡!';
-  const sub='SubÃ­ fotos y mensajes en tiempo real';
+  const msg=document.getElementById('print-msg').value||'¡Escaneá y participá!';
+  const sub='Subí fotos y mensajes en tiempo real';
   const style=document.getElementById('print-style').value;
   const qty=parseInt(document.getElementById('print-qty').value);
   const qrDataUrl=await getQRDataUrl();
@@ -3418,10 +3397,10 @@ async function doPrint(){
   win.document.close();
 }
 
-// â”€â”€ WISH WALL (in screen.html - handled separately) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── WISH WALL (in screen.html - handled separately) ──────────
 
 
-// â”€â”€ POLLS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── POLLS ─────────────────────────────────────────────────────
 function showPolls(){
   const notice=document.getElementById('polls-notice');
   const content=document.getElementById('polls-content');
@@ -3434,16 +3413,16 @@ function addPollOption(){
   const list=document.getElementById('poll-options-list');
   const n=list.children.length+1;
   const div=document.createElement('div');div.className='poll-opt-row';
-  div.innerHTML='<input type="text" class="field poll-opt-input" placeholder="OpciÃ³n '+n+'" style="margin-bottom:8px"/>';
+  div.innerHTML='<input type="text" class="field poll-opt-input" placeholder="Opción '+n+'" style="margin-bottom:8px"/>';
   list.appendChild(div);
 }
 
 async function createPoll(){
   const question=document.getElementById('poll-question').value.trim();
-  if(!question){toast('âŒ EscribÃ­ la pregunta');return;}
+  if(!question){toast('❌ Escribí la pregunta');return;}
   const inputs=[...document.querySelectorAll('.poll-opt-input')];
   const options=inputs.map(i=>i.value.trim()).filter(Boolean);
-  if(options.length<2){toast('âŒ NecesitÃ¡s al menos 2 opciones');return;}
+  if(options.length<2){toast('❌ Necesitás al menos 2 opciones');return;}
   const btn=document.getElementById('create-poll-btn');
   btn.disabled=true;btn.textContent='Creando...';
   const duration=parseInt(document.getElementById('poll-duration').value)||0;
@@ -3452,11 +3431,11 @@ async function createPoll(){
     event_id:selectedEvent.id, question, options, active:true,
     duration_secs:duration, ends_at
   })});
-  btn.disabled=false;btn.textContent='Crear votaciÃ³n â†’';
+  btn.disabled=false;btn.textContent='Crear votación →';
   if(Array.isArray(res)&&res[0]?.id){
-    toast('ðŸ—³ VotaciÃ³n creada y visible para los invitados!');
+    toast('🗳 Votación creada y visible para los invitados!');
     document.getElementById('poll-question').value='';
-    document.querySelectorAll('.poll-opt-input').forEach((el,i)=>{el.value='';el.placeholder='OpciÃ³n '+(i+1);});
+    document.querySelectorAll('.poll-opt-input').forEach((el,i)=>{el.value='';el.placeholder='Opción '+(i+1);});
     document.getElementById('poll-duration').value='0';
     while(document.getElementById('poll-options-list').children.length>2){
       document.getElementById('poll-options-list').removeChild(document.getElementById('poll-options-list').lastChild);
@@ -3468,7 +3447,7 @@ async function createPoll(){
 async function loadPolls(){
   const polls=await api('polls?event_id=eq.'+selectedEvent.id+'&order=created_at.desc');
   if(!Array.isArray(polls)||!polls.length){
-    document.getElementById('polls-list').innerHTML='<div class="empty"><div class="empty-ico">ðŸ—³</div><div class="empty-txt">No hay votaciones aÃºn. Â¡CreÃ¡ la primera!</div></div>';
+    document.getElementById('polls-list').innerHTML='<div class="empty"><div class="empty-ico">🗳</div><div class="empty-txt">No hay votaciones aún. ¡Creá la primera!</div></div>';
     return;
   }
   // Load all votes for this event
@@ -3487,7 +3466,7 @@ async function loadPolls(){
       const pct=total>0?Math.round((counts[i]/total)*100):0;
       const isWinner=counts[i]===maxVotes&&total>0;
       return `<div class="poll-option-bar">
-        <div class="poll-option-label"><span>${opt}</span><span class="pvotes">${counts[i]} voto${counts[i]!==1?'s':''} Â· ${pct}%</span></div>
+        <div class="poll-option-label"><span>${opt}</span><span class="pvotes">${counts[i]} voto${counts[i]!==1?'s':''} · ${pct}%</span></div>
         <div class="poll-bar-bg"><div class="poll-bar-fill${isWinner?' winner':''}" style="width:${pct}%"></div></div>
       </div>`;
     }).join('');
@@ -3495,18 +3474,18 @@ async function loadPolls(){
     let timeLabel='';
     if(poll.active&&poll.ends_at){
       const remaining=Math.max(0,Math.round((new Date(poll.ends_at)-Date.now())/1000));
-      timeLabel=remaining>0?`â± ${remaining}s restantes`:'â± Tiempo agotado';
+      timeLabel=remaining>0?`⏱ ${remaining}s restantes`:'⏱ Tiempo agotado';
     } else if(poll.active&&poll.duration_secs>0){
-      timeLabel='â± Sin tiempo registrado';
+      timeLabel='⏱ Sin tiempo registrado';
     }
     card.innerHTML=`<div class="poll-question">${poll.question}</div>${barsHtml}
       ${timeLabel?`<div style="font-size:12px;color:var(--gold);margin-bottom:8px">${timeLabel}</div>`:''}
       <div class="poll-meta">
-        <span class="poll-total">ðŸ“Š ${total} voto${total!==1?'s':''} en total</span>
+        <span class="poll-total">📊 ${total} voto${total!==1?'s':''} en total</span>
         <div style="display:flex;gap:8px;align-items:center">
-          <span class="poll-status ${poll.active?'active':'closed'}">${poll.active?'â— Activa':'Cerrada'}</span>
+          <span class="poll-status ${poll.active?'active':'closed'}">${poll.active?'● Activa':'Cerrada'}</span>
           <button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="togglePoll('${poll.id}',${poll.active})">${poll.active?'Cerrar':'Reabrir'}</button>
-          <button class="btn-reject" style="font-size:12px;padding:5px 12px;flex:none" onclick="deletePoll('${poll.id}')">âœ•</button>
+          <button class="btn-reject" style="font-size:12px;padding:5px 12px;flex:none" onclick="deletePoll('${poll.id}')">✕</button>
         </div>
       </div>`;
     list.appendChild(card);
@@ -3520,22 +3499,22 @@ async function loadPolls(){
 
 async function togglePoll(id,isActive){
   await api('polls?id=eq.'+id,{method:'PATCH',body:JSON.stringify({active:!isActive})});
-  toast(isActive?'VotaciÃ³n cerrada':'VotaciÃ³n reabierta');
+  toast(isActive?'Votación cerrada':'Votación reabierta');
   loadPolls();
 }
 
 async function deletePoll(id){
-  confirm2('Se eliminarÃ¡ la votaciÃ³n y todos sus votos.',async()=>{
+  confirm2('Se eliminará la votación y todos sus votos.',async()=>{
     await api('poll_votes?poll_id=eq.'+id,{method:'DELETE'});
     await api('polls?id=eq.'+id,{method:'DELETE'});
-    toast('ðŸ—‘ VotaciÃ³n eliminada');loadPolls();
-  },{title:'Â¿Eliminar votaciÃ³n?',ico:'ðŸ—³'});
+    toast('🗑 Votación eliminada');loadPolls();
+  },{title:'¿Eliminar votación?',ico:'🗳'});
 }
 
-// â”€â”€ GUEST DESIGN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── GUEST DESIGN ─────────────────────────────────────────────
 const GD_DEFAULTS = {
-  title:'', subtitle:'', welcome:'CompartÃ­ tu momento con todos ðŸ“·',
-  btnText:'Enviar a la pantalla âœ¨',
+  title:'', subtitle:'', welcome:'Compartí tu momento con todos 📷',
+  btnText:'Enviar a la pantalla ✨',
   bg:'#faf8f6', accent:'#f0176f', hero:'#0c0c0f', heroTxt:'#ffffff',
   showPhoto:true, showMessage:true, showAudio:true, showWish:true, showVote:true, showReactions:true, showPhotoEdit:true, showDeletePhoto:true
 };
@@ -3578,7 +3557,7 @@ async function showGuestDesign(){
   if(wmUrl){
     document.getElementById('gd-wm-img').src=wmUrl;
     document.getElementById('gd-wm-preview').style.display='block';
-    document.getElementById('gd-wm-status').textContent='âœ… Marca de agua activa';
+    document.getElementById('gd-wm-status').textContent='✅ Marca de agua activa';
   } else {
     document.getElementById('gd-wm-preview').style.display='none';
     document.getElementById('gd-wm-status').textContent='Sin marca de agua';
@@ -3606,9 +3585,9 @@ function getGDToggle(key){
 
 function updateGuestPreview(){
   const title      = document.getElementById('gd-title').value||selectedEvent?.name||'Nombre del evento';
-  const sub        = document.getElementById('gd-subtitle').value||(selectedEvent?.date||'')+(selectedEvent?.subtitle?' Â· '+selectedEvent.subtitle:'');
-  const welcome    = document.getElementById('gd-welcome').value||'CompartÃ­ tu momento con todos ðŸ“·';
-  const btnText    = document.getElementById('gd-btn-text').value||'Enviar a la pantalla âœ¨';
+  const sub        = document.getElementById('gd-subtitle').value||(selectedEvent?.date||'')+(selectedEvent?.subtitle?' · '+selectedEvent.subtitle:'');
+  const welcome    = document.getElementById('gd-welcome').value||'Compartí tu momento con todos 📷';
+  const btnText    = document.getElementById('gd-btn-text').value||'Enviar a la pantalla ✨';
   const bg         = document.getElementById('gd-bg').value||'#faf8f6';
   const accent     = document.getElementById('gd-accent').value||'#f0176f';
   const hero       = document.getElementById('gd-hero').value||'#0c0c0f';
@@ -3641,8 +3620,8 @@ function updateGuestPreview(){
   document.getElementById('gd-prev-title').style.cssText='font-size:18px;font-weight:800;color:'+heroTxt+';margin-bottom:4px;font-family:'+fontTitle+',sans-serif';
   document.getElementById('gd-prev-title').textContent=title;
   document.getElementById('gd-prev-sub').style.cssText='font-size:11px;color:'+heroTxt+'99;margin-bottom:14px;font-family:'+font+',sans-serif';
-  document.getElementById('gd-prev-sub').textContent=sub||'Fecha Â· Lugar';
-  document.getElementById('gd-prev-welcome').textContent='ðŸ“· '+welcome.replace(/ðŸ“·\s*/,'');
+  document.getElementById('gd-prev-sub').textContent=sub||'Fecha · Lugar';
+  document.getElementById('gd-prev-welcome').textContent='📷 '+welcome.replace(/📷\s*/,'');
   document.getElementById('gd-prev-welcome').style.cssText='display:inline-flex;align-items:center;gap:6px;background:'+accent+'22;border:1px solid '+accent+'55;padding:6px 12px;border-radius:20px;font-size:11px;color:'+heroTxt+'cc';
 
   // Stats
@@ -3683,9 +3662,9 @@ function updateGuestPreview(){
   const btns=document.getElementById('gd-prev-btns');
   const btnStyle=`border:1.5px solid #ece8e3;border-radius:${btnRadius}px;padding:8px 4px;text-align:center;font-size:9px;color:${textColor}99;background:${fieldBg};font-family:${font},sans-serif`;
   btns.innerHTML='';
-  if(showPhoto) btns.innerHTML+=`<div style="${btnStyle}">ðŸ“·<br>Foto</div>`;
-  if(showMsg)   btns.innerHTML+=`<div style="${btnStyle}">ðŸ’¬<br>Mensaje</div>`;
-  if(showAudio) btns.innerHTML+=`<div style="${btnStyle}">ðŸŽ¤<br>Audio</div>`;
+  if(showPhoto) btns.innerHTML+=`<div style="${btnStyle}">📷<br>Foto</div>`;
+  if(showMsg)   btns.innerHTML+=`<div style="${btnStyle}">💬<br>Mensaje</div>`;
+  if(showAudio) btns.innerHTML+=`<div style="${btnStyle}">🎤<br>Audio</div>`;
   if(btns.children.length===0) btns.innerHTML=`<div style="font-size:10px;color:#aaa;padding:8px;text-align:center;grid-column:1/-1">Sin opciones</div>`;
 
   // Update swatches
@@ -3698,14 +3677,14 @@ function updateGuestPreview(){
   const extraBtns=document.getElementById('gd-prev-extra-btns');
   if(extraBtns){
     extraBtns.innerHTML='';
-    if(showWish) extraBtns.innerHTML+=`<div style="width:100%;${btnStyle};margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px">ðŸ’Œ Mensaje especial</div>`;
-    if(showVote) extraBtns.innerHTML+=`<div style="width:100%;${btnStyle};margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px">ðŸ—³ Votaciones</div>`;
+    if(showWish) extraBtns.innerHTML+=`<div style="width:100%;${btnStyle};margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px">💌 Mensaje especial</div>`;
+    if(showVote) extraBtns.innerHTML+=`<div style="width:100%;${btnStyle};margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px">🗳 Votaciones</div>`;
   }
 }
 
 
 async function saveGuestDesign(btn){
-  if(!selectedEvent){toast('SeleccionÃ¡ un evento primero');return;}
+  if(!selectedEvent){toast('Seleccioná un evento primero');return;}
   const design={
     title:document.getElementById('gd-title').value,
     subtitle:document.getElementById('gd-subtitle').value,
@@ -3755,17 +3734,17 @@ async function saveGuestDesign(btn){
     const text = await res.text();
     if (!res.ok) {
       console.error('Save error:', res.status, text);
-      toast('âŒ Error al guardar: ' + text.slice(0,80));
+      toast('❌ Error al guardar: ' + text.slice(0,80));
       return;
     }
     if(btn) btnSaved(btn);
-    toast('âœ… ConfiguraciÃ³n guardada â€” se aplica en los celulares al instante');
+    toast('✅ Configuración guardada — se aplica en los celulares al instante');
   } catch(e) {
-    toast('âŒ Error de red: ' + e.message);
+    toast('❌ Error de red: ' + e.message);
   }
 }
 
-// â”€â”€ MOBILE SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── MOBILE SIDEBAR ───────────────────────────────────────────
 function toggleSidebar(){
   const sidebar=document.querySelector('.sidebar');
   const overlay=document.getElementById('sidebar-overlay');
@@ -3777,7 +3756,7 @@ function closeSidebar(){
   document.getElementById('sidebar-overlay').classList.remove('show');
 }
 
-// Sync PIN desde Supabase siempre al cargar
+// Force PIN re-entry on every reload instead of trusting a client-side flag
 sessionStorage.removeItem('ew_unlocked');
 
 // Auto-load if already unlocked this session
@@ -3809,14 +3788,14 @@ if(false){
         const expired=await api('events?pin_expires_at=lt.'+now+'&client_email=not.is.null&select=*');
         if(!Array.isArray(expired)||!expired.length) return;
         for(const ev of expired){
-          // Fast cache check (localStorage) â€” real dedup is server-side via cron_sent_emails
+          // Fast cache check (localStorage) — real dedup is server-side via cron_sent_emails
           const sentKey='ew_album_sent_'+ev.id;
           if(localStorage.getItem(sentKey)) continue;
-          // Fetch posts first â€” only proceed if there are approved posts
+          // Fetch posts first — only proceed if there are approved posts
           try{
             const posts=await api('posts?event_id=eq.'+ev.id+'&approved=eq.true&order=created_at.asc');
             if(!Array.isArray(posts)||!posts.length) continue; // no posts yet, don't mark as sent
-            toast('ðŸ“§ Enviando Ã¡lbum de "'+ev.name+'" a '+ev.client_email+'...',6000);
+            toast('📧 Enviando álbum de "'+ev.name+'" a '+ev.client_email+'...',6000);
             const ok=await sendAlbumEmail(ev, posts);
             if(ok) localStorage.setItem(sentKey,'1'); // mark only after successful send
           }catch(e){ /* retry next check */ }
@@ -3832,8 +3811,8 @@ if(false){
 <!-- CUSTOM CONFIRM MODAL -->
 <div class="cmodal-overlay" id="cmodal-overlay">
   <div class="cmodal">
-    <div class="cmodal-ico" id="cmodal-ico">âš ï¸</div>
-    <div class="cmodal-title" id="cmodal-title">Â¿EstÃ¡s seguro?</div>
+    <div class="cmodal-ico" id="cmodal-ico">⚠️</div>
+    <div class="cmodal-title" id="cmodal-title">¿Estás seguro?</div>
     <div class="cmodal-msg" id="cmodal-msg"></div>
     <div class="cmodal-btns">
       <button class="cmodal-cancel" onclick="cmodalClose()">Cancelar</button>
@@ -3843,5 +3822,3 @@ if(false){
 </div>
 </body>
 </html>
-
-
