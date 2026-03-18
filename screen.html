@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>EventWall Â· Pantalla</title>
+<title>EventWall · Pantalla</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&family=Dancing+Script:wght@700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -34,7 +34,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 /* FEATURED */
 .featured-side{position:relative;overflow:hidden;background:#000}
 .featured-img{width:100%;height:100%;object-fit:contain;display:block;transition:opacity 0.8s ease;position:absolute;inset:0;background:#000}
-.featured-overlay{position:absolute;bottom:0;left:0;right:0;padding:clamp(16px,2vh,32px) clamp(20px,2.5vw,40px);z-index:2;display:none}
+.featured-overlay{position:absolute;bottom:0;left:0;right:0;padding:clamp(16px,2vh,32px) clamp(20px,2.5vw,40px);background:linear-gradient(transparent 0%,rgba(0,0,0,0.5) 40%,rgba(0,0,0,0.92) 100%);z-index:2;display:none}
 .featured-caption{font-family:var(--font-title);font-size:clamp(16px,1.8vw,28px);font-weight:700;line-height:1.4;margin-bottom:6px;color:var(--txt)}
 .featured-author{display:inline-flex;align-items:center;gap:6px;background:rgba(240,23,111,0.25);border:1px solid rgba(240,23,111,0.4);border-radius:100px;padding:3px 12px;font-size:clamp(10px,1vw,15px);color:#fff;font-weight:700;margin-top:6px;}.featured-author:empty{display:none;}
 .featured-reactions{display:flex;gap:clamp(6px,0.8vw,12px);flex-wrap:wrap;margin-top:clamp(8px,1vh,14px);transition:opacity 0.4s ease}
@@ -200,13 +200,13 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
   .msg-strip{gap:4px}
 }
 
-/* PORTRAIT / MOBILE â€” ocultar sidebar, mostrar QR abajo */
+/* PORTRAIT / MOBILE — ocultar sidebar, mostrar QR abajo */
 @media (max-width:768px) and (orientation:portrait){
   .grid{grid-template-columns:1fr}
   .sidebar{display:none}
 }
 
-/* â”€â”€ POLAROID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€*/
+/* ── POLAROID ─────────────────────────────────────────────────*/
 @keyframes polaroidFall{
   0%{transform:translateY(-130%) rotate(var(--pol-rot)) scale(0.85);opacity:0}
   55%{transform:translateY(0) rotate(var(--pol-rot)) scale(1.03);opacity:1}
@@ -276,7 +276,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 <div id="poll-overlay" style="position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(7,7,15,0.96);padding:40px">
   <div style="width:100%;max-width:700px">
     <div style="text-align:center;margin-bottom:28px">
-      <div style="font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">ðŸ—³ VOTACIÃ“N EN VIVO</div>
+      <div style="font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">🗳 VOTACIÓN EN VIVO</div>
       <div id="poll-screen-question" style="font-family:var(--font-title);font-size:clamp(20px,3.5vw,36px);font-weight:800;color:#fff;line-height:1.3"></div>
     </div>
     <div id="poll-screen-bars"></div>
@@ -293,7 +293,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
   <div id="wish-bg" style="position:absolute;inset:0;background:linear-gradient(135deg,#1a0a14,#2d1020,#1a0a14);background-size:400% 400%;animation:gradShift 8s ease infinite"></div>
   <div id="wish-particles" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
   <div style="position:relative;z-index:2;text-align:center;padding:40px;max-width:800px">
-    <div id="wish-heart" style="font-size:72px;margin-bottom:20px;animation:heartBeat 1.5s ease infinite">ðŸ’Œ</div>
+    <div id="wish-heart" style="font-size:72px;margin-bottom:20px;animation:heartBeat 1.5s ease infinite">💌</div>
     <div id="wish-author" style="font-size:18px;font-weight:600;color:rgba(255,192,210,0.8);margin-bottom:16px;letter-spacing:1px;text-transform:uppercase"></div>
     <div id="wish-text" style="font-family:var(--font-title);font-size:clamp(22px,4vw,48px);font-weight:800;color:#fff;line-height:1.4;text-shadow:0 2px 40px rgba(240,23,111,0.5)"></div>
   </div>
@@ -312,7 +312,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
       <span id="mosaic-count" style="font-size:13px;color:rgba(255,255,255,0.5)">0 fotos</span>
       <select id="mosaic-style-select" onchange="setMosaicStyle(this.value)" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:4px 10px;border-radius:8px;font-size:12px;font-family:inherit">
         <option value="grid">Grilla</option>
-        <option value="dynamic">DinÃ¡mico</option>
+        <option value="dynamic">Dinámico</option>
         <option value="masonry">Masonry</option>
       </select>
     </div>
@@ -325,9 +325,9 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
     <div class="ws-orb3"></div>
     <div class="ws-inner">
       <div class="ws-title" id="ws-title">Bienvenidos</div>
-      <div class="ws-subtitle" id="ws-subtitle">EscaneÃ¡ el cÃ³digo y participÃ¡ en tiempo real</div>
+      <div class="ws-subtitle" id="ws-subtitle">Escaneá el código y participá en tiempo real</div>
       <div class="ws-qr-box"><img id="ws-qr-img" width="220" height="220" style="display:block"/></div>
-      <div class="ws-qr-label">ðŸ“¸ SubÃ­ fotos Â· ðŸ’¬ EnviÃ¡ mensajes Â· ðŸ¥‚ DejÃ¡ un deseo</div>
+      <div class="ws-qr-label">📸 Subí fotos · 💬 Enviá mensajes · 🥂 Dejá un deseo</div>
       <div class="ws-countdown" id="ws-countdown"></div>
     </div>
     <div class="ws-msgs" id="ws-msgs"></div>
@@ -335,8 +335,8 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 
   <div class="header">
     <div>
-      <div class="ev-name" id="ev-name">â€”</div>
-      <div class="ev-sub" id="ev-sub">â€”</div>
+      <div class="ev-name" id="ev-name">—</div>
+      <div class="ev-sub" id="ev-sub">—</div>
     </div>
     <div style="display:flex;align-items:center;gap:12px">
       <div class="live-pill"><div class="live-dot"></div>EN VIVO</div>
@@ -348,7 +348,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
       <div id="msg-bubble-overlay" style="position:absolute;inset:0;z-index:85;display:none;align-items:center;justify-content:center;pointer-events:none">
         <div id="msg-bubble-card" style="background:var(--bubble-bg);border-radius:var(--bubble-radius);padding:clamp(28px,4vh,48px) clamp(28px,4vw,52px);max-width:min(700px,88%);width:fit-content;min-width:200px;text-align:center;position:relative;box-shadow:0 40px 100px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.08);overflow:hidden;word-break:break-word">
           <div class="bubble-accent-bar"></div>
-          <div class="bubble-quote">â</div>
+          <div class="bubble-quote">❝</div>
           <div id="bubble-tail" style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;"></div>
           <div id="msg-bubble-icon" style="font-size:clamp(28px,4.5vw,56px);margin-bottom:12px"></div>
           <div id="msg-bubble-text" style="font-family:var(--font-title);font-weight:800;line-height:1.3;word-break:break-word;overflow-wrap:break-word;max-width:100%"></div>
@@ -358,11 +358,11 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
           </div>
         </div>
       </div>
-      <div class="new-badge" id="new-badge">Â¡Nuevo contenido! ðŸŽ‰</div>
+      <div class="new-badge" id="new-badge">¡Nuevo contenido! 🎉</div>
       <div class="no-content" id="no-content">
-        <div class="big">ðŸ“¸</div>
+        <div class="big">📸</div>
         <p style="font-size:16px">Esperando contenido...</p>
-        <p style="font-size:13px">Los invitados estÃ¡n escaneando el QR</p>
+        <p style="font-size:13px">Los invitados están escaneando el QR</p>
       </div>
       <img id="featured-img" class="featured-img" src="" alt="" style="display:none"/>
       <img id="screen-wm" src="" alt="" style="display:none;position:absolute;z-index:5;pointer-events:none;max-width:35%"/>
@@ -378,9 +378,9 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
       <div class="msg-strip" id="msg-strip"></div>
       <div class="qr-section">
         <div class="qr-inner">
-          <div class="qr-chip">ðŸ“¸ EscaneÃ¡</div>
+          <div class="qr-chip">📸 Escaneá</div>
           <div class="qr-box"><img id="qr-img" width="120" height="120" style="display:block"/></div>
-          <div class="qr-text"><strong>ParticipÃ¡ en el evento</strong>SubÃ­ fotos Â· Mensajes<br>en tiempo real</div>
+          <div class="qr-text"><strong>Participá en el evento</strong>Subí fotos · Mensajes<br>en tiempo real</div>
         </div>
       </div>
     </div>
@@ -391,7 +391,7 @@ body.theme-light .qr-text strong{color:rgba(0,0,0,0.7)}
 <div id="photo-strip" style="display:none"></div>
 
 <script>
-// Renderiza un QR como <img> usando api.qrserver.com â€” funciona en toda plataforma
+// Renderiza un QR como <img> usando api.qrserver.com — funciona en toda plataforma
 function renderQR(text, imgId, size){
   const target=document.getElementById(imgId);
   if(!target) return;
@@ -404,9 +404,6 @@ function renderQR(text, imgId, size){
 
 const SUPABASE_URL='https://jxqwrbmnfmnzddkcimrm.supabase.co';
 const SUPABASE_KEY='sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
-
-function safeText(value){ return String(value??''); }
-function sanitizeUrl(url){ try{ const parsed=new URL(String(url??''),window.location.href); return ['http:','https:','data:','blob:'].includes(parsed.protocol)?parsed.href:''; }catch(e){ return ''; } }
 
 async function api(path){
   try{
@@ -464,7 +461,7 @@ tryUnlockAudio();
   document.addEventListener(evt, tryUnlockAudio, {once:true});
 });
 
-// â”€â”€ FONT LOADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── FONT LOADER ───────────────────────────────────────────────
 function loadScreenFont(font){
   if(!font||font==='Syne'||font==='DM Sans') return;
   const id='gf-'+font.replace(/\s/g,'-');
@@ -475,7 +472,7 @@ function loadScreenFont(font){
   document.head.appendChild(link);
 }
 
-// â”€â”€ WATERMARK OVERLAY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── WATERMARK OVERLAY ─────────────────────────────────────────
 function applyScreenWatermark(gd){
   const el=document.getElementById('screen-wm');
   if(!el) return;
@@ -496,7 +493,7 @@ function applyScreenWatermark(gd){
   el.style.display='block';
 }
 
-// â”€â”€ THEME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── THEME ─────────────────────────────────────────────────────
 function applyTheme(design){
   if(!design) return;
   const r=document.documentElement;
@@ -612,7 +609,7 @@ function applyTicker(text, color){
   ticker.style.background=(color||'#f0176f')+'22';
   ticker.style.borderTop='1px solid '+(color||'#f0176f')+'44';
   const inner=document.getElementById('screen-ticker-inner');
-  if(inner){inner.textContent=text+' Â· '+text+' Â· '+text;inner.style.color=color||'#f0176f';}
+  if(inner){inner.textContent=text+' · '+text+' · '+text;inner.style.color=color||'#f0176f';}
   // Add ticker keyframe if not exists
   if(!document.getElementById('ticker-style')){
     const s=document.createElement('style');s.id='ticker-style';
@@ -621,7 +618,7 @@ function applyTicker(text, color){
   }
 }
 
-// â”€â”€ SOUNDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── SOUNDS ────────────────────────────────────────────────────
 function playSound(type){
   if(type==='none') return;
   try{
@@ -636,9 +633,9 @@ function playSound(type){
 }
 
 
-// â”€â”€ MESSAGE BUBBLES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── MESSAGE BUBBLES ───────────────────────────────────────────
 let msgBubbleQueue=[],msgBubbleShowing=false,currentBubbleId=null,_bubbleTimer=null;
-const MSG_ICONS=['ðŸ’¬','ðŸ˜‚','â¤ï¸','ðŸ”¥','ðŸ˜','ðŸŽ‰','ðŸ‘','ðŸ’•','ðŸ˜Ž','ðŸ¥³','ðŸ’¯','âœ¨'];
+const MSG_ICONS=['💬','😂','❤️','🔥','😍','🎉','👏','💕','😎','🥳','💯','✨'];
 
 function getShownKey(prefix){
   // Key includes today's date so it auto-clears next day
@@ -660,35 +657,16 @@ function addMsgToStrip(msg){
   if(msg.type!=='message'&&msg.type!=='audio') return;
   const card=document.createElement('div');
   const avatarLetter=(msg.author||'?').trim().charAt(0).toUpperCase();
-  const inner=document.createElement('div');
-  const avatar=document.createElement('div');
-  const body=document.createElement('div');
-  const iconEl=document.createElement('div');
-  const textEl=document.createElement('div');
-  const authorEl=document.createElement('div');
   card.dataset.id=msg.id;
-  card.className=msg.type==='audio'?'msg-card audio-card':'msg-card';
-  inner.className='msg-card-inner';
-  avatar.className='msg-avatar';
-  avatar.textContent=avatarLetter;
-  body.className='msg-card-body';
-  iconEl.className='msg-card-icon';
-  textEl.className='msg-card-text';
-  authorEl.className='msg-card-author';
   if(msg.type==='audio'){
-    iconEl.textContent='??';
-    textEl.textContent='Mensaje de voz';
-    textEl.style.fontStyle='italic';
-  }else{
-    let icon='??';
-    try{const f=JSON.parse(msg.frame||'{}');icon=(f.emoji&&f.emoji!=='none')?f.emoji:'??';}catch(e){}
-    iconEl.textContent=icon;
-    textEl.textContent=safeText(msg.content);
+    card.className='msg-card audio-card';
+    card.innerHTML=`<div class="msg-card-inner"><div class="msg-avatar">${avatarLetter}</div><div class="msg-card-body"><div class="msg-card-icon">🎤</div><div class="msg-card-text" style="font-style:italic">Mensaje de voz</div><div class="msg-card-author">— ${msg.author}</div></div></div>`;
+  } else {
+    card.className='msg-card';
+    let icon='💬';
+    try{const f=JSON.parse(msg.frame||'{}');icon=(f.emoji&&f.emoji!=='none')?f.emoji:'💬';}catch(e){}
+    card.innerHTML=`<div class="msg-card-inner"><div class="msg-avatar">${avatarLetter}</div><div class="msg-card-body"><div class="msg-card-icon">${icon}</div><div class="msg-card-text">${msg.content}</div><div class="msg-card-author">— ${msg.author}</div></div></div>`;
   }
-  authorEl.textContent='? '+safeText(msg.author);
-  body.append(iconEl,textEl,authorEl);
-  inner.append(avatar,body);
-  card.appendChild(inner);
   strip.insertBefore(card, strip.firstChild);
   while(strip.children.length>5) strip.removeChild(strip.lastChild);
 }
@@ -712,24 +690,13 @@ async function pollMessages(){
 function addMsgToWaiting(msg){
   const container=document.getElementById('ws-msgs');
   if(!container) return;
-  let icon='??';
-  try{const f=JSON.parse(msg.frame||'{}');icon=(f.emoji&&f.emoji!=='none')?f.emoji:'??';}catch(e){}
+  let icon='💬';
+  try{const f=JSON.parse(msg.frame||'{}');icon=(f.emoji&&f.emoji!=='none')?f.emoji:'💬';}catch(e){}
   const card=document.createElement('div');
-  const iconEl=document.createElement('div');
-  const body=document.createElement('div');
-  const textEl=document.createElement('div');
-  const authorEl=document.createElement('div');
   card.className='ws-msg-card';
-  iconEl.className='ws-msg-icon';
-  iconEl.textContent=icon;
-  body.className='ws-msg-body';
-  textEl.className='ws-msg-text';
-  textEl.textContent=safeText(msg.content);
-  authorEl.className='ws-msg-author';
-  authorEl.textContent='? '+safeText(msg.author);
-  body.append(textEl,authorEl);
-  card.append(iconEl,body);
+  card.innerHTML=`<div class="ws-msg-icon">${icon}</div><div class="ws-msg-body"><div class="ws-msg-text">${msg.content}</div><div class="ws-msg-author">— ${msg.author}</div></div>`;
   container.insertBefore(card, container.firstChild);
+  // Máximo 3 mensajes visibles
   while(container.children.length>3) container.removeChild(container.lastChild);
 }
 
@@ -745,7 +712,7 @@ function showNextBubble(){
   const textEl=document.getElementById('msg-bubble-text');
   textEl.style.cssText='font-family:var(--font-title);font-weight:800;line-height:1.3;word-break:break-word;overflow-wrap:break-word;max-width:100%';
   textEl.classList.remove('msg-anim-bounce','msg-anim-fade','msg-anim-wave');
-  // Cargar font dinÃ¡mica si no estÃ¡ ya cargada en screen
+  // Cargar font dinámica si no está ya cargada en screen
   if(custom.font&&custom.font!=='Syne'&&custom.font!=='DM Sans'&&custom.font!=='Dancing Script'){
     const fontId='sb-font-'+custom.font.replace(/\s+/g,'-');
     if(!document.getElementById(fontId)){
@@ -755,7 +722,7 @@ function showNextBubble(){
       document.head.appendChild(lnk);
     }
   }
-  const icon=custom.emoji||(cfg.bubbleIcon==='none'?'':cfg.bubbleIcon==='fixed'?'ðŸ’¬':MSG_ICONS[Math.floor(Math.random()*MSG_ICONS.length)]);
+  const icon=custom.emoji||(cfg.bubbleIcon==='none'?'':cfg.bubbleIcon==='fixed'?'💬':MSG_ICONS[Math.floor(Math.random()*MSG_ICONS.length)]);
   const iconEl=document.getElementById('msg-bubble-icon');
   iconEl.textContent=icon;
   iconEl.style.display=icon?'block':'none';
@@ -777,16 +744,7 @@ function showNextBubble(){
   if(custom.animation==='bounce') textEl.classList.add('msg-anim-bounce');
   else if(custom.animation==='fade') textEl.classList.add('msg-anim-fade');
   else if(custom.animation==='wave'){
-    textEl.replaceChildren();
-    [...safeText(msg.content)].forEach(ch=>{
-      if(ch===' '){
-        textEl.appendChild(document.createTextNode(' '));
-        return;
-      }
-      const span=document.createElement('span');
-      span.textContent=ch;
-      textEl.appendChild(span);
-    });
+    textEl.innerHTML=[...msg.content].map(ch=>ch===' '?' ':`<span>${ch}</span>`).join('');
     textEl.classList.add('msg-anim-wave');
   } else if(custom.animation==='typewriter'){
     textEl.style.overflow='hidden';
@@ -811,7 +769,7 @@ function showNextBubble(){
   const txtColor=custom.textColor||'var(--bubble-txt)';
   const bubbleStyle=custom.bubbleStyle||'bubble';
   // Apply background
-  const solidBg=custom.bgColor||'var(--bubble-bg)'; // color sÃ³lido para borders
+  const solidBg=custom.bgColor||'var(--bubble-bg)'; // color sólido para borders
   const styleMap={
     bubble:{borderRadius:'var(--bubble-radius)',background:bgColor,boxShadow:'0 40px 100px rgba(0,0,0,0.55)',border:'none',padding:'clamp(28px,4vh,48px) clamp(28px,4vw,52px)',maxWidth:'min(700px,88%)'},
     card:{borderRadius:'16px',background:bgColor,boxShadow:'0 8px 40px rgba(0,0,0,0.3)',border:'4px solid '+solidBg,padding:'32px 40px',maxWidth:'min(700px,88%)'},
@@ -847,7 +805,7 @@ function dismissBubble(){
   setTimeout(()=>{overlay.style.display='none';msgBubbleShowing=false;setTimeout(showNextBubble,400);},300);
 }
 
-// â”€â”€ WISH WALL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── WISH WALL ─────────────────────────────────────────────────
 let wishQueue=[],wishShowing=false,lastWishDisplayTime=0,currentWishId=null,_wishTimer=null;
 const WISH_SCREEN_COOLDOWN=30*60*1000; // 30 min entre deseos en pantalla
 
@@ -871,7 +829,7 @@ async function pollWishes(){
 
 function spawnParticles(){
   const container=document.getElementById('wish-particles');container.innerHTML='';
-  const emojis=['ðŸ’•','âœ¨','ðŸŒ¸','ðŸ’–','â­','ðŸŽ€','ðŸ’«','ðŸŒº'];
+  const emojis=['💕','✨','🌸','💖','⭐','🎀','💫','🌺'];
   for(let i=0;i<20;i++){
     const el=document.createElement('div');
     el.style.cssText='position:absolute;font-size:'+(Math.random()*20+16)+'px;left:'+Math.random()*100+'%;animation:particleFly '+(Math.random()*4+4)+'s linear '+(Math.random()*3)+'s infinite;';
@@ -916,7 +874,7 @@ function dismissWish(){
   setTimeout(()=>{overlay.style.display='none';overlay.style.opacity='1';overlay.style.transition='';wishShowing=false;setTimeout(showNextWish,400);},300);
 }
 
-// â”€â”€ POLL SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── POLL SCREEN ───────────────────────────────────────────────
 let pollScreenVisible=false;
 let pollTimerInterval=null;
 let currentPollData=null;
@@ -958,7 +916,7 @@ function renderPollScreen(poll,votes){
     const pct=total>0?Math.round((counts[i]/total)*100):0;
     const isWinner=counts[i]===maxVotes&&total>0;
     const bar=document.createElement('div');bar.className='sbar-wrap';
-    bar.innerHTML='<div class="sbar-top"><span class="sbar-label">'+opt+'</span><span class="sbar-count">'+counts[i]+' Â· '+pct+'%</span></div><div class="sbar-bg"><div class="sbar-fill'+(isWinner?' winner':'')+'" style="width:'+pct+'%"></div></div>';
+    bar.innerHTML='<div class="sbar-top"><span class="sbar-label">'+opt+'</span><span class="sbar-count">'+counts[i]+' · '+pct+'%</span></div><div class="sbar-bg"><div class="sbar-fill'+(isWinner?' winner':'')+'" style="width:'+pct+'%"></div></div>';
     barsDiv.appendChild(bar);
   });
   document.getElementById('poll-overlay').style.display='flex';
@@ -986,7 +944,7 @@ function startPollTimer(poll){
     else{timerEl.style.color='var(--accent)';timerEl.style.animation='none';}
     if(remaining<=0){
       clearInterval(pollTimerInterval);
-      timerEl.textContent='â°';
+      timerEl.textContent='⏰';
       timerEl.style.color='#ef4444';
     }
   }
@@ -994,7 +952,7 @@ function startPollTimer(poll){
   pollTimerInterval=setInterval(updateTimer,1000);
 }
 
-// â”€â”€ PHOTOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── PHOTOS ────────────────────────────────────────────────────
 function getPlayedAudioIds(){
   try{return new Set(JSON.parse(localStorage.getItem(getShownKey('ew_audios'))||'[]'));}
   catch(e){return new Set();}
@@ -1017,7 +975,7 @@ function showFeatured(post,idx){
     document.getElementById('featured-reactions').style.opacity='0';
     if(hasCaption){
       document.getElementById('featured-caption').textContent='"'+post.content_text+'"';
-      document.getElementById('featured-author').textContent='â€” '+post.author;
+      document.getElementById('featured-author').textContent='— '+post.author;
       overlay.style.display='block';
     } else {
       document.getElementById('featured-caption').textContent='';
@@ -1114,7 +1072,7 @@ function showNewBadge(){
   clearTimeout(b._t);b._t=setTimeout(()=>b.style.display='none',3000);
 }
 
-// â”€â”€ POLLING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── POLLING ───────────────────────────────────────────────────
 async function loadPosts(){
   posts=await api('posts?event_id=eq.'+eventId+'&approved=eq.true&order=created_at.desc');
   if(!Array.isArray(posts)) posts=[];
@@ -1174,14 +1132,14 @@ async function pollPosts(){
     }
   }
 
-  // Handle new posts â€” compare by ID not by count
+  // Handle new posts — compare by ID not by count
   const newItems=fresh.filter(f=>!knownIds.has(f.id));
   if(newItems.length){
     newItems.forEach(p=>{
       if(p.type==='photo'&&p.content&&p.content.startsWith('http')){
         if(cfg.polaroid==='yes') showPolaroid(p);
         if(!currentFeaturedPostId){
-          // No photo yet â€” show immediately
+          // No photo yet — show immediately
           photoPosts.unshift(p);
           if(photoPosts.length>cfg.carouselLimit) photoPosts=photoPosts.slice(0,cfg.carouselLimit);
           buildStrip();
@@ -1231,19 +1189,19 @@ async function pollPosts(){
   posts=fresh;lastPostCount=fresh.length;updateCounters();
 }
 
-// â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── INIT ──────────────────────────────────────────────────────
 async function init(){
   if(!eventId){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Error: falta ?event= en la URL</p>';return;}
   let events=[];
   try{ events=await api('events?id=eq.'+eventId); }catch(e){}
   if(!Array.isArray(events)||!events[0]) events=await api('events?custom_code=eq.'+eventId);
-  if(!Array.isArray(events)||!events[0]){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Evento no encontrado. VerificÃ¡ el ID en la URL.</p>';return;}
+  if(!Array.isArray(events)||!events[0]){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Evento no encontrado. Verificá el ID en la URL.</p>';return;}
   const ev=events[0];
   eventId=ev.id; // asegura que siempre usamos el UUID real
   eventName=ev.name;
-  document.title=ev.name+' Â· EventWall';
+  document.title=ev.name+' · EventWall';
   document.getElementById('ev-name').textContent=ev.name;
-  document.getElementById('ev-sub').textContent=[formatDateES(ev.date),ev.subtitle].filter(Boolean).join(' Â· ');
+  document.getElementById('ev-sub').textContent=[formatDateES(ev.date),ev.subtitle].filter(Boolean).join(' · ');
   const saved=localStorage.getItem('ew_design_'+eventId);
   // QR
   const guestUrl=location.origin+'/guest.html?event='+eventId;
@@ -1283,7 +1241,7 @@ async function updateFeaturedReactions(postId){
     const container=document.getElementById('featured-reactions');
     if(!container)return;
     container.innerHTML='';
-    const EMOJIS=['â¤ï¸','ðŸŽ‰','ðŸ˜','ðŸ”¥'];
+    const EMOJIS=['❤️','🎉','😍','🔥'];
     EMOJIS.forEach(e=>{
       let pill=container.querySelector('[data-rxn="'+e+'"]');
       if(counts[e]){
@@ -1309,14 +1267,14 @@ async function updateFeaturedReactions(postId){
 }
 
 
-// â”€â”€ WAITING SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── WAITING SCREEN ───────────────────────────────────────────
 function showWaitingScreen(eventId, ev){
   waitingScreenActive=true;
   const ws=document.getElementById('waiting-screen');
   ws.style.display='flex';
   // Texts
   const title=cfg.waitTitle||ev.name||'Bienvenidos';
-  const subtitle=cfg.waitSubtitle||'EscaneÃ¡ el cÃ³digo y participÃ¡ en tiempo real';
+  const subtitle=cfg.waitSubtitle||'Escaneá el código y participá en tiempo real';
   document.getElementById('ws-title').textContent=title;
   document.getElementById('ws-subtitle').textContent=subtitle;
   // Big QR
@@ -1336,7 +1294,7 @@ function startWaitCountdown(){
     const target=new Date(cfg.waitStart);
     const diff=target-now;
     if(diff<=0){
-      el.innerHTML='<span class="ws-live-dot"></span>Â¡Ya comenzamos!';
+      el.innerHTML='<span class="ws-live-dot"></span>¡Ya comenzamos!';
       clearInterval(waitCountdownTimer);
       return;
     }
@@ -1347,7 +1305,7 @@ function startWaitCountdown(){
     if(h>0) parts.push(h+'h');
     parts.push(String(m).padStart(2,'0')+'m');
     parts.push(String(s).padStart(2,'0')+'s');
-    el.textContent='â³ Comienza en '+parts.join(' ');
+    el.textContent='⏳ Comienza en '+parts.join(' ');
   }
   tick();
   waitCountdownTimer=setInterval(tick,1000);
@@ -1363,7 +1321,7 @@ function hideWaitingScreen(){
   setTimeout(()=>{ws.style.display='none';ws.classList.remove('hide');},900);
 }
 
-// â”€â”€ BACKGROUND CANVAS EFFECTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── BACKGROUND CANVAS EFFECTS ────────────────────────────────
 let bgAnimFrame=null;
 let bgParticles=[];
 let currentEffect='none';
@@ -1394,7 +1352,7 @@ window.addEventListener('resize',()=>{
   if(currentEffect!=='none') startBgEffect(currentEffect);
 });
 
-// â”€â”€ CONFETTI (Fiesta) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── CONFETTI (Fiesta) ─────────────────────────────────────────
 function initConfetti(canvas,ctx){
   const colors=['#f0176f','#ffd700','#00f5ff','#ff6b9d','#a855f7','#22d3ee','#fb923c'];
   for(let i=0;i<80;i++){
@@ -1421,7 +1379,7 @@ function initConfetti(canvas,ctx){
   draw();
 }
 
-// â”€â”€ PETALS (RomÃ¡ntico) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── PETALS (Romántico) ────────────────────────────────────────
 function initPetals(canvas,ctx){
   const petalColors=['#ffb7c5','#ff9eb5','#ffd6e0','#ffadc5','#ff85a1'];
   for(let i=0;i<50;i++){
@@ -1454,7 +1412,7 @@ function initPetals(canvas,ctx){
   draw();
 }
 
-// â”€â”€ NEON GRID (Futurista) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── NEON GRID (Futurista) ─────────────────────────────────────
 function initNeon(canvas,ctx){
   const lines=[];
   const gridSize=60;
@@ -1506,7 +1464,7 @@ function initNeon(canvas,ctx){
   draw();
 }
 
-// â”€â”€ GOLD DUST (Elegante) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── GOLD DUST (Elegante) ──────────────────────────────────────
 function initGold(canvas,ctx){
   for(let i=0;i<120;i++){
     bgParticles.push({
@@ -1538,7 +1496,7 @@ function initGold(canvas,ctx){
   draw();
 }
 
-// â”€â”€ STARS (bonus) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── STARS (bonus) ─────────────────────────────────────────────
 function initStars(canvas,ctx){
   for(let i=0;i<150;i++){
     bgParticles.push({
@@ -1562,7 +1520,7 @@ function initStars(canvas,ctx){
   draw();
 }
 
-// â”€â”€ BUBBLES (bonus) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── BUBBLES (bonus) ───────────────────────────────────────────
 function initBubbles(canvas,ctx){
   for(let i=0;i<40;i++){
     bgParticles.push({
@@ -1591,7 +1549,7 @@ function initBubbles(canvas,ctx){
 }
 
 
-// â”€â”€ MOSAIC MODE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── MOSAIC MODE ───────────────────────────────────────────────
 let mosaicActive=false;
 let mosaicStyle='grid'; // grid | dynamic | masonry
 let mosaicPhotos=[];
@@ -1673,13 +1631,7 @@ function renderGrid(grid,W,H,newIds){
       cell=document.createElement('div');
       cell.className='mosaic-cell'+(isNew?' new-cell':'');
       cell.dataset.id=p.id;
-      const img=document.createElement('img');
-      img.loading='lazy';
-      img.src=sanitizeUrl(p.content);
-      const author=document.createElement('div');
-      author.className='mcell-author';
-      author.textContent=safeText(p.author);
-      cell.replaceChildren(img,author);
+      cell.innerHTML='<img src="'+p.content+'" loading="lazy"/><div class="mcell-author">'+p.author+'</div>';
       grid.appendChild(cell);
     }
     cell.style.left=x+'px';cell.style.top=y+'px';
@@ -1718,13 +1670,7 @@ function renderDynamic(grid,W,H,newIds){
       cell=document.createElement('div');
       cell.className='mosaic-cell'+(isNew?' new-cell':'')+(pos.featured?' featured':'');
       cell.dataset.id=p.id;
-      const img=document.createElement('img');
-      img.loading='lazy';
-      img.src=sanitizeUrl(p.content);
-      const author=document.createElement('div');
-      author.className='mcell-author';
-      author.textContent=safeText(p.author);
-      cell.replaceChildren(img,author);
+      cell.innerHTML='<img src="'+p.content+'" loading="lazy"/><div class="mcell-author">'+p.author+'</div>';
       grid.appendChild(cell);
     }
     cell.classList.toggle('featured',!!pos.featured);
@@ -1758,13 +1704,7 @@ function renderMasonry(grid,W,H,newIds){
       cell=document.createElement('div');
       cell.className='mosaic-cell'+(isNew?' new-cell':'');
       cell.dataset.id=p.id;
-      const img=document.createElement('img');
-      img.loading='lazy';
-      img.src=sanitizeUrl(p.content);
-      const author=document.createElement('div');
-      author.className='mcell-author';
-      author.textContent=safeText(p.author);
-      cell.replaceChildren(img,author);
+      cell.innerHTML='<img src="'+p.content+'" loading="lazy"/><div class="mcell-author">'+p.author+'</div>';
       grid.appendChild(cell);
     }
     cell.style.left=x+'px';cell.style.top=y+'px';
@@ -1777,7 +1717,7 @@ function renderMasonry(grid,W,H,newIds){
 window.addEventListener('resize',()=>{if(mosaicActive) renderMosaic();});
 
 
-// â”€â”€ MOMENTS ENGINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── MOMENTS ENGINE ────────────────────────────────────────────
 let lastMomentId=null;
 let momentAnimFrame=null;
 
@@ -1937,7 +1877,7 @@ function hideMoment(){
 
 init();
 
-// â”€â”€ POLAROID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── POLAROID ──────────────────────────────────────────────────
 let _polaroidActive=false;
 function showPolaroid(post){
   if(_polaroidActive) return;
@@ -1947,14 +1887,8 @@ function showPolaroid(post){
   const card=document.createElement('div');
   card.className='polaroid-card';
   card.style.setProperty('--pol-rot',rot);
-  const img=document.createElement('img');
-  img.className='polaroid-img';
-  img.alt='';
-  img.src=sanitizeUrl(post.content);
-  const name=document.createElement('div');
-  name.className='polaroid-name';
-  name.textContent=safeText(post.author);
-  card.replaceChildren(img,name);
+  card.innerHTML='<img class="polaroid-img" src="'+post.content+'" alt=""/>'
+    +'<div class="polaroid-name">'+post.author+'</div>';
   overlay.innerHTML='';
   overlay.appendChild(card);
   overlay.style.display='flex';
@@ -1973,5 +1907,3 @@ function showPolaroid(post){
 </script>
 </body>
 </html>
-
-
