@@ -53,6 +53,49 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 
 ## Changelog
 
+### 2026-03-18 - Sesion 8
+
+**Landing / SEO (`index.html`)**
+- Se reviso `index.html` y se confirmo que el archivo local coincide byte a byte con una version sana del repo; no fue necesario restaurarlo completo
+- Open Graph y Twitter Cards ahora usan `example2.png`, que si existe en el repo, en lugar de `og-image.png`, que no estaba presente
+- Se agregaron `og:image:alt`, `twitter:url`, `twitter:image:alt`, `theme-color`, `format-detection` y `robots=max-image-preview:large`
+- El JSON-LD de `Service` ahora incluye `image` y `sameAs` hacia Instagram
+
+**Seguridad / higiene**
+- Todos los links externos con `target="_blank"` en `index.html` ahora incluyen `rel="noopener noreferrer"`
+
+**Nota operativa**
+- Cuando el shell muestre mojibake en archivos HTML grandes, validar primero contra Git antes de reescribir; en este caso el problema visible en consola no implicaba bytes distintos en `index.html`
+
+---
+
+### 2026-03-18 - Sesion 9
+
+**Marca / logo (`index.html`)**
+- Se incorporo `eventwall.png` como logo visible de la landing
+- Header y footer ahora muestran la imagen de marca junto al texto `EventWall`
+- Se reemplazo el punto decorativo anterior por una clase reutilizable `brand-mark`, con tamanos adaptados para navbar y footer
+
+---
+
+### 2026-03-18 - Sesion 7
+
+**Regresion de encoding**
+- `admin.html` y `screen.html` mostraron mojibake (`Ã¡`, `Ã±`, `Â·`, emojis rotos) despues de una serie de ediciones con herramientas distintas sobre archivos HTML grandes
+- La causa fue una mezcla de reescrituras con encoding inconsistente sobre archivos que ya tenian acentos, simbolos y emojis
+
+**Correccion aplicada**
+- `admin.html`: se dejo el fix de auth y se corrigio la regresion visual del panel
+- `screen.html`: se restauro a la ultima version sana previa a la regresion de encoding
+- Se publico el arreglo en `main` con commits `42c3f38` y `472c00c`
+
+**Nota para trabajo compartido (Codex / Claude / otros)**
+- Mantener estos HTML en UTF-8 y evitar conversiones automaticas de encoding
+- Si se hace una restauracion puntual, comparar siempre contra un commit sano antes de reescribir archivos grandes
+- En archivos con mucho texto visible, preferir cambios acotados sobre bloques especificos en vez de reserializar el archivo completo
+
+---
+
 ### 2026-03-18 - Sesion 6
 
 **Seguridad del panel admin**
