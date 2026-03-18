@@ -349,3 +349,12 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Los “momentos” tambiÃ©n guardan el Ãºltimo ID mostrado en `localStorage`
 - Al refrescar la pantalla, el contenido ya mostrado no vuelve a dispararse completo
 
+### 2026-03-18 â€” SesiÃ³n 15
+
+**admin.html + screen.html â€” diseÃ±os compartidos y configuraciones consistentes**
+
+- El diseÃ±o de pantalla dejÃ³ de depender solo del `localStorage` del navegador del admin y ahora se guarda en `event_settings.screen_design`
+- `screen.html` ahora prioriza `event_settings.screen_design` para aplicar el tema del evento y solo usa `localStorage` como fallback de compatibilidad
+- La marca de agua de pantalla ahora se hidrata desde `event_settings.guest_design`, igual que el resto del flujo de invitado
+- Los resets de diseÃ±o invitado y diseÃ±o de pantalla ahora limpian la configuraciÃ³n compartida del evento, no solo estado local del navegador
+

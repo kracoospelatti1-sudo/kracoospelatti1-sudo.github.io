@@ -2638,12 +2638,19 @@ const TEMPLATES = {
   roseclaro: {bg:'#fff0f5',header:'#ffe0ec',accent:'#e91e8c',text:'#4a1030',bubble:'#ffffff',bubbleText:'#4a1030',fontTitle:'Playfair Display',fontBody:'Nunito',bgEffect:'petals'},
 };
 
-function showDesign(){
+async function showDesign(){
   const notice=document.getElementById('design-notice');
   const content=document.getElementById('design-content');
   if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
   notice.classList.remove('show');content.style.display='block';
-  const saved=JSON.parse(localStorage.getItem('ew_design_'+selectedEvent.id)||'{}');
+  let saved={};
+  try{
+    const rows=await api('event_settings?event_id=eq.'+selectedEvent.id+'&select=screen_design');
+    saved=(Array.isArray(rows)&&rows[0]?.screen_design)||{};
+  }catch(e){}
+  if(!saved||Object.keys(saved).length===0){
+    saved=JSON.parse(localStorage.getItem('ew_design_'+selectedEvent.id)||'{}');
+  }
   const setVal=(id,val)=>{if(!val) return; const el=document.getElementById(id); if(el) el.value=val;};
   const setHex=(cid,hid,val)=>{if(!val) return; setVal(cid,val); setVal(hid,val.toUpperCase());};
   setHex('c-bg','c-bg-hex',saved.bg);
@@ -2946,7 +2953,7 @@ function switchDesignTab(tab, btn){
   document.getElementById('dtab-'+tab).classList.add('active');
 }
 
-function saveDesign(btn){
+async function saveDesign(btn){
   if(!selectedEvent){toast('Seleccioná un evento primero');return;}
   const design={
     bg:getV('c-bg'), accent:getV('c-accent'), text:getV('c-text'),
@@ -2981,6 +2988,18 @@ function saveDesign(btn){
     bgEffect:getV('cfg-bg-effect')||'none',
     template:document.querySelector('.tpl-card.active')?.className.match(/tpl-(\w+)/)?.[1]||'dark'
   };
+  const rows=await api('event_settings?event_id=eq.'+selectedEvent.id+'&select=event_id');
+  if(Array.isArray(rows)&&rows[0]?.event_id){
+    await api('event_settings?event_id=eq.'+selectedEvent.id,{
+      method:'PATCH',
+      body:JSON.stringify({screen_design:design,updated_at:new Date().toISOString()})
+    });
+  } else {
+    await api('event_settings',{
+      method:'POST',
+      body:JSON.stringify({event_id:selectedEvent.id,screen_design:design,updated_at:new Date().toISOString()})
+    });
+  }
   localStorage.setItem('ew_design_'+selectedEvent.id,JSON.stringify(design));
   if(btn) btnSaved(btn);
   toast('✅ Diseño guardado — recargá la pantalla del evento para verlo');
@@ -3808,6 +3827,49 @@ if(false){
   },60000); // Check every minute
 }
 // Save session on unlock
+
+// Keep screen and guest design resets aligned with shared event settings.
+function resetGuestDesign(){
+  confirm2('Se perderan todos los cambios de diseno del invitado.',async()=>{
+    if(!selectedEvent){toast('Selecciona un evento primero');return;}
+    const rows=await api('event_settings?event_id=eq.'+selectedEvent.id+'&select=event_id');
+    if(Array.isArray(rows)&&rows[0]?.event_id){
+      await api('event_settings?event_id=eq.'+selectedEvent.id,{
+        method:'PATCH',
+        body:JSON.stringify({guest_design:null,updated_at:new Date().toISOString()})
+      });
+    } else {
+      await api('event_settings',{
+        method:'POST',
+        body:JSON.stringify({event_id:selectedEvent.id,guest_design:null,updated_at:new Date().toISOString()})
+      });
+    }
+    localStorage.removeItem('ew_guest_design_'+selectedEvent.id);
+    await showGuestDesign();
+    toast('Diseno invitado reseteado');
+  },{title:'Resetear diseno',ico:'↺',danger:false});
+}
+
+function resetDesign(){
+  confirm2('Se perderan todos los cambios de diseno de pantalla.',async()=>{
+    if(!selectedEvent){toast('Selecciona un evento primero');return;}
+    const rows=await api('event_settings?event_id=eq.'+selectedEvent.id+'&select=event_id');
+    if(Array.isArray(rows)&&rows[0]?.event_id){
+      await api('event_settings?event_id=eq.'+selectedEvent.id,{
+        method:'PATCH',
+        body:JSON.stringify({screen_design:null,updated_at:new Date().toISOString()})
+      });
+    } else {
+      await api('event_settings',{
+        method:'POST',
+        body:JSON.stringify({event_id:selectedEvent.id,screen_design:null,updated_at:new Date().toISOString()})
+      });
+    }
+    localStorage.removeItem('ew_design_'+selectedEvent.id);
+    await showDesign();
+    toast('Diseno de pantalla reseteado');
+  },{title:'Resetear diseno',ico:'↺',danger:false});
+}
 
 </script>
 

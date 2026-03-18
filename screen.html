@@ -1312,22 +1312,36 @@ async function init(){
   document.title=ev.name+' · EventWall';
   document.getElementById('ev-name').textContent=ev.name;
   document.getElementById('ev-sub').textContent=[formatDateES(ev.date),ev.subtitle].filter(Boolean).join(' · ');
-  const saved=localStorage.getItem('ew_design_'+eventId);
   // QR
   const guestUrl=location.origin+'/guest.html?event='+eventId;
   renderQR(guestUrl, 'qr-img', 120);
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   // Apply theme AFTER app is visible so DOM queries work
-  if(saved) try{applyTheme(JSON.parse(saved));}catch(e){console.error('applyTheme:',e);}
-  // Load guest design for watermark
   try{
-    const gds=await api('guest_design?event_id=eq.'+eventId+'&select=design&limit=1');
-    if(gds&&gds[0]){
-      const gd=typeof gds[0].design==='string'?JSON.parse(gds[0].design):gds[0].design;
-      applyScreenWatermark(gd);
+    const settingsRows=await api('event_settings?event_id=eq.'+eventId+'&select=screen_design,guest_design&limit=1');
+    const settings=Array.isArray(settingsRows)&&settingsRows[0]?settingsRows[0]:null;
+    const screenDesign=settings?.screen_design;
+    if(screenDesign){
+      const design=typeof screenDesign==='string'?JSON.parse(screenDesign):screenDesign;
+      applyTheme(design);
+      localStorage.setItem('ew_design_'+eventId, JSON.stringify(design));
+    } else {
+      const saved=localStorage.getItem('ew_design_'+eventId);
+      if(saved) try{applyTheme(JSON.parse(saved));}catch(e){console.error('applyTheme:',e);}
     }
-  }catch(e){console.error('watermark:',e);}
+    const gd=settings?.guest_design;
+    if(gd){
+      const design=typeof gd==='string'?JSON.parse(gd):gd;
+      applyScreenWatermark(design);
+    } else {
+      applyScreenWatermark(null);
+    }
+  }catch(e){
+    const saved=localStorage.getItem('ew_design_'+eventId);
+    if(saved) try{applyTheme(JSON.parse(saved));}catch(err){console.error('applyTheme:',err);}
+    console.error('event_settings:',e);
+  }
   await loadPosts();
   // Show waiting screen if no photos yet
   if(!photoPosts.length) showWaitingScreen(eventId, ev);
