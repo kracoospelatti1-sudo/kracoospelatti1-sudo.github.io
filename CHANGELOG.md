@@ -315,3 +315,16 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 *HTML:*
 - `index.html`, `admin.html`, `guest.html` y `screen.html` ahora referencian el favicon y el icono touch
 
+---
+
+### 2026-03-18 â€” SesiÃ³n 12
+
+**guest.html â€” UX mÃ¡s premium**
+
+- La selecciÃ³n de foto ahora muestra una tarjeta de estado con nombre de archivo, peso y validaciÃ³n visual antes de enviar
+- El `upload-zone` tiene mejor feedback visual al hover y al quedar una foto lista
+- El overlay de envÃ­o pasÃ³ a una tarjeta mÃ¡s cuidada, con tÃ­tulo y descripciÃ³n segÃºn el tipo de contenido
+- La pantalla de Ã©xito ahora cambia el mensaje y CTA segÃºn si se enviÃ³ foto, mensaje, audio o dedicatoria
+- Los errores tÃ©cnicos se convierten en mensajes mÃ¡s claros para el invitado
+- Los errores visibles ahora hacen scroll suave hasta el bloque correspondiente
+

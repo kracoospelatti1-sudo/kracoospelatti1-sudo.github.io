@@ -143,13 +143,33 @@ body{
   border:2px dashed var(--border);border-radius:var(--radius);
   display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:6px;cursor:pointer;
-  background:#fff;transition:border-color 0.2s,background 0.2s;margin-bottom:12px;
+  background:#fff;transition:border-color 0.2s,background 0.2s,transform 0.2s,box-shadow 0.2s;margin-bottom:12px;
   -webkit-tap-highlight-color:transparent;
 }
-.upload-zone:active,.upload-zone:hover{border-color:var(--pink);background:var(--pink-light)}
+.upload-zone:active,.upload-zone:hover{border-color:var(--pink);background:var(--pink-light);transform:translateY(-1px);box-shadow:0 12px 28px rgba(240,23,111,0.08)}
+.upload-zone.has-file{border-style:solid;background:linear-gradient(135deg,#fff 0%,#fff5fa 100%);border-color:rgba(240,23,111,0.28);box-shadow:0 14px 34px rgba(240,23,111,0.12)}
 .upload-zone .uz-ico{font-size:44px;margin-bottom:2px}
 .upload-zone .uz-txt{font-size:16px;font-weight:700;color:var(--text)}
 .upload-zone .uz-sub{font-size:12px;color:var(--muted)}
+.photo-meta{
+  display:none;align-items:center;justify-content:space-between;gap:12px;
+  background:linear-gradient(135deg,#fff 0%,#fff8fc 100%);
+  border:1px solid rgba(240,23,111,0.18);border-radius:var(--radius-sm);
+  padding:13px 14px;margin-bottom:12px;box-shadow:0 10px 24px rgba(240,23,111,0.08)
+}
+.photo-meta.show{display:flex}
+.photo-meta-main{display:flex;align-items:center;gap:12px;min-width:0}
+.photo-meta-ico{
+  width:42px;height:42px;border-radius:12px;background:rgba(240,23,111,0.12);
+  color:var(--pink);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0
+}
+.photo-meta-copy{min-width:0}
+.photo-meta-title{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.photo-meta-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.photo-meta-badge{
+  flex-shrink:0;padding:7px 10px;border-radius:999px;background:rgba(240,23,111,0.1);
+  color:var(--pink);font-size:11px;font-weight:800;letter-spacing:0.2px
+}
 
 .orient-warn{
   background:#fef3c7;border:1px solid #f59e0b;border-radius:var(--radius-sm);
@@ -386,9 +406,16 @@ body{
   align-items:center;justify-content:center;gap:16px;
 }
 .sending-overlay.show{display:flex}
+.sending-card{
+  width:min(92vw,360px);background:rgba(14,14,21,0.92);border:1px solid rgba(240,23,111,0.16);
+  border-radius:24px;padding:28px 22px;box-shadow:0 24px 80px rgba(0,0,0,0.45),0 0 0 1px rgba(255,255,255,0.03) inset;
+  display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center
+}
 .progress-ring{width:60px;height:60px}
 .progress-ring circle{fill:none;stroke:var(--pink);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 0.4s}
-.sending-msg{font-size:14px;color:rgba(255,255,255,0.7);font-weight:500}
+.sending-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1.1}
+.sending-msg{font-size:14px;color:rgba(255,255,255,0.78);font-weight:600}
+.sending-sub{font-size:12px;color:rgba(255,255,255,0.46);max-width:260px;line-height:1.5}
 
 /* SUCCESS */
 .success-screen{
@@ -408,6 +435,11 @@ body{
   border-radius:var(--radius-sm);font-size:17px;font-weight:700;
   font-family:'DM Sans',sans-serif;cursor:pointer;
   box-shadow:0 8px 24px rgba(240,23,111,0.3);
+}
+.success-meta{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+  background:rgba(240,23,111,0.08);border:1px solid rgba(240,23,111,0.14);
+  font-size:12px;font-weight:700;color:var(--pink);letter-spacing:0.2px
 }
 /* Confetti */
 .confetti-piece{
@@ -624,22 +656,27 @@ body{
 
 <!-- SENDING OVERLAY -->
 <div class="sending-overlay" id="sending-overlay">
-  <svg class="progress-ring" viewBox="0 0 60 60">
-    <circle cx="30" cy="30" r="24" stroke-dasharray="150" stroke-dashoffset="150" id="progress-circle"/>
-    <text x="30" y="35" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="11" font-family="DM Sans,sans-serif" font-weight="700" id="progress-pct"></text>
-  </svg>
-  <div class="sending-msg" id="sending-msg">Enviando...</div>
-  <div style="width:180px;height:3px;background:rgba(255,255,255,0.15);border-radius:99px;overflow:hidden;margin-top:-4px">
-    <div id="progress-bar-fill" style="height:100%;background:var(--pink);border-radius:99px;width:0%;transition:width 0.3s"></div>
+  <div class="sending-card">
+    <svg class="progress-ring" viewBox="0 0 60 60">
+      <circle cx="30" cy="30" r="24" stroke-dasharray="150" stroke-dashoffset="150" id="progress-circle"/>
+      <text x="30" y="35" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="11" font-family="DM Sans,sans-serif" font-weight="700" id="progress-pct"></text>
+    </svg>
+    <div class="sending-title" id="sending-title">Estamos enviando tu momento</div>
+    <div class="sending-msg" id="sending-msg">Preparando...</div>
+    <div class="sending-sub" id="sending-sub">No cierres esta pantalla. En unos segundos queda listo para el evento.</div>
+    <div style="width:100%;height:4px;background:rgba(255,255,255,0.12);border-radius:99px;overflow:hidden">
+      <div id="progress-bar-fill" style="height:100%;background:var(--pink);border-radius:99px;width:0%;transition:width 0.3s"></div>
+    </div>
   </div>
 </div>
 
 <!-- SUCCESS -->
 <div class="success-screen" id="success-screen">
   <div class="success-ico">🎉</div>
-  <div class="success-title">¡Enviado!</div>
-  <div class="success-sub">Tu contenido ya está en la pantalla del evento</div>
-  <button class="success-btn" onclick="resetForm()">Enviar algo más</button>
+  <div class="success-meta" id="success-meta">Listo para el evento</div>
+  <div class="success-title" id="success-title">¡Enviado!</div>
+  <div class="success-sub" id="success-sub">Tu contenido ya está en la pantalla del evento</div>
+  <button class="success-btn" id="success-btn" onclick="resetForm()">Enviar algo más</button>
 </div>
 
 <!-- APP -->
@@ -694,6 +731,16 @@ body{
         <div class="uz-sub">JPG, PNG · Máx 8MB · Mejor en horizontal</div>
       </div>
       <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(this)"/>
+      <div class="photo-meta" id="photo-meta">
+        <div class="photo-meta-main">
+          <div class="photo-meta-ico">ðŸ“·</div>
+          <div class="photo-meta-copy">
+            <div class="photo-meta-title" id="photo-meta-title">Foto lista para enviar</div>
+            <div class="photo-meta-sub" id="photo-meta-sub">Horizontal · lista para pantalla</div>
+          </div>
+        </div>
+        <div class="photo-meta-badge" id="photo-meta-badge">OK</div>
+      </div>
 
       <div class="canvas-wrap" id="canvas-preview-wrap">
         <canvas id="preview-canvas"></canvas>
@@ -1001,6 +1048,7 @@ let eventId=params.get('event');
 let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
 let gdFlags={showReactions:true,showPhotoEdit:true,showDeletePhoto:true,wmUrl:'',wmPos:'br',wmSize:20,wmOpacity:70};
 let _wmImage=null; // cached watermark image
+let currentSuccessType='content';
 
 function formatDateES(str){
   if(!str) return '';
@@ -1045,6 +1093,58 @@ function ensureNotExpired(errorId){
 
 
 // ── FRAMES ───────────────────────────────────────────────────
+function formatFileSize(bytes){
+  if(!bytes&&bytes!==0) return '';
+  if(bytes<1024) return bytes+' B';
+  const units=['KB','MB','GB'];
+  let size=bytes/1024, idx=0;
+  while(size>=1024&&idx<units.length-1){size/=1024;idx++;}
+  return (size>=10?Math.round(size):size.toFixed(1))+' '+units[idx];
+}
+
+function updatePhotoMeta(file,img){
+  const card=document.getElementById('photo-meta');
+  const zone=document.getElementById('upload-zone');
+  if(!card||!zone||!file) return;
+  const title=document.getElementById('photo-meta-title');
+  const sub=document.getElementById('photo-meta-sub');
+  const badge=document.getElementById('photo-meta-badge');
+  const orientation=img&&img.naturalWidth&&img.naturalHeight?(img.naturalWidth>=img.naturalHeight?'Horizontal':'Vertical'):'Lista';
+  if(title) title.textContent=file.name||'Foto lista para enviar';
+  if(sub) sub.textContent=[orientation, formatFileSize(file.size), 'Se verá genial en pantalla'].filter(Boolean).join(' · ');
+  if(badge) badge.textContent='Lista';
+  zone.classList.add('has-file');
+  card.classList.add('show');
+}
+
+function clearPhotoMeta(){
+  const card=document.getElementById('photo-meta');
+  const zone=document.getElementById('upload-zone');
+  if(card) card.classList.remove('show');
+  if(zone) zone.classList.remove('has-file');
+}
+
+function getSuccessContent(type){
+  return {
+    photo:{meta:'Foto enviada',title:'¡Tu foto ya viajó!',sub:'Quedó lista para aparecer en la pantalla del evento.',btn:'Enviar otra foto'},
+    message:{meta:'Mensaje enviado',title:'¡Mensaje listo!',sub:'Tu mensaje ya quedó preparado para mostrarse en vivo.',btn:'Enviar otro mensaje'},
+    audio:{meta:'Audio enviado',title:'¡Audio enviado!',sub:'Tu voz ya forma parte del momento.',btn:'Grabar otro audio'},
+    wish:{meta:'Mensaje especial',title:'¡Momento especial listo!',sub:'Tu dedicatoria ya quedó guardada para sorprender en pantalla.',btn:'Enviar otro mensaje'},
+    content:{meta:'Listo para el evento',title:'¡Enviado!',sub:'Tu contenido ya está en la pantalla del evento.',btn:'Enviar algo más'}
+  }[type]||{meta:'Listo para el evento',title:'¡Enviado!',sub:'Tu contenido ya está en la pantalla del evento.',btn:'Enviar algo más'};
+}
+
+function formatUserError(error,context='contenido'){
+  const raw=((error&&error.message)?error.message:String(error||'')).trim();
+  if(!raw) return 'No pudimos completar el envío. Probá de nuevo en unos segundos.';
+  if(raw.includes('Failed to fetch')||raw.includes('NetworkError')||raw==='Sin conexión') return 'Se cortó la conexión justo durante el envío. Probá de nuevo cuando tengas señal.';
+  if(raw.includes('Storage 413')||raw.includes('Payload Too Large')) return 'El archivo es demasiado pesado. Probá con uno más liviano.';
+  if(raw.includes('Storage 415')) return 'Ese formato no está soportado. Probá con JPG, PNG o WebP.';
+  if(raw.includes('NotAllowedError')||raw.includes('Permission denied')) return 'Necesitamos permiso para usar el micrófono antes de grabar.';
+  if(raw.startsWith('REST ')||raw.startsWith('Storage ')) return 'No pudimos guardar tu '+context+' ahora mismo. Probá otra vez en unos segundos.';
+  return raw.startsWith('Error:')?raw:'Error: '+raw;
+}
+
 const FRAMES=[
   {id:'none', name:'Sin marco', cat:'todos', draw:null},
 
@@ -2070,6 +2170,7 @@ function handleFileSelect(input){
       document.getElementById('orient-warn').classList.remove('show');
       hideFormError('photo-error');
       originalImage=img;
+      updatePhotoMeta(file,img);
       renderPreviewCanvas();
       document.getElementById('canvas-preview-wrap').style.display='block';
       document.getElementById('caption-wrap').style.display='block';
@@ -2092,6 +2193,7 @@ function handleFileSelect(input){
 function removePhoto(){
   selectedFile=null;originalImage=null;selectedFrame='none';
   selectedFilter='none';selectedStickers=[];
+  clearPhotoMeta();
   document.getElementById('canvas-preview-wrap').style.display='none';
   document.getElementById('caption-wrap').style.display='none';
   document.getElementById('upload-zone').style.display='flex';
@@ -2108,7 +2210,7 @@ async function sendPhoto(){
   if(!ensureNotExpired('photo-error')) return;
   if(!originalImage){showFormError('photo-error','Seleccioná una foto primero');return;}
   if(!checkCooldown('photo')) return;
-  showSending();
+  showSending('photo');
   let uploadedUrl=null;
   try{
     // Ensure watermark is applied before uploading
@@ -2135,19 +2237,19 @@ async function sendPhoto(){
     try{localStorage.removeItem('ew_gallery_'+eventId);localStorage.removeItem('ew_myphotos_'+eventId+'_'+name);}catch(e){}
     setProgress(100,'¡Listo!');
     setLastSent('photo');
-    setTimeout(()=>{hideSending();showSuccess();},400);
+    setTimeout(()=>{hideSending();showSuccess('photo');},400);
   }catch(e){
     hideSending();
     if(uploadedUrl&&isNetworkError(e)){
       // Upload succeeded but insert failed — queue the insert
       const caption=document.getElementById('photo-caption')?.value.trim();
       enqueuePost({event_id:eventId,type:'photo',author:name,content:uploadedUrl,content_text:caption||null,frame:selectedFrame,approved:true});
-      showFormError('photo-error','📶 Sin señal — tu foto se enviará cuando vuelvas a conectarte');
+      showFormError('photo-error','📶 Sin señal — tu foto se enviará cuando vuelvas a conectarte.');
     }else if(!uploadedUrl&&isNetworkError(e)){
       // Upload itself failed — photo still selected, user can retry
-      showFormError('photo-error','📶 Sin señal — tu foto sigue seleccionada, tocá "Enviar" de nuevo cuando tengas señal');
+      showFormError('photo-error','📶 Sin señal — tu foto sigue seleccionada. Tocá "Enviar" de nuevo cuando vuelvas a tener señal.');
     }else{
-      showFormError('photo-error','Error: '+e.message);
+      showFormError('photo-error',formatUserError(e,'foto'));
     }
   }
 }
@@ -2356,20 +2458,20 @@ async function sendWish(){
   if(!ensureNotExpired('wish-error')) return;
   const text=document.getElementById('wish-text').value.trim();
   if(!text){showFormError('wish-error','Escribí tu mensaje primero');return;}
-  showSending();setProgress(50,'Enviando deseo...');
+  showSending('wish');setProgress(50,'Enviando dedicatoria...');
   try{
     await apiRest('posts',{method:'POST',body:JSON.stringify({
       event_id:eventId,type:'wish',author:name,content:text,approved:true
     })});
     localStorage.setItem(getWishCooldownKey(), Date.now().toString());
     updateWishBtn(true);
-    setProgress(100,'¡Enviado!');setTimeout(()=>{hideSending();showSuccess();},300);
+    setProgress(100,'¡Enviado!');setTimeout(()=>{hideSending();showSuccess('wish');},300);
   }catch(e){
     hideSending();
     if(isNetworkError(e)){
       enqueuePost({event_id:eventId,type:'wish',author:name,content:text,approved:true});
-      showFormError('wish-error','📶 Sin señal — tu deseo se enviará cuando vuelvas a conectarte');
-    }else{showFormError('wish-error','Error: '+e.message);}
+      showFormError('wish-error','📶 Sin señal — tu dedicatoria se enviará cuando vuelvas a conectarte.');
+    }else{showFormError('wish-error',formatUserError(e,'dedicatoria'));}
   }
 }
 
@@ -2379,20 +2481,20 @@ async function sendMessage(){
   const text=document.getElementById('msg-text').value.trim();
   if(!text){showFormError('msg-error','Escribí un mensaje primero');return;}
   if(!checkCooldown('message')) return;
-  showSending();setProgress(50,'Enviando mensaje...');
+  showSending('message');setProgress(50,'Enviando mensaje...');
   const _msgSizes={small:20,medium:32,large:48,xlarge:60};
   const frameData=JSON.stringify({emoji:msgEmoji==='none'?'':msgEmoji,bgColor:msgBgColor,bgGradient:msgBgGradient,textColor:msgTextColor,fontSize:_msgSizes[msgSize]||32,bubbleStyle:msgBubbleStyle,font:msgFont||'Syne',bold:msgBold,italic:msgItalic,underline:msgUnderline,shadow:msgShadow,outline:msgOutline,animation:msgAnimation||'none'});
   try{
     await apiRest('posts',{method:'POST',body:JSON.stringify({
       event_id:eventId,type:'message',author:name,content:text,approved:true,frame:frameData
     })});
-    setProgress(100,'¡Listo!');setLastSent('message');setTimeout(()=>{hideSending();showSuccess();},300);
+    setProgress(100,'¡Listo!');setLastSent('message');setTimeout(()=>{hideSending();showSuccess('message');},300);
   }catch(e){
     hideSending();
     if(isNetworkError(e)){
       enqueuePost({event_id:eventId,type:'message',author:name,content:text,approved:true,frame:frameData});
-      showFormError('msg-error','📶 Sin señal — tu mensaje se enviará cuando vuelvas a conectarte');
-    }else{showFormError('msg-error','Error: '+e.message);}
+      showFormError('msg-error','📶 Sin señal — tu mensaje se enviará cuando vuelvas a conectarte.');
+    }else{showFormError('msg-error',formatUserError(e,'mensaje'));}
   }
 }
 
@@ -2427,7 +2529,7 @@ async function toggleRecording(){
     document.getElementById('record-status').textContent='Grabando... tocá para detener';
     document.getElementById('audio-ready').style.display='none';
     recTimer=setInterval(()=>{recSecs++;const m=Math.floor(recSecs/60),s=recSecs%60;document.getElementById('record-timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');},1000);
-  }catch(e){showFormError('audio-error','No se pudo acceder al micrófono.');}
+  }catch(e){showFormError('audio-error',formatUserError(e,'audio'));}
 }
 
 function playAudio(){if(audioUrl) new Audio(audioUrl).play();}
@@ -2436,20 +2538,20 @@ async function sendAudio(){
   const name=getGuestName();if(!name) return;
   if(!audioBlob){showFormError('audio-error','Grabá un audio primero');return;}
   if(!checkCooldown('audio')) return;
-  showSending();
+  showSending('audio');
   let uploadedUrl=null;
   try{
     const ext=audioBlob.type.includes('mp4')?'mp4':'webm';
     const audioFile=new File([audioBlob],'audio.'+ext,{type:audioBlob.type});
     uploadedUrl=await uploadFile(audioFile,'audios');
     await apiRest('posts',{method:'POST',body:JSON.stringify({event_id:eventId,type:'audio',author:name,content:uploadedUrl,content_text:recSecs+'s',approved:true})});
-    setProgress(100,'¡Listo!');setLastSent('audio');setTimeout(()=>{hideSending();showSuccess();},400);
+    setProgress(100,'¡Listo!');setLastSent('audio');setTimeout(()=>{hideSending();showSuccess('audio');},400);
   }catch(e){
     hideSending();
     if(uploadedUrl&&isNetworkError(e)){
       enqueuePost({event_id:eventId,type:'audio',author:name,content:uploadedUrl,content_text:recSecs+'s',approved:true});
-      showFormError('audio-error','📶 Sin señal — tu audio se enviará cuando vuelvas a conectarte');
-    }else{showFormError('audio-error','Error: '+e.message);}
+      showFormError('audio-error','📶 Sin señal — tu audio se enviará cuando vuelvas a conectarte.');
+    }else{showFormError('audio-error',formatUserError(e,'audio'));}
   }
 }
 
@@ -2493,7 +2595,7 @@ async function flushQueue(){
   }
   saveQueue(failed);
   updateOfflineBanner();
-  if(!failed.length) showSuccess();
+  if(!failed.length) showSuccess('content');
 }
 
 function clearQueue(){saveQueue([]);updateOfflineBanner();}
@@ -2517,9 +2619,33 @@ function setProgress(pct,label){
   const msg=document.getElementById('sending-msg');
   if(msg&&label) msg.textContent=label;
 }
-function showSending(){setProgress(10,'Preparando...');document.getElementById('sending-overlay').classList.add('show');}
+function showSending(type='content'){
+  const cfg={
+    photo:{title:'Estamos preparando tu foto',sub:'La optimizamos para que se vea increíble en la pantalla del evento.'},
+    message:{title:'Estamos enviando tu mensaje',sub:'En un instante queda listo para mostrarse en vivo.'},
+    audio:{title:'Estamos subiendo tu audio',sub:'Guardamos tu grabación para que se reproduzca sin cortes.'},
+    wish:{title:'Estamos guardando tu dedicatoria',sub:'Tu mensaje especial va a quedar listo para sorprender en pantalla.'},
+    content:{title:'Estamos enviando tu momento',sub:'No cierres esta pantalla. En unos segundos queda listo para el evento.'}
+  }[type]||{title:'Estamos enviando tu momento',sub:'No cierres esta pantalla. En unos segundos queda listo para el evento.'};
+  const title=document.getElementById('sending-title');
+  const sub=document.getElementById('sending-sub');
+  if(title) title.textContent=cfg.title;
+  if(sub) sub.textContent=cfg.sub;
+  setProgress(10,'Preparando...');
+  document.getElementById('sending-overlay').classList.add('show');
+}
 function hideSending(){document.getElementById('sending-overlay').classList.remove('show');setProgress(0,'');}
-function showSuccess(){
+function showSuccess(type='content'){
+  currentSuccessType=type;
+  const cfg=getSuccessContent(type);
+  const meta=document.getElementById('success-meta');
+  const title=document.getElementById('success-title');
+  const sub=document.getElementById('success-sub');
+  const btn=document.getElementById('success-btn');
+  if(meta) meta.textContent=cfg.meta;
+  if(title) title.textContent=cfg.title;
+  if(sub) sub.textContent=cfg.sub;
+  if(btn) btn.textContent=cfg.btn;
   document.getElementById('success-screen').classList.add('show');
   launchConfetti();
   loadStats();
@@ -2536,7 +2662,13 @@ function launchConfetti(){
     setTimeout(()=>p.remove(),1600);
   }
 }
-function showFormError(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.add('show');}
+function showFormError(id,msg){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.textContent=msg;
+  el.classList.add('show');
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
 function hideFormError(id){document.getElementById(id).classList.remove('show');}
 function resetForm(){
   document.getElementById('success-screen').classList.remove('show');
