@@ -84,6 +84,15 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 
 ---
 
+### 2026-03-18 - Sesion 11
+
+**Reversion del logo en la landing**
+- Se quito `eventwall.png` de `index.html`
+- Header y footer volvieron al branding anterior: punto rosa + texto `EventWall`
+- Se elimina tambien el archivo `eventwall.png` del repo
+
+---
+
 ---
 
 ### 2026-03-18 - Sesion 7
