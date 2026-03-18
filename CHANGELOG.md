@@ -328,3 +328,16 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Los errores tÃ©cnicos se convierten en mensajes mÃ¡s claros para el invitado
 - Los errores visibles ahora hacen scroll suave hasta el bloque correspondiente
 
+---
+
+### 2026-03-18 â€” SesiÃ³n 13
+
+**screen.html â€” Robustez + branding + transiciones**
+
+- Nuevo badge de conexiÃ³n para mostrar pantalla conectada, seÃ±al inestable o reconexiÃ³n
+- `api()` ahora detecta timeouts/lentitud y actualiza el estado visual de conexiÃ³n
+- Polling protegido con guards para evitar requests solapados cuando Supabase tarda
+- `showFeatured()` ahora serializa transiciones para evitar parpadeos cuando llegan fotos seguidas
+- Featured con entrada mÃ¡s cinematogrÃ¡fica y branding mÃ¡s consistente con glow/acento rosa
+- Overlay de wishes mÃ¡s emocional, con entrada escalonada de autor/texto y fondo mÃ¡s rico
+
