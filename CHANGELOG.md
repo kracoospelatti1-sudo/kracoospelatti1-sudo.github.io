@@ -341,3 +341,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Featured con entrada mÃ¡s cinematogrÃ¡fica y branding mÃ¡s consistente con glow/acento rosa
 - Overlay de wishes mÃ¡s emocional, con entrada escalonada de autor/texto y fondo mÃ¡s rico
 
+### 2026-03-18 â€” SesiÃ³n 14
+
+**screen.html â€” no repetir contenido al refrescar**
+
+- Mensajes, wishes y audios vistos ahora se guardan por evento sin depender de una key diaria
+- Los “momentos” tambiÃ©n guardan el Ãºltimo ID mostrado en `localStorage`
+- Al refrescar la pantalla, el contenido ya mostrado no vuelve a dispararse completo
+

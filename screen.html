@@ -721,17 +721,15 @@ let msgBubbleQueue=[],msgBubbleShowing=false,currentBubbleId=null,_bubbleTimer=n
 const MSG_ICONS=['💬','😂','❤️','🔥','😍','🎉','👏','💕','😎','🥳','💯','✨'];
 
 function getShownKey(prefix){
-  // Key includes today's date so it auto-clears next day
-  const today=new Date().toISOString().slice(0,10);
-  return prefix+'_'+eventId+'_'+today;
+  return prefix+'_'+eventId;
 }
 function getShownMsgIds(){
   try{return new Set(JSON.parse(localStorage.getItem(getShownKey('ew_msgs'))||'[]'));}
   catch(e){return new Set();}
 }
 function markMsgShown(id){
-  const ids=getShownMsgIds();ids.add(id);
-  localStorage.setItem(getShownKey('ew_msgs'),JSON.stringify([...ids]));
+  const ids=[...getShownMsgIds(),id];
+  localStorage.setItem(getShownKey('ew_msgs'),JSON.stringify([...new Set(ids)].slice(-400)));
 }
 
 function addMsgToStrip(msg){
@@ -897,8 +895,8 @@ function getShownWishIds(){
   catch(e){return new Set();}
 }
 function markWishShown(id){
-  const ids=getShownWishIds();ids.add(id);
-  localStorage.setItem(getShownKey('ew_wishes'),JSON.stringify([...ids]));
+  const ids=[...getShownWishIds(),id];
+  localStorage.setItem(getShownKey('ew_wishes'),JSON.stringify([...new Set(ids)].slice(-200)));
 }
 
 async function pollWishes(){
@@ -1044,8 +1042,8 @@ function getPlayedAudioIds(){
   catch(e){return new Set();}
 }
 function markAudioPlayed(id){
-  const ids=getPlayedAudioIds();ids.add(id);
-  localStorage.setItem(getShownKey('ew_audios'),JSON.stringify([...ids]));
+  const ids=[...getPlayedAudioIds(),id];
+  localStorage.setItem(getShownKey('ew_audios'),JSON.stringify([...new Set(ids)].slice(-200)));
 }
 
 function showFeatured(post,idx){
@@ -1309,6 +1307,7 @@ async function init(){
   if(!Array.isArray(events)||!events[0]){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Evento no encontrado. Verificá el ID en la URL.</p>';return;}
   const ev=events[0];
   eventId=ev.id; // asegura que siempre usamos el UUID real
+  lastMomentId=getLastSeenMomentId();
   eventName=ev.name;
   document.title=ev.name+' · EventWall';
   document.getElementById('ev-name').textContent=ev.name;
@@ -1835,6 +1834,18 @@ window.addEventListener('resize',()=>{if(mosaicActive) renderMosaic();});
 let lastMomentId=null;
 let momentAnimFrame=null;
 
+function getLastSeenMomentId(){
+  try{return localStorage.getItem(getShownKey('ew_last_moment'))||null;}
+  catch(e){return null;}
+}
+
+function markMomentSeen(id){
+  lastMomentId=id||null;
+  try{
+    if(id) localStorage.setItem(getShownKey('ew_last_moment'),id);
+  }catch(e){}
+}
+
 async function pollMoments(){
   try{
     const moments=await api('moments?event_id=eq.'+eventId+'&order=launched_at.desc&limit=1');
@@ -1843,8 +1854,8 @@ async function pollMoments(){
     if(m.id===lastMomentId) return;
     // Check if launched within last 60s
     const age=(Date.now()-new Date(m.launched_at).getTime())/1000;
-    if(age>60){lastMomentId=m.id;return;}
-    lastMomentId=m.id;
+    if(age>60){markMomentSeen(m.id);return;}
+    markMomentSeen(m.id);
     let effect={type:'confetti',duration:10,subtext:''};
     try{effect=JSON.parse(m.effect||'{}');}catch(e){}
     showMoment(m.text,effect);
