@@ -465,6 +465,7 @@ async function apiPost(path,body){
 
 const params=new URLSearchParams(location.search);
 let eventId=params.get('event');
+let eventDbId=null;
 const mosaicParam=params.get('mosaic');
 let eventName='';
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
@@ -1306,6 +1307,7 @@ async function init(){
   if(!Array.isArray(events)||!events[0]) events=await api('events?custom_code=eq.'+eventId);
   if(!Array.isArray(events)||!events[0]){document.getElementById('loading').innerHTML='<p style="color:var(--accent)">Evento no encontrado. Verificá el ID en la URL.</p>';return;}
   const ev=events[0];
+  eventDbId=ev.id;
   eventId=ev.id; // asegura que siempre usamos el UUID real
   lastMomentId=getLastSeenMomentId();
   eventName=ev.name;
@@ -1319,15 +1321,16 @@ async function init(){
   document.getElementById('app').style.display='block';
   // Apply theme AFTER app is visible so DOM queries work
   try{
-    const settingsRows=await api('event_settings?event_id=eq.'+eventId+'&select=screen_design,guest_design&limit=1');
+    if(!eventDbId) throw new Error('missing event uuid');
+    const settingsRows=await api('event_settings?event_id=eq.'+eventDbId+'&select=screen_design,guest_design&limit=1');
     const settings=Array.isArray(settingsRows)&&settingsRows[0]?settingsRows[0]:null;
     const screenDesign=settings?.screen_design;
     if(screenDesign){
       const design=typeof screenDesign==='string'?JSON.parse(screenDesign):screenDesign;
       applyTheme(design);
-      localStorage.setItem('ew_design_'+eventId, JSON.stringify(design));
+      localStorage.setItem('ew_design_'+eventDbId, JSON.stringify(design));
     } else {
-      const saved=localStorage.getItem('ew_design_'+eventId);
+      const saved=localStorage.getItem('ew_design_'+eventDbId);
       if(saved) try{applyTheme(JSON.parse(saved));}catch(e){console.error('applyTheme:',e);}
     }
     const gd=settings?.guest_design;
@@ -1338,7 +1341,7 @@ async function init(){
       applyScreenWatermark(null);
     }
   }catch(e){
-    const saved=localStorage.getItem('ew_design_'+eventId);
+    const saved=localStorage.getItem('ew_design_'+(eventDbId||eventId));
     if(saved) try{applyTheme(JSON.parse(saved));}catch(err){console.error('applyTheme:',err);}
     console.error('event_settings:',e);
   }

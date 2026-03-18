@@ -358,3 +358,12 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - La marca de agua de pantalla ahora se hidrata desde `event_settings.guest_design`, igual que el resto del flujo de invitado
 - Los resets de diseÃ±o invitado y diseÃ±o de pantalla ahora limpian la configuraciÃ³n compartida del evento, no solo estado local del navegador
 
+### 2026-03-18 â€” SesiÃ³n 16
+
+**guest.html + screen.html â€” consultas a `event_settings` siempre con UUID**
+
+- Se agregÃ³ una referencia explÃ­cita al UUID real del evento para evitar consultas a `event_settings` usando el `custom_code`
+- `guest.html` ahora usa ese UUID resuelto para cargar y refrescar `guest_design`
+- `screen.html` ahora usa ese UUID resuelto para cargar `screen_design` y `guest_design`
+- Con esto se evita el `400` de Supabase cuando la URL entra con un cÃ³digo corto como `6dae`
+

@@ -1044,6 +1044,7 @@ const SUPABASE_KEY='sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D';
 const BUCKET='eventwall';
 const params=new URLSearchParams(location.search);
 let eventId=params.get('event');
+let eventDbId=null;
 
 let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
 let gdFlags={showReactions:true,showPhotoEdit:true,showDeletePhoto:true,wmUrl:'',wmPos:'br',wmSize:20,wmOpacity:70};
@@ -1862,8 +1863,10 @@ async function uploadFile(file,folder){
 // ── GUEST DESIGN ─────────────────────────────────────────────
 async function applyGuestDesign(ev){
   let d={};
+  const settingsEventId=eventDbId||eventId;
   try{
-    const res=await apiRest('event_settings?event_id=eq.'+eventId+'&select=guest_design');
+    if(!settingsEventId) return;
+    const res=await apiRest('event_settings?event_id=eq.'+settingsEventId+'&select=guest_design');
     if(Array.isArray(res)&&res[0]?.guest_design) d=res[0].guest_design;
   }catch(e){ console.error('applyGuestDesign error:',e); }
 
@@ -2024,6 +2027,7 @@ async function init(){
     if(!evs[0]) evs=await apiRest('events?custom_code=eq.'+eventId);
     if(!evs[0]) throw new Error('Evento no encontrado');
     const ev=evs[0];
+    eventDbId=ev.id;
     eventId=ev.id; // asegura que siempre usamos el UUID real
 
     // Pin expiry
@@ -2083,7 +2087,8 @@ async function init(){
     let _lastDesignTs='';
     setInterval(async()=>{
       try{
-        const res=await apiRest('event_settings?event_id=eq.'+eventId+'&select=guest_design,updated_at');
+        if(!eventDbId) return;
+        const res=await apiRest('event_settings?event_id=eq.'+eventDbId+'&select=guest_design,updated_at');
         if(Array.isArray(res)&&res[0]?.guest_design){
           const ts=res[0].updated_at||'';
           if(ts!==_lastDesignTs){
