@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kracoospelatti1-sudo.github.io/sitemap.xml

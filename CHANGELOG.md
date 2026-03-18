@@ -93,6 +93,18 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 
 ---
 
+### 2026-03-18 - Sesion 12
+
+**SEO tecnico (`index.html`)**
+- Se agregaron `hreflang`, `og:image:secure_url`, `og:image:type` y `meta language` en la landing
+- Se sumo schema adicional de `Organization` y `WebSite` para reforzar entidad de marca y contexto del sitio
+
+**Archivos SEO**
+- Nuevo `robots.txt` con referencia al sitemap publico
+- Nuevo `sitemap.xml` para la URL canonica del sitio
+
+---
+
 ---
 
 ### 2026-03-18 - Sesion 7
