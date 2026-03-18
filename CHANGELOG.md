@@ -121,6 +121,14 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 
 ---
 
+### 2026-03-18 - Sesion 15
+
+**Dominio principal**
+- `index.html`, `robots.txt` y `sitemap.xml` ahora usan `https://eventwall.online/` como dominio canonico principal
+- Se elimino `CNAME` del repo para que GitHub Pages deje de reclamar `eventwall.online`
+
+---
+
 ---
 
 ### 2026-03-18 - Sesion 7

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://darkblue-swallow-842981.hostingersite.com/sitemap.xml
+Sitemap: https://eventwall.online/sitemap.xml
