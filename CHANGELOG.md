@@ -76,6 +76,14 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Header y footer ahora muestran la imagen de marca junto al texto `EventWall`
 - Se reemplazo el punto decorativo anterior por una clase reutilizable `brand-mark`, con tamanos adaptados para navbar y footer
 
+### 2026-03-18 - Sesion 10
+
+**Ajuste visual del logo (`index.html`)**
+- El logo de la landing ahora reemplaza el texto `EventWall` en header y footer, en vez de mostrarse a su lado
+- Se aumento el tamano visual de `eventwall.png` para que la marca tenga mas presencia en navegacion y pie
+
+---
+
 ---
 
 ### 2026-03-18 - Sesion 7
