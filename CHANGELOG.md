@@ -105,6 +105,14 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 
 ---
 
+### 2026-03-18 - Sesion 13
+
+**Copy SEO de la landing**
+- Se reforzo el hero con keywords mas descriptivas como `muro digital para eventos`, `bodas`, `fiestas de 15` y `eventos corporativos`
+- Se actualizaron los textos de las secciones `En vivo`, `Como funciona` y `Funcionalidades` para mejorar relevancia semantica sin perder tono comercial
+
+---
+
 ---
 
 ### 2026-03-18 - Sesion 7
