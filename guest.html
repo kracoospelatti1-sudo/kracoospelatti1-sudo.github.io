@@ -77,11 +77,11 @@ body{
 /* NAME INPUT */
 .name-block{margin-bottom:16px}
 .label{
-  font-size:13px;font-weight:700;color:var(--muted);
+  font-size:13px;font-weight:700;color:#bba198;
   text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;
   display:block;
 }
-.field-hint{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45}
+.field-hint{font-size:12px;color:rgba(247,239,231,0.62);margin-top:8px;line-height:1.45}
 .input{
   width:100%;padding:16px;
   background:#fff;border:1.5px solid var(--border);
@@ -131,11 +131,11 @@ body{
 .mode-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;line-height:1.1;color:var(--text);margin-bottom:6px;letter-spacing:-0.02em}
 .mode-desc{font-size:13px;color:var(--muted);line-height:1.45}
 .section-head{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
-.section-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;line-height:1.05;color:var(--text);letter-spacing:-0.02em}
-.section-copy{font-size:13px;color:var(--muted);line-height:1.45;margin-top:4px}
+.section-title{font-family:'Sora',sans-serif;font-size:18px;font-weight:700;line-height:1.05;color:#f7efe7;letter-spacing:-0.02em}
+.section-copy{font-size:13px;color:rgba(247,239,231,0.72);line-height:1.45;margin-top:4px}
 .section-tip{
-  flex-shrink:0;padding:6px 10px;border-radius:12px;background:var(--surface2);
-  border:1px solid var(--border);font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap
+  flex-shrink:0;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.14);font-size:12px;font-weight:700;color:#f0d8cf;white-space:nowrap
 }
 
 /* ── FORM SECTIONS ──────────────────────────────────────────── */
@@ -765,7 +765,6 @@ body{
           <div class="section-title">Foto del momento</div>
           <div class="section-copy">La opción más rápida para aparecer en pantalla. Solo aceptamos fotos horizontales.</div>
         </div>
-        <div class="section-tip">Lo más usado</div>
       </div>
       <div class="orient-warn" id="orient-warn">
         <span>📱</span>
@@ -835,7 +834,6 @@ body{
           <div class="section-title">Mensaje en pantalla</div>
           <div class="section-copy">Escribí algo corto, cálido o divertido. Cuanto más directo, mejor se luce.</div>
         </div>
-        <div class="section-tip">Hasta 200 caracteres</div>
       </div>
       <!-- Suggest chips -->
       <div class="suggest-row" id="suggest-row">
@@ -1004,7 +1002,6 @@ body{
           <div class="section-title">Mensaje de voz</div>
           <div class="section-copy">Ideal para algo más personal. Si podés, grabalo en un lugar con poco ruido.</div>
         </div>
-        <div class="section-tip">Breve y claro</div>
       </div>
       <div class="audio-area">
         <div class="record-status" id="record-status">Tocá para grabar tu mensaje de voz</div>
@@ -1045,7 +1042,6 @@ body{
           <div class="section-title">Dedicatoria especial</div>
           <div class="section-copy">Este mensaje entra con más protagonismo. Guardalo para algo realmente emotivo.</div>
         </div>
-        <div class="section-tip">Momento especial</div>
       </div>
       <div class="wish-banner">
         <div class="ico">💌</div>
@@ -1065,7 +1061,6 @@ body{
           <div class="section-title">Votaciones en vivo</div>
           <div class="section-copy">Elegí tu opción y seguí el resultado en tiempo real en la pantalla del evento.</div>
         </div>
-        <div class="section-tip">En vivo</div>
       </div>
       <div id="vote-loading" style="text-align:center;padding:40px 0;color:var(--muted)">
         <div style="font-size:32px;margin-bottom:8px">🗳</div>
@@ -1086,7 +1081,6 @@ body{
           <div class="section-title">Tus fotos</div>
           <div class="section-copy">Revisá lo que ya subiste y seguí tu participación en el evento.</div>
         </div>
-        <div class="section-tip">Tu historial</div>
       </div>
       <div id="my-photos-loading" style="text-align:center;padding:40px 0;color:var(--muted)">
         <div style="font-size:36px;margin-bottom:10px">🖼</div>
@@ -1107,7 +1101,6 @@ body{
           <div class="section-title">Galería del evento</div>
           <div class="section-copy">Mirá lo que ya compartieron los demás invitados e inspirate para subir el tuyo.</div>
         </div>
-        <div class="section-tip">Inspirate</div>
       </div>
       <div id="gallery-loading" style="text-align:center;padding:40px 0;color:var(--muted)">
         <div style="font-size:36px;margin-bottom:10px">🎉</div>
