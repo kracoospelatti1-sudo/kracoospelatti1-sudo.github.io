@@ -415,7 +415,6 @@ body.theme-light .qr-box{box-shadow:0 0 0 1px rgba(0,0,0,0.08),0 0 clamp(12px,1.
           <div id="msg-bubble-icon" style="font-size:clamp(28px,4.5vw,56px);margin-bottom:12px"></div>
           <div id="msg-bubble-text" style="font-family:var(--font-title);font-weight:800;line-height:1.3;word-break:break-word;overflow-wrap:break-word;max-width:100%"></div>
           <div class="bubble-author-row">
-            <div class="bubble-avatar" id="msg-bubble-avatar"></div>
             <div id="msg-bubble-author" style="font-size:clamp(13px,1.5vw,19px);font-weight:700;opacity:0.75"></div>
           </div>
         </div>
@@ -887,13 +886,11 @@ function addMsgToStrip(msg){
   if(!strip) return;
   if(msg.type!=='message'&&msg.type!=='audio') return;
   const card=document.createElement('div');
-  const avatarLetter=(msg.author||'?').trim().charAt(0).toUpperCase();
   card.dataset.id=msg.id;
   if(msg.type==='audio'){
     card.className='msg-card audio-card';
     const inner=document.createElement('div');
     inner.className='msg-card-inner';
-    const avatar=makeTextEl('div','msg-avatar',avatarLetter);
     const body=document.createElement('div');
     body.className='msg-card-body';
     const iconEl=makeTextEl('div','msg-card-icon','🎤');
@@ -901,7 +898,7 @@ function addMsgToStrip(msg){
     textEl.style.fontStyle='italic';
     const authorEl=makeTextEl('div','msg-card-author','— '+(msg.author||''));
     body.append(iconEl,textEl,authorEl);
-    inner.append(avatar,body);
+    inner.append(body);
     card.appendChild(inner);
   } else {
     card.className='msg-card';
@@ -909,7 +906,6 @@ function addMsgToStrip(msg){
     try{const f=JSON.parse(msg.frame||'{}');icon=(f.emoji&&f.emoji!=='none')?f.emoji:'💬';}catch(e){}
     const inner=document.createElement('div');
     inner.className='msg-card-inner';
-    const avatar=makeTextEl('div','msg-avatar',avatarLetter);
     const body=document.createElement('div');
     body.className='msg-card-body';
     body.append(
@@ -917,7 +913,7 @@ function addMsgToStrip(msg){
       makeTextEl('div','msg-card-text',msg.content||''),
       makeTextEl('div','msg-card-author','— '+(msg.author||''))
     );
-    inner.append(avatar,body);
+    inner.append(body);
     card.appendChild(inner);
   }
   strip.insertBefore(card, strip.firstChild);
@@ -1013,15 +1009,6 @@ function showNextBubble(){
     textEl.style.animation='msgTypewriter '+(msg.content.length*0.06)+'s steps('+msg.content.length+') forwards';
   }
   document.getElementById('msg-bubble-author').textContent=msg.author;
-  // Avatar con inicial coloreada
-  const avatarEl=document.getElementById('msg-bubble-avatar');
-  if(avatarEl){
-    const palette=['#f0176f','#7c3aed','#0891b2','#059669','#d97706','#e11d48','#9333ea','#0284c7'];
-    let h=0;for(const c of(msg.author||''))h=(h*31+c.charCodeAt(0))>>>0;
-    avatarEl.style.background=palette[h%palette.length];
-    avatarEl.textContent=(msg.author||'?')[0].toUpperCase();
-    avatarEl.style.display=msg.author?'flex':'none';
-  }
   // Apply custom style
   const card=document.getElementById('msg-bubble-card');
   const tail=document.getElementById('bubble-tail');
