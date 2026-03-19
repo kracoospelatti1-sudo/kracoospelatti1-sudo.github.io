@@ -464,3 +464,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Foto, mensaje, audio, dedicatoria, votaciÃ³n, galerÃ­a y fotos propias ahora tienen tÃ­tulo, copy y tip visual para ordenar mejor la experiencia
 - Las acciones rÃ¡pidas ahora muestran estado activo y llevan al usuario directo al campo correspondiente para reducir fricciÃ³n
 
+### 2026-03-19 â€” SesiÃ³n 29
+
+**guest.html â€” compactaciÃ³n visual para telÃ©fono**
+
+- La tarjeta de onboarding y la tarjeta de modo activo se compactaron para que no ocupen demasiado alto en mobile
+- Las acciones rÃ¡pidas ahora apilan mejor en telÃ©fono y conservan la versiÃ³n mÃ¡s amplia en desktop
+- Los encabezados de secciÃ³n, tips y copies se adaptan mejor al ancho chico para que el flujo se vea menos pesado en pantalla de celular
+
