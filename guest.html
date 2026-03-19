@@ -775,7 +775,7 @@ body{
       <button class="tab-btn active" onclick="selectType('photo',this)"><span class="ico">📷</span><span class="lbl">Foto</span></button>
       <button class="tab-btn" onclick="selectType('message',this)"><span class="ico">💬</span><span class="lbl">Mensaje</span></button>
       <button class="tab-btn" onclick="selectType('audio',this)"><span class="ico">🎤</span><span class="lbl">Audio</span></button>
-      <button class="tab-btn" id="wish-btn" onclick="selectType('wish',this)" disabled><span class="ico">💌</span><span class="lbl" id="wish-btn-sub">Especial</span></button>
+      <button class="tab-btn" id="wish-btn" onclick="selectType('wish',this)" disabled><span class="ico">📖</span><span class="lbl" id="wish-btn-sub">Firmar</span></button>
       <button class="tab-btn" id="vote-btn" onclick="selectType('vote',this);loadVotePolls()" style="display:none"><span class="ico">🗳</span><span class="lbl" id="vote-label">Votar</span></button>
       <button class="tab-btn" id="my-photos-btn" onclick="selectType('my-photos',this);loadMyPhotos()"><span class="ico">🖼</span><span class="lbl">Mis fotos</span></button>
       <button class="tab-btn" id="gallery-btn" onclick="selectType('gallery',this);loadGallery()"><span class="ico">🎉</span><span class="lbl">Galería</span></button>
@@ -2148,6 +2148,8 @@ async function init(){
     eventId=ev.id; // asegura que siempre usamos el UUID real
 
     // Pin expiry
+
+    // Pin expiry
     eventPinExpiry = ev.pin_expires_at || null;
     if(checkPinExpiry()) return;
 
@@ -2219,30 +2221,26 @@ async function init(){
   }catch(e){document.getElementById('page-loading').innerHTML='<p style="color:red;padding:20px">'+e.message+'</p>';}
 }
 
-const WISH_COOLDOWN_MS=30*60*1000; // 30 minutos
+function getWishCooldownKey(){return 'ew_signed_wish_'+eventId;}
 
-function getWishCooldownKey(){return 'ew_wish_cd_'+eventId;}
-
-function wishCooldownRemaining(){
-  const last=parseInt(localStorage.getItem(getWishCooldownKey())||'0');
-  return Math.max(0, last+WISH_COOLDOWN_MS-Date.now());
+function hasSignedWish(){
+  return localStorage.getItem(getWishCooldownKey()) === 'true';
 }
 
 function updateWishBtn(eventStarted){
   const btn=document.getElementById('wish-btn');
   const sub=document.getElementById('wish-btn-sub');
   if(!btn||!sub) return;
-  const remaining=wishCooldownRemaining();
+  
   if(!eventStarted){
     btn.disabled=true;
     sub.textContent='Pronto';
-  } else if(remaining>0){
+  } else if(hasSignedWish()){
     btn.disabled=true;
-    const mins=Math.ceil(remaining/60000);
-    sub.textContent=mins+'min';
+    sub.textContent='Firmado ✓';
   } else {
     btn.disabled=false;
-    sub.textContent='Especial';
+    sub.textContent='Firmar';
   }
 }
 
@@ -2520,28 +2518,6 @@ function updateMsgPreview(){
   textEl.style.wordBreak='break-word';
   textEl.style.overflowWrap='break-word';
   textEl.style.fontFamily=msgFont?("'"+msgFont+"',sans-serif"):"'Sora',sans-serif";
-  textEl.style.fontWeight=msgBold?'800':'400';
-  textEl.style.fontStyle=msgItalic?'italic':'normal';
-  textEl.style.textDecoration=msgUnderline?'underline':'none';
-  textEl.style.textShadow=msgShadow?'2px 2px 8px rgba(0,0,0,0.4)':'none';
-  textEl.style.webkitTextStroke=msgOutline?('1px '+msgTextColor):'';
-
-  // Apply animation to preview
-  const replayBtn=document.getElementById('replay-anim-btn');
-  applyPreviewAnimation(text);
-  if(replayBtn) replayBtn.style.display=msgAnimation!=='none'?'':'none';
-}
-
-let _typewriterInterval=null;
-function applyPreviewAnimation(text){
-  const textEl=document.getElementById('msg-preview-text');
-  const bubble=document.getElementById('msg-preview-bubble');
-  if(!textEl||!bubble) return;
-  // Clear any running typewriter interval
-  if(_typewriterInterval){clearInterval(_typewriterInterval);_typewriterInterval=null;}
-  // Remove all animation classes
-  textEl.classList.remove('msg-anim-bounce','msg-anim-fade','msg-anim-wave','msg-anim-slide','msg-anim-zoom');
-  bubble.style.animation='';
   // Force reflow to restart animation
   void textEl.offsetWidth;
   if(msgAnimation==='typewriter'){
