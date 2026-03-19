@@ -480,3 +480,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - La tarjeta de archivo, el estado de envÃ­o y el mensaje de Ã©xito ahora tambiÃ©n recuerdan esa regla para evitar dudas
 - En `admin.html` la opciÃ³n de fotos del invitado ahora se presenta explÃ­citamente como `Subir fotos horizontales`
 
+### 2026-03-19 â€” SesiÃ³n 31
+
+**guest.html + screen.html â€” paleta mÃ¡s consistente entre invitado y pantalla**
+
+- `guest.html` ahora deriva mejor sus tintes desde el acento del evento y, si hace falta, toma tonos base del `screen_design` para no caer en rosas hardcodeados
+- `screen.html` ahora reutiliza el acento y tonos del `guest_design` como fallback cuando el diseÃ±o de pantalla no define todos sus colores
+- Los brillos, badges y overlays principales de la pantalla ahora usan variables derivadas del acento real del evento para que ambos lados compartan mejor la misma familia visual
+
