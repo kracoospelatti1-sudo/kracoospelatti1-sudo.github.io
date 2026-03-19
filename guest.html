@@ -796,7 +796,7 @@ body{
         <div>
           <div class="guest-intro-kicker">Cómo participar</div>
           <div class="guest-intro-title">Elegí una forma de sumarte</div>
-          <div class="guest-intro-copy">La forma más rápida es sacar una foto. También podés dejar un mensaje, grabar un audio o guardar una dedicatoria especial.</div>
+          <div class="guest-intro-copy">La forma más rápida es sacar una foto horizontal. También podés dejar un mensaje, grabar un audio o guardar una dedicatoria especial.</div>
         </div>
         <div class="guest-intro-badge" id="guest-intro-badge">Recomendado</div>
       </div>
@@ -823,7 +823,7 @@ body{
     <div class="mode-card">
       <div class="mode-kicker" id="mode-kicker">Modo activo</div>
       <div class="mode-title" id="mode-title">Subí una foto</div>
-      <div class="mode-desc" id="mode-desc">Sacá una foto horizontal y la dejamos lista para verse increíble en pantalla grande.</div>
+      <div class="mode-desc" id="mode-desc">Sacá una foto horizontal. Las verticales no se pueden enviar y la dejamos lista para verse increíble en pantalla grande.</div>
     </div>
 
     <!-- ── PHOTO SECTION ── -->
@@ -831,7 +831,7 @@ body{
       <div class="section-head">
         <div>
           <div class="section-title">Foto del momento</div>
-          <div class="section-copy">La opción más rápida para aparecer en pantalla. Mejor si la sacás en horizontal.</div>
+          <div class="section-copy">La opción más rápida para aparecer en pantalla. Solo aceptamos fotos horizontales.</div>
         </div>
         <div class="section-tip">Lo más usado</div>
       </div>
@@ -841,8 +841,8 @@ body{
       </div>
       <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
         <div class="uz-ico">📸</div>
-        <div class="uz-txt">Tocá para sacar o elegir una foto</div>
-        <div class="uz-sub">JPG, PNG · Máx 8MB · Mejor en horizontal</div>
+        <div class="uz-txt">Tocá para sacar o elegir una foto horizontal</div>
+        <div class="uz-sub">JPG, PNG · Máx 8MB · Solo horizontal</div>
       </div>
       <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(this)"/>
       <div class="photo-meta" id="photo-meta">
@@ -1269,8 +1269,9 @@ function updatePhotoMeta(file,img){
   const sub=document.getElementById('photo-meta-sub');
   const badge=document.getElementById('photo-meta-badge');
   const orientation=img&&img.naturalWidth&&img.naturalHeight?(img.naturalWidth>=img.naturalHeight?'Horizontal':'Vertical'):'Lista';
+  const orientationNote=orientation==='Horizontal'?'Lista para pantalla':'Solo se permiten fotos horizontales';
   if(title) title.textContent=file.name||'Foto lista para enviar';
-  if(sub) sub.textContent=[orientation, formatFileSize(file.size), 'Se verá genial en pantalla'].filter(Boolean).join(' · ');
+  if(sub) sub.textContent=[orientation, formatFileSize(file.size), orientationNote].filter(Boolean).join(' · ');
   if(badge){
     badge.textContent='Lista';
     badge.classList.add('ready');
@@ -1288,7 +1289,7 @@ function clearPhotoMeta(){
 
 function getSuccessContent(type){
   return {
-    photo:{meta:'Foto enviada',title:'¡Tu foto ya viajó!',sub:'Quedó lista para aparecer en la pantalla del evento.',btn:'Enviar otra foto'},
+    photo:{meta:'Foto enviada',title:'¡Tu foto ya viajó!',sub:'Quedó lista para aparecer en la pantalla del evento. Recordá que solo trabajamos con fotos horizontales.',btn:'Enviar otra foto'},
     message:{meta:'Mensaje enviado',title:'¡Mensaje listo!',sub:'Tu mensaje ya quedó preparado para mostrarse en vivo.',btn:'Enviar otro mensaje'},
     audio:{meta:'Audio enviado',title:'¡Audio enviado!',sub:'Tu voz ya forma parte del momento.',btn:'Grabar otro audio'},
     wish:{meta:'Mensaje especial',title:'¡Momento especial listo!',sub:'Tu dedicatoria ya quedó guardada para sorprender en pantalla.',btn:'Enviar otro mensaje'},
@@ -2316,7 +2317,7 @@ async function loadStats(){
 }
 
 const MODE_COPY={
-  photo:{badge:'Recomendado',kicker:'Modo activo',title:'Subí una foto',desc:'Sacá una foto horizontal y la dejamos lista para verse increíble en pantalla grande.'},
+  photo:{badge:'Recomendado',kicker:'Modo activo',title:'Subí una foto',desc:'Sacá una foto horizontal. Las fotos verticales no se pueden enviar y la dejamos lista para verse increíble en pantalla grande.'},
   message:{badge:'Rápido',kicker:'Modo activo',title:'Escribí un mensaje',desc:'Ideal para dejar algo corto, cálido o divertido y verlo aparecer en vivo.'},
   audio:{badge:'Personal',kicker:'Modo activo',title:'Grabá tu voz',desc:'Perfecto para un saludo más cercano. Un audio breve suele salir mucho mejor.'},
   wish:{badge:'Especial',kicker:'Modo activo',title:'Mandá una dedicatoria',desc:'Guardá este espacio para un mensaje más emotivo y con más protagonismo.'},
@@ -2843,7 +2844,7 @@ function setProgress(pct,label){
 }
 function showSending(type='content'){
   const cfg={
-    photo:{title:'Estamos preparando tu foto',sub:'La optimizamos para que se vea increíble en la pantalla del evento.'},
+    photo:{title:'Estamos preparando tu foto',sub:'La optimizamos para que se vea increíble en la pantalla del evento. Solo trabajamos con fotos horizontales.'},
     message:{title:'Estamos enviando tu mensaje',sub:'En un instante queda listo para mostrarse en vivo.'},
     audio:{title:'Estamos subiendo tu audio',sub:'Guardamos tu grabación para que se reproduzca sin cortes.'},
     wish:{title:'Estamos guardando tu dedicatoria',sub:'Tu mensaje especial va a quedar listo para sorprender en pantalla.'},

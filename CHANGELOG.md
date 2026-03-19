@@ -472,3 +472,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Las acciones rÃ¡pidas ahora apilan mejor en telÃ©fono y conservan la versiÃ³n mÃ¡s amplia en desktop
 - Los encabezados de secciÃ³n, tips y copies se adaptan mejor al ancho chico para que el flujo se vea menos pesado en pantalla de celular
 
+### 2026-03-19 â€” SesiÃ³n 30
+
+**guest.html + admin.html â€” regla de fotos horizontales mÃ¡s clara**
+
+- Se reforzÃ³ el copy del flujo de foto en `guest.html` para aclarar desde el inicio que solo se aceptan fotos horizontales
+- La tarjeta de archivo, el estado de envÃ­o y el mensaje de Ã©xito ahora tambiÃ©n recuerdan esa regla para evitar dudas
+- En `admin.html` la opciÃ³n de fotos del invitado ahora se presenta explÃ­citamente como `Subir fotos horizontales`
+
