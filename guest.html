@@ -146,14 +146,6 @@ body{
 .tab-btn.active .lbl{color:var(--pink)}
 #wish-btn:disabled{opacity:0.45;cursor:not-allowed;pointer-events:none}
 
-.mode-card{
-  background:linear-gradient(135deg,rgba(255,255,255,0.96) 0%,rgba(248,239,231,0.96) 100%);
-  border:1px solid rgba(233,221,209,0.92);border-radius:var(--radius);
-  padding:18px 18px 16px;margin-bottom:18px;box-shadow:var(--shadow-card)
-}
-.mode-kicker{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#a28379;margin-bottom:7px}
-.mode-title{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;line-height:1.05;color:var(--text);margin-bottom:8px;letter-spacing:-0.03em}
-.mode-desc{font-size:14px;color:var(--muted);line-height:1.55}
 .section-head{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:16px}
 .section-title{font-family:'Sora',sans-serif;font-size:20px;font-weight:700;line-height:1.05;color:var(--text);letter-spacing:-0.03em}
 .section-copy{font-size:14px;color:var(--muted);line-height:1.55;margin-top:6px;max-width:42rem}
@@ -422,6 +414,12 @@ body{
 .poll-total{font-size:12px;color:var(--muted);margin-top:8px}
 .vote-empty{text-align:center;padding:40px 20px;color:var(--muted)}
 .vote-empty .ico{font-size:40px;margin-bottom:12px}
+.voted-badge{
+  margin-top:12px;padding:10px 12px;border-radius:14px;
+  background:linear-gradient(180deg,#fff7f4 0%,#f9ece7 100%);
+  border:1px solid var(--pink-border);font-size:12px;font-weight:700;
+  color:var(--pink);text-align:center;
+}
 
 /* SEND BUTTON */
 .send-btn{
@@ -674,9 +672,6 @@ body{
   .hero-sub{font-size:17px}
   .field-hint{font-size:13px}
   .tabs-wrap{padding:12px}
-  .mode-card{padding:20px 20px 18px;margin-bottom:18px}
-  .mode-title{font-size:22px}
-  .mode-desc{font-size:14px;line-height:1.5}
   .section-head{flex-direction:row;align-items:flex-start;gap:12px}
   .section-title{font-size:22px}
   .section-copy{font-size:14px;line-height:1.5}
@@ -786,12 +781,6 @@ body{
       <button class="tab-btn" id="gallery-btn" onclick="selectType('gallery',this);loadGallery()"><span class="ico">🎉</span><span class="lbl">Galería</span></button>
     </div>
     </div><!-- end tabs-wrap -->
-
-    <div class="mode-card">
-      <div class="mode-kicker" id="mode-kicker">Modo activo</div>
-      <div class="mode-title" id="mode-title">Subí una foto</div>
-      <div class="mode-desc" id="mode-desc">Sacá una foto horizontal. Las verticales no se pueden enviar y la dejamos lista para verse increíble en pantalla grande.</div>
-    </div>
 
     <!-- ── PHOTO SECTION ── -->
     <div class="section active" id="section-photo">
@@ -1102,6 +1091,7 @@ body{
         <p>Cargando votaciones...</p>
       </div>
       <div id="vote-list"></div>
+      <div class="error-bar" id="vote-error"></div>
       <div id="vote-empty" class="vote-empty" style="display:none">
         <div class="ico">🗳</div>
         <p style="font-size:14px">No hay votaciones activas</p>
@@ -2303,7 +2293,6 @@ function selectType(type,btn){
   btn.classList.add('active');
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('section-'+type).classList.add('active');
-  updateModeCard(type);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -2888,9 +2877,10 @@ async function loadVotePolls(){
 function renderVotePolls(polls, votes){
   const list=document.getElementById('vote-list');
   list.innerHTML='';
+  const safeVotes=Array.isArray(votes)?votes:[];
   polls.forEach(poll=>{
     const opts=Array.isArray(poll.options)?poll.options:[];
-    const pollVotes=votes.filter(v=>v.poll_id===poll.id);
+    const pollVotes=safeVotes.filter(v=>v.poll_id===poll.id);
     const total=pollVotes.length;
     const counts=opts.map((_,i)=>pollVotes.filter(v=>v.option_idx===i).length);
     const maxVotes=Math.max(...counts,1);
@@ -2912,26 +2902,26 @@ function renderVotePolls(polls, votes){
         timerBadge=`<div style="display:inline-flex;align-items:center;gap:5px;background:#ef444418;border:1px solid #ef444444;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#ef4444;margin-bottom:12px">⏰ Tiempo agotado</div>`;
       }
     }
-    let content=`<div class="poll-item-question">${poll.question}</div>${timerBadge}`;
+    let content=`<div class="poll-q">${poll.question}</div>${timerBadge}`;
     if(hasVoted){
       // Show results
       content+=opts.map((opt,i)=>{
         const pct=total>0?Math.round((counts[i]/total)*100):0;
         const isWinner=counts[i]===maxVotes&&total>0;
         const isMine=i===myVote;
-        return `<div class="vote-bar-wrap">
-          <div class="vote-bar-label">
-            <span style="${isMine?'font-weight:700;color:var(--pink)':''}">${isMine?'✓ ':''} ${opt}</span>
-            <span class="vote-bar-pct">${pct}%</span>
+        return `<div class="poll-bar-wrap">
+          <div class="poll-bar-row">
+            <span class="opt-name" style="${isMine?'font-weight:700;color:var(--pink)':''}">${isMine?'✓ ':''}${opt}</span>
+            <span class="opt-pct">${pct}%</span>
           </div>
-          <div class="vote-bar-bg"><div class="vote-bar-fill${isWinner?' winner':''}" style="width:${pct}%"></div></div>
+          <div class="poll-bar-bg"><div class="poll-bar-fill${isWinner?' winner':''}" style="width:${pct}%"></div></div>
         </div>`;
       }).join('');
       content+=`<div class="voted-badge">✓ Ya votaste · ${total} voto${total!==1?'s':''}</div>`;
     } else {
       // Show vote buttons
-      content+=opts.map((opt,i)=>`<button class="vote-opt" onclick="castVote('${poll.id}',${i},this.closest('.poll-item'),'${encodeURIComponent(JSON.stringify(poll))}')">${opt}</button>`).join('');
-      content+=`<div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">${total} voto${total!==1?'s':''} hasta ahora</div>`;
+      content+=opts.map((opt,i)=>`<button class="poll-opt-btn" onclick="castVote('${poll.id}',${i},this.closest('.poll-item'),'${encodeURIComponent(JSON.stringify(poll))}')">${opt}</button>`).join('');
+      content+=`<div class="poll-total">${total} voto${total!==1?'s':''} hasta ahora</div>`;
     }
     div.innerHTML=content;
     list.appendChild(div);
@@ -2952,7 +2942,7 @@ async function castVote(pollId, optionIdx, container, pollEncoded){
   } catch(e){
     delete votedPolls[pollId];
     localStorage.setItem('ew_voted_'+eventId,JSON.stringify(votedPolls));
-    showFormError('photo-error','Error al votar: '+e.message);
+    showFormError('vote-error','Error al votar: '+e.message);
   }
 }
 
