@@ -417,3 +417,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Los textos secundarios, badges, pills, sidebar, QR, estados vacÃ­os, waiting screen y barras de votaciÃ³n ahora ajustan contraste para no quedar blancos sobre fondos claros
 - Con esto los temas como `light` y `roseclaro` mantienen mejor legibilidad sin tapar textos ni overlays
 
+### 2026-03-19 â€” SesiÃ³n 23
+
+**admin.html + guest.html + screen.html â€” reacciones mÃ¡s controladas y con mejor show**
+
+- El panel de DiseÃ±o ahora permite decidir si las reacciones se muestran, quÃ© emojis estÃ¡n permitidos, quÃ© intensidad de animaciÃ³n usa la pantalla y cuÃ¡ntos segundos de cooldown anti-spam se aplican
+- `guest.html` ahora lee esa configuraciÃ³n compartida, limita los emojis disponibles, bloquea taps repetidos mientras una reacciÃ³n estÃ¡ en vuelo y aplica cooldown por invitado para evitar spam bÃ¡sico
+- `screen.html` ahora usa la lista de emojis configurada y suma bursts animados al detectar reacciones nuevas, con intensidad `suave`, `normal` o `fiesta`
+

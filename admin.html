@@ -916,6 +916,22 @@ input[type=range]{accent-color:var(--pink)}
                 </select>
               </div>
               <div class="design-field">
+                <label>Emojis permitidos</label>
+                <input type="text" id="cfg-reaction-emojis" placeholder="❤️ 🎉 😍 🔥"/>
+              </div>
+              <div class="design-field">
+                <label>Intensidad en pantalla</label>
+                <select id="cfg-reaction-intensity">
+                  <option value="soft">Suave</option>
+                  <option value="normal" selected>Normal</option>
+                  <option value="party">Fiesta</option>
+                </select>
+              </div>
+              <div class="design-field">
+                <label>Cooldown anti-spam (seg)</label>
+                <input type="number" id="cfg-reaction-cooldown" value="4" min="0" max="30"/>
+              </div>
+              <div class="design-field">
                 <label>Fotos en el carrusel</label>
                 <select id="cfg-carousel-limit">
                   <option value="3">Últimas 3 fotos</option>
@@ -2688,6 +2704,9 @@ async function showDesign(){
   setVal('cfg-sidebar-width',saved.sidebarWidth||'240');
   setVal('cfg-show-counters',saved.showCounters||'yes');
   setVal('cfg-show-reactions',saved.showReactions||'yes');
+  setVal('cfg-reaction-emojis',Array.isArray(saved.reactionEmojis)?saved.reactionEmojis.join(' '):(saved.reactionEmojis||'❤️ 🎉 😍 🔥'));
+  setVal('cfg-reaction-intensity',saved.reactionIntensity||'normal');
+  setVal('cfg-reaction-cooldown',saved.reactionCooldown||4);
   setVal('cfg-ticker',saved.ticker||'');
   if(saved.tickerColor){setVal('cfg-ticker-color',saved.tickerColor);setVal('cfg-ticker-color-hex',(saved.tickerColor||'').toUpperCase());}
   setVal('cfg-bg-image',saved.bgImage||'');
@@ -2726,6 +2745,11 @@ function selectTemplate(name,el){
 }
 
 function getV(id){return document.getElementById(id)?.value||'';}
+function parseReactionEmojiInput(value){
+  const raw=(value||'').trim();
+  if(!raw) return ['❤️','🎉','😍','🔥'];
+  return [...new Set(raw.split(/[\s,|/]+/).map(v=>v.trim()).filter(Boolean))].slice(0,8);
+}
 
 // ── MINI PREVIEW CANVAS EFFECTS ──────────────────────────────
 let prevBgAnimFrame=null;
@@ -2990,6 +3014,9 @@ async function saveDesign(btn){
     sidebarWidth:getV('cfg-sidebar-width')||'240',
     showCounters:getV('cfg-show-counters')||'yes',
     showReactions:getV('cfg-show-reactions')||'yes',
+    reactionEmojis:parseReactionEmojiInput(getV('cfg-reaction-emojis')),
+    reactionIntensity:getV('cfg-reaction-intensity')||'normal',
+    reactionCooldown:Math.max(0,Math.min(30,parseInt(getV('cfg-reaction-cooldown'))||4)),
     ticker:getV('cfg-ticker')||'',
     tickerColor:getV('cfg-ticker-color')||'#f0176f',
     bgImage:getV('cfg-bg-image')||'',

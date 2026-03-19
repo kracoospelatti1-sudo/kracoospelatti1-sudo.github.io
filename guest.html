@@ -1050,6 +1050,8 @@ let selectedFile=null,originalImage=null,audioBlob=null,mediaRecorder=null;
 let gdFlags={showReactions:true,showPhotoEdit:true,showDeletePhoto:true,wmUrl:'',wmPos:'br',wmSize:20,wmOpacity:70};
 let _wmImage=null; // cached watermark image
 let currentSuccessType='content';
+let screenSettings={showReactions:true,reactionEmojis:['❤️','🎉','😍','🔥'],reactionCooldown:4};
+let reactionLocks={};
 
 function formatDateES(str){
   if(!str) return '';
@@ -1863,11 +1865,13 @@ async function uploadFile(file,folder){
 // ── GUEST DESIGN ─────────────────────────────────────────────
 async function applyGuestDesign(ev){
   let d={};
+  let sd={};
   const settingsEventId=eventDbId||eventId;
   try{
     if(!settingsEventId) return;
-    const res=await apiRest('event_settings?event_id=eq.'+settingsEventId+'&select=guest_design');
+    const res=await apiRest('event_settings?event_id=eq.'+settingsEventId+'&select=guest_design,screen_design');
     if(Array.isArray(res)&&res[0]?.guest_design) d=res[0].guest_design;
+    if(Array.isArray(res)&&res[0]?.screen_design) sd=res[0].screen_design;
   }catch(e){ console.error('applyGuestDesign error:',e); }
 
   const bg      = d.bg      || '#faf8f6';
@@ -1984,6 +1988,11 @@ async function applyGuestDesign(ev){
 
   // Save flags globally for use in photo handler
   gdFlags.showReactions=d.showReactions!==false;
+  screenSettings.showReactions=(sd.showReactions||'yes')!=='no';
+  screenSettings.reactionEmojis=Array.isArray(sd.reactionEmojis)&&sd.reactionEmojis.length
+    ? [...new Set(sd.reactionEmojis.filter(Boolean))].slice(0,8)
+    : ['❤️','🎉','😍','🔥'];
+  screenSettings.reactionCooldown=Math.max(0,Math.min(30,parseInt(sd.reactionCooldown)||4));
   gdFlags.showPhotoEdit=d.showPhotoEdit!==false;
   gdFlags.showDeletePhoto=d.showDeletePhoto!==false;
   gdFlags.wmUrl=d.wmUrl||'';
@@ -2001,7 +2010,7 @@ async function applyGuestDesign(ev){
   } else { _wmImage=null; }
 
   // Reactions — hide all gallery-reactions divs
-  document.querySelectorAll('.gallery-reactions').forEach(el=>el.style.display=gdFlags.showReactions?'':'none');
+  document.querySelectorAll('.gallery-reactions').forEach(el=>el.style.display=(gdFlags.showReactions&&screenSettings.showReactions)?'':'none');
 
   // Photo editing (frames, filters, stickers) — only hide if currently visible
   if(!gdFlags.showPhotoEdit){
@@ -2088,12 +2097,13 @@ async function init(){
     setInterval(async()=>{
       try{
         if(!eventDbId) return;
-        const res=await apiRest('event_settings?event_id=eq.'+eventDbId+'&select=guest_design,updated_at');
-        if(Array.isArray(res)&&res[0]?.guest_design){
+        const res=await apiRest('event_settings?event_id=eq.'+eventDbId+'&select=guest_design,screen_design,updated_at');
+        if(Array.isArray(res)&&res[0]&&(res[0].guest_design||res[0].screen_design)){
           const ts=res[0].updated_at||'';
           if(ts!==_lastDesignTs){
             _lastDesignTs=ts;
             await applyGuestDesign(null);
+            if(document.getElementById('gallery-grid')?.children?.length) loadGallery();
           }
         }
       }catch(e){}
@@ -3164,7 +3174,21 @@ async function deleteMyPhoto(id, cardEl){
 }
 
 // ── GALLERY & REACTIONS ───────────────────────────────────────
-const REACTION_EMOJIS=['❤️','🎉','😍','🔥'];
+function getReactionEmojis(){
+  return Array.isArray(screenSettings.reactionEmojis)&&screenSettings.reactionEmojis.length
+    ? screenSettings.reactionEmojis
+    : ['❤️','🎉','😍','🔥'];
+}
+function getReactionCooldownKey(name){
+  return 'ew_rxn_cd_'+eventId+'_'+(name||'').trim().toLowerCase();
+}
+function getReactionCooldownRemaining(name){
+  const last=parseInt(localStorage.getItem(getReactionCooldownKey(name))||'0',10);
+  return Math.max(0,last+(screenSettings.reactionCooldown*1000)-Date.now());
+}
+function markReactionCooldown(name){
+  localStorage.setItem(getReactionCooldownKey(name),String(Date.now()));
+}
 let myReactions={};
 
 // Popover singleton
@@ -3258,9 +3282,9 @@ function renderGalleryCard(post,counts){
   card.dataset.postId=post.id;
   // Build rxnData for sheet
   const rxnData={};
-  REACTION_EMOJIS.forEach(e=>{const d=counts[e];if(d&&d.count) rxnData[e]=d.names||[];});
+  getReactionEmojis().forEach(e=>{const d=counts[e];if(d&&d.count) rxnData[e]=d.names||[];});
   const hasAnyRxn=Object.keys(rxnData).length>0;
-  const btns=REACTION_EMOJIS.map(e=>{
+  const btns=getReactionEmojis().map(e=>{
     const data=counts[e]||{count:0,names:[]};
     const c=data.count;
     const active=myReactions[post.id]===e?' reacted':'';
@@ -3272,7 +3296,7 @@ function renderGalleryCard(post,counts){
   const whoBtn=hasAnyRxn?'<button class="rxn-who-btn" title="Ver quién reaccionó">👁</button>':'';
   card.innerHTML='<img class="gallery-img" src="'+post.content+'" loading="lazy"/>'
     +'<div class="gallery-author"></div>'
-    +(gdFlags.showReactions?'<div class="gallery-reactions">'+btns+whoBtn+'</div>':'');
+    +((gdFlags.showReactions&&screenSettings.showReactions)?'<div class="gallery-reactions">'+btns+whoBtn+'</div>':'');
   card.querySelector('.gallery-author').textContent=post.author;
   if(hasAnyRxn){
     const wb=card.querySelector('.rxn-who-btn');
@@ -3284,10 +3308,18 @@ function renderGalleryCard(post,counts){
 async function toggleReaction(postId,emoji,btn){
   const name=document.getElementById('guest-name').value.trim();
   if(!name){toast('Ingresá tu nombre para reaccionar 👆');return;}
+  if(!gdFlags.showReactions||!screenSettings.showReactions){toast('Las reacciones están desactivadas en este evento');return;}
+  if(reactionLocks[postId]) return;
+  const cooldownRemaining=getReactionCooldownRemaining(name);
+  if(cooldownRemaining>0){
+    toast('Esperá '+Math.ceil(cooldownRemaining/1000)+'s para reaccionar otra vez');
+    return;
+  }
 
   const prevEmoji=myReactions[postId]; // emoji currently chosen for this photo (if any)
   const isSame=prevEmoji===emoji;
   const card=btn.closest('.gallery-card');
+  reactionLocks[postId]=true;
 
   // Optimistic UI: clear all reacted states on this card
   card.querySelectorAll('.rxn-btn').forEach(b=>{
@@ -3312,6 +3344,7 @@ async function toggleReaction(postId,emoji,btn){
   }
 
   try{
+    markReactionCooldown(name);
     // Always delete existing reaction for this photo first
     if(prevEmoji){
       await apiRest('reactions?post_id=eq.'+postId+'&guest_name=eq.'+encodeURIComponent(name),{method:'DELETE'});
@@ -3325,6 +3358,8 @@ async function toggleReaction(postId,emoji,btn){
   }catch(e){
     // Revert on error by reloading gallery
     loadGallery();
+  }finally{
+    reactionLocks[postId]=false;
   }
 }
 
@@ -3356,7 +3391,7 @@ function enterFromSplash(){
   window._showRxnSheet=function(rxnData){
     // rxnData: { '❤️': ['Juan','María'], '🎉': ['Pedro'] }
     const body=document.getElementById('rxn-sheet-body');
-    const EMOJIS=['❤️','🎉','😍','🔥'];
+    const EMOJIS=getReactionEmojis();
     const rows=EMOJIS.filter(e=>rxnData[e]&&rxnData[e].length).map(e=>{
       const names=rxnData[e];
       return '<div class="rxn-sheet-row">'

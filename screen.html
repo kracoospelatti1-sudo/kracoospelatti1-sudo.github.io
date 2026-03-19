@@ -65,6 +65,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#07070f;color:#fff;f
 .featured-caption{font-family:var(--font-title);font-size:clamp(16px,1.8vw,28px);font-weight:700;line-height:1.4;margin-bottom:6px;color:var(--txt)}
 .featured-author{display:inline-flex;align-items:center;gap:6px;background:rgba(240,23,111,0.25);border:1px solid rgba(240,23,111,0.4);border-radius:100px;padding:3px 12px;font-size:clamp(10px,1vw,15px);color:var(--txt);font-weight:700;margin-top:6px;}.featured-author:empty{display:none;}
 .featured-reactions{display:flex;gap:clamp(6px,0.8vw,12px);flex-wrap:wrap;margin-top:clamp(8px,1vh,14px);transition:opacity 0.4s ease}
+.reaction-burst-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:4}
+.reaction-burst{position:absolute;bottom:12%;font-size:clamp(22px,2.4vw,40px);line-height:1;opacity:0;filter:drop-shadow(0 8px 24px rgba(0,0,0,0.2));animation:reactionBurstUp 1.6s cubic-bezier(0.22,1,0.36,1) forwards}
+@keyframes reactionBurstUp{
+  0%{opacity:0;transform:translate3d(0,12px,0) scale(0.72)}
+  12%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--rxn-x,0),-220px,0) scale(1.14) rotate(var(--rxn-rot,0deg))}
+}
 .feat-rxn{display:flex;align-items:center;gap:5px;background:var(--glass-panel-bg);backdrop-filter:blur(10px);border:1px solid var(--glass-panel-border);border-radius:40px;padding:clamp(4px,0.5vh,8px) clamp(10px,1.2vw,18px)}
 .feat-rxn-emoji{font-size:clamp(16px,1.8vw,26px);line-height:1}
 .feat-rxn-count{font-size:clamp(13px,1.4vw,20px);font-weight:800;color:var(--txt)}
@@ -422,6 +429,7 @@ body.theme-light .qr-box{box-shadow:0 0 0 1px rgba(0,0,0,0.08),0 0 clamp(12px,1.
       <img id="featured-img" class="featured-img" src="" alt="" style="display:none"/>
       <img id="screen-wm" src="" alt="" style="display:none;position:absolute;z-index:5;pointer-events:none;max-width:35%"/>
       <div class="polaroid-overlay" id="polaroid-overlay" style="display:none"></div>
+      <div class="reaction-burst-layer" id="reaction-burst-layer"></div>
       <div class="featured-overlay" id="featured-overlay">
         <div class="featured-caption" id="featured-caption"></div>
         <div class="featured-author" id="featured-author"></div>
@@ -487,10 +495,11 @@ const mosaicParam=params.get('mosaic');
 let eventName='';
 let posts=[],photoPosts=[],featuredIdx=0,lastPostCount=0,rotateTimer=null;
 let currentFeaturedPostId=null;
-let cfg={interval:6000,sound:'none',fsBubble:32,carouselLimit:5,transition:'fade',kenBurns:'no',polaroid:'no',waitTitle:'',waitSubtitle:'',waitStart:'',waitCountdown:'yes'};
+let cfg={interval:6000,sound:'none',fsBubble:32,carouselLimit:5,transition:'fade',kenBurns:'no',polaroid:'no',waitTitle:'',waitSubtitle:'',waitStart:'',waitCountdown:'yes',showReactions:'yes',reactionIntensity:'normal',reactionEmojis:['❤️','🎉','😍','🔥']};
 let featuredTransitionBusy=false,queuedFeatured=null;
 let pollLocks={posts:false,wishes:false,messages:false,polls:false,moments:false,reactions:false};
 let connectionFailures=0,connectionBadgeTimer=null;
+let lastFeaturedReactionCounts={};
 
 function setConnectionBadge(state='ok',label='Conexión estable',sticky=false){
   const badge=document.getElementById('connection-badge');
@@ -508,6 +517,27 @@ function setConnectionBadge(state='ok',label='Conexión estable',sticky=false){
   }
   clearTimeout(connectionBadgeTimer);
   badge.classList.add('show');
+}
+function getReactionEmojis(){
+  return Array.isArray(cfg.reactionEmojis)&&cfg.reactionEmojis.length ? cfg.reactionEmojis : ['❤️','🎉','😍','🔥'];
+}
+function spawnReactionBursts(emoji, amount){
+  if(cfg.showReactions==='no') return;
+  const layer=document.getElementById('reaction-burst-layer');
+  if(!layer) return;
+  const presets={soft:1,normal:2,party:4};
+  const burstCount=Math.min(12,Math.max(0,amount)*(presets[cfg.reactionIntensity]||2));
+  for(let i=0;i<burstCount;i++){
+    const el=document.createElement('span');
+    el.className='reaction-burst';
+    el.textContent=emoji;
+    el.style.left=(18+Math.random()*64)+'%';
+    el.style.setProperty('--rxn-x',((Math.random()*140)-70)+'px');
+    el.style.setProperty('--rxn-rot',((Math.random()*26)-13)+'deg');
+    el.style.animationDelay=(i*0.03)+'s';
+    layer.appendChild(el);
+    setTimeout(()=>el.remove(),1900);
+  }
 }
 
 function markConnectionHealthy(){
@@ -683,6 +713,11 @@ function applyTheme(design){
   if(design.waitSubtitle) cfg.waitSubtitle=design.waitSubtitle;
   if(design.waitStart) cfg.waitStart=design.waitStart;
   if(design.waitCountdown) cfg.waitCountdown=design.waitCountdown;
+  cfg.showReactions=design.showReactions||'yes';
+  cfg.reactionIntensity=design.reactionIntensity||'normal';
+  cfg.reactionEmojis=Array.isArray(design.reactionEmojis)&&design.reactionEmojis.length
+    ? [...new Set(design.reactionEmojis.filter(Boolean))].slice(0,8)
+    : ['❤️','🎉','😍','🔥'];
 
   // Photo fit
   const img=document.getElementById('featured-img');
@@ -695,6 +730,8 @@ function applyTheme(design){
   // Counters
   const counters=document.querySelector('.counter-pills');
   if(counters) counters.style.display=(design.showCounters==='no')?'none':'flex';
+  const reactions=document.getElementById('featured-reactions');
+  if(reactions) reactions.style.display=(cfg.showReactions==='no')?'none':'flex';
 
   // QR size
   const qrSize=parseInt(design.qrSize)||120;
@@ -1133,6 +1170,7 @@ function showFeatured(post,idx){
   }
   featuredTransitionBusy=true;
   featuredIdx=idx;currentFeaturedPostId=post.id;
+  lastFeaturedReactionCounts={};
   const img=document.getElementById('featured-img');
   const t=cfg.transition||'fade';
   const finalizeTransition=()=>{
@@ -1439,16 +1477,28 @@ async function init(){
 
 async function updateFeaturedReactions(postId){
   try{
+    if(cfg.showReactions==='no'){
+      const hiddenContainer=document.getElementById('featured-reactions');
+      if(hiddenContainer) hiddenContainer.innerHTML='';
+      const hiddenOverlay=document.getElementById('featured-overlay');
+      const hasCaption=document.getElementById('featured-caption')?.textContent.trim();
+      if(hiddenOverlay) hiddenOverlay.style.display=hasCaption?'block':'none';
+      lastFeaturedReactionCounts={};
+      return;
+    }
     const rxns=await api('reactions?post_id=eq.'+postId+'&select=emoji');
     const counts={};
     rxns.forEach(r=>{counts[r.emoji]=(counts[r.emoji]||0)+1;});
     const container=document.getElementById('featured-reactions');
     if(!container)return;
     container.innerHTML='';
-    const EMOJIS=['❤️','🎉','😍','🔥'];
+    const prevCounts=currentFeaturedPostId===postId?lastFeaturedReactionCounts:{};
+    const EMOJIS=getReactionEmojis();
     EMOJIS.forEach(e=>{
       let pill=container.querySelector('[data-rxn="'+e+'"]');
       if(counts[e]){
+        const increase=(counts[e]||0)-(prevCounts[e]||0);
+        if(increase>0&&currentFeaturedPostId===postId) spawnReactionBursts(e,increase);
         if(!pill){
           pill=document.createElement('span');
           pill.className='feat-rxn';
@@ -1462,6 +1512,7 @@ async function updateFeaturedReactions(postId){
         pill.remove();
       }
     });
+    lastFeaturedReactionCounts=counts;
     const overlay=document.getElementById('featured-overlay');
     const hasCaption=document.getElementById('featured-caption').textContent.trim();
     if(container.children.length>0||hasCaption) overlay.style.display='block';
