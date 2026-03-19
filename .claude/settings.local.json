@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__supabase__execute_sql",
+      "Bash(grep:*)",
+      "mcp__supabase__apply_migration",
+      "mcp__supabase__list_edge_functions",
+      "mcp__supabase__get_edge_function",
+      "mcp__supabase__deploy_edge_function",
+      "WebFetch(domain:stitch.withgoogle.com)",
+      "WebFetch(domain:developers.google.com)",
+      "Bash(claude mcp:*)",
+      "Bash(curl -s \"https://jxqwrbmnfmnzddkcimrm.supabase.co/rest/v1/rpc/version\" -H \"apikey: sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D\" -H \"Authorization: Bearer sb_publishable_YAg0wbF4KmtqEa30MtUVmg_EGhJo61D\")",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__get_logs",
+      "WebFetch(domain:selpix.blog)",
+      "mcp__claude_ai_Canva__generate-design",
+      "mcp__claude_ai_Canva__create-design-from-candidate",
+      "mcp__claude_ai_Canva__export-design",
+      "mcp__supabase__get_project_url",
+      "Bash(curl -s -o \"C:/Users/Lucas Pelatti/Downloads/canva_frame_wedding.png\" \"https://export-download.canva.com/dUAnA/DAHEPqdUAnA/-1/0/0001-8808412219491298889.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAQYCGKMUH5AO7UJ26%2F20260317%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260317T051137Z&X-Amz-Expires=66536&X-Amz-Signature=b3a6945082c0db23db99397161ec2dfb92f8d2cc5072bebd102b1bac3d914324&X-Amz-SignedHeaders=host%3Bx-amz-expected-bucket-owner&response-expires=Tue%2C%2017%20Mar%202026%2023%3A40%3A33%20GMT\")",
+      "Bash(curl:*)",
+      "Read(//c/Users/Lucas Pelatti/Documents/GitHub/consecionariavirtual/**)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-git --use-npm)",
+      "Bash(yes \"\")",
+      "Bash(npm install:*)",
+      "mcp__supabase__get_publishable_keys",
+      "mcp__supabase__generate_typescript_types"
+    ]
+  }
+}
