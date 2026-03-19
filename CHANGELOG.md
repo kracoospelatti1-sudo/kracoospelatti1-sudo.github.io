@@ -409,3 +409,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Ahora cambiar un color desde el picker actualiza el hex correcto en lugar de restaurar el valor anterior
 - El preview de DiseÃ±o vuelve a reflejar los cambios de color al momento de editar
 
+### 2026-03-19 â€” SesiÃ³n 22
+
+**screen.html â€” mejor contraste para temas claros**
+
+- Se reforzÃ³ la detecciÃ³n de temas claros usando luminancia real del fondo y el header en lugar de un chequeo simple por prefijo hex
+- Los textos secundarios, badges, pills, sidebar, QR, estados vacÃ­os, waiting screen y barras de votaciÃ³n ahora ajustan contraste para no quedar blancos sobre fondos claros
+- Con esto los temas como `light` y `roseclaro` mantienen mejor legibilidad sin tapar textos ni overlays
+
