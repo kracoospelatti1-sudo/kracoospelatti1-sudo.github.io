@@ -104,35 +104,6 @@ body{
 }
 .input:focus{border-color:var(--pink)}
 
-.guest-intro{
-  background:linear-gradient(135deg,#fff 0%,#fff8fc 100%);
-  border:1px solid rgba(240,23,111,0.14);
-  border-radius:var(--radius);
-  padding:14px 14px 12px;
-  margin-bottom:14px;
-  box-shadow:0 12px 28px rgba(240,23,111,0.06);
-}
-.guest-intro-top{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
-.guest-intro-kicker{font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:var(--pink);margin-bottom:6px}
-.guest-intro-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;line-height:1.1;color:var(--text)}
-.guest-intro-copy{font-size:13px;color:var(--muted);line-height:1.45;max-width:560px}
-.guest-intro-badge{
-  flex-shrink:0;align-self:flex-start;padding:7px 10px;border-radius:999px;background:var(--pink-light);
-  border:1px solid var(--pink-border);color:var(--pink);font-size:11px;font-weight:800;letter-spacing:0.4px
-}
-.quick-actions{display:grid;grid-template-columns:1fr;gap:8px}
-.quick-action{
-  display:flex;align-items:center;justify-content:center;
-  border:none;background:#fff;border:1px solid var(--border);border-radius:999px;
-  min-height:44px;padding:10px 12px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;
-  font-family:'DM Sans',sans-serif;transition:all 0.18s;
-}
-.quick-action:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-light)}
-.quick-action.primary{background:var(--pink);color:#fff;border-color:var(--pink);box-shadow:0 10px 24px rgba(240,23,111,0.18)}
-.quick-action.primary:hover{opacity:0.92}
-.quick-action.active{border-color:var(--pink);color:var(--pink);background:var(--pink-light)}
-.quick-action.primary.active{background:var(--pink);color:#fff}
-
 /* TYPE TABS */
 .tabs-wrap{position:relative;margin-bottom:16px}
 .tabs-wrap::after{
@@ -678,12 +649,6 @@ body{
   .hero-sub{font-size:17px}
   .stats{max-width:880px;margin:-20px auto 0;border-radius:18px;overflow:hidden;position:relative;z-index:2;box-shadow:0 18px 40px rgba(0,0,0,0.08)}
   .field-hint{font-size:13px}
-  .guest-intro{padding:16px 16px 14px;margin-bottom:18px}
-  .guest-intro-top{flex-direction:row;align-items:center;gap:12px}
-  .guest-intro-title{font-size:22px}
-  .guest-intro-copy{font-size:14px;line-height:1.5}
-  .guest-intro-badge{align-self:auto;padding:8px 12px}
-  .quick-actions{display:flex;flex-wrap:wrap}
   .mode-card{padding:16px 16px 14px;margin-bottom:16px}
   .mode-title{font-size:22px}
   .mode-desc{font-size:14px;line-height:1.5}
@@ -789,22 +754,6 @@ body{
       <label class="label">Tu nombre</label>
       <input type="text" class="input" id="guest-name" placeholder="¿Cómo te llamás?" autocomplete="name"/>
       <div class="field-hint">Usamos tu nombre para mostrar quién compartió cada momento en la pantalla.</div>
-    </div>
-
-    <div class="guest-intro">
-      <div class="guest-intro-top">
-        <div>
-          <div class="guest-intro-kicker">Cómo participar</div>
-          <div class="guest-intro-title">Elegí una forma de sumarte</div>
-          <div class="guest-intro-copy">La forma más rápida es sacar una foto horizontal. También podés dejar un mensaje, grabar un audio o guardar una dedicatoria especial.</div>
-        </div>
-        <div class="guest-intro-badge" id="guest-intro-badge">Recomendado</div>
-      </div>
-      <div class="quick-actions">
-        <button class="quick-action primary active" data-target="photo" onclick="jumpToType('photo')">📷 Subir foto</button>
-        <button class="quick-action" data-target="message" onclick="jumpToType('message')">💬 Escribir mensaje</button>
-        <button class="quick-action" data-target="audio" onclick="jumpToType('audio')">🎤 Grabar audio</button>
-      </div>
     </div>
 
     <!-- TYPE TABS -->
@@ -2023,61 +1972,29 @@ async function uploadFile(file,folder){
 
 // ── INIT ─────────────────────────────────────────────────────
 // ── GUEST DESIGN ─────────────────────────────────────────────
-function hexToRgbSafe(hex){
-  if(typeof hex!=='string') return null;
-  const clean=hex.trim().replace('#','');
-  if(!/^[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(clean)) return null;
-  const full=clean.length===3?clean.split('').map(ch=>ch+ch).join(''):clean;
-  const num=parseInt(full,16);
-  return {r:(num>>16)&255,g:(num>>8)&255,b:num&255};
-}
-function colorAlpha(hex,alpha){
-  const rgb=hexToRgbSafe(hex);
-  return rgb?`rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`:hex;
-}
-function mixHex(hexA,hexB,weightB){
-  const a=hexToRgbSafe(hexA);
-  const b=hexToRgbSafe(hexB);
-  if(!a||!b) return hexA||hexB||'#f0176f';
-  const wb=Math.max(0,Math.min(1,weightB));
-  const wa=1-wb;
-  const toHex=v=>Math.round(v).toString(16).padStart(2,'0');
-  return `#${toHex(a.r*wa+b.r*wb)}${toHex(a.g*wa+b.g*wb)}${toHex(a.b*wa+b.b*wb)}`;
-}
-
 async function applyGuestDesign(ev){
   let d={};
-  let sd={};
   const settingsEventId=eventDbId||eventId;
   try{
     if(!settingsEventId) return;
-    const res=await apiRest('event_settings?event_id=eq.'+settingsEventId+'&select=guest_design,screen_design');
+    const res=await apiRest('event_settings?event_id=eq.'+settingsEventId+'&select=guest_design');
     if(Array.isArray(res)&&res[0]?.guest_design) d=res[0].guest_design;
-    if(Array.isArray(res)&&res[0]?.screen_design) sd=res[0].screen_design;
   }catch(e){ console.error('applyGuestDesign error:',e); }
 
-  const accent  = d.accent  || sd.accent || '#f0176f';
-  const bg      = d.bg      || mixHex(accent,'#ffffff',0.965);
-  const hero    = d.hero    || sd.header || sd.bg || mixHex(accent,'#09090f',0.84);
-  const heroTxt = d.heroTxt || sd.text || '#ffffff';
+  const bg      = d.bg      || '#faf8f6';
+  const accent  = d.accent  || '#f0176f';
+  const hero    = d.hero    || '#0c0c0f';
+  const heroTxt = d.heroTxt || '#ffffff';
 
   // Load extra fields
   const textColor = d.textColor  || '#1a1a1a';
-  const fieldBg   = d.fieldBg   || mixHex(bg,'#ffffff',0.55);
+  const fieldBg   = d.fieldBg   || '#ffffff';
   const font      = d.font      || 'DM Sans';
   const fontTitle = d.fontTitle || 'Syne';
   const btnRadius = d.btnRadius || '14';
   const fieldRadius = d.fieldRadius || '12';
   const fontSize  = d.fontSize  || '15';
   const showLogo  = d.showLogo  !== 'no';
-  const accentSoft=colorAlpha(accent,0.08);
-  const accentMild=colorAlpha(accent,0.12);
-  const accentSoftStrong=colorAlpha(accent,0.16);
-  const accentBorder=colorAlpha(accent,0.24);
-  const accentStrongBorder=colorAlpha(accent,0.4);
-  const accentGlow=colorAlpha(accent,0.18);
-  const accentGhost=colorAlpha(accent,0.06);
-  const panelBg=mixHex(accent,'#ffffff',0.965);
 
   // Load Google Fonts if needed
   [font, fontTitle].forEach(f=>{
@@ -2095,17 +2012,17 @@ async function applyGuestDesign(ev){
   let styleEl = document.getElementById('gd-dynamic-style');
   if(!styleEl){ styleEl=document.createElement('style'); styleEl.id='gd-dynamic-style'; document.head.appendChild(styleEl); }
   styleEl.textContent = `
-    :root { --pink: ${accent}; --pink-light: ${accentSoftStrong}; --pink-border: ${accentStrongBorder}; --bg: ${bg}; }
+    :root { --pink: ${accent}; --pink-light: ${accent}22; --pink-border: ${accent}66; --bg: ${bg}; }
     html, body { background: ${bg} !important; color: ${textColor} !important; font-family: '${font}', sans-serif !important; font-size: ${fontSize}px !important; overflow-x: hidden !important; width: 100% !important; max-width: 100% !important; }
     .hero { background: ${hero} !important; }
     .hero-title { color: ${heroTxt} !important; font-family: '${fontTitle}', sans-serif !important; }
     .hero-sub { color: ${heroTxt}99 !important; }
     .hero-logo { color: ${accent} !important; }
-    .hero-pill { background: ${accentMild} !important; border-color: ${accentStrongBorder} !important; color: ${heroTxt}cc !important; }
+    .hero-pill { background: ${accent}22 !important; border-color: ${accent}55 !important; color: ${heroTxt}cc !important; }
     .stat-num { color: ${accent} !important; }
     .section-label { font-family: '${fontTitle}', sans-serif !important; color: ${textColor}88 !important; }
     .tab-btn { font-family: '${font}', sans-serif !important; border-radius: ${btnRadius}px !important; }
-    .tab-btn.active { border-color: ${accent} !important; background: ${accentSoft} !important; }
+    .tab-btn.active { border-color: ${accent} !important; background: ${accent}15 !important; }
     .tab-btn.active .lbl { color: ${accent} !important; }
     input.field, textarea.field, select.field, .field { 
       background: ${fieldBg} !important; 
@@ -2124,19 +2041,10 @@ async function applyGuestDesign(ev){
     button.send-btn:disabled, .send-btn:disabled { opacity: 0.55 !important; }
     button.record-btn { background: ${accent} !important; }
     button.audio-play-btn { background: ${accent} !important; }
-    .audio-ready { border-color: ${accentStrongBorder} !important; background: ${accentGhost} !important; }
+    .audio-ready { border-color: ${accent}66 !important; background: ${accent}08 !important; }
     .wbar { background: ${accent} !important; }
     .cooldown-bar .cooldown-fill { background: ${accent} !important; }
     .upload-zone:hover { border-color: ${accent} !important; color: ${accent} !important; }
-    .guest-intro, .mode-card, .photo-meta { background: linear-gradient(135deg, ${fieldBg} 0%, ${panelBg} 100%) !important; border-color: ${accentBorder} !important; }
-    .guest-intro { box-shadow: 0 12px 28px ${accentGhost} !important; }
-    .guest-intro-kicker, .guest-intro-badge, .mode-kicker, .section-tip, .photo-meta-badge, .suggest-chip, .quick-action.active { color: ${accent} !important; }
-    .guest-intro-badge, .photo-meta-badge, .suggest-chip, .quick-action.active, .section-tip { background: ${accentSoft} !important; border-color: ${accentBorder} !important; }
-    .quick-action:hover { border-color: ${accent} !important; color: ${accent} !important; background: ${accentSoft} !important; }
-    .quick-action.primary, .quick-action.primary.active { background: ${accent} !important; border-color: ${accent} !important; box-shadow: 0 10px 24px ${accentGlow} !important; }
-    .upload-zone.has-file { background: linear-gradient(135deg, ${fieldBg} 0%, ${panelBg} 100%) !important; border-color: ${accentBorder} !important; box-shadow: 0 14px 34px ${accentGhost} !important; }
-    .msg-custom-toggle.open, .frame-cat.active, .filter-opt.active, .sticker-btn.active, .emoji-opt.active, .size-opt.active, .bubble-style-btn.active, .poll-opt-btn.selected, .rxn-btn.reacted { border-color: ${accent} !important; background: ${accentSoft} !important; color: ${accent} !important; }
-    .color-dot.active { box-shadow: 0 0 0 2px #fff, 0 0 0 4px ${accent} !important; }
   `;
 
   // Logo visibility
@@ -2366,39 +2274,12 @@ const MODE_COPY={
 };
 function updateModeCard(type){
   const copy=MODE_COPY[type]||MODE_COPY.photo;
-  const badge=document.getElementById('guest-intro-badge');
   const kicker=document.getElementById('mode-kicker');
   const title=document.getElementById('mode-title');
   const desc=document.getElementById('mode-desc');
-  if(badge) badge.textContent=copy.badge;
   if(kicker) kicker.textContent=copy.kicker;
   if(title) title.textContent=copy.title;
   if(desc) desc.textContent=copy.desc;
-  document.querySelectorAll('.quick-action[data-target]').forEach(btn=>{
-    btn.classList.toggle('active',btn.dataset.target===type);
-  });
-}
-function jumpToType(type){
-  const target=Array.from(document.querySelectorAll('.type-tabs .tab-btn')).find(btn=>(btn.getAttribute('onclick')||'').includes("selectType('"+type+"'"));
-  if(target) target.click();
-  const focusMap={
-    photo:'file-input',
-    message:'msg-text',
-    audio:'record-btn',
-    wish:'wish-text'
-  };
-  const focusId=focusMap[type];
-  if(!focusId) return;
-  setTimeout(()=>{
-    const el=document.getElementById(focusId);
-    if(!el) return;
-    if(type==='photo'){
-      document.getElementById('upload-zone')?.scrollIntoView({behavior:'smooth',block:'center'});
-      return;
-    }
-    el.focus?.();
-    el.scrollIntoView({behavior:'smooth',block:'center'});
-  },80);
 }
 
 // ── TYPE ─────────────────────────────────────────────────────

@@ -488,3 +488,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - `screen.html` ahora reutiliza el acento y tonos del `guest_design` como fallback cuando el diseÃ±o de pantalla no define todos sus colores
 - Los brillos, badges y overlays principales de la pantalla ahora usan variables derivadas del acento real del evento para que ambos lados compartan mejor la misma familia visual
 
+### 2026-03-19 â€” SesiÃ³n 32
+
+**guest.html + screen.html â€” vuelta a diseÃ±os separados**
+
+- Se eliminÃ³ la tarjeta introductoria de `guest.html` con accesos directos rÃ¡pidos
+- `guest.html` volviÃ³ a tomar solo su propio `guest_design` para colores y tintes
+- `screen.html` volviÃ³ a tomar solo `screen_design`, sin heredar tonalidades del invitado
+
