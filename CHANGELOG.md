@@ -401,3 +401,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Se mantiene fallback a `localStorage` para compatibilidad con diseÃ±os viejos
 - El reset de DiseÃ±o tambiÃ©n limpia `screen_design` en Supabase
 
+### 2026-03-19 â€” SesiÃ³n 21
+
+**admin.html â€” fix de selector de color en DiseÃ±o**
+
+- Se corrigiÃ³ la sincronizaciÃ³n entre el color picker y el campo hexadecimal en el editor de DiseÃ±o
+- Ahora cambiar un color desde el picker actualiza el hex correcto en lugar de restaurar el valor anterior
+- El preview de DiseÃ±o vuelve a reflejar los cambios de color al momento de editar
+

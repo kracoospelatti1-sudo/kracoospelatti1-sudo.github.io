@@ -2792,8 +2792,15 @@ function prevBubbles(cv,ctx,W,H){
 function setVal(id,val){const el=document.getElementById(id);if(el&&val!==undefined&&val!==null) el.value=val;}
 
 function syncColorFromHex(colorId, hexId){
-  const hex=document.getElementById(hexId).value;
-  if(/^#[0-9A-Fa-f]{6}$/.test(hex)) document.getElementById(colorId).value=hex;
+  const colorEl=document.getElementById(colorId);
+  const hexEl=document.getElementById(hexId);
+  if(!colorEl||!hexEl) return;
+  if(document.activeElement===colorEl){
+    hexEl.value=(colorEl.value||'').toUpperCase();
+  } else {
+    const hex=hexEl.value.trim();
+    if(/^#[0-9A-Fa-f]{6}$/.test(hex)) colorEl.value=hex;
+  }
   previewTheme();
 }
 
