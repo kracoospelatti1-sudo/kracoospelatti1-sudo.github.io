@@ -439,3 +439,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - La pantalla ahora combina `screen_design.showReactions` con `guest_design.showReactions`
 - Si las reacciones se deshabilitan desde la configuraciÃ³n del evento, tambiÃ©n desaparecen del `screen`
 
+### 2026-03-19 â€” SesiÃ³n 26
+
+**guest.html â€” tarjeta y preview de foto mÃ¡s prolijos**
+
+- Se corrigiÃ³ el icono roto de la metadata de foto seleccionada
+- El preview del canvas ahora vive dentro de un contenedor mÃ¡s estable, con borde y alto visual controlado para que las fotos no queden desproporcionadas
+- La tarjeta de archivo seleccionado queda mÃ¡s consistente con el resto del diseÃ±o del invitado
+

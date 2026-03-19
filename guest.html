@@ -170,6 +170,7 @@ body{
   flex-shrink:0;padding:7px 10px;border-radius:999px;background:rgba(240,23,111,0.1);
   color:var(--pink);font-size:11px;font-weight:800;letter-spacing:0.2px
 }
+.photo-meta-badge.ready{background:rgba(240,23,111,0.1);color:var(--pink)}
 
 .orient-warn{
   background:#fef3c7;border:1px solid #f59e0b;border-radius:var(--radius-sm);
@@ -180,8 +181,24 @@ body{
 
 .canvas-wrap{
   position:relative;width:100%;margin-bottom:12px;display:none;
+  background:linear-gradient(180deg,#fff 0%,#fff7fb 100%);
+  border:1px solid rgba(240,23,111,0.16);
+  border-radius:var(--radius);
+  padding:10px;
+  min-height:220px;
+  max-height:58vh;
+  overflow:hidden;
 }
-.canvas-wrap canvas{width:100%;border-radius:var(--radius);display:block}
+.canvas-wrap canvas{
+  width:100%;
+  height:auto;
+  max-height:calc(58vh - 20px);
+  object-fit:contain;
+  border-radius:calc(var(--radius) - 4px);
+  display:block;
+  margin:0 auto;
+  background:#fff;
+}
 .remove-photo{
   position:absolute;top:8px;right:8px;
   background:rgba(0,0,0,0.6);color:#fff;border:none;
@@ -733,7 +750,7 @@ body{
       <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none" onchange="handleFileSelect(this)"/>
       <div class="photo-meta" id="photo-meta">
         <div class="photo-meta-main">
-          <div class="photo-meta-ico">ðŸ“·</div>
+          <div class="photo-meta-ico">📸</div>
           <div class="photo-meta-copy">
             <div class="photo-meta-title" id="photo-meta-title">Foto lista para enviar</div>
             <div class="photo-meta-sub" id="photo-meta-sub">Horizontal · lista para pantalla</div>
@@ -1115,7 +1132,10 @@ function updatePhotoMeta(file,img){
   const orientation=img&&img.naturalWidth&&img.naturalHeight?(img.naturalWidth>=img.naturalHeight?'Horizontal':'Vertical'):'Lista';
   if(title) title.textContent=file.name||'Foto lista para enviar';
   if(sub) sub.textContent=[orientation, formatFileSize(file.size), 'Se verá genial en pantalla'].filter(Boolean).join(' · ');
-  if(badge) badge.textContent='Lista';
+  if(badge){
+    badge.textContent='Lista';
+    badge.classList.add('ready');
+  }
   zone.classList.add('has-file');
   card.classList.add('show');
 }
