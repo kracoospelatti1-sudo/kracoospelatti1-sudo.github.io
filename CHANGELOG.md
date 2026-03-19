@@ -375,3 +375,12 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - `showDesign`, `saveDesign`, `showGuestDesign`, `saveGuestDesign` y los resets de diseÃ±o ahora usan ese UUID normalizado
 - Con esto el panel evita consultas a `event_settings` con valores como `6dae`
 
+### 2026-03-19 â€” SesiÃ³n 18
+
+**admin.html + screen.html â€” rollback de `screen_design` a esquema real**
+
+- Se confirmÃ³ que `event_settings` no tiene columna `screen_design`; el `400` venÃ­a de esa consulta, no del valor `6dae`
+- El diseÃ±o de pantalla volviÃ³ a guardarse y leerse desde `localStorage`, que es como funciona con el esquema actual
+- `screen.html` vuelve a consultar solo `guest_design` en `event_settings`
+- `guest_design` sigue persistido en Supabase y el panel de DiseÃ±o vuelve a abrir sin error
+

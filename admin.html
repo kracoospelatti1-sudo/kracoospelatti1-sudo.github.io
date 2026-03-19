@@ -2509,24 +2509,6 @@ function selectEvent(ev,cardEl){
   goNav('dashboard');
 }
 
-function looksLikeUuid(value){
-  return typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
-}
-
-async function getSelectedEventDbId(){
-  if(!selectedEvent) return null;
-  if(looksLikeUuid(selectedEvent.id)) return selectedEvent.id;
-  const code=selectedEvent.custom_code||selectedEvent.id;
-  if(!code) return null;
-  const rows=await api('events?custom_code=eq.'+code+'&select=id,custom_code&limit=1');
-  if(Array.isArray(rows)&&rows[0]?.id){
-    selectedEvent.id=rows[0].id;
-    if(!selectedEvent.custom_code&&rows[0].custom_code) selectedEvent.custom_code=rows[0].custom_code;
-    return selectedEvent.id;
-  }
-  return null;
-}
-
 async function evCreate(){
   const name=document.getElementById('ev-name').value.trim();
   if(!name){toast('❌ El nombre es obligatorio');return;}
@@ -2660,17 +2642,8 @@ async function showDesign(){
   const notice=document.getElementById('design-notice');
   const content=document.getElementById('design-content');
   if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  const eventDbId=await getSelectedEventDbId();
-  if(!eventDbId){toast('No se pudo resolver el evento');return;}
   notice.classList.remove('show');content.style.display='block';
-  let saved={};
-  try{
-    const rows=await api('event_settings?event_id=eq.'+eventDbId+'&select=screen_design');
-    saved=(Array.isArray(rows)&&rows[0]?.screen_design)||{};
-  }catch(e){}
-  if(!saved||Object.keys(saved).length===0){
-    saved=JSON.parse(localStorage.getItem('ew_design_'+eventDbId)||'{}');
-  }
+  const saved=JSON.parse(localStorage.getItem('ew_design_'+selectedEvent.id)||'{}');
   const setVal=(id,val)=>{if(!val) return; const el=document.getElementById(id); if(el) el.value=val;};
   const setHex=(cid,hid,val)=>{if(!val) return; setVal(cid,val); setVal(hid,val.toUpperCase());};
   setHex('c-bg','c-bg-hex',saved.bg);
@@ -2974,9 +2947,7 @@ function switchDesignTab(tab, btn){
 }
 
 async function saveDesign(btn){
-  const eventDbId=await getSelectedEventDbId();
   if(!selectedEvent){toast('Seleccioná un evento primero');return;}
-  if(!eventDbId){toast('No se pudo resolver el evento');return;}
   const design={
     bg:getV('c-bg'), accent:getV('c-accent'), text:getV('c-text'),
     bubble:getV('c-bubble'), bubbleText:getV('c-bubble-text'), header:getV('c-header'),
@@ -3010,19 +2981,7 @@ async function saveDesign(btn){
     bgEffect:getV('cfg-bg-effect')||'none',
     template:document.querySelector('.tpl-card.active')?.className.match(/tpl-(\w+)/)?.[1]||'dark'
   };
-  const rows=await api('event_settings?event_id=eq.'+eventDbId+'&select=event_id');
-  if(Array.isArray(rows)&&rows[0]?.event_id){
-    await api('event_settings?event_id=eq.'+eventDbId,{
-      method:'PATCH',
-      body:JSON.stringify({screen_design:design,updated_at:new Date().toISOString()})
-    });
-  } else {
-    await api('event_settings',{
-      method:'POST',
-      body:JSON.stringify({event_id:eventDbId,screen_design:design,updated_at:new Date().toISOString()})
-    });
-  }
-  localStorage.setItem('ew_design_'+eventDbId,JSON.stringify(design));
+  localStorage.setItem('ew_design_'+selectedEvent.id,JSON.stringify(design));
   if(btn) btnSaved(btn);
   toast('✅ Diseño guardado — recargá la pantalla del evento para verlo');
 }
@@ -3569,11 +3528,9 @@ async function showGuestDesign(){
   const notice=document.getElementById('gd-notice');
   const content=document.getElementById('gd-content');
   if(!selectedEvent){notice.classList.add('show');content.style.display='none';return;}
-  const eventDbId=await getSelectedEventDbId();
-  if(!eventDbId){toast('No se pudo resolver el evento');return;}
   notice.classList.remove('show');content.style.display='block';
   // Load from Supabase
-  const rows=await api('event_settings?event_id=eq.'+eventDbId);
+  const rows=await api('event_settings?event_id=eq.'+selectedEvent.id);
   const saved=(Array.isArray(rows)&&rows[0]?.guest_design)||{};
   const d={...GD_DEFAULTS,...saved};
   document.getElementById('gd-title').value=d.title;
@@ -3730,8 +3687,6 @@ function updateGuestPreview(){
 
 
 async function saveGuestDesign(btn){
-  const eventDbId=await getSelectedEventDbId();
-  if(!eventDbId&&selectedEvent){toast('No se pudo resolver el evento');return;}
   if(!selectedEvent){toast('Seleccioná un evento primero');return;}
   const design={
     title:document.getElementById('gd-title').value,
@@ -3774,7 +3729,7 @@ async function saveGuestDesign(btn){
         'Prefer': 'resolution=merge-duplicates,return=representation'
       },
       body: JSON.stringify({
-        event_id: eventDbId,
+        event_id: selectedEvent.id,
         guest_design: design,
         updated_at: new Date().toISOString()
       })
@@ -3858,21 +3813,19 @@ if(false){
 function resetGuestDesign(){
   confirm2('Se perderan todos los cambios de diseno del invitado.',async()=>{
     if(!selectedEvent){toast('Selecciona un evento primero');return;}
-    const eventDbId=await getSelectedEventDbId();
-    if(!eventDbId){toast('No se pudo resolver el evento');return;}
-    const rows=await api('event_settings?event_id=eq.'+eventDbId+'&select=event_id');
+    const rows=await api('event_settings?event_id=eq.'+selectedEvent.id+'&select=event_id');
     if(Array.isArray(rows)&&rows[0]?.event_id){
-      await api('event_settings?event_id=eq.'+eventDbId,{
+      await api('event_settings?event_id=eq.'+selectedEvent.id,{
         method:'PATCH',
         body:JSON.stringify({guest_design:null,updated_at:new Date().toISOString()})
       });
     } else {
       await api('event_settings',{
         method:'POST',
-        body:JSON.stringify({event_id:eventDbId,guest_design:null,updated_at:new Date().toISOString()})
+        body:JSON.stringify({event_id:selectedEvent.id,guest_design:null,updated_at:new Date().toISOString()})
       });
     }
-    localStorage.removeItem('ew_guest_design_'+eventDbId);
+    localStorage.removeItem('ew_guest_design_'+selectedEvent.id);
     await showGuestDesign();
     toast('Diseno invitado reseteado');
   },{title:'Resetear diseno',ico:'↺',danger:false});
@@ -3881,21 +3834,7 @@ function resetGuestDesign(){
 function resetDesign(){
   confirm2('Se perderan todos los cambios de diseno de pantalla.',async()=>{
     if(!selectedEvent){toast('Selecciona un evento primero');return;}
-    const eventDbId=await getSelectedEventDbId();
-    if(!eventDbId){toast('No se pudo resolver el evento');return;}
-    const rows=await api('event_settings?event_id=eq.'+eventDbId+'&select=event_id');
-    if(Array.isArray(rows)&&rows[0]?.event_id){
-      await api('event_settings?event_id=eq.'+eventDbId,{
-        method:'PATCH',
-        body:JSON.stringify({screen_design:null,updated_at:new Date().toISOString()})
-      });
-    } else {
-      await api('event_settings',{
-        method:'POST',
-        body:JSON.stringify({event_id:eventDbId,screen_design:null,updated_at:new Date().toISOString()})
-      });
-    }
-    localStorage.removeItem('ew_design_'+eventDbId);
+    localStorage.removeItem('ew_design_'+selectedEvent.id);
     await showDesign();
     toast('Diseno de pantalla reseteado');
   },{title:'Resetear diseno',ico:'↺',danger:false});
