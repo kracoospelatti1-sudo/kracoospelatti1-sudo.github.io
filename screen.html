@@ -1321,8 +1321,14 @@ async function init(){
   const saved=localStorage.getItem('ew_design_'+eventId);
   if(saved) try{applyTheme(JSON.parse(saved));}catch(e){console.error('applyTheme:',e);}
   try{
-    const settingsRows=await api('event_settings?event_id=eq.'+eventId+'&select=guest_design&limit=1');
+    const settingsRows=await api('event_settings?event_id=eq.'+eventId+'&select=screen_design,guest_design&limit=1');
     const settings=Array.isArray(settingsRows)&&settingsRows[0]?settingsRows[0]:null;
+    const sd=settings?.screen_design;
+    if(sd){
+      const design=typeof sd==='string'?JSON.parse(sd):sd;
+      applyTheme(design);
+      localStorage.setItem('ew_design_'+eventId,JSON.stringify(design));
+    }
     const gd=settings?.guest_design;
     if(gd){
       const design=typeof gd==='string'?JSON.parse(gd):gd;

@@ -392,3 +392,12 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - El selector ahora ofrece `220px`, `240px`, `280px` y `320px`, ademÃ¡s de `Sin sidebar`
 - En pantallas de hasta `1024px`, el ancho responsive base del sidebar pasÃ³ de `180px` a `220px`
 
+### 2026-03-19 â€” SesiÃ³n 20
+
+**admin.html + screen.html â€” sincronizaciÃ³n real de diseÃ±o de pantalla**
+
+- El panel de DiseÃ±o vuelve a leer y guardar `screen_design` dentro de `event_settings`
+- `screen.html` ahora prioriza `screen_design` para reflejar cambios hechos desde otro dispositivo
+- Se mantiene fallback a `localStorage` para compatibilidad con diseÃ±os viejos
+- El reset de DiseÃ±o tambiÃ©n limpia `screen_design` en Supabase
+
