@@ -384,3 +384,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - `screen.html` vuelve a consultar solo `guest_design` en `event_settings`
 - `guest_design` sigue persistido en Supabase y el panel de DiseÃ±o vuelve a abrir sin error
 
+### 2026-03-19 â€” SesiÃ³n 19
+
+**admin.html + screen.html â€” sidebar mÃ¡s usable**
+
+- Se eliminÃ³ la opciÃ³n de sidebar de `180px`, que quedaba demasiado apretada visualmente
+- El selector ahora ofrece `220px`, `240px`, `280px` y `320px`, ademÃ¡s de `Sin sidebar`
+- En pantallas de hasta `1024px`, el ancho responsive base del sidebar pasÃ³ de `180px` a `220px`
+
