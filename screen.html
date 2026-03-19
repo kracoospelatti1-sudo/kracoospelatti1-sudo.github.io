@@ -500,6 +500,7 @@ let featuredTransitionBusy=false,queuedFeatured=null;
 let pollLocks={posts:false,wishes:false,messages:false,polls:false,moments:false,reactions:false};
 let connectionFailures=0,connectionBadgeTimer=null;
 let lastFeaturedReactionCounts={};
+let guestReactionsEnabled=true;
 
 function setConnectionBadge(state='ok',label='Conexión estable',sticky=false){
   const badge=document.getElementById('connection-badge');
@@ -521,8 +522,11 @@ function setConnectionBadge(state='ok',label='Conexión estable',sticky=false){
 function getReactionEmojis(){
   return Array.isArray(cfg.reactionEmojis)&&cfg.reactionEmojis.length ? cfg.reactionEmojis : ['❤️','🎉','😍','🔥'];
 }
+function areScreenReactionsEnabled(){
+  return cfg.showReactions!=='no' && guestReactionsEnabled!==false;
+}
 function spawnReactionBursts(emoji, amount){
-  if(cfg.showReactions==='no') return;
+  if(!areScreenReactionsEnabled()) return;
   const layer=document.getElementById('reaction-burst-layer');
   if(!layer) return;
   const presets={soft:1,normal:2,party:4};
@@ -731,7 +735,7 @@ function applyTheme(design){
   const counters=document.querySelector('.counter-pills');
   if(counters) counters.style.display=(design.showCounters==='no')?'none':'flex';
   const reactions=document.getElementById('featured-reactions');
-  if(reactions) reactions.style.display=(cfg.showReactions==='no')?'none':'flex';
+  if(reactions) reactions.style.display=areScreenReactionsEnabled()?'flex':'none';
 
   // QR size
   const qrSize=parseInt(design.qrSize)||120;
@@ -1450,8 +1454,12 @@ async function init(){
     const gd=settings?.guest_design;
     if(gd){
       const design=typeof gd==='string'?JSON.parse(gd):gd;
+      guestReactionsEnabled=design.showReactions!==false;
+      const reactions=document.getElementById('featured-reactions');
+      if(reactions) reactions.style.display=areScreenReactionsEnabled()?'flex':'none';
       applyScreenWatermark(design);
     } else {
+      guestReactionsEnabled=true;
       applyScreenWatermark(null);
     }
   }catch(e){
@@ -1477,7 +1485,7 @@ async function init(){
 
 async function updateFeaturedReactions(postId){
   try{
-    if(cfg.showReactions==='no'){
+    if(!areScreenReactionsEnabled()){
       const hiddenContainer=document.getElementById('featured-reactions');
       if(hiddenContainer) hiddenContainer.innerHTML='';
       const hiddenOverlay=document.getElementById('featured-overlay');

@@ -432,3 +432,10 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Se agregÃ³ estilo para `input[type=\"datetime-local\"]` en el admin
 - La hora de inicio del evento ahora usa el mismo look oscuro del resto de los campos y deja de verse con el control blanco nativo del navegador
 
+### 2026-03-19 â€” SesiÃ³n 25
+
+**screen.html â€” reacciones apagadas tambiÃ©n en pantalla**
+
+- La pantalla ahora combina `screen_design.showReactions` con `guest_design.showReactions`
+- Si las reacciones se deshabilitan desde la configuraciÃ³n del evento, tambiÃ©n desaparecen del `screen`
+
