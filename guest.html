@@ -2227,15 +2227,12 @@ function hasSignedWish(){
   return localStorage.getItem(getWishCooldownKey()) === 'true';
 }
 
-function updateWishBtn(eventStarted){
+function updateWishBtn(){
   const btn=document.getElementById('wish-btn');
   const sub=document.getElementById('wish-btn-sub');
   if(!btn||!sub) return;
   
-  if(!eventStarted){
-    btn.disabled=true;
-    sub.textContent='Pronto';
-  } else if(hasSignedWish()){
+  if(hasSignedWish()){
     btn.disabled=true;
     sub.textContent='Firmado ✓';
   } else {
@@ -2245,12 +2242,8 @@ function updateWishBtn(eventStarted){
 }
 
 async function checkEventStarted(){
-  try{
-    const photos=await apiRest('posts?event_id=eq.'+eventId+'&type=eq.photo&approved=eq.true&select=id&limit=1');
-    const started=Array.isArray(photos)&&photos.length>0;
-    updateWishBtn(started);
-    return started;
-  }catch(e){return false;}
+  updateWishBtn();
+  return true;
 }
 
 async function loadStats(){
