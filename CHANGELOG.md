@@ -455,3 +455,12 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - Las animaciones de texto tipo `wave` ahora construyen spans de forma segura sin inyectar contenido crudo
 - Mosaicos, tira de fotos y polaroid ahora validan URLs de medios antes de renderizar y dejan de interpolar autores directamente en HTML
 
+### 2026-03-19 â€” SesiÃ³n 28
+
+**guest.html â€” flujo mÃ¡s intuitivo para invitados**
+
+- Se agregÃ³ una tarjeta inicial que explica rÃ¡pido cÃ³mo participar y prioriza foto, mensaje y audio con accesos directos
+- Cada modo ahora tiene su propia cabecera contextual para que el invitado entienda mejor quÃ© estÃ¡ haciendo y quÃ© conviene enviar
+- Foto, mensaje, audio, dedicatoria, votaciÃ³n, galerÃ­a y fotos propias ahora tienen tÃ­tulo, copy y tip visual para ordenar mejor la experiencia
+- Las acciones rÃ¡pidas ahora muestran estado activo y llevan al usuario directo al campo correspondiente para reducir fricciÃ³n
+

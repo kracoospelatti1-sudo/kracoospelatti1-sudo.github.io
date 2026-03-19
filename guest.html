@@ -84,15 +84,16 @@ body{
 }
 
 /* ── MAIN CONTENT ───────────────────────────────────────────── */
-.content{padding:24px 18px 40px;}
+.content{padding:24px 18px 40px;max-width:880px;margin:0 auto;}
 
 /* NAME INPUT */
-.name-block{margin-bottom:20px}
+.name-block{margin-bottom:16px}
 .label{
   font-size:13px;font-weight:700;color:var(--muted);
   text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;
   display:block;
 }
+.field-hint{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.45}
 .input{
   width:100%;padding:16px;
   background:#fff;border:1.5px solid var(--border);
@@ -102,6 +103,34 @@ body{
   -webkit-appearance:none;
 }
 .input:focus{border-color:var(--pink)}
+
+.guest-intro{
+  background:linear-gradient(135deg,#fff 0%,#fff8fc 100%);
+  border:1px solid rgba(240,23,111,0.14);
+  border-radius:var(--radius);
+  padding:16px 16px 14px;
+  margin-bottom:18px;
+  box-shadow:0 12px 28px rgba(240,23,111,0.06);
+}
+.guest-intro-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.guest-intro-kicker{font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:var(--pink);margin-bottom:6px}
+.guest-intro-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1.1;color:var(--text)}
+.guest-intro-copy{font-size:14px;color:var(--muted);line-height:1.5;max-width:560px}
+.guest-intro-badge{
+  flex-shrink:0;padding:8px 12px;border-radius:999px;background:var(--pink-light);
+  border:1px solid var(--pink-border);color:var(--pink);font-size:11px;font-weight:800;letter-spacing:0.4px
+}
+.quick-actions{display:flex;flex-wrap:wrap;gap:8px}
+.quick-action{
+  border:none;background:#fff;border:1px solid var(--border);border-radius:999px;
+  padding:9px 12px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all 0.18s;
+}
+.quick-action:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-light)}
+.quick-action.primary{background:var(--pink);color:#fff;border-color:var(--pink);box-shadow:0 10px 24px rgba(240,23,111,0.18)}
+.quick-action.primary:hover{opacity:0.92}
+.quick-action.active{border-color:var(--pink);color:var(--pink);background:var(--pink-light)}
+.quick-action.primary.active{background:var(--pink);color:#fff}
 
 /* TYPE TABS */
 .tabs-wrap{position:relative;margin-bottom:16px}
@@ -131,6 +160,21 @@ body{
 .tab-btn.active{border-color:var(--pink);background:var(--pink-light)}
 .tab-btn.active .lbl{color:var(--pink)}
 #wish-btn:disabled{opacity:0.45;cursor:not-allowed;pointer-events:none}
+
+.mode-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 16px 14px;margin-bottom:16px;box-shadow:0 8px 22px rgba(0,0,0,0.04)
+}
+.mode-kicker{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.mode-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1.1;color:var(--text);margin-bottom:6px}
+.mode-desc{font-size:14px;color:var(--muted);line-height:1.5}
+.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.section-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1.05;color:var(--text)}
+.section-copy{font-size:14px;color:var(--muted);line-height:1.5;margin-top:4px}
+.section-tip{
+  flex-shrink:0;padding:8px 12px;border-radius:12px;background:var(--surface2);
+  border:1px solid var(--border);font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap
+}
 
 /* ── FORM SECTIONS ──────────────────────────────────────────── */
 .section{display:none;animation:secFadeIn 0.25s ease}
@@ -432,7 +476,7 @@ body{
 .progress-ring circle{fill:none;stroke:var(--pink);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 0.4s}
 .sending-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1.1}
 .sending-msg{font-size:14px;color:rgba(255,255,255,0.78);font-weight:600}
-.sending-sub{font-size:12px;color:rgba(255,255,255,0.46);max-width:260px;line-height:1.5}
+.sending-sub{font-size:13px;color:rgba(255,255,255,0.58);max-width:280px;line-height:1.55}
 
 /* SUCCESS */
 .success-screen{
@@ -445,7 +489,7 @@ body{
 .success-ico{font-size:72px;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)}
 @keyframes popIn{from{transform:scale(0) rotate(-15deg)}to{transform:scale(1) rotate(0deg)}}
 .success-title{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--text)}
-.success-sub{font-size:16px;color:var(--muted);text-align:center;max-width:260px;line-height:1.5}
+.success-sub{font-size:16px;color:var(--muted);text-align:center;max-width:320px;line-height:1.55}
 .success-btn{
   margin-top:8px;padding:16px 36px;
   background:var(--pink);color:#fff;border:none;
@@ -625,6 +669,15 @@ body{
   animation:wsFadeUp 0.7s 0.3s ease both;
 }
 @keyframes wsFadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+@media(min-width:768px){
+  .hero{padding:56px 40px 48px}
+  .content{padding:34px 28px 54px}
+  .hero-name{font-size:44px}
+  .hero-sub{font-size:17px}
+  .stats{max-width:880px;margin:-20px auto 0;border-radius:18px;overflow:hidden;position:relative;z-index:2;box-shadow:0 18px 40px rgba(0,0,0,0.08)}
+  .guest-intro-top{align-items:center}
+}
 </style>
 </head>
 <body>
@@ -721,6 +774,23 @@ body{
     <div class="name-block">
       <label class="label">Tu nombre</label>
       <input type="text" class="input" id="guest-name" placeholder="¿Cómo te llamás?" autocomplete="name"/>
+      <div class="field-hint">Usamos tu nombre para mostrar quién compartió cada momento en la pantalla.</div>
+    </div>
+
+    <div class="guest-intro">
+      <div class="guest-intro-top">
+        <div>
+          <div class="guest-intro-kicker">Cómo participar</div>
+          <div class="guest-intro-title">Elegí una forma de sumarte</div>
+          <div class="guest-intro-copy">La forma más rápida es sacar una foto. También podés dejar un mensaje, grabar un audio o guardar una dedicatoria especial.</div>
+        </div>
+        <div class="guest-intro-badge" id="guest-intro-badge">Recomendado</div>
+      </div>
+      <div class="quick-actions">
+        <button class="quick-action primary active" data-target="photo" onclick="jumpToType('photo')">📷 Subir foto</button>
+        <button class="quick-action" data-target="message" onclick="jumpToType('message')">💬 Escribir mensaje</button>
+        <button class="quick-action" data-target="audio" onclick="jumpToType('audio')">🎤 Grabar audio</button>
+      </div>
     </div>
 
     <!-- TYPE TABS -->
@@ -736,8 +806,21 @@ body{
     </div>
     </div><!-- end tabs-wrap -->
 
+    <div class="mode-card">
+      <div class="mode-kicker" id="mode-kicker">Modo activo</div>
+      <div class="mode-title" id="mode-title">Subí una foto</div>
+      <div class="mode-desc" id="mode-desc">Sacá una foto horizontal y la dejamos lista para verse increíble en pantalla grande.</div>
+    </div>
+
     <!-- ── PHOTO SECTION ── -->
     <div class="section active" id="section-photo">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Foto del momento</div>
+          <div class="section-copy">La opción más rápida para aparecer en pantalla. Mejor si la sacás en horizontal.</div>
+        </div>
+        <div class="section-tip">Lo más usado</div>
+      </div>
       <div class="orient-warn" id="orient-warn">
         <span>📱</span>
         <div><strong>Solo fotos horizontales</strong><br>Girá el celular en modo paisaje 🌄</div>
@@ -801,6 +884,13 @@ body{
 
     <!-- ── MESSAGE SECTION ── -->
     <div class="section" id="section-message">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Mensaje en pantalla</div>
+          <div class="section-copy">Escribí algo corto, cálido o divertido. Cuanto más directo, mejor se luce.</div>
+        </div>
+        <div class="section-tip">Hasta 200 caracteres</div>
+      </div>
       <!-- Suggest chips -->
       <div class="suggest-row" id="suggest-row">
         <button class="suggest-chip" onclick="fillSuggest(this,'¡Felicidades! 🥳')">¡Felicidades! 🥳</button>
@@ -963,6 +1053,13 @@ body{
 
     <!-- ── AUDIO SECTION ── -->
     <div class="section" id="section-audio">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Mensaje de voz</div>
+          <div class="section-copy">Ideal para algo más personal. Si podés, grabalo en un lugar con poco ruido.</div>
+        </div>
+        <div class="section-tip">Breve y claro</div>
+      </div>
       <div class="audio-area">
         <div class="record-status" id="record-status">Tocá para grabar tu mensaje de voz</div>
         <button class="record-btn" id="record-btn" onclick="toggleRecording()">🎤</button>
@@ -997,6 +1094,13 @@ body{
 
     <!-- ── WISH SECTION ── -->
     <div class="section" id="section-wish">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Dedicatoria especial</div>
+          <div class="section-copy">Este mensaje entra con más protagonismo. Guardalo para algo realmente emotivo.</div>
+        </div>
+        <div class="section-tip">Momento especial</div>
+      </div>
       <div class="wish-banner">
         <div class="ico">💌</div>
         <h3>Mensaje especial</h3>
@@ -1010,6 +1114,13 @@ body{
 
     <!-- ── VOTE SECTION ── -->
     <div class="section" id="section-vote">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Votaciones en vivo</div>
+          <div class="section-copy">Elegí tu opción y seguí el resultado en tiempo real en la pantalla del evento.</div>
+        </div>
+        <div class="section-tip">En vivo</div>
+      </div>
       <div id="vote-loading" style="text-align:center;padding:40px 0;color:var(--muted)">
         <div style="font-size:32px;margin-bottom:8px">🗳</div>
         <p>Cargando votaciones...</p>
@@ -1024,6 +1135,13 @@ body{
 
     <!-- ── MY PHOTOS SECTION ── -->
     <div class="section" id="section-my-photos" style="width:100%;overflow:hidden">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Tus fotos</div>
+          <div class="section-copy">Revisá lo que ya subiste y seguí tu participación en el evento.</div>
+        </div>
+        <div class="section-tip">Tu historial</div>
+      </div>
       <div id="my-photos-loading" style="text-align:center;padding:40px 0;color:var(--muted)">
         <div style="font-size:36px;margin-bottom:10px">🖼</div>
         <p>Cargando tus fotos...</p>
@@ -1038,6 +1156,13 @@ body{
 
     <!-- ── GALLERY SECTION ── -->
     <div class="section" id="section-gallery" style="width:100%;overflow:hidden">
+      <div class="section-head">
+        <div>
+          <div class="section-title">Galería del evento</div>
+          <div class="section-copy">Mirá lo que ya compartieron los demás invitados e inspirate para subir el tuyo.</div>
+        </div>
+        <div class="section-tip">Inspirate</div>
+      </div>
       <div id="gallery-loading" style="text-align:center;padding:40px 0;color:var(--muted)">
         <div style="font-size:36px;margin-bottom:10px">🎉</div>
         <p>Cargando fotos del evento...</p>
@@ -2176,12 +2301,60 @@ async function loadStats(){
   }catch(e){}
 }
 
+const MODE_COPY={
+  photo:{badge:'Recomendado',kicker:'Modo activo',title:'Subí una foto',desc:'Sacá una foto horizontal y la dejamos lista para verse increíble en pantalla grande.'},
+  message:{badge:'Rápido',kicker:'Modo activo',title:'Escribí un mensaje',desc:'Ideal para dejar algo corto, cálido o divertido y verlo aparecer en vivo.'},
+  audio:{badge:'Personal',kicker:'Modo activo',title:'Grabá tu voz',desc:'Perfecto para un saludo más cercano. Un audio breve suele salir mucho mejor.'},
+  wish:{badge:'Especial',kicker:'Modo activo',title:'Mandá una dedicatoria',desc:'Guardá este espacio para un mensaje más emotivo y con más protagonismo.'},
+  vote:{badge:'En vivo',kicker:'Modo activo',title:'Participá de la votación',desc:'Elegí tu opción y seguí el resultado junto al resto de los invitados.'},
+  'my-photos':{badge:'Tu historial',kicker:'Modo activo',title:'Revisá tus fotos',desc:'Acá podés ver lo que ya subiste y seguir tu participación en el evento.'},
+  gallery:{badge:'Inspirate',kicker:'Modo activo',title:'Mirá la galería',desc:'Explorá lo que ya compartieron los demás e inspirate para subir el tuyo.'}
+};
+function updateModeCard(type){
+  const copy=MODE_COPY[type]||MODE_COPY.photo;
+  const badge=document.getElementById('guest-intro-badge');
+  const kicker=document.getElementById('mode-kicker');
+  const title=document.getElementById('mode-title');
+  const desc=document.getElementById('mode-desc');
+  if(badge) badge.textContent=copy.badge;
+  if(kicker) kicker.textContent=copy.kicker;
+  if(title) title.textContent=copy.title;
+  if(desc) desc.textContent=copy.desc;
+  document.querySelectorAll('.quick-action[data-target]').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.target===type);
+  });
+}
+function jumpToType(type){
+  const target=Array.from(document.querySelectorAll('.type-tabs .tab-btn')).find(btn=>(btn.getAttribute('onclick')||'').includes("selectType('"+type+"'"));
+  if(target) target.click();
+  const focusMap={
+    photo:'file-input',
+    message:'msg-text',
+    audio:'record-btn',
+    wish:'wish-text'
+  };
+  const focusId=focusMap[type];
+  if(!focusId) return;
+  setTimeout(()=>{
+    const el=document.getElementById(focusId);
+    if(!el) return;
+    if(type==='photo'){
+      document.getElementById('upload-zone')?.scrollIntoView({behavior:'smooth',block:'center'});
+      return;
+    }
+    el.focus?.();
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+  },80);
+}
+
 // ── TYPE ─────────────────────────────────────────────────────
 function selectType(type,btn){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('section-'+type).classList.add('active');
+  updateModeCard(type);
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 // ── PHOTO ─────────────────────────────────────────────────────
