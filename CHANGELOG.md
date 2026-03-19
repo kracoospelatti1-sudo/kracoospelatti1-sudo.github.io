@@ -425,3 +425,10 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - `guest.html` ahora lee esa configuraciÃ³n compartida, limita los emojis disponibles, bloquea taps repetidos mientras una reacciÃ³n estÃ¡ en vuelo y aplica cooldown por invitado para evitar spam bÃ¡sico
 - `screen.html` ahora usa la lista de emojis configurada y suma bursts animados al detectar reacciones nuevas, con intensidad `suave`, `normal` o `fiesta`
 
+### 2026-03-19 â€” SesiÃ³n 24
+
+**admin.html â€” campo de fecha/hora consistente con el panel**
+
+- Se agregÃ³ estilo para `input[type=\"datetime-local\"]` en el admin
+- La hora de inicio del evento ahora usa el mismo look oscuro del resto de los campos y deja de verse con el control blanco nativo del navegador
+

@@ -28,8 +28,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .card{background:linear-gradient(180deg,var(--surface) 0%,var(--surface) 100%);border:1px solid var(--border);border-top-color:rgba(240,23,111,0.2);border-radius:16px;padding:24px;margin-bottom:16px}
 .card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px}
 label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px;letter-spacing:0.3px}
-input[type=text],input[type=date],input[type=password],input[type=number],input[type=email],textarea,select{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s}
+input[type=text],input[type=date],input[type=datetime-local],input[type=password],input[type=number],input[type=email],textarea,select{width:100%;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s}
 input:focus,textarea:focus,select:focus{border-color:var(--pink)}
+input[type=datetime-local]{color-scheme:dark}
+input[type=datetime-local]::-webkit-calendar-picker-indicator{filter:invert(0.9);opacity:0.9;cursor:pointer}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .fg.full{grid-template-columns:1fr}
 .fg.three{grid-template-columns:1fr 1fr 1fr}
