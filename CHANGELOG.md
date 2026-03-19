@@ -367,3 +367,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - `screen.html` ahora usa ese UUID resuelto para cargar `screen_design` y `guest_design`
 - Con esto se evita el `400` de Supabase cuando la URL entra con un cÃ³digo corto como `6dae`
 
+### 2026-03-18 â€” SesiÃ³n 17
+
+**admin.html â€” normalizaciÃ³n de evento antes de tocar `event_settings`**
+
+- Se agregÃ³ un helper para resolver el UUID real del evento aunque el panel tenga cargado el `custom_code`
+- `showDesign`, `saveDesign`, `showGuestDesign`, `saveGuestDesign` y los resets de diseÃ±o ahora usan ese UUID normalizado
+- Con esto el panel evita consultas a `event_settings` con valores como `6dae`
+
