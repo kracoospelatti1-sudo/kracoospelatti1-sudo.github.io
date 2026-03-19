@@ -65,24 +65,6 @@ body{
 }
 
 /* ── STATS ──────────────────────────────────────────────────── */
-.stats{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  background:#fff;border-bottom:1px solid var(--border);
-}
-.stat{
-  padding:14px 8px;text-align:center;
-  border-right:1px solid var(--border);
-}
-.stat:last-child{border-right:none}
-.stat-num{
-  font-family:'Syne',sans-serif;font-size:26px;
-  font-weight:800;color:var(--pink);line-height:1;
-}
-.stat-lbl{
-  font-size:12px;font-weight:600;color:var(--muted);
-  text-transform:uppercase;letter-spacing:0.8px;margin-top:3px;
-}
-
 /* ── MAIN CONTENT ───────────────────────────────────────────── */
 .content{padding:20px 14px 34px;max-width:880px;margin:0 auto;}
 
@@ -647,7 +629,6 @@ body{
   .content{padding:34px 28px 54px}
   .hero-name{font-size:44px}
   .hero-sub{font-size:17px}
-  .stats{max-width:880px;margin:-20px auto 0;border-radius:18px;overflow:hidden;position:relative;z-index:2;box-shadow:0 18px 40px rgba(0,0,0,0.08)}
   .field-hint{font-size:13px}
   .mode-card{padding:16px 16px 14px;margin-bottom:16px}
   .mode-title{font-size:22px}
@@ -737,13 +718,6 @@ body{
     <div class="hero-name" id="ev-name">Cargando...</div>
     <div class="hero-sub" id="ev-sub"></div>
     <div class="hero-pill" id="hero-pill">📷 Compartí tu momento con todos</div>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats">
-    <div class="stat"><div class="stat-num" id="cnt-photos">0</div><div class="stat-lbl">Fotos</div></div>
-    <div class="stat"><div class="stat-num" id="cnt-msgs">0</div><div class="stat-lbl">Mensajes</div></div>
-    <div class="stat"><div class="stat-num" id="cnt-audios">0</div><div class="stat-lbl">Audios</div></div>
   </div>
 
   <!-- CONTENT -->
@@ -2256,10 +2230,14 @@ async function checkEventStarted(){
 
 async function loadStats(){
   try{
+    const photosEl=document.getElementById('cnt-photos');
+    const msgsEl=document.getElementById('cnt-msgs');
+    const audiosEl=document.getElementById('cnt-audios');
+    if(!photosEl||!msgsEl||!audiosEl) return;
     const posts=await apiRest('posts?event_id=eq.'+eventId+'&approved=eq.true&select=type');
-    document.getElementById('cnt-photos').textContent=posts.filter(p=>p.type==='photo').length;
-    document.getElementById('cnt-msgs').textContent=posts.filter(p=>p.type==='message').length;
-    document.getElementById('cnt-audios').textContent=posts.filter(p=>p.type==='audio').length;
+    photosEl.textContent=posts.filter(p=>p.type==='photo').length;
+    msgsEl.textContent=posts.filter(p=>p.type==='message').length;
+    audiosEl.textContent=posts.filter(p=>p.type==='audio').length;
   }catch(e){}
 }
 

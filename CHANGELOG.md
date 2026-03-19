@@ -496,3 +496,10 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - `guest.html` volviÃ³ a tomar solo su propio `guest_design` para colores y tintes
 - `screen.html` volviÃ³ a tomar solo `screen_design`, sin heredar tonalidades del invitado
 
+### 2026-03-19 â€” SesiÃ³n 33
+
+**guest.html â€” sin bloque de stats para invitados**
+
+- Se eliminÃ³ el resumen de fotos, mensajes y audios de la parte superior del `guest`
+- El flujo del invitado ahora arranca mÃ¡s directo en nombre y acciones, sin un bloque que no aportaba a la participaciÃ³n
+
