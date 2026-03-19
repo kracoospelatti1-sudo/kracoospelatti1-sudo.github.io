@@ -525,6 +525,35 @@ function getReactionEmojis(){
 function areScreenReactionsEnabled(){
   return cfg.showReactions!=='no' && guestReactionsEnabled!==false;
 }
+function safeMediaUrl(url){
+  if(typeof url!=='string') return '';
+  const trimmed=url.trim();
+  if(!trimmed) return '';
+  try{
+    const parsed=new URL(trimmed,location.href);
+    return /^https?:$/i.test(parsed.protocol) ? parsed.href : '';
+  }catch(e){
+    return '';
+  }
+}
+function makeTextEl(tag,className,text){
+  const el=document.createElement(tag);
+  if(className) el.className=className;
+  el.textContent=text==null?'':String(text);
+  return el;
+}
+function setWaveText(el,text){
+  el.textContent='';
+  [...String(text||'')].forEach(ch=>{
+    if(ch===' '){
+      el.appendChild(document.createTextNode(' '));
+      return;
+    }
+    const span=document.createElement('span');
+    span.textContent=ch;
+    el.appendChild(span);
+  });
+}
 function spawnReactionBursts(emoji, amount){
   if(!areScreenReactionsEnabled()) return;
   const layer=document.getElementById('reaction-burst-layer');
@@ -862,12 +891,34 @@ function addMsgToStrip(msg){
   card.dataset.id=msg.id;
   if(msg.type==='audio'){
     card.className='msg-card audio-card';
-    card.innerHTML=`<div class="msg-card-inner"><div class="msg-avatar">${avatarLetter}</div><div class="msg-card-body"><div class="msg-card-icon">🎤</div><div class="msg-card-text" style="font-style:italic">Mensaje de voz</div><div class="msg-card-author">— ${msg.author}</div></div></div>`;
+    const inner=document.createElement('div');
+    inner.className='msg-card-inner';
+    const avatar=makeTextEl('div','msg-avatar',avatarLetter);
+    const body=document.createElement('div');
+    body.className='msg-card-body';
+    const iconEl=makeTextEl('div','msg-card-icon','🎤');
+    const textEl=makeTextEl('div','msg-card-text','Mensaje de voz');
+    textEl.style.fontStyle='italic';
+    const authorEl=makeTextEl('div','msg-card-author','— '+(msg.author||''));
+    body.append(iconEl,textEl,authorEl);
+    inner.append(avatar,body);
+    card.appendChild(inner);
   } else {
     card.className='msg-card';
     let icon='💬';
     try{const f=JSON.parse(msg.frame||'{}');icon=(f.emoji&&f.emoji!=='none')?f.emoji:'💬';}catch(e){}
-    card.innerHTML=`<div class="msg-card-inner"><div class="msg-avatar">${avatarLetter}</div><div class="msg-card-body"><div class="msg-card-icon">${icon}</div><div class="msg-card-text">${msg.content}</div><div class="msg-card-author">— ${msg.author}</div></div></div>`;
+    const inner=document.createElement('div');
+    inner.className='msg-card-inner';
+    const avatar=makeTextEl('div','msg-avatar',avatarLetter);
+    const body=document.createElement('div');
+    body.className='msg-card-body';
+    body.append(
+      makeTextEl('div','msg-card-icon',icon),
+      makeTextEl('div','msg-card-text',msg.content||''),
+      makeTextEl('div','msg-card-author','— '+(msg.author||''))
+    );
+    inner.append(avatar,body);
+    card.appendChild(inner);
   }
   strip.insertBefore(card, strip.firstChild);
   while(strip.children.length>5) strip.removeChild(strip.lastChild);
@@ -896,7 +947,14 @@ function addMsgToWaiting(msg){
   try{const f=JSON.parse(msg.frame||'{}');icon=(f.emoji&&f.emoji!=='none')?f.emoji:'💬';}catch(e){}
   const card=document.createElement('div');
   card.className='ws-msg-card';
-  card.innerHTML=`<div class="ws-msg-icon">${icon}</div><div class="ws-msg-body"><div class="ws-msg-text">${msg.content}</div><div class="ws-msg-author">— ${msg.author}</div></div>`;
+  const iconEl=makeTextEl('div','ws-msg-icon',icon);
+  const body=document.createElement('div');
+  body.className='ws-msg-body';
+  body.append(
+    makeTextEl('div','ws-msg-text',msg.content||''),
+    makeTextEl('div','ws-msg-author','— '+(msg.author||''))
+  );
+  card.append(iconEl,body);
   container.insertBefore(card, container.firstChild);
   // Máximo 3 mensajes visibles
   while(container.children.length>3) container.removeChild(container.lastChild);
@@ -946,7 +1004,7 @@ function showNextBubble(){
   if(custom.animation==='bounce') textEl.classList.add('msg-anim-bounce');
   else if(custom.animation==='fade') textEl.classList.add('msg-anim-fade');
   else if(custom.animation==='wave'){
-    textEl.innerHTML=[...msg.content].map(ch=>ch===' '?' ':`<span>${ch}</span>`).join('');
+    setWaveText(textEl,msg.content||'');
     textEl.classList.add('msg-anim-wave');
   } else if(custom.animation==='typewriter'){
     textEl.style.overflow='hidden';
@@ -1121,7 +1179,16 @@ function renderPollScreen(poll,votes){
     const pct=total>0?Math.round((counts[i]/total)*100):0;
     const isWinner=counts[i]===maxVotes&&total>0;
     const bar=document.createElement('div');bar.className='sbar-wrap';
-    bar.innerHTML='<div class="sbar-top"><span class="sbar-label">'+opt+'</span><span class="sbar-count">'+counts[i]+' · '+pct+'%</span></div><div class="sbar-bg"><div class="sbar-fill'+(isWinner?' winner':'')+'" style="width:'+pct+'%"></div></div>';
+    const top=document.createElement('div');top.className='sbar-top';
+    top.append(
+      makeTextEl('span','sbar-label',opt),
+      makeTextEl('span','sbar-count',counts[i]+' · '+pct+'%')
+    );
+    const bg=document.createElement('div');bg.className='sbar-bg';
+    const fill=document.createElement('div');fill.className='sbar-fill'+(isWinner?' winner':'');
+    fill.style.width=pct+'%';
+    bg.appendChild(fill);
+    bar.append(top,bg);
     barsDiv.appendChild(bar);
   });
   document.getElementById('poll-overlay').style.display='flex';
@@ -1275,7 +1342,10 @@ function rotateFeatured(){
 
 function addToStrip(post){
   const strip=document.getElementById('photo-strip');
-  const img=document.createElement('img');img.src=post.content;
+  const img=document.createElement('img');
+  const safeUrl=safeMediaUrl(post.content);
+  if(!safeUrl) return;
+  img.src=safeUrl;
   strip.insertBefore(img,strip.firstChild);
   if(strip.children.length>6) strip.removeChild(strip.lastChild);
 }
@@ -1291,11 +1361,18 @@ function updateCounters(){
   const wishCount=posts.filter(p=>p.type==='wish').length;
   const pills=document.querySelector('.counter-pills');
   if(!pills)return;
-  pills.innerHTML=`
-    <div class="cpill"><span>${photoCount}</span> Foto${photoCount!==1?'s':''}</div>
-    <div class="cpill"><span>${msgCount}</span> Mensaje${msgCount!==1?'s':''}</div>
-    <div class="cpill"><span>${wishCount}</span> Deseo${wishCount!==1?'s':''}</div>
-  `;
+  pills.textContent='';
+  [
+    [photoCount,'Foto'],
+    [msgCount,'Mensaje'],
+    [wishCount,'Deseo']
+  ].forEach(([count,label])=>{
+    const pill=document.createElement('div');
+    pill.className='cpill';
+    const num=makeTextEl('span','',count);
+    pill.append(num,document.createTextNode(' '+label+(count!==1?'s':'')));
+    pills.appendChild(pill);
+  });
 }
 
 function showNewBadge(){
@@ -1511,7 +1588,10 @@ async function updateFeaturedReactions(postId){
           pill=document.createElement('span');
           pill.className='feat-rxn';
           pill.dataset.rxn=e;
-          pill.innerHTML='<span class="feat-rxn-emoji">'+e+'</span><span class="feat-rxn-count">'+counts[e]+'</span>';
+          pill.append(
+            makeTextEl('span','feat-rxn-emoji',e),
+            makeTextEl('span','feat-rxn-count',counts[e])
+          );
           container.appendChild(pill);
         } else {
           pill.querySelector('.feat-rxn-count').textContent=counts[e];
@@ -1894,7 +1974,13 @@ function renderGrid(grid,W,H,newIds){
       cell=document.createElement('div');
       cell.className='mosaic-cell'+(isNew?' new-cell':'');
       cell.dataset.id=p.id;
-      cell.innerHTML='<img src="'+p.content+'" loading="lazy"/><div class="mcell-author">'+p.author+'</div>';
+      const img=document.createElement('img');
+      const safeUrl=safeMediaUrl(p.content);
+      if(!safeUrl) return;
+      img.src=safeUrl;
+      img.loading='lazy';
+      const author=makeTextEl('div','mcell-author',p.author||'');
+      cell.append(img,author);
       grid.appendChild(cell);
     }
     cell.style.left=x+'px';cell.style.top=y+'px';
@@ -1933,7 +2019,13 @@ function renderDynamic(grid,W,H,newIds){
       cell=document.createElement('div');
       cell.className='mosaic-cell'+(isNew?' new-cell':'')+(pos.featured?' featured':'');
       cell.dataset.id=p.id;
-      cell.innerHTML='<img src="'+p.content+'" loading="lazy"/><div class="mcell-author">'+p.author+'</div>';
+      const img=document.createElement('img');
+      const safeUrl=safeMediaUrl(p.content);
+      if(!safeUrl) return;
+      img.src=safeUrl;
+      img.loading='lazy';
+      const author=makeTextEl('div','mcell-author',p.author||'');
+      cell.append(img,author);
       grid.appendChild(cell);
     }
     cell.classList.toggle('featured',!!pos.featured);
@@ -1967,7 +2059,13 @@ function renderMasonry(grid,W,H,newIds){
       cell=document.createElement('div');
       cell.className='mosaic-cell'+(isNew?' new-cell':'');
       cell.dataset.id=p.id;
-      cell.innerHTML='<img src="'+p.content+'" loading="lazy"/><div class="mcell-author">'+p.author+'</div>';
+      const img=document.createElement('img');
+      const safeUrl=safeMediaUrl(p.content);
+      if(!safeUrl) return;
+      img.src=safeUrl;
+      img.loading='lazy';
+      const author=makeTextEl('div','mcell-author',p.author||'');
+      cell.append(img,author);
       grid.appendChild(cell);
     }
     cell.style.left=x+'px';cell.style.top=y+'px';
@@ -2162,8 +2260,14 @@ function showPolaroid(post){
   const card=document.createElement('div');
   card.className='polaroid-card';
   card.style.setProperty('--pol-rot',rot);
-  card.innerHTML='<img class="polaroid-img" src="'+post.content+'" alt=""/>'
-    +'<div class="polaroid-name">'+post.author+'</div>';
+  const img=document.createElement('img');
+  const safeUrl=safeMediaUrl(post.content);
+  if(!safeUrl){_polaroidActive=false;return;}
+  img.className='polaroid-img';
+  img.src=safeUrl;
+  img.alt='';
+  const name=makeTextEl('div','polaroid-name',post.author||'');
+  card.append(img,name);
   overlay.innerHTML='';
   overlay.appendChild(card);
   overlay.style.display='flex';

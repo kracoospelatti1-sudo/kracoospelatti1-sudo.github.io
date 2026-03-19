@@ -447,3 +447,11 @@ UNIQUE(post_id, guest_name)  -- una reacciÃ³n por foto por persona
 - El preview del canvas ahora vive dentro de un contenedor mÃ¡s estable, con borde y alto visual controlado para que las fotos no queden desproporcionadas
 - La tarjeta de archivo seleccionado queda mÃ¡s consistente con el resto del diseÃ±o del invitado
 
+### 2026-03-19 â€” SesiÃ³n 27
+
+**screen.html â€” hardening de render para evento en vivo**
+
+- Se reemplazaron varios `innerHTML` con datos de usuarios por construcciÃ³n segura de nodos en mensajes, waiting screen, barras de votaciÃ³n y pills de reacciones
+- Las animaciones de texto tipo `wave` ahora construyen spans de forma segura sin inyectar contenido crudo
+- Mosaicos, tira de fotos y polaroid ahora validan URLs de medios antes de renderizar y dejan de interpolar autores directamente en HTML
+
