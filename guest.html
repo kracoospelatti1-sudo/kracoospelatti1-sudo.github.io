@@ -2384,6 +2384,7 @@ async function sendPhoto(){
     try{localStorage.removeItem('ew_gallery_'+eventId);localStorage.removeItem('ew_myphotos_'+eventId+'_'+name);}catch(e){}
     setProgress(100,'¡Listo!');
     setLastSent('photo');
+    checkEventStarted();
     setTimeout(()=>{hideSending();showSuccess('photo');},400);
   }catch(e){
     hideSending();
